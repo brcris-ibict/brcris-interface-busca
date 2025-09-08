@@ -12,6 +12,7 @@
   --border-dark-color: #bbbbbb;
   --bg: #f7f7f9;
   --bg-card: #ffffff;
+  --bg-footer: #071d41;
   --border-radius: .75rem;
 }
 
@@ -711,7 +712,7 @@ li .sui-result__key:after {
   justify-content: center;
   align-items: center;
   gap: 2rem;
-  background-color: var(--primary-color);
+  background-color: var(--bg-footer);
   height: 48px;
 }
 
@@ -720,11 +721,28 @@ li .sui-result__key:after {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: var(--bg-footer);
+  color: #fff;
 }
 
 .footer-adress {
   font-size: 0.75rem;
   text-align: center;
+}
+
+.copyright {
+  background-color: #04132a;
+  color: #ccc;
+  font-size: 13px;
+  font-weight: 400;
+  text-align: left;
+  padding: 16px;
+  width: 100%;
+  text-align: center;
+
+  a {
+    color: #fff;
+  }
 }
 
 .alert-container {
