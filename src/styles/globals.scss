@@ -271,8 +271,8 @@ a {
   position: fixed;
   width: 100%;
   z-index: 99;
-  border-bottom: 1px solid var(--border-color);
-  background-color: var(--bg);
+  border-bottom: 1px solid var(--primary-color);
+  background-color: #ffffff;
 }
 
 .navbar .navbar-brand {
@@ -426,6 +426,11 @@ li .sui-result__key:after {
 .lattes-icon {
   max-height: 19px;
   margin-top: -8px;
+}
+.orcid-icon {
+  max-height: 15px;
+  margin-top: -8px;
+  margin-right: 2px;
 }
 
 .page .nav-tabs .nav-item.show .nav-link,
@@ -963,6 +968,45 @@ button.rc-pagination-item-link[disabled] {
   display: none;
 }
 
+.details-content .sui-result__details {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.details-content .sui-result__value {
+  display: block;
+  margin-top: 2px;
+}
+
+.details-content .info-card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: 1rem 1.25rem;
+  margin: 0.5rem;
+  width: 100%;
+}
+
+.details-content .research-fields {
+  margin-top: 1rem;
+}
+
+.details-content .chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.details-content .chip {
+  background-color: #f1f3f5;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #333;
+  white-space: nowrap;
+}
 
 @media (max-width: 800px) {
   .nav .nav-item {
