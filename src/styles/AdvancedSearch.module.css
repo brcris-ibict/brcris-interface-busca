@@ -77,7 +77,7 @@ input.firstInput {
 .help {
   align-items: center;
   justify-content: center;
-  color: var(--tabs-color);
+  color: var(--link-color);
   width: 24px;
   height: 24px;
   display: flex;

@@ -18,8 +18,8 @@ import { getAggregateQuery } from '../indicators/query/Query';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 const INDEX_NAME = process.env.INDEX_PUBLICATION || '';
-export const options = new OptionsBar('Documents by year');
-export const optionsType = new OptionsPie('Documents by type');
+export const options = new OptionsBar('Publicatons by year');
+export const optionsType = new OptionsPie('Publicatons by type');
 
 const headersPublicationsByYear = [
   { label: 'Year', key: 'key' },
@@ -88,6 +88,7 @@ export default function PersonProduction({ authorId }: { authorId: string }) {
 
   return (
     <div className={styles.charts} hidden={isEmpty()}>
+      <h3>Estatísticas de Produção</h3>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

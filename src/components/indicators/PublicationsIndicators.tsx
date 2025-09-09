@@ -19,8 +19,8 @@ import { getAggregateQuery } from './query/Query';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 const INDEX_NAME = process.env.INDEX_PUBLICATION || '';
-export const options = new OptionsBar('Documents by year');
-export const optionsType = new OptionsPie('Documents by type');
+export const options = new OptionsBar('Publicatons by year');
+export const optionsType = new OptionsPie('Publicatons by type');
 
 const headersPublicationsByYear = [
   { label: 'Year', key: 'key' },
