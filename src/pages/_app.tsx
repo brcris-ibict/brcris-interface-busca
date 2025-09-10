@@ -1,4 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import bootstrap CSS
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 import { appWithTranslation } from 'next-i18next';
 import type { AppProps } from 'next/app';
 import { useEffect } from 'react';

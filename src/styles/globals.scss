@@ -4,14 +4,14 @@
   --primary-color: #210d41;
   --secondary-color: #430059;
   --text-color: #333;
-  --link-color: #0d6efd;
-  --link-hover-color: #0a58ca;
+  --tabs-color: #660b6e;
+  --bs-link-color: #6610f2;
+  --bs-link-hover-color: #8540f5;
   --text-secondary-color: #333333;
   --border-color: #e5e7eb;
   --border-dark-color: #bbbbbb;
   --bg: #f7f7f9;
   --bg-card: #ffffff;
-  --bg-footer: #071d41;
   --border-radius: .75rem;
 }
 
@@ -59,7 +59,7 @@ h1 {
 }
 
 a {
-  color: var(--link-color);
+  color: var(--bs-link-color);
 }
 
 h3 a {
@@ -248,7 +248,7 @@ a {
 }
 
 .btn-link {
-  color: var(--link-color);
+  color: var(--bs-link-color);
   background-color: transparent;
   border: none;
   margin-left: 8px;
@@ -270,7 +270,6 @@ a {
   position: fixed;
   width: 100%;
   z-index: 99;
-  border-bottom: 1px solid var(--primary-color);
   background-color: #ffffff;
 }
 
@@ -426,7 +425,6 @@ li .sui-result__key:after {
   max-height: 19px;
   margin-top: -8px;
 }
-
 .orcid-icon {
   max-height: 15px;
   margin-top: -8px;
@@ -663,7 +661,7 @@ li .sui-result__key:after {
 }
 
 .link-color {
-  color: var(--link-color);
+  color: var(--bs-link-color);
   cursor: pointer;
   width: fit-content;
   font-weight: 300;
@@ -682,7 +680,7 @@ li .sui-result__key:after {
 }
 
 .read-more {
-  color: var(--link-color) !important;
+  color: var(--bs-link-color) !important;
   position: absolute;
   bottom: 0;
   right: 1rem;
@@ -695,7 +693,7 @@ li .sui-result__key:after {
 }
 
 .read-more[aria-expanded='true']::after {
-  border-bottom: 1px solid var(--link-color);
+  border-bottom: 1px solid var(--bs-link-color);
 }
 
 .read-more::after {
@@ -717,7 +715,7 @@ li .sui-result__key:after {
   justify-content: center;
   align-items: center;
   gap: 2rem;
-  background-color: var(--bg-footer);
+  background-color: var(--primary-color);
   height: 48px;
 }
 
@@ -726,28 +724,11 @@ li .sui-result__key:after {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--bg-footer);
-  color: #fff;
 }
 
 .footer-adress {
   font-size: 0.75rem;
   text-align: center;
-}
-
-.copyright {
-  background-color: #04132a;
-  color: #ccc;
-  font-size: 13px;
-  font-weight: 400;
-  text-align: left;
-  padding: 16px;
-  width: 100%;
-  text-align: center;
-
-  a {
-    color: #fff;
-  }
 }
 
 .alert-container {
@@ -791,7 +772,7 @@ li .sui-result__key:after {
 }
 
 .tablist .nav-tabs .nav-link {
-  background-color: var(--primary-color);
+  background-color: var(--tabs-color);
   color: #fff;
   margin: 0 1px;
   border-top-left-radius: 4px;
@@ -933,7 +914,7 @@ footer {
 
 .rc-pagination-prev button:after,
 .rc-pagination-next button:after {
-  color: var(--link-color);
+  color: var(--bs-link-color);
 }
 
 .sui-paging .rc-pagination-item {
@@ -980,12 +961,13 @@ button.rc-pagination-item-link[disabled] {
   margin-top: 2px;
 }
 
+
 .details-content .info-card {
   background: var(--bg-card);
   border-radius: var(--border-radius);
   padding: 1rem 1.25rem;
-  margin: 0.5rem;
-  width: 100%;
+  margin: 0.5rem 0;  width: 100%;
+  box-sizing: border-box;
 }
 
 .details-content .research-fields {
@@ -1007,6 +989,58 @@ button.rc-pagination-item-link[disabled] {
   color: #333;
   white-space: nowrap;
 }
+.orcid-logo, .lattes-logo {
+  max-width: 24px;
+  max-height: 24px;
+  margin-top: -8px;
+  margin-right: 2px;
+}
+.research-title {
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+}
+
+.research-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.mobile-hidden {
+  font-size: 1rem;
+}
+
+.custom-popover-btn {
+  background-color: #f8f9fa; 
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: #6c757d; 
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-popover-btn:hover {
+  background-color: #6c757d; 
+  color: #fff;
+}
+
+.custom-popover-btn i {
+  font-size: 14px;
+}
+
+.overview {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: 1rem 1.25rem;
+  width: 100%;
+}
+.overview p{
+  line-height: 1.6;
+}
+
 
 @media (max-width: 800px) {
   .nav .nav-item {
@@ -1123,4 +1157,22 @@ button.rc-pagination-item-link[disabled] {
     width: 100%;
     border-radius: 24px;
   }
+
+  .details-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    
+  }
+
+  .details-main{
+    width: 100%;
+  }
+    .mobile-hidden {
+    display: none;
+  }
+  .production-with-popover{
+     width: 100%;
+}
 }
