@@ -181,8 +181,10 @@
   "Select an entity": "Selecione uma entidade",
   "records": "registros",
   "The Brazilian Scientific Research Information Ecosystem, BrCris, is an aggregator platform that allows retrieving, certifying and visualizing data and information related to the various actors who work in scientific research in the Brazilian context.": "O Ecossistema de Informação da Pesquisa Científica Brasileira, BrCris, é uma plataforma agregadora que permite recuperar, certificar e visualizar dados e informações relativas aos diversos atores que atuam na pesquisa científica no contexto brasileiro.",
-  "Where do these data come from": "De onde vêm esses dados",
+  "Where do these data come from?": "De onde vêm esses dados?",
   "Data Source Title": "Fonte de Dados",
   "Data Source Description": "Os dados para geração deste gráfico são coletados de várias fontes de pesquisa. Para mais informações,",
-  "click here": "clique aqui"
+  "click here": "clique aqui",
+  "Publication statistics": "Estatísticas de publicação",
+  "Metrics": "Indicadores"
 }

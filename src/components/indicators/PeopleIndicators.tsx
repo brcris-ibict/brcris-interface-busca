@@ -93,7 +93,7 @@ function PeopleIndicators({ filters, resultSearchTerm, isLoading }: IndicatorsPr
   const researchAreaValues = researchArea != null ? researchArea.map((d) => d.doc_count) : [];
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

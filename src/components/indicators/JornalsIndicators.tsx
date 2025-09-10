@@ -64,7 +64,7 @@ function JornalsIndicators({ filters, resultSearchTerm, isLoading }: IndicatorsP
   const qualisLabels = qualisIndicators != null ? qualisIndicators.map((d) => d.key) : [];
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

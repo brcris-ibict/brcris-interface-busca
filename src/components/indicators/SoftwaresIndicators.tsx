@@ -89,7 +89,7 @@ function SoftwaresIndicators({ filters, resultSearchTerm, isLoading }: Indicator
   releaseYearIndicators && releaseYearIndicators.sort((a, b) => Number(a.key) - Number(b.key));
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

@@ -63,7 +63,7 @@ function ProgramsIndicators({ filters, resultSearchTerm, isLoading }: Indicators
   const orgUnitLabels = orgUnitIndicators != null ? orgUnitIndicators.map((d) => d.key) : [];
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

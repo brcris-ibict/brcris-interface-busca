@@ -15,6 +15,7 @@ import { IndicatorType } from '../../types/Entities';
 import IndicatorContext from '../context/CustomContext';
 import { OptionsBar, OptionsPie } from '../indicators/options/ChartsOptions';
 import { getAggregateQuery } from '../indicators/query/Query';
+import PopoverButton from '../PopOver';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 const INDEX_NAME = process.env.INDEX_PUBLICATION || '';
@@ -87,8 +88,9 @@ export default function PersonProduction({ authorId }: { authorId: string }) {
   yearIndicators && yearIndicators.sort((a, b) => Number(a.key) - Number(b.key));
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
-      <h3>Estatísticas de Produção</h3>
+    <div className="indicators" hidden={isEmpty()}>
+      <PopoverButton />
+      <h3>{t('Publication statistics')}</h3>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

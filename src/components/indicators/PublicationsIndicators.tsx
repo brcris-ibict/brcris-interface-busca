@@ -14,6 +14,7 @@ import indicatorProxyService from '../../services/IndicatorProxyService';
 import { CustomSearchQuery, IndicatorType } from '../../types/Entities';
 import { IndicatorsProps } from '../../types/Propos';
 import IndicatorContext from '../context/CustomContext';
+import PopoverButton from '../PopOver';
 import { OptionsBar, OptionsPie } from './options/ChartsOptions';
 import { getAggregateQuery } from './query/Query';
 
@@ -89,7 +90,8 @@ function PublicationsIndicators({ filters, resultSearchTerm, isLoading }: Indica
   yearIndicators && yearIndicators.sort((a, b) => Number(a.key) - Number(b.key));
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
+      <PopoverButton />
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

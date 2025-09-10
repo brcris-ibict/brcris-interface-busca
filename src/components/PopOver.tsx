@@ -1,5 +1,6 @@
-import { OverlayTrigger, Popover } from 'react-bootstrap';
+import { Info } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
 
 export default function PopoverButton() {
   const { t } = useTranslation('common');
@@ -21,9 +22,13 @@ export default function PopoverButton() {
 
   return (
     <OverlayTrigger trigger="focus" placement="bottom" overlay={popover}>
-      <button type="button" className="custom-popover-btn">
-        <span className="mobile-hidden">{t('Where do these data come from')}?</span>
-        <i className="bi bi-question-circle"></i>
+      <button
+        type="button"
+        className="custom-popover-btn"
+        aria-label={t('Where do these data come from?')}
+        title={t('Where do these data come from?')}
+      >
+        <Info size={24} />
       </button>
     </OverlayTrigger>
   );

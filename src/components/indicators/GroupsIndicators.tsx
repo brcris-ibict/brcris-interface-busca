@@ -134,7 +134,7 @@ function GroupsIndicators({ filters, resultSearchTerm, isLoading }: IndicatorsPr
   creationYearIndicators && creationYearIndicators.sort((a, b) => Number(a.key) - Number(b.key));
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
       <div className={styles.chart} hidden={creationYearIndicators == null}>
         {/* @ts-ignore */}
         <CSVLink
