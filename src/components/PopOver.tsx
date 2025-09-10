@@ -22,7 +22,7 @@ export default function PopoverButton() {
   return (
     <OverlayTrigger trigger="focus" placement="bottom" overlay={popover}>
       <button type="button" className="custom-popover-btn">
-        <span className="mobile-hidden">{t('Title Popover')}?</span>
+        <span className="mobile-hidden">{t('Where do these data come from')}?</span>
         <i className="bi bi-question-circle"></i>
       </button>
     </OverlayTrigger>

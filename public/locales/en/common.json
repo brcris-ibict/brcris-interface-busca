@@ -35,7 +35,6 @@
   "Name DESC": "Name DESC",
   "Name": "Name",
   "Research field": "Research field",
-  "Areas of Activity": "Areas of Activity",
   "Nationality": "Nationality",
   "Nationalities": "Nationalities",
   "Title ASC": "Title ASC",
@@ -181,7 +180,7 @@
   "Select an entity": "Select an entity",
   "records": "records",
   "The Brazilian Scientific Research Information Ecosystem, BrCris, is an aggregator platform that allows retrieving, certifying and visualizing data and information related to the various actors who work in scientific research in the Brazilian context.": "The Brazilian Scientific Research Information Ecosystem, BrCris, is an aggregator platform that allows retrieving, certifying and visualizing data and information related to the various actors who work in scientific research in the Brazilian context.",
-  "Title Popover": "collection date",
+  "Where do these data come from": "Where do these data come from",
   "Data Source Title": "Data Sources",
   "Data Source Description": "The data used to generate this chart is collected from various research sources. For more information,",
   "click here": "click here"

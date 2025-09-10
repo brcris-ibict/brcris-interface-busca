@@ -33,9 +33,9 @@ export default function PublicationDetails() {
                 <h1></h1>
                 <div>
                   <p style={{ margin: '0' }}>
-                    <a href={`http://lattes.cnpq.br/${result.lattesId.raw!}`} target="_blank" rel="noopener noreferrer">
+                    <a href={`http://lattes.cnpq.br/${result.lattesId?.raw}`} target="_blank" rel="noopener noreferrer">
                       <img className="lattes-logo" src="/logos/lattes.png" alt="logo do Lattes" />
-                      {`http://lattes.cnpq.br/${result.lattesId.raw!}`}
+                      {`http://lattes.cnpq.br/${result.lattesId?.raw}`}
                     </a>
                   </p>
                   <p style={{ margin: '0' }}>
@@ -60,13 +60,13 @@ export default function PublicationDetails() {
                 </div>
                 <div className="research-fields">
                   <h3 className="research-title">
-                    {t('Areas of Activity')}
+                    {t('Research field')}
                     <img className="research-icon" src="/icones/layers.svg" alt="Ícone-layers" />
                   </h3>
                   <div className="chips-container">
-                    {result.researchArea?.raw.map((researchArea: any, index: number) => (
+                    {result.researchArea?.raw?.map((researchArea: any, index: number) => (
                       <span key={index} className="chip">
-                        {researchArea.name}
+                        {researchArea?.name}
                       </span>
                     ))}
                   </div>
@@ -80,10 +80,10 @@ export default function PublicationDetails() {
                     <div className="info-card">
                       <ShowItem
                         label={t('Organization')}
-                        value={result.orgunit?.raw.map((orgunit: any, index: any) => (
+                        value={result.orgunit?.raw?.map((orgunit: any, index: any) => (
                           <span key={index} className="sui-result__value">
-                            <a key={orgunit.id} href={`/organizations/${orgunit.id}`}>
-                              {orgunit.name!}
+                            <a key={orgunit.id} href={`/organizations/${orgunit?.id}`}>
+                              {orgunit?.name}
                             </a>
                           </span>
                         ))}
@@ -92,8 +92,8 @@ export default function PublicationDetails() {
                     <div className="info-card">
                       <ShowItem
                         label={t('Research field')}
-                        value={result.researchArea?.raw.map((researchArea: any, index: any) => (
-                          <span key={index}>{researchArea.name}</span>
+                        value={result.researchArea?.raw?.map((researchArea: any, index: any) => (
+                          <span key={index}>{researchArea?.name}</span>
                         ))}
                       />
                     </div>
@@ -102,8 +102,8 @@ export default function PublicationDetails() {
                       <li>
                         <span className="sui-result__key">{t('Community')}</span>
                         <span className="sui-result__value">
-                          {result.community?.raw.map((community: any, index: any) => (
-                            <span key={index}>{community.name}</span>
+                          {result.community?.raw?.map((community: any, index: any) => (
+                            <span key={index}>{community?.name}</span>
                           ))}
                         </span>
                       </li>

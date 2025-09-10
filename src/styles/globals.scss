@@ -961,11 +961,10 @@ button.rc-pagination-item-link[disabled] {
   margin-top: 2px;
 }
 
-
 .details-content .info-card {
   background: var(--bg-card);
   border-radius: var(--border-radius);
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.25rem 1rem; 
   margin: 0.5rem 0;  width: 100%;
   box-sizing: border-box;
 }
@@ -988,6 +987,7 @@ button.rc-pagination-item-link[disabled] {
   font-size: 14px;
   color: #333;
   white-space: nowrap;
+  border: 1px solid var(--border-color);
 }
 .orcid-logo, .lattes-logo {
   max-width: 24px;
@@ -1012,7 +1012,7 @@ button.rc-pagination-item-link[disabled] {
 
 .custom-popover-btn {
   background-color: #f8f9fa; 
-  border: 1px solid #d1d5db;
+  border: 1px solid  var(--border-dark-color);
   border-radius: 6px;
   padding: 6px 12px;
   color: #6c757d; 
@@ -1020,6 +1020,7 @@ button.rc-pagination-item-link[disabled] {
   align-items: center;
   gap: 4px;
   transition: background-color 0.2s ease;
+  white-space: nowrap
 }
 
 .custom-popover-btn:hover {
@@ -1034,7 +1035,7 @@ button.rc-pagination-item-link[disabled] {
 .overview {
   background: var(--bg-card);
   border-radius: var(--border-radius);
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.25rem 1rem;
   width: 100%;
 }
 .overview p{
