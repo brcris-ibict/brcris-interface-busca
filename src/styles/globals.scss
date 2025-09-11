@@ -7,11 +7,13 @@
   --tabs-color: #660b6e;
   --bs-link-color: #6610f2;
   --bs-link-hover-color: #8540f5;
-  --text-secondary-color: #333333;
+  --text-secondary-color: #555;
   --border-color: #e5e7eb;
   --border-dark-color: #bbbbbb;
   --bg: #f7f7f9;
+  --bg-hover: #e9f1fb;
   --bg-card: #ffffff;
+  --bg-footer: #071d41;
   --border-radius: .75rem;
 }
 
@@ -335,7 +337,7 @@ a.nav-link {
 .sui-layout-main-body {
   position: relative;
   display: flex;
-  gap: 1rem;
+  gap: 16px;
 }
 
 .result {
@@ -530,6 +532,14 @@ li .sui-result__key:after {
   padding: 8px;
 }
 
+.page-search .sui-facet+.sui-facet {
+  margin-top: 0;
+}
+
+.page-search .sui-sorting+.sui-facet {
+  margin-top: 16px;
+}
+
 .sui-facet label {
   text-transform: capitalize;
 }
@@ -562,9 +572,7 @@ li .sui-result__key:after {
   padding: 0;
 }
 
-.sui-result__header h6 {
-  margin: 0;
-}
+
 
 .sui-result__header .sui-result__title {
   font-size: 1rem;
@@ -575,17 +583,62 @@ li .sui-result__key:after {
   font-weight: normal;
 }
 
-.page-search .sui-result,
+.page-search .sui-results-container h3 {
+  margin: 0;
+}
+
+
+
+.page-search .sui-result {
+  border: none;
+  border-radius: 0;
+  padding: 0.5rem;
+
+  a {
+    color: inherit;
+
+    h3 {
+      color: var(--primary-color);
+    }
+  }
+}
+
+.result-metadata {
+  display: flex;
+  position: relative;
+  color: var(--text-secondary-color);
+  flex-wrap: wrap;
+
+  span:after {
+    padding: 0 4px;
+    content: '·';
+  }
+}
+
+.result-metadata span:last-child::after {
+  content: '';
+}
+
+.page-search .sui-result:hover,
+.sui-facet label:hover {
+  background-color: var(--bg-hover);
+}
+
+.page-search .sui-results-container,
 .page-search .sui-facet,
 .sui-sorting {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding: 1rem 1.25rem;
+  padding: .75rem;
+}
+
+.page-search .sui-results-container {
+  padding: 0.5rem;
 }
 
 .page-search .sui-layout-main {
-  padding: 16px 0 0 16px;
+  padding: 16px 0;
   width: 100%;
 }
 
@@ -721,7 +774,7 @@ li .sui-result__key:after {
   justify-content: center;
   align-items: center;
   gap: 2rem;
-  background-color: var(--primary-color);
+  background-color: var(--bg-footer);
   height: 48px;
 }
 
@@ -730,6 +783,23 @@ li .sui-result__key:after {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: var(--bg-footer);
+  color: #fff;
+}
+
+.copyright {
+  background-color: #04132a;
+  color: #ccc;
+  font-size: 13px;
+  font-weight: 400;
+  text-align: left;
+  padding: 16px;
+  width: 100%;
+  text-align: center;
+
+  a {
+    color: #fff;
+  }
 }
 
 .footer-adress {

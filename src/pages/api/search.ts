@@ -24,7 +24,7 @@ function builConnector(index: string) {
         ) as estypes.QueryDslQueryContainer;
         requestBody.query = fullQuery;
       }
-
+      console.log('requestBody.query', JSON.stringify(requestBody.query, null, 2));
       return requestBody;
     }
   );

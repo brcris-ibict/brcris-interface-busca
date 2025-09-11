@@ -37,27 +37,25 @@ const config: CustomSearchDriverOptions = {
       type: {
         raw: {},
       },
+      journal: { raw: {} },
+      service: { raw: {} },
+      orgunit: { raw: {} },
+      id: { raw: {} },
     },
     disjunctiveFacets: [
       'language.type',
       'author.name',
-      'keyword.type',
       'cnpqResearchArea.type',
       'publicationDate.type',
-      'course.name',
-      'program.name',
       'conference.name',
     ],
 
     facets: {
-      language: { type: 'value' },
       'author.name': { type: 'value' },
-      keyword: { type: 'value' },
+      language: { type: 'value' },
+      type: { type: 'value' },
       'orgunit.name': { type: 'value' },
       'journal.title': { type: 'value' },
-      type: { type: 'value' },
-      'course.name': { type: 'value' },
-      'program.name': { type: 'value' },
       'conference.name': { type: 'value' },
       researchArea: { type: 'value' },
       publicationDate: {
