@@ -16,6 +16,21 @@ export type Service = {
   title: string[];
 };
 
+export type Publisher = {
+  id: string;
+  name: string;
+};
+
+export type Conference = {
+  id: string;
+  name: string[];
+};
+
+export type ResearchArea = {
+  id: string;
+  name: string[];
+};
+
 export type IndicatorType = {
   key: string;
   doc_count: number;

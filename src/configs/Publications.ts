@@ -26,37 +26,29 @@ const config: CustomSearchDriverOptions = {
     },
     result_fields: {
       author: {
-        raw: [],
+        snippet: {},
       },
       publicationDate: {
-        snippet: {},
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
       },
       title: {
         snippet: {},
       },
-      type: {
-        raw: {},
-      },
       journal: { raw: {} },
-      service: { raw: {} },
-      orgunit: { raw: {} },
+      conference: { raw: {} },
+      sponsorOrgUnit: { raw: {} },
       id: { raw: {} },
     },
-    disjunctiveFacets: [
-      'language.type',
-      'author.name',
-      'cnpqResearchArea.type',
-      'publicationDate.type',
-      'conference.name',
-    ],
+    disjunctiveFacets: [],
 
     facets: {
       'author.name': { type: 'value' },
-      language: { type: 'value' },
-      type: { type: 'value' },
-      'orgunit.name': { type: 'value' },
       'journal.title': { type: 'value' },
       'conference.name': { type: 'value' },
+      'sponsorOrgUnit.name': { type: 'value' },
       researchArea: { type: 'value' },
       publicationDate: {
         type: 'range',

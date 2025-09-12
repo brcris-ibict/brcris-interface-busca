@@ -23,7 +23,7 @@ import { getAggregateQuery } from './query/Query';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 const INDEX_NAME = process.env.INDEX_PERSON || '';
 
-export const optionsResearchArea = new OptionsPie('Research areas');
+export const optionsResearchArea = new OptionsPie('Affiliation');
 
 const headersNacionality = [
   { label: 'Nacionality', key: 'key' },
@@ -31,11 +31,11 @@ const headersNacionality = [
 ];
 
 const headersResearchArea = [
-  { label: 'Search area', key: 'key' },
+  { label: 'Affiliation', key: 'key' },
   { label: 'Quantity', key: 'doc_count' },
 ];
 
-function PeopleIndicators({ filters, resultSearchTerm, isLoading }: IndicatorsProps) {
+function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
   const { t } = useTranslation('common');
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } = useContext(IndicatorContext);
@@ -62,7 +62,7 @@ function PeopleIndicators({ filters, resultSearchTerm, isLoading }: IndicatorsPr
         JSON.stringify(
           getAggregateQuery({
             size: 10,
-            indicadorName: 'researchArea.name',
+            indicadorName: 'affiliation.name',
             searchTerm: resultSearchTerm,
             fields,
             operator,
@@ -70,16 +70,14 @@ function PeopleIndicators({ filters, resultSearchTerm, isLoading }: IndicatorsPr
           })
         ),
       ];
-      if (isLoading) {
-        indicatorProxy.search(queries, INDEX_NAME).then((data) => {
-          setIndicatorsData(data);
-        });
-      }
+      indicatorProxy.search(queries, INDEX_NAME).then((data) => {
+        setIndicatorsData(data);
+      });
     } catch (err) {
       console.error(err);
       setIndicatorsData([]);
     }
-  }, [filters, resultSearchTerm, isLoading]);
+  }, [filters, resultSearchTerm]);
 
   const nationalities: IndicatorType[] = indicators ? indicators[0] : [];
 
@@ -164,9 +162,8 @@ function PeopleIndicators({ filters, resultSearchTerm, isLoading }: IndicatorsPr
 // @ts-ignore
 export default withSearch(
   // @ts-ignore
-  ({ filters, resultSearchTerm, isLoading }) => ({
+  ({ filters, resultSearchTerm }) => ({
     filters,
     resultSearchTerm,
-    isLoading,
   })
 )(PeopleIndicators);

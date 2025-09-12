@@ -21,7 +21,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 const INDEX_NAME = process.env.INDEX_SOFTWARE || '';
 
 const optPubDate = new OptionsBar('Software by release year');
-const optknowledgeAreas = new OptionsPie('Software by knowledge area');
+const optknowledgeAreas = new OptionsPie('Software by Funding Institution');
 
 const headersByReleaseYear = [
   { label: 'Release year', key: 'key' },
@@ -29,7 +29,7 @@ const headersByReleaseYear = [
 ];
 
 const headersKnowledgeAreas = [
-  { label: 'Knowledge area', key: 'key' },
+  { label: 'Funding Institution', key: 'key' },
   { label: 'Quantity', key: 'doc_count' },
 ];
 
@@ -62,7 +62,7 @@ function SoftwaresIndicators({ filters, resultSearchTerm, isLoading }: Indicator
       JSON.stringify(
         getAggregateQuery({
           size: 10,
-          indicadorName: 'knowledgeAreas',
+          indicadorName: 'fundingInstitution',
           searchTerm: resultSearchTerm,
           fields,
           operator,

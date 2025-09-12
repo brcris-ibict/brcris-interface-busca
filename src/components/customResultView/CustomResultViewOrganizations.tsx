@@ -1,29 +1,20 @@
 import { ResultViewProps } from '@elastic/react-search-ui-views';
-import { useTranslation } from 'next-i18next';
-import ShowItem from './ShowItem';
 
 const CustomResultViewOrganizations = ({ result, onClickLink }: ResultViewProps) => {
-  const { t } = useTranslation('common');
   return (
     <li className="sui-result">
-      <div>
-        <div className="sui-result__header">
-          <h3>
-            <a onClick={onClickLink} href={`/organizations/${result.id.raw}`}>
-              {result.name?.raw}
-            </a>
-          </h3>
+      <a onClick={onClickLink} href={`/organizations/${result.id.raw}`}>
+        <h3
+          dangerouslySetInnerHTML={{
+            __html: (result.name.snippet || result.name.raw) + (result.acronym?.raw ? ` (${result.acronym?.raw})` : ''),
+          }}
+        ></h3>
+        <div className="result-metadata">
+          {result.city?.raw && <span>{result.city?.raw}</span>}
+          {result.state?.raw && <span>{result.state?.raw}</span>}
+          {result.country?.raw && <span>{result.country?.raw}</span>}
         </div>
-
-        <div className="sui-result__body">
-          <ul className="sui-result__details">
-            <ShowItem value={result.acronym?.raw} label={t('Acronym')} />
-            <ShowItem value={result.country?.raw} label={t('Country')} />
-            <ShowItem value={result.state?.raw} label={t('State')} />
-            <ShowItem value={result.city?.raw} label={t('City')} />
-          </ul>
-        </div>
-      </div>
+      </a>
     </li>
   );
 };

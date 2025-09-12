@@ -29,32 +29,25 @@ const config: CustomSearchDriverOptions = {
         raw: {},
       },
       name: {
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
+      },
+      creator: {
+        raw: {},
+      },
+      releaseYear: {
         raw: {},
       },
       description: {
         raw: {},
       },
-      creator: {
-        raw: {},
-      },
-
-      releaseYear: {
-        raw: {},
-      },
-      kind: {
-        raw: {},
-      },
-
-      registrationCountry: {
-        raw: {},
-      },
-      language: {
-        raw: {},
-      },
     },
     disjunctiveFacets: ['depositDate', 'releaseYear'],
     facets: {
-      creator: { type: 'value' },
+      'creator.name': { type: 'value' },
+      fundingInstitution: { type: 'value' },
       registrationCountry: { type: 'value' },
       releaseYear: { type: 'value' },
       kind: { type: 'value' },

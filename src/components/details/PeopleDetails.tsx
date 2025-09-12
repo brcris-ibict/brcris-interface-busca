@@ -51,19 +51,21 @@ export default function PublicationDetails() {
                   <div className="overview">
                     <p>{result.bio?.raw}</p>
                   </div>
-                  <div className="research-fields">
-                    <strong className="research-title">
-                      {t('Research field')}
-                      <Layers width={24} height={24} color="#210d41" />
-                    </strong>
-                    <div className="chips-container">
-                      {result.researchArea?.raw?.map((researchArea: any, index: number) => (
-                        <span key={index} className="chip">
-                          {researchArea?.name}
-                        </span>
-                      ))}
+                  {result.researchArea?.raw && (
+                    <div className="research-fields">
+                      <strong className="research-title">
+                        {t('Research field')}
+                        <Layers width={24} height={24} color="#210d41" />
+                      </strong>
+                      <div className="chips-container">
+                        {result.researchArea?.raw?.map((researchArea: any, index: number) => (
+                          <span key={index} className="chip">
+                            {researchArea?.name}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <ul className="sui-result__details">
                     <ShowItem label={t('Nationality')} value={result.nationality?.raw} />
                     <ShowItem

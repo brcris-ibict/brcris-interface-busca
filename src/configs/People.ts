@@ -15,8 +15,7 @@ const config: CustomSearchDriverOptions = {
     operator: 'OR',
     index: indexName,
     advanced_fields: {
-      'orgunit.name_text': {},
-      lattesId: {},
+      'affiliation.name_text': {},
     },
     search_fields: {
       name_text: {},
@@ -26,22 +25,18 @@ const config: CustomSearchDriverOptions = {
         raw: {},
       },
       name: {
-        raw: {},
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
       },
-      lattesId: {
-        raw: {},
-      },
-      researchArea: {
-        raw: {},
-      },
-      orgunit: {
-        raw: {},
+      affiliation: {
+        snippet: {},
       },
     },
     disjunctiveFacets: [],
     facets: {
-      'researchArea.name': { type: 'value' },
-      'orgunit.name': { type: 'value' },
+      'affiliation.name': { type: 'value' },
     },
   },
   autocompleteQuery: {

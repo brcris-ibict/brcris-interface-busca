@@ -28,7 +28,10 @@ const config: CustomSearchDriverOptions = {
         raw: {},
       },
       name: {
-        raw: {},
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
       },
       acronym: {
         raw: {},

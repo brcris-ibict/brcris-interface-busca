@@ -29,10 +29,10 @@ const config: CustomSearchDriverOptions = {
         raw: {},
       },
       espacenetTitle: {
-        raw: {},
-      },
-      applicant: {
-        raw: [],
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
       },
       depositDate: {
         raw: {},

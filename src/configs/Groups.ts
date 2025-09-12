@@ -22,50 +22,33 @@ const config: CustomSearchDriverOptions = {
       name_text: {
         weight: 3,
       },
-      'leader.name_text': {},
-      'orgunit.name_text': {},
+      'leaderResearcher.name_text': {},
+      'leaderOrgUnit.name_text': {},
     },
     result_fields: {
       name: {
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
+      },
+      leaderResearcher: {
         raw: {},
       },
-      creationYear: {
+      leaderOrgUnit: {
         raw: {},
       },
       researchLine: {
         raw: {},
       },
-      status: {
-        raw: {},
-      },
-      leader: {
-        raw: {},
-      },
-      member: {
-        raw: {},
-      },
-      orgunit: {
-        raw: {},
-      },
     },
-    disjunctiveFacets: [
-      'creationYear',
-      'researchLine',
-      'knowledgeArea',
-      'orgunit',
-      'keyword',
-      'status',
-      'leader',
-      'partner',
-      'member',
-      'applicationSector',
-    ],
+    disjunctiveFacets: [],
     facets: {
       creationYear: { type: 'value' },
       researchLine: { type: 'value' },
-      'orgunit.name': { type: 'value' },
+      'leaderOrgUnit.name': { type: 'value' },
       status: { type: 'value' },
-      'leader.name': { type: 'value' },
+      'leaderResearcher.name': { type: 'value' },
     },
   },
 };

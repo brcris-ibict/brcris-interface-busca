@@ -18,7 +18,8 @@ const config: CustomSearchDriverOptions = {
       title_text: {
         weight: 3,
       },
-      keywords: {},
+      publisher: {},
+      researchArea: {},
       issn: {},
     },
 
@@ -26,29 +27,25 @@ const config: CustomSearchDriverOptions = {
       id: {
         raw: {},
       },
-      issn: {
-        raw: {},
+      title: {
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
       },
       publisher: {
         raw: {},
       },
-      qualis: {
-        raw: {},
-      },
-      title: {
-        raw: {},
-      },
-      type: {
+      researchArea: {
         raw: {},
       },
     },
-    disjunctiveFacets: ['status', 'publisher.name'],
+    disjunctiveFacets: [],
 
     facets: {
-      qualis: { type: 'value' },
-      status: { type: 'value' },
       type: { type: 'value' },
       'publisher.name': { type: 'value' },
+      'researchArea.name': { type: 'value' },
     },
   },
   autocompleteQuery: {

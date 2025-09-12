@@ -821,6 +821,14 @@ li .sui-result__key:after {
   width: 100%;
 }
 
+.limit-text-1-line {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .loader {
   margin: 100px auto;
   font-size: 25px;
