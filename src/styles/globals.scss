@@ -4,15 +4,15 @@
   --primary-color: #210d41;
   --secondary-color: #430059;
   --text-color: #333;
+  --text-secondary-color: #555;
   --tabs-color: #660b6e;
   --bs-link-color: #6610f2;
   --bs-link-hover-color: #8540f5;
-  --text-secondary-color: #555;
   --border-color: #e5e7eb;
   --border-dark-color: #bbbbbb;
-  --bg: #f7f7f9;
+  --bg: #fafafa;
   --bg-hover: #e9f1fb;
-  --bg-card: #ffffff;
+  --bg-card: #fefefe;
   --bg-footer: #071d41;
   --border-radius: .75rem;
 }
@@ -138,7 +138,7 @@ main {
   border-right: none;
   font-weight: 500;
   cursor: pointer;
-  background-color: #fff;
+  background-color: var(--bg-card);
 }
 
 .custom-select::before,
@@ -272,7 +272,8 @@ a {
   position: fixed;
   width: 100%;
   z-index: 99;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .navbar .navbar-brand {
@@ -359,7 +360,7 @@ button[disabled]:hover {
 .sui-result,
 .sui-result__header a {
   text-decoration: none;
-  word-break: break-all;
+  // word-break: break-all;
 }
 
 .page-search .indicators-header {
@@ -860,7 +861,7 @@ li .sui-result__key:after {
 }
 
 .tablist .nav-tabs .nav-link.active {
-  background-color: #fff;
+  background-color: var(--bg-card);
   color: var(--primary-color);
   padding: calc(0.5rem + 1px) 1rem;
   border: 1px solid var(--border-color);
@@ -876,14 +877,14 @@ li .sui-result__key:after {
   left: 0;
   bottom: -2px;
   height: 5px;
-  background-color: #fff;
+  background-color: var(--bg-card);
 }
 
 .tablist .tab-content {
   border: 1px solid var(--border-color);
   padding: 16px;
   border-radius: var(--border-radius);
-  background-color: #fff;
+  background-color: var(--bg-card);
 }
 
 
@@ -1095,7 +1096,7 @@ button.rc-pagination-item-link[disabled] {
   color: #6c757d;
   border-radius: 100%;
   padding: 0;
-  background-color: #fff;
+  background-color: var(--bg-card);
   border: none;
   position: absolute;
   top: -2.5rem;
@@ -1116,7 +1117,7 @@ button.rc-pagination-item-link[disabled] {
 }
 
 .details-card {
-  background: #fff;
+  background: var(--bg-card);
   padding: 1rem;
   border-radius: .75rem;
   border: 1px solid var(--border-color);
