@@ -26,6 +26,7 @@ export default function PublicationDetails() {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <h1>{result.name?.raw}</h1>
+                    <p className="citation-name">{result.citationName?.raw}</p>
                   </div>
                   <div className="d-lg-none">
                     <PopoverButton />
@@ -48,17 +49,7 @@ export default function PublicationDetails() {
                 </div>
                 <div className="details-card">
                   <div className="overview">
-                    <p>
-                      He holds a Doctor and Master&apos;s degree in Informatics from the University of Brasília, with a
-                      Sandwich Doctoral Internship at King&apos;s College London. He also holds a degree in Mathematics
-                      (Bachelor and Licentiate) from the University of Brasília. He is Technical Coordinator of the Area
-                      of Treatment, Analysis and Dissemination of Scientific Information at the Brazilian Institute of
-                      Information in Science and Technology (Ibict / MCTI). He is a member and coordinates projects and
-                      committees in the areas of Open Science and Data Science. He is the leader of the Brazilian
-                      Scientific Research Ecosystem Laboratory and Research Group (LaEPeCBr). Areas of research
-                      interest: Formal Methods, Open Digital Repositories, Scientific Data Repositories,
-                      Interoperability between Open Information Systems, Open Science and Data Science.
-                    </p>
+                    <p>{result.bio?.raw}</p>
                   </div>
                   <div className="research-fields">
                     <strong className="research-title">
@@ -77,10 +68,20 @@ export default function PublicationDetails() {
                     <ShowItem label={t('Nationality')} value={result.nationality?.raw} />
                     <ShowItem
                       label={t('Organization')}
-                      value={result.orgunit?.raw?.map((orgunit: any, index: any) => (
+                      value={result.affiliation?.raw?.map((orgunit: any, index: any) => (
                         <span key={index} className="sui-result__value">
                           <a key={orgunit.id} href={`/organizations/${orgunit?.id}`}>
                             {orgunit?.name}
+                          </a>
+                        </span>
+                      ))}
+                    />
+                    <ShowItem
+                      label={t('Publications')}
+                      value={result.authorOf?.raw?.map((publication: any, index: any) => (
+                        <span key={index} className="sui-result__value">
+                          <a key={publication.id} href={`/publications/${publication?.id}`}>
+                            {publication?.title}
                           </a>
                         </span>
                       ))}

@@ -54,6 +54,12 @@ export default function PublicationDetailsPage() {
         nationality: {
           raw: {},
         },
+        birthCountry: {
+          raw: {},
+        },
+        affiliation: {
+          raw: {},
+        },
         orcid: {
           raw: {},
         },
@@ -64,6 +70,18 @@ export default function PublicationDetailsPage() {
           raw: {},
         },
         community: {
+          raw: {},
+        },
+        bio: {
+          raw: {},
+        },
+        memberOf: {
+          raw: {},
+        },
+        authorOf: {
+          raw: {},
+        },
+        citationName: {
           raw: {},
         },
       },
