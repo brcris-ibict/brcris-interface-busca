@@ -78,6 +78,9 @@ export default function PublicationDetailsPage() {
         memberOf: {
           raw: {},
         },
+        leaderOf: {
+          raw: {},
+        },
         authorOf: {
           raw: {},
         },

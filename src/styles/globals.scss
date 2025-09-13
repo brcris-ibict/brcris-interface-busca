@@ -1134,9 +1134,56 @@ button.rc-pagination-item-link[disabled] {
 .page-search .sui-layout-main-header__inner {
   width: 74%;
 }
+.author-header{
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.author-header span{
+  font-size: 14px;
+}
 
+.expandable-content {
+  display: flex;
+  flex-direction: column;
+}
 
+.expandable-content.overview p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  transition: all 0.3s ease;
+}
 
+.expandable-content.overview p.expanded {
+  display: block;
+}
+
+.expandable-content.list .list-item {
+  margin: 0;
+  padding: 0;
+}
+
+.see-more-btn {
+  background: none;
+  border: none;
+  color: var(--bs-link-color);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0;
+  align-self: flex-start;
+  
+}
+
+.publication-meta {
+  font-size: 0.8rem; 
+  color: #555;
+}
+.publication-item{
+  margin-top: 3px;
+}
 @media (max-width: 800px) {
   .nav .nav-item {
     justify-content: flex-start;
