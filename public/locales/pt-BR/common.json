@@ -200,5 +200,15 @@
   "BrCris identifier": "Identificador BrCris",
   "Capes identifier": "Identificador Capes",
   "Oasisbr identifier": "Identificador Oasisbr",
-  "Award sponsored by": "Prêmio patrocinado pela"
+  "Award sponsored by": "Prêmio patrocinado pela",
+  "Is open access": "Revista com acesso aberto",
+  "Is in DOAJ": "Listada em DOAJ",
+  "ISSN-L": "ISSN-L",
+  "International Standard Serial Number (ISSN)": "ISSN Associados",
+  "Qualis": "Qualis classification",
+  "H index": "Indice H",
+  "I10 index": "Índice i-10",
+  "2 year mean citedness": "Média de citação (2 anos)",
+  "Has subject area": "Áreas",
+  "Assessment area": "Área de avaliação"
 }

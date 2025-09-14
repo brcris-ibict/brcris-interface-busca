@@ -199,5 +199,15 @@
   "BrCris identifier": "BrCris identifier",
   "Capes identifier": "Capes identifier",
   "Oasisbr identifier": "Oasisbr identifier",
-  "Award sponsored by": "Award sponsored by"
+  "Award sponsored by": "Award sponsored by",
+  "Is open access": "Is open access",
+  "Is in DOAJ": "Is in DOAJ",
+  "ISSN-L": "ISSN-L",
+  "International Standard Serial Number (ISSN)": "International Standard Serial Number (ISSN)",
+  "Qualis classification": "Qualis classification",
+  "H index": "H index",
+  "I10 index": "i10 index",
+  "2 year mean citedness": "2 year mean citedness",
+  "Has subject area": "Has subject area",
+  "Assessment area": "Assessment area"
 }

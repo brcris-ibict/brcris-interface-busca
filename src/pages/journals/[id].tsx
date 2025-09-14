@@ -49,16 +49,13 @@ export default function JournalDetailsPage() {
         id: {
           raw: {},
         },
-        H5index: {
-          raw: {},
-        },
         accessType: {
           raw: {},
         },
         issn: {
           raw: {},
         },
-        issnl: {
+        issn_l: {
           raw: {},
         },
         keywords: {
@@ -83,6 +80,36 @@ export default function JournalDetailsPage() {
           raw: {},
         },
         type: {
+          raw: {},
+        },
+        openalexId: {
+          raw: {},
+        },
+        isInDoaj: {
+          raw: {},
+        },
+        isOA: {
+          raw: {},
+        },
+        websiteUrl: {
+          raw: {},
+        },
+        assessmentArea: {
+          raw: {},
+        },
+        brcrisId: {
+          raw: {},
+        },
+        countryCode: {
+          raw: {},
+        },
+        googleH5: {
+          raw: {},
+        },
+        h_index: {
+          raw: {},
+        },
+        i10_index: {
           raw: {},
         },
       },
