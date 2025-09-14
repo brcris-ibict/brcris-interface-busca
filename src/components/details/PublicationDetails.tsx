@@ -64,51 +64,90 @@ export default function PublicationDetails() {
                   )}
 
                   <ShowItem label={t('Keywords')} value={result.keywords?.raw} />
-                  <li>
-                    <span className="identifier-key">{t('BrCris identifier')}:</span>
-                    <span className="identifier-value">
-                      {result.brcrisId?.raw?.map((item: string, index: number) => <span key={index}>{item}</span>)}
-                    </span>
-                  </li>
+                  {result.brcrisId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('BrCris identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+
+                  {result.capesId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('Capes identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.capesId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.oasisbrId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('Oasisbr identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.oasisbrId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+
                   <ShowAuthorItem label={t('Advisor')} authors={result.advisor?.raw} />
                   <ShowAuthorItem label={t('Coadvisor')} authors={result.coadvisor?.raw} />
+                  <ShowItem
+                    label={t('Award sponsored by')}
+                    value={result.sponsorOrgUnit?.raw.map((org: any) => (
+                      <a key={org.id} href={`/organizations/${org.id}`}>
+                        {org.name?.[0]}
+                      </a>
+                    ))}
+                  />
+
                   {/* <ShowItem label={t('Year 2')} value={result.year?.raw} /> */}
                   <ShowItem label={t('DOI')} value={result.doi?.raw} />
                   <ShowItem label={t('OpenalexId')} value={result.openalexId?.raw} />
 
-                  <ShowItem
-                    label={t('Research field')}
-                    value={result.researchArea?.raw.map((researchArea: any, index: any) => (
-                      <span key={index}>{researchArea.name}</span>
-                    ))}
-                  />
-                  <ShowItem
-                    label={t('Conference')}
-                    value={result.conference?.raw.map((conference: any, index: any) => (
-                      <span key={index}>{conference.name}</span>
-                    ))}
-                  />
+                  {result.researchArea?.raw?.length > 0 &&
+                    result.researchArea.raw.some((researchArea: any) => researchArea?.name) && (
+                      <ShowItem
+                        label={t('Research field')}
+                        value={result.researchArea.raw
+                          .filter((researchArea: any) => researchArea?.name)
+                          .map((researchArea: any, index: number) => (
+                            <span key={index}>{researchArea.name}</span>
+                          ))}
+                      />
+                    )}
 
-                  <ShowItem
-                    label={t('Program')}
-                    value={result.program?.raw.map((program: any, index: any) => (
-                      <span key={index} className="sui-result__value">
-                        <a key={program.id} href={`programs/${program.id}`}>
-                          {program.name!}
-                        </a>
-                      </span>
-                    ))}
-                  />
-                  <ShowItem
-                    label={t('Course')}
-                    value={result.course?.raw.map((course: any, index: any) => (
-                      <span key={index} className="sui-result__value">
-                        <a key={course.id} href={`/organizations/${course.id}`}>
-                          {course.name!}
-                        </a>
-                      </span>
-                    ))}
-                  />
+                  {result.conference?.raw?.length > 0 && (
+                    <ShowItem
+                      label={t('Conference')}
+                      value={result.conference.raw.map((conference: any, index: number) => (
+                        <span key={index}>{conference.name}</span>
+                      ))}
+                    />
+                  )}
+
+                  {result.program?.raw?.length > 0 && (
+                    <ShowItem
+                      label={t('Program')}
+                      value={result.program.raw.map((program: any, index: number) => (
+                        <span key={index} className="sui-result__value">
+                          <a href={`/programs/${program.id}`}>{program.name}</a>
+                        </span>
+                      ))}
+                    />
+                  )}
+
+                  {result.course?.raw?.length > 0 && (
+                    <ShowItem
+                      label={t('Course')}
+                      value={result.course.raw.map((course: any, index: number) => (
+                        <span key={index} className="sui-result__value">
+                          <a href={`/organizations/${course.id}`}>{course.name}</a>
+                        </span>
+                      ))}
+                    />
+                  )}
+
                   <ShowItem label={t('Series')} value={result.series?.raw} />
                   <ShowItem label={t('Volume')} value={result.volume?.raw} />
                   <ShowItem label={t('Issue')} value={result.issue?.raw} />

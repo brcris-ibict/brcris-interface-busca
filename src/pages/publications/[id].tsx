@@ -45,6 +45,9 @@ export default function PublicationDetailsPage() {
         advisor: {
           raw: {},
         },
+        sponsorOrgUnit: {
+          raw: {},
+        },
         author: {
           raw: [],
         },
@@ -97,6 +100,12 @@ export default function PublicationDetailsPage() {
           raw: {},
         },
         brcrisId: {
+          raw: {},
+        },
+        capesId: {
+          raw: {},
+        },
+        oasisbrId: {
           raw: {},
         },
         issue: {
