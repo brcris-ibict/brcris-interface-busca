@@ -1171,7 +1171,6 @@ button.rc-pagination-item-link[disabled] {
   border: none;
   color: var(--bs-link-color);
   cursor: pointer;
-  font-weight: 600;
   padding: 0;
   align-self: flex-start;
   
@@ -1181,9 +1180,21 @@ button.rc-pagination-item-link[disabled] {
   font-size: 0.8rem; 
   color: #555;
 }
+
 .publication-item{
   margin-top: 3px;
 }
+.identifier-value {
+  display: flex;
+  flex-direction: column; 
+  gap: 4px; 
+}
+
+.identifier-key {
+  font-weight: 500;
+  margin-right: 8px;
+}
+
 @media (max-width: 800px) {
   .nav .nav-item {
     justify-content: flex-start;

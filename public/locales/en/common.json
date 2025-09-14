@@ -49,7 +49,7 @@
   "BrCris offers a unified interface for searching information, visualization of collaboration networks and dashboards of indicators in science, technology and innovation.": "BrCris offers a unified interface for searching information, visualization of collaboration networks and dashboards of indicators in science, technology and innovation.",
   "Nacionality": "Nacionality",
   "CNPq research area": "CNPq research area",
-  "Language": "Language",
+  "Has Language": "Language",
   "Journal": "Journal",
   "Status": "Status",
   "Publisher": "Publisher",
@@ -190,5 +190,11 @@
   "Data Source Description": "The data used to generate this chart is collected from various research sources. For more information,",
   "click here": "click here",
   "Publication statistics": "Publication statistics",
-  "Metrics": "Metrics"
+  "Metrics": "Metrics",
+  "Series": "Series",
+  "Start Page": "Start Page",
+  "End Page": "End Page",
+  "Volume": "Volume",
+  "Issue": "Issue",
+  "BrCris identifier": "BrCris identifier"
 }

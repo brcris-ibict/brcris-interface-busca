@@ -52,7 +52,7 @@
   "BrCris offers a unified interface for searching information, visualization of collaboration networks and dashboards of indicators in science, technology and innovation.": "O BrCris oferece uma interface unificada de busca de informações, a visualização de redes de colaboração e painéis de indicadores em ciência, tecnologia e inovação.",
   "Nacionality": "Nacionalidade",
   "CNPq research area": "Área do conhecimento CNPq",
-  "Language": "Idioma",
+  "Has Language": "Idioma",
   "Journal": "Revista",
   "Status": "Status",
   "Publisher": "Editora",
@@ -191,5 +191,11 @@
   "Data Source Description": "Os dados para geração deste gráfico são coletados de várias fontes de pesquisa. Para mais informações,",
   "click here": "clique aqui",
   "Publication statistics": "Estatísticas de publicação",
-  "Metrics": "Indicadores"
+  "Metrics": "Indicadores",
+  "Series": "Série",
+  "Start Page": "Página Inicial",
+  "End Page": "Página final",
+  "Volume": "Volume",
+  "Issue": "Edição",
+  "BrCris identifier": "identificador BrCris"
 }

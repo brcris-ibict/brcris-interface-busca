@@ -63,7 +63,7 @@ export default function PublicationDetailsPage() {
         journal: {
           raw: {},
         },
-        keyword: {
+        keywords: {
           snippet: {},
         },
         language: {
@@ -94,6 +94,24 @@ export default function PublicationDetailsPage() {
           raw: {},
         },
         year: {
+          raw: {},
+        },
+        brcrisId: {
+          raw: {},
+        },
+        issue: {
+          raw: {},
+        },
+        series: {
+          raw: {},
+        },
+        volume: {
+          raw: {},
+        },
+        startPage: {
+          raw: {},
+        },
+        endPage: {
           raw: {},
         },
       },

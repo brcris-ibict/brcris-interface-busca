@@ -63,9 +63,13 @@ export default function PublicationDetails() {
                     </li>
                   )}
 
-                  <ShowItem label={t('Language')} value={result.language?.raw} />
-
-                  <ShowItem label={t('Keywords')} value={result.keyword?.raw} />
+                  <ShowItem label={t('Keywords')} value={result.keywords?.raw} />
+                  <li>
+                    <span className="identifier-key">{t('BrCris identifier')}:</span>
+                    <span className="identifier-value">
+                      {result.brcrisId?.raw?.map((item: string, index: number) => <span key={index}>{item}</span>)}
+                    </span>
+                  </li>
                   <ShowAuthorItem label={t('Advisor')} authors={result.advisor?.raw} />
                   <ShowAuthorItem label={t('Coadvisor')} authors={result.coadvisor?.raw} />
                   {/* <ShowItem label={t('Year 2')} value={result.year?.raw} /> */}
@@ -105,6 +109,12 @@ export default function PublicationDetails() {
                       </span>
                     ))}
                   />
+                  <ShowItem label={t('Series')} value={result.series?.raw} />
+                  <ShowItem label={t('Volume')} value={result.volume?.raw} />
+                  <ShowItem label={t('Issue')} value={result.issue?.raw} />
+                  <ShowItem label={t('Start Page')} value={result.startPage?.raw} />
+                  <ShowItem label={t('End Page')} value={result.endPage?.raw} />
+                  <ShowItem label={t('Has Language')} value={result.language?.raw} />
                 </ul>
               </div>
             </div>

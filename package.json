@@ -5,7 +5,7 @@
   "scripts": {
     "prepare": "husky install",
     "lint": "next lint --fix -d src",
-    "dev": "set NODE_TLS_REJECT_UNAUTHORIZED=0 && next dev",
+    "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 next dev",
     "start": "PORT=3000 && next start -p $PORT",
     "build": "next build",
     "postbuild": "next-sitemap",
