@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'next-i18next';
 
 interface ExpandableContentProps<T = any> {
   text?: string;
@@ -6,8 +7,6 @@ interface ExpandableContentProps<T = any> {
   renderItem?: (item: T, index: number) => JSX.Element;
   maxLines?: number;
   initialCount?: number;
-  moreLabel?: string;
-  lessLabel?: string;
 }
 
 export default function ExpandableContent<T>({
@@ -16,13 +15,11 @@ export default function ExpandableContent<T>({
   renderItem,
   maxLines = 5,
   initialCount = 10,
-  moreLabel = 'more',
-  lessLabel = 'less',
 }: ExpandableContentProps<T>) {
   const [expanded, setExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
-
+  const { t } = useTranslation('common');
   useEffect(() => {
     if (text && textRef.current) {
       const el = textRef.current;
@@ -44,7 +41,7 @@ export default function ExpandableContent<T>({
         </p>
         {isOverflowing && (
           <button onClick={() => setExpanded(!expanded)} className="see-more-btn">
-            {expanded ? lessLabel : moreLabel}
+            {expanded ? t('see less') : t('see more')}
           </button>
         )}
       </div>
@@ -62,7 +59,7 @@ export default function ExpandableContent<T>({
         ))}
         {items.length > initialCount && (
           <button onClick={() => setExpanded(!expanded)} className="see-more-btn">
-            {expanded ? lessLabel : moreLabel}
+            {expanded ? t('see less') : t('see more')}
           </button>
         )}
       </div>

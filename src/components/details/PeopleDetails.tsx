@@ -82,30 +82,35 @@ export default function PublicationDetails() {
                         </span>
                       ))}
                     />
-                    {result.memberOf?.raw?.length > 0 && (
-                      <ShowItem
-                        label={t('Member of')}
-                        value={result.memberOf.raw
-                          .filter((item: any) => item?.name)
-                          .map((item: any, index: number) => (
-                            <span key={index} className="sui-result__value">
-                              {item.id ? <a href={`/research-groups/${item.id}`}>{item.name}</a> : item.name}
-                            </span>
-                          ))}
-                      />
-                    )}
 
-                    {result.leaderOf?.raw?.length > 0 && (
-                      <ShowItem
-                        label={t('Leader of')}
-                        value={result.leaderOf.raw
-                          .filter((item: any) => item?.name)
-                          .map((item: any, index: number) => (
-                            <span key={index} className="sui-result__value">
-                              {item.id ? <a href={`/research-groups/${item.id}`}>{item.name}</a> : item.name}
-                            </span>
-                          ))}
-                      />
+                    {(result.memberOf?.raw?.length > 0 || result.leaderOf?.raw?.length > 0) && (
+                      <li>
+                        <span className="sui-result__key">{t('Research groups')}</span>
+                        <div className="d-flex flex-wrap gap-2">
+                          {(() => {
+                            const groupsMap = new Map<string, any>();
+
+                            (result.memberOf?.raw || []).forEach((item: any) => {
+                              if (item?.id) {
+                                groupsMap.set(item.id, { ...item, role: 'Member' });
+                              }
+                            });
+
+                            (result.leaderOf?.raw || []).forEach((item: any) => {
+                              if (item?.id) {
+                                groupsMap.set(item.id, { ...item, role: 'Leader of' });
+                              }
+                            });
+
+                            return Array.from(groupsMap.values()).map((item: any, index: number) => (
+                              <span key={index} className="group-item">
+                                {item.id ? <a href={`/research-groups/${item.id}`}>{item.name}</a> : item.name}
+                                {` (${t(item.role)})`}
+                              </span>
+                            ));
+                          })()}
+                        </div>
+                      </li>
                     )}
                     <li>
                       <span className="sui-result__key">{t('Publications')}</span>
