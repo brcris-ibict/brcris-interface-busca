@@ -64,6 +64,46 @@ export default function OragnizationDetailsPage() {
         city: {
           raw: {},
         },
+        brcrisId: {
+          raw: {},
+        },
+        coordinates: {
+          raw: {},
+        },
+        member: {
+          raw: {},
+        },
+        program: {
+          raw: {},
+        },
+        course: {
+          raw: {},
+        },
+
+        capesId: {
+          raw: {},
+        },
+        ciId: {
+          raw: {},
+        },
+        gridId: {
+          raw: {},
+        },
+        ringgoId: {
+          raw: {},
+        },
+        rorid: {
+          raw: {},
+        },
+        scopusId: {
+          raw: {},
+        },
+        wikidataId: {
+          raw: {},
+        },
+        publication: {
+          raw: {},
+        },
       },
     },
   };

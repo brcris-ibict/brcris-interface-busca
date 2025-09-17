@@ -40,16 +40,18 @@ export default function PublicationDetails() {
                       Lattes
                     </a>
                   </span>
-                  <span>
-                    <a href={`https://orcid.org/${result.orcid?.raw}`} target="_blank" rel="noopener noreferrer">
-                      <img className="orcid-logo" src="/logos/logo_orcid.png" alt="logo do Lattes" />
-                      ORCID
-                    </a>
-                  </span>
+                  {result.orcid?.raw && (
+                    <span>
+                      <a href={`https://orcid.org/${result.orcid?.raw}`} target="_blank" rel="noopener noreferrer">
+                        <img className="orcid-logo" src="/logos/logo_orcid.png" alt="logo do Lattes" />
+                        ORCID
+                      </a>
+                    </span>
+                  )}
                 </div>
                 <div className="details-card">
                   <div>
-                    <ExpandableContent text={result.bio?.raw || ''} maxLines={5} />
+                    <ExpandableContent text={result.bio?.raw} maxLines={5} />
                   </div>
                   {result.researchArea?.raw?.length > 0 && (
                     <div className="research-fields">
@@ -92,22 +94,7 @@ export default function PublicationDetails() {
                           ))}
                       />
                     )}
-                    <li>
-                      <span className="sui-result__key">{t('Publications')}</span>
-                      <ExpandableContent
-                        items={result.authorOf.raw}
-                        initialCount={2}
-                        renderItem={(publication: any) => (
-                          <div className="publication-item">
-                            <a href={`/publications/${publication?.id}`}>{publication?.title}</a>
-                            <div className="publication-meta">
-                              {publication.publicationDate?.[0] && <span>{publication.publicationDate[0]}</span>}
-                              {publication.type?.[0] && <span className="type"> - {publication.type[0]}</span>}
-                            </div>
-                          </div>
-                        )}
-                      />
-                    </li>
+
                     {result.leaderOf?.raw?.length > 0 && (
                       <ShowItem
                         label={t('Leader of')}
@@ -120,6 +107,26 @@ export default function PublicationDetails() {
                           ))}
                       />
                     )}
+                    <li>
+                      <span className="sui-result__key">{t('Publications')}</span>
+                      <ExpandableContent
+                        items={result.authorOf?.raw?.slice()?.sort((a: any, b: any) => {
+                          const dateA = new Date(a.publicationDate?.[0] || 0).getTime();
+                          const dateB = new Date(b.publicationDate?.[0] || 0).getTime();
+                          return dateB - dateA;
+                        })}
+                        initialCount={2}
+                        renderItem={(publication: any) => (
+                          <div className="publication-item">
+                            <a href={`/publications/${publication?.id}`}>{publication?.title}</a>
+                            <div className="publication-meta">
+                              {publication.publicationDate?.[0] && <span>{publication.publicationDate[0]}</span>}
+                              {publication.type?.[0] && <span className="type"> - {publication.type[0]}</span>}
+                            </div>
+                          </div>
+                        )}
+                      />
+                    </li>
                   </ul>
                 </div>
               </div>
