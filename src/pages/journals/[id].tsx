@@ -97,6 +97,9 @@ export default function JournalDetailsPage() {
         assessmentArea: {
           raw: {},
         },
+        publication: {
+          raw: {},
+        },
         brcrisId: {
           raw: {},
         },

@@ -4,7 +4,7 @@ import { ErrorBoundary, useSearch } from '@elastic/react-search-ui';
 import Head from 'next/head';
 import ShowAuthorItem from '../customResultView/ShowAuthorItem';
 import ShowItem from '../customResultView/ShowItem';
-
+import ExpandableContent from '../ExpandableContent';
 export default function JournalDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation('common');
@@ -25,12 +25,21 @@ export default function JournalDetails() {
               <div className="details-card">
                 <ul>
                   <ShowItem label={t('Type')} value={result.type?.raw} />
-                  <ShowItem
-                    label={t('Has subject area')}
-                    value={result.researchArea?.raw?.map((researchArea: any, idx: number) => (
-                      <span key={idx}>{researchArea.name}</span>
-                    ))}
-                  />
+                  {result.researchArea?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t('Has subject area')}</span>
+                      <ExpandableContent
+                        items={result.researchArea?.raw}
+                        initialCount={5}
+                        renderItem={(area: any, idx: number) => (
+                          <div key={idx} className="research-area-item">
+                            {area?.name}
+                          </div>
+                        )}
+                      />
+                    </li>
+                  )}
+
                   <ShowAuthorItem label={t('Publisher')} authors={result.publisher?.raw} />
                   <ShowItem label={t('Is open access')} value={result.isOA?.raw} />
                   <ShowItem label={t('Is in DOAJ')} value={result.isInDoaj?.raw} />
@@ -40,6 +49,20 @@ export default function JournalDetails() {
                   <ShowItem label={t('ISSN-L')} value={result.issn_l?.raw} />
                   <ShowItem label={t('International Standard Serial Number (ISSN)')} value={result.issn?.raw} />
                   <ShowItem label={t('Qualis classification')} value={result.qualis?.raw} />
+                  {result.publication?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t('Publications')}</span>
+                      <ExpandableContent
+                        items={result.publication?.raw}
+                        initialCount={5}
+                        renderItem={(publication: any) => (
+                          <div className="publication-item">
+                            <a href={`/publications/${publication?.id}`}>{publication?.title}</a>
+                          </div>
+                        )}
+                      />
+                    </li>
+                  )}
                   <ShowItem label={t('Access type')} value={result.accessType?.raw} />
                   <ShowItem label={t('Status')} value={result.status?.raw} />
                   <ShowItem label={t('Language')} value={result.language?.raw} />

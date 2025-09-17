@@ -405,6 +405,7 @@ li .sui-result__key {
 }
 
 li .sui-result__value {
+  text-transform: capitalize;
   font-size: 1rem;
 }
 
@@ -1181,7 +1182,7 @@ button.rc-pagination-item-link[disabled] {
   color: #555;
 }
 
-.publication-item{
+.publication-item, .research-area-item, .course-item, .programs-item{
   margin-top: 3px;
   word-wrap: break-word;
 }

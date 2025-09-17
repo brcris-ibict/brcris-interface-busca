@@ -211,6 +211,13 @@
   "2 year mean citedness": "Média de citação (2 anos)",
   "Has subject area": "Áreas",
   "Assessment area": "Área de avaliação",
-  "see less": "ver mais",
-  "see more": "ver menos"
+  "see less": "ver menos",
+  "see more": "ver mais",
+  "Scopus identifier": "Identificador Scopus",
+  "ROR identifier": "Identificador ROR",
+  "Ringgold identifier": "Identificador Ringgold",
+  "GRID identifier": "Identificador GRID",
+  "Wikidata identifier": "Identificador Wikidata",
+  "CAPES identifier": "Identificador CAPES",
+  "CI identifier": "Identificador CI"
 }

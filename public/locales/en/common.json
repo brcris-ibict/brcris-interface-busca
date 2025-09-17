@@ -211,5 +211,12 @@
   "Has subject area": "Has subject area",
   "Assessment area": "Assessment area",
   "see less": "see less",
-  "see more": "see more"
+  "see more": "see more",
+  "Scopus identifier": "Scopus identifier",
+  "ROR identifier": "ROR identifier",
+  "Ringgold identifier": "Ringgold identifier",
+  "GRID identifier": "GRID identifier",
+  "Wikidata identifier": "Wikidata identifier",
+  "CAPES identifier": "CAPES identifier",
+  "CI identifier": "CI identifier"
 }

@@ -5,6 +5,7 @@ import { OrgUnit, Service } from '../../types/Entities';
 import ShowAuthorItem from '../customResultView/ShowAuthorItem';
 import ShowItem from '../customResultView/ShowItem';
 import Loader from '../Loader';
+import ExpandableContent from '../ExpandableContent';
 
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
@@ -62,17 +63,6 @@ export default function PublicationDetails() {
                       </span>
                     </li>
                   )}
-
-                  <ShowItem label={t('Keywords')} value={result.keywords?.raw} />
-                  {result.brcrisId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('BrCris identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
-
                   {result.capesId?.raw?.length > 0 && (
                     <li>
                       <span className="identifier-key">{t('Capes identifier')}:</span>
@@ -89,7 +79,6 @@ export default function PublicationDetails() {
                       </span>
                     </li>
                   )}
-
                   <ShowAuthorItem label={t('Advisor')} authors={result.advisor?.raw} />
                   <ShowAuthorItem label={t('Coadvisor')} authors={result.coadvisor?.raw} />
                   <ShowItem
@@ -125,29 +114,34 @@ export default function PublicationDetails() {
                       ))}
                     />
                   )}
-
                   {result.program?.raw?.length > 0 && (
-                    <ShowItem
-                      label={t('Program')}
-                      value={result.program.raw.map((program: any, index: number) => (
-                        <span key={index} className="sui-result__value">
-                          <a href={`/programs/${program.id}`}>{program.name}</a>
-                        </span>
-                      ))}
-                    />
+                    <li>
+                      <span className="sui-result__key">{t('Program')}</span>
+                      <ExpandableContent
+                        items={result.program.raw}
+                        initialCount={5}
+                        renderItem={(program: any, idx: number) => (
+                          <div key={idx} className="programs-item">
+                            <a href={`/programs/${program.id}`}>{program.name}</a>
+                          </div>
+                        )}
+                      />
+                    </li>
                   )}
-
                   {result.course?.raw?.length > 0 && (
-                    <ShowItem
-                      label={t('Course')}
-                      value={result.course.raw.map((course: any, index: number) => (
-                        <span key={index} className="sui-result__value">
-                          <a href={`/organizations/${course.id}`}>{course.name}</a>
-                        </span>
-                      ))}
-                    />
+                    <li>
+                      <span className="sui-result__key">{t('Course')}</span>
+                      <ExpandableContent
+                        items={result.course?.raw}
+                        initialCount={5}
+                        renderItem={(item: any, idx: number) => (
+                          <div key={idx} className="course-item">
+                            <a href={`/organizations/${item.id}`}>{item?.name}</a>
+                          </div>
+                        )}
+                      />
+                    </li>
                   )}
-
                   <ShowItem label={t('Series')} value={result.series?.raw} />
                   <ShowItem label={t('Volume')} value={result.volume?.raw} />
                   <ShowItem label={t('Issue')} value={result.issue?.raw} />

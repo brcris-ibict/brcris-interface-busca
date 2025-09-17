@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next';
 import { ErrorBoundary, useSearch } from '@elastic/react-search-ui';
 import Head from 'next/head';
 import ShowItem from '../customResultView/ShowItem';
-
+import ExpandableContent from '../ExpandableContent';
 export default function OrganizationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation('common');
@@ -33,6 +33,104 @@ export default function OrganizationDetails() {
                       <span className="identifier-value">
                         {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
                       </span>
+                    </li>
+                  )}
+                  {result.capesId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('CAPES identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.capesId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.ciId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('CI identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.ciId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.gridId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('GRID identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.gridId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.ringgoId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('Ringgold identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.ringgoId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.rorid?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('ROR identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.rorid?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.scopusId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('Scopus identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.scopusId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.wikidataId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('Wikidata identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.wikidataId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.program?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t('Program')}</span>
+                      <ExpandableContent
+                        items={result.program.raw}
+                        initialCount={5}
+                        renderItem={(program: any, idx: number) => (
+                          <div key={idx} className="programs-item">
+                            <a href={`/programs/${program.id}`}>{program.name}</a>
+                          </div>
+                        )}
+                      />
+                    </li>
+                  )}
+                  {result.course?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t('Course')}</span>
+                      <ExpandableContent
+                        items={result.course?.raw}
+                        initialCount={5}
+                        renderItem={(item: any, index: number) => (
+                          <div key={index} className="course-item">
+                            <a href={`/organizations/${item.id}`}>{item?.name}</a>
+                          </div>
+                        )}
+                      />
+                    </li>
+                  )}
+                  {result.publication?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t('Publications')}</span>
+                      <ExpandableContent
+                        items={result.publication?.raw}
+                        initialCount={5}
+                        renderItem={(publication: any, index: number) => (
+                          <div key={index} className="publication-item">
+                            <a href={`/publications/${publication?.id}`}>{publication?.title}</a>
+                          </div>
+                        )}
+                      />
                     </li>
                   )}
                 </ul>

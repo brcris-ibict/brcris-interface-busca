@@ -120,7 +120,7 @@ export default function PublicationDetails() {
                           const dateB = new Date(b.publicationDate?.[0] || 0).getTime();
                           return dateB - dateA;
                         })}
-                        initialCount={2}
+                        initialCount={5}
                         renderItem={(publication: any) => (
                           <div className="publication-item">
                             <a href={`/publications/${publication?.id}`}>{publication?.title}</a>
