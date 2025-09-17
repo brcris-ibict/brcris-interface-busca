@@ -129,9 +129,9 @@ export default function Search({ index }: SearchProps) {
                                       <Results resultView={index.customView} /> <Paging />
                                     </div>
                                   </>
+                                  <index.indicators />
                                 </>
                               )}
-                              <index.indicators />
                             </>
                           )}
                         ></ErrorBoundary>

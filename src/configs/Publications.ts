@@ -38,6 +38,7 @@ const config: CustomSearchDriverOptions = {
         snippet: {},
       },
       journal: { raw: {} },
+      type: { raw: {} },
       conference: { raw: {} },
       sponsorOrgUnit: { raw: {} },
       id: { raw: {} },
@@ -46,6 +47,7 @@ const config: CustomSearchDriverOptions = {
 
     facets: {
       'author.name': { type: 'value' },
+      type: { type: 'value' },
       'journal.title': { type: 'value' },
       'conference.name': { type: 'value' },
       'sponsorOrgUnit.name': { type: 'value' },
