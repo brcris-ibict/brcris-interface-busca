@@ -55,10 +55,7 @@ export default function PublicationDetails() {
                   </div>
                   {result.researchArea?.raw?.length > 0 && (
                     <div className="research-fields">
-                      <strong className="research-title">
-                        {t('Research field')}
-                        <Layers width={24} height={24} color="#210d41" />
-                      </strong>
+                      <strong className="research-title">{t('Research field')}</strong>
                       <div className="chips-container">
                         {result.researchArea.raw
                           .filter((area: any) => area?.name)
@@ -113,7 +110,9 @@ export default function PublicationDetails() {
                       </li>
                     )}
                     <li>
-                      <span className="sui-result__key">{t('Publications')}</span>
+                      <strong className="research-title">
+                        {t('Publications')} <Layers width={24} height={24} color="#210d41" />
+                      </strong>
                       <ExpandableContent
                         items={result.authorOf?.raw?.slice()?.sort((a: any, b: any) => {
                           const dateA = new Date(a.publicationDate?.[0] || 0).getTime();
