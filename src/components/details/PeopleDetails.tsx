@@ -3,10 +3,10 @@ import { Layers } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import ShowItem from '../customResultView/ShowItem';
+import ExpandableContent from '../ExpandableContent';
 import Loader from '../Loader';
 import PopoverButton from '../PopOver';
 import PersonProduction from './PersonProduction';
-import ExpandableContent from '../ExpandableContent';
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation('common');
@@ -135,7 +135,7 @@ export default function PublicationDetails() {
                   </ul>
                 </div>
               </div>
-              <PersonProduction authorId={result.id?.raw} />
+              <PersonProduction publications={result.authorOf?.raw} />
             </div>
           ))}
       </ErrorBoundary>
