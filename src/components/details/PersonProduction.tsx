@@ -5,13 +5,12 @@ import { CSVLink } from 'react-csv';
 import styles from '../../styles/Indicators.module.css';
 
 import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { Download } from 'lucide-react';
+import { Download, Users } from 'lucide-react';
 import { Bar, Pie } from 'react-chartjs-2';
 import { CHART_BACKGROUD_COLORS, CHART_BORDER_COLORS } from '../../../utils/Utils';
 import { IndicatorType } from '../../types/Entities';
 import { OptionsBar, OptionsPie } from '../indicators/options/ChartsOptions';
 import PopoverButton from '../PopOver';
-import ChordDiagram from './ChordDiagram';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 export const options = new OptionsBar('Publicatons by year');
@@ -63,11 +62,12 @@ export default function PersonProduction({ publications }: { publications: any[]
   return (
     <div className="indicators">
       <PopoverButton />
-      <div className="container py-5">
-        <h2>Co-authorship Chord Diagram</h2>
-        <ChordDiagram authorId="7ea9469a-1088-4913-aa01-d161d440f564" />
-      </div>
       <h3>{t('Publication statistics')}</h3>
+      <div className="card p-2 mb-3">
+        <a href="#coautoria">
+          <Users /> {t('Co-authorship Network')}
+        </a>
+      </div>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 'use client';
 import * as d3 from 'd3';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 import { Overlay, Popover } from 'react-bootstrap';
 import { Rnd } from 'react-rnd';
 import coautoriaService from '../../services/CoautoriaService';
 
 export default function ChordDiagram({ authorId }: { authorId: string }) {
+  const { t } = useTranslation('common');
   const chartRef = useRef<SVGSVGElement | null>(null);
   const [mainAuthor, setMainAuthor] = useState<any>(null);
   const [nodes, setNodes] = useState<any[]>([]);
@@ -204,8 +206,10 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
   }
 
   return (
-    <div>
-      <h3>{mainAuthor.name} — Co-authorship Graph</h3>
+    <div id="coautoria" className="card my-3 p-2">
+      <h3>
+        {mainAuthor.name} — {t('Co-authorship Network')}
+      </h3>
       {/** @ts-ignore */}
       <div ref={chartRef}></div>
 

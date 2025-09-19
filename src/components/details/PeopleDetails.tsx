@@ -6,8 +6,8 @@ import ShowItem from '../customResultView/ShowItem';
 import ExpandableContent from '../ExpandableContent';
 import Loader from '../Loader';
 import PopoverButton from '../PopOver';
-import PersonProduction from './PersonProduction';
 import ChordDiagram from './ChordDiagram';
+import PersonProduction from './PersonProduction';
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation('common');
@@ -134,10 +134,7 @@ export default function PublicationDetails() {
                     </li>
                   </ul>
                 </div>
-                <div className="container py-5">
-                  <h2>Co-authorship Chord Diagram</h2>
-                  <ChordDiagram authorId="7ea9469a-1088-4913-aa01-d161d440f564" />
-                </div>
+                <ChordDiagram authorId="7ea9469a-1088-4913-aa01-d161d440f564" />
               </div>
               <PersonProduction publications={result.authorOf?.raw} />
             </div>

@@ -912,6 +912,10 @@ li .sui-result__key:after {
   font-weight: 500;
 }
 
+.card {
+  border-color: var(--border-color);
+}
+
 .dashboards {
   display: flex;
   flex-wrap: wrap;
@@ -1135,12 +1139,14 @@ button.rc-pagination-item-link[disabled] {
 .page-search .sui-layout-main-header__inner {
   width: 74%;
 }
-.author-header{
+
+.author-header {
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
-.author-header span{
+
+.author-header span {
   font-size: 14px;
 }
 
@@ -1174,22 +1180,26 @@ button.rc-pagination-item-link[disabled] {
   cursor: pointer;
   padding: 0;
   align-self: flex-start;
-  
+
 }
 
 .publication-meta {
-  font-size: 0.8rem; 
+  font-size: 0.8rem;
   color: #555;
 }
 
-.publication-item, .research-area-item, .course-item, .programs-item{
+.publication-item,
+.research-area-item,
+.course-item,
+.programs-item {
   margin-top: 3px;
   word-wrap: break-word;
 }
+
 .identifier-value {
   display: flex;
-  flex-direction: column; 
-  gap: 4px; 
+  flex-direction: column;
+  gap: 4px;
 }
 
 .identifier-key {
