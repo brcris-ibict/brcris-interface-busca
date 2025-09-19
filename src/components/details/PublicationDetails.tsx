@@ -143,6 +143,7 @@ export default function PublicationDetails() {
                     </li>
                   )}
                   <ShowItem label={t('Series')} value={result.series?.raw} />
+                  <ShowItem label={t('Edition')} value={result.edition?.raw} />
                   <ShowItem label={t('Volume')} value={result.volume?.raw} />
                   <ShowItem label={t('Issue')} value={result.issue?.raw} />
                   <ShowItem label={t('Start Page')} value={result.startPage?.raw} />

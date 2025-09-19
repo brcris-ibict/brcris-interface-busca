@@ -73,6 +73,15 @@ export default function PatentDetailsPage() {
         inventor: {
           raw: [],
         },
+        brcrisId: {
+          raw: {},
+        },
+        IPCclassification: {
+          raw: {},
+        },
+        CPCclassification: {
+          raw: {},
+        },
       },
     },
   };

@@ -68,10 +68,10 @@ export default function GroupDetailsPage() {
         applicationSector: {
           raw: {},
         },
-        keyword: {
+        keywords: {
           raw: [],
         },
-        URL: {
+        url: {
           raw: {},
         },
         status: {
@@ -93,6 +93,12 @@ export default function GroupDetailsPage() {
           raw: {},
         },
         equipment: {
+          raw: {},
+        },
+        brcrisId: {
+          raw: {},
+        },
+        leaderResearcher: {
           raw: {},
         },
       },

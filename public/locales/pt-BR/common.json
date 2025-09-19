@@ -220,5 +220,10 @@
   "Wikidata identifier": "Identificador Wikidata",
   "CAPES identifier": "Identificador CAPES",
   "CI identifier": "Identificador CI",
-  "Co-authorship Network": "Rede de Coautoria"
+  "Co-authorship Network": "Rede de Coautoria",
+  "Edition": "Edição",
+  "IPC Classification": "Classificação IPC",
+  "CPC Classification": "Classificação CPC",
+  "Has leader": "Líder",
+  "Has member": "Membros"
 }

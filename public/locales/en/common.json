@@ -219,5 +219,10 @@
   "Wikidata identifier": "Wikidata identifier",
   "CAPES identifier": "CAPES identifier",
   "CI identifier": "CI identifier",
-  "Co-authorship Network": "Co-authorship Network"
+  "Co-authorship Network": "Co-authorship Network",
+  "Edition": "Edition",
+  "IPC Classification": "IPC Classification",
+  "CPC Classification": "CPC Classification",
+  "Has leader": "Has leader",
+  "Has member": "Has member"
 }
