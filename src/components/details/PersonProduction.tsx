@@ -11,6 +11,7 @@ import { CHART_BACKGROUD_COLORS, CHART_BORDER_COLORS } from '../../../utils/Util
 import { IndicatorType } from '../../types/Entities';
 import { OptionsBar, OptionsPie } from '../indicators/options/ChartsOptions';
 import PopoverButton from '../PopOver';
+import ChordDiagram from './ChordDiagram';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 export const options = new OptionsBar('Publicatons by year');
@@ -62,6 +63,10 @@ export default function PersonProduction({ publications }: { publications: any[]
   return (
     <div className="indicators">
       <PopoverButton />
+      <div className="container py-5">
+        <h2>Co-authorship Chord Diagram</h2>
+        <ChordDiagram authorId="7ea9469a-1088-4913-aa01-d161d440f564" />
+      </div>
       <h3>{t('Publication statistics')}</h3>
       <div className={styles.chart}>
         {/* @ts-ignore */}
