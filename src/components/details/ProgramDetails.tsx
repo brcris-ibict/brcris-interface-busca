@@ -4,7 +4,7 @@ import Head from 'next/head';
 import ShowItem from '../customResultView/ShowItem';
 import Loader from '../Loader';
 import { OrgUnit } from '../../types/Entities';
-
+import ExpandableContent from '../ExpandableContent';
 export default function ProgramDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation('common');
@@ -23,16 +23,18 @@ export default function ProgramDetails() {
               </Head>
               <h1 className="title">{result.name?.raw}</h1>
               <ul>
-                <li>
-                  <span className="sui-result__key">{t('Organization')}</span>
-                  <span className="sui-result__value">
-                    {result.orgunit?.raw.map((org: OrgUnit) => (
-                      <a key={org.id} href={`/organizations/${org.id}`}>
-                        {org.name!}
-                      </a>
-                    ))}
-                  </span>
-                </li>
+                {result.orgUnit?.raw?.length > 0 && (
+                  <li>
+                    <span className="sui-result__key">{t('Organization')}</span>
+                    <span className="sui-result__value">
+                      {result.orgUnit?.raw.map((org: OrgUnit) => (
+                        <a key={org.id} href={`/organizations/${org.id}`}>
+                          {org.name!}
+                        </a>
+                      ))}
+                    </span>
+                  </li>
+                )}
                 <ShowItem
                   label={t('Research field')}
                   value={result.researchArea?.raw.map((researchArea: any, index: any) => (
@@ -40,6 +42,36 @@ export default function ProgramDetails() {
                   ))}
                 />
                 <ShowItem label={t('Evaluation area')} value={result.evaluationArea?.raw} />
+                {result.brcrisId?.raw?.length > 0 && (
+                  <li>
+                    <span className="identifier-key">{t('BrCris identifier')}:</span>
+                    <span className="identifier-value">
+                      {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                    </span>
+                  </li>
+                )}
+                {result.capesId?.raw?.length > 0 && (
+                  <li>
+                    <span className="identifier-key">{t('Capes identifier')}:</span>
+                    <span className="identifier-value">
+                      {result.capesId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                    </span>
+                  </li>
+                )}
+                {result.course?.raw?.length > 0 && (
+                  <li>
+                    <span className="sui-result__key">{t('Course')}</span>
+                    <ExpandableContent
+                      items={result.course?.raw}
+                      initialCount={5}
+                      renderItem={(item: any, idx: number) => (
+                        <div key={idx} className="course-item">
+                          <a href={`/courses/${item.id}`}>{item?.name}</a>
+                        </div>
+                      )}
+                    />
+                  </li>
+                )}
               </ul>
             </div>
           ))}

@@ -83,24 +83,6 @@ export default function OragnizationDetailsPage() {
         capesId: {
           raw: {},
         },
-        ciId: {
-          raw: {},
-        },
-        gridId: {
-          raw: {},
-        },
-        ringgoId: {
-          raw: {},
-        },
-        rorid: {
-          raw: {},
-        },
-        scopusId: {
-          raw: {},
-        },
-        wikidataId: {
-          raw: {},
-        },
         publication: {
           raw: {},
         },

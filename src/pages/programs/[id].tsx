@@ -49,7 +49,7 @@ export default function ProgramDetailsPage() {
         name: {
           raw: {},
         },
-        orgunit: {
+        orgUnit: {
           raw: [],
         },
         researchArea: {
@@ -58,10 +58,18 @@ export default function ProgramDetailsPage() {
         evaluationArea: {
           raw: {},
         },
+        brcrisId: {
+          raw: {},
+        },
+        capesId: {
+          raw: {},
+        },
+        course: {
+          raw: {},
+        },
       },
     },
   };
-
   if (!id) {
     return <Loader />;
   }

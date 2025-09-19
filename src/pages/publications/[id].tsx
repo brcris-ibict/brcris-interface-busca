@@ -114,6 +114,9 @@ export default function PublicationDetailsPage() {
         series: {
           raw: {},
         },
+        edition: {
+          raw: {},
+        },
         volume: {
           raw: {},
         },

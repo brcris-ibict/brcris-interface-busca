@@ -42,6 +42,16 @@ export default function PatentDetails() {
                 <ShowItem label={t('Country Code')} value={result.countryCode?.raw} />
                 <ShowItem label={t('Lattes Title')} value={result.lattesTitle?.raw} />
                 <ShowItem label={t('Publication date')} value={result.publicationDate?.raw} />
+                <ShowItem label={t('IPC Classification')} value={result.IPCclassification?.raw} />
+                <ShowItem label={t('CPC Classification')} value={result.CPCclassification?.raw} />
+                {result.brcrisId?.raw?.length > 0 && (
+                  <li>
+                    <span className="identifier-key">{t('BrCris identifier')}:</span>
+                    <span className="identifier-value">
+                      {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                    </span>
+                  </li>
+                )}
               </ul>
             </div>
           ))}

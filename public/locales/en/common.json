@@ -218,5 +218,10 @@
   "GRID identifier": "GRID identifier",
   "Wikidata identifier": "Wikidata identifier",
   "CAPES identifier": "CAPES identifier",
-  "CI identifier": "CI identifier"
+  "CI identifier": "CI identifier",
+  "Edition": "Edition",
+  "IPC Classification": "IPC Classification",
+  "CPC Classification": "CPC Classification",
+  "Has leader": "Has leader",
+  "Has member": "Has member"
 }

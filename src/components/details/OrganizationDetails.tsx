@@ -43,54 +43,6 @@ export default function OrganizationDetails() {
                       </span>
                     </li>
                   )}
-                  {result.ciId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('CI identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.ciId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
-                  {result.gridId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('GRID identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.gridId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
-                  {result.ringgoId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('Ringgold identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.ringgoId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
-                  {result.rorid?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('ROR identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.rorid?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
-                  {result.scopusId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('Scopus identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.scopusId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
-                  {result.wikidataId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('Wikidata identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.wikidataId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
                   {result.program?.raw?.length > 0 && (
                     <li>
                       <span className="sui-result__key">{t('Program')}</span>
