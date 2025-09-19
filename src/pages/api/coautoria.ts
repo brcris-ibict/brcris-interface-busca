@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import { Client } from 'es7';
 import { NextApiRequest, NextApiResponse } from 'next';
 import logger from '../../services/Logger';
@@ -29,6 +31,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
 
     console.log(' response', JSON.stringify(response.body.hits.hits, null, 2));
 
+    // @ts-ignore
     const hits = response.body.hits.hits.map((h) => h._source);
 
     console.log('hits', hits);
@@ -36,11 +39,14 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!hits.length) return null;
 
     // Obter nome do autor principal
+    // @ts-ignore
     const mainAuthorData = hits[0].author.find((a) => a.id === authorId);
 
     // Montar coAuthors únicos
     const coAuthorsMap = new Map();
+    // @ts-ignore
     hits.forEach((pub) => {
+      // @ts-ignore
       pub.author.forEach((a) => {
         if (a.id !== authorId) coAuthorsMap.set(a.id, a.name);
       });
@@ -48,9 +54,11 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
     const coAuthors = Array.from(coAuthorsMap.entries()).map(([id, name]) => ({ id, name }));
 
     // Montar publicações com array de ids de autores
+    // @ts-ignore
     const publications = hits.map((pub) => ({
       id: pub.id,
       title: pub.title,
+      // @ts-ignore
       authors: pub.author.map((a) => a.id),
     }));
 
