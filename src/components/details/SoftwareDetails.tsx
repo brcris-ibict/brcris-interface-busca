@@ -2,8 +2,8 @@ import { ErrorBoundary, useSearch } from '@elastic/react-search-ui';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import Loader from '../Loader';
-import ShowAuthorItem from '../customResultView/ShowAuthorItem';
 import ShowItem from '../customResultView/ShowItem';
+import ExpandableContent from '../ExpandableContent';
 
 export default function SoftwareDetails() {
   const { wasSearched, isLoading, results } = useSearch();
@@ -22,19 +22,51 @@ export default function SoftwareDetails() {
                 <title>{`${result.name?.raw} | BrCris`}</title>
               </Head>
               <h1 className="title">{result.name?.raw}</h1>
-              <ul>
-                <ShowItem label={t('Description')} value={result.description?.raw} />
-                <ShowAuthorItem label={t('Creator(s)')} authors={result.creator?.raw} />
-                <ShowItem label={t('Release year')} value={result.releaseYear?.raw} />
-                <ShowItem label={t('Registration country')} value={result.registrationCountry?.raw} />
-                <ShowItem label={t('Platform')} value={result.platform?.raw} />
-                <ShowItem label={t('Kind')} value={result.kind?.raw} />
-                <ShowItem label={t('Deposit date')} value={result.depositDate?.raw} />
-                <ShowItem label={t('Activity sector')} value={result.activitySector?.raw} />
-                <ShowItem label={t('Knowledge areas')} value={result.knowledgeAreas?.raw} />
-                <ShowItem label={t('Keywords')} value={result.keyword?.raw} />
-                <ShowItem label={t('Language')} value={result.language?.raw} />
-              </ul>
+              <div className="details-card">
+                <ul>
+                  <ShowItem label={t('Description')} value={result.description?.raw} />
+                  {/* <ShowAuthorItem label={t('Creator(s)')} authors={result.creator?.raw} /> */}
+                  {result.creator?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t('Creator(s)')}</span>
+                      <ExpandableContent
+                        items={result.creator?.raw}
+                        initialCount={5}
+                        renderItem={(item: any, idx: number) => (
+                          <div key={idx} className="creator-item">
+                            <a href={`/people/${item.id}`}>{item?.name}</a>
+                          </div>
+                        )}
+                      />
+                    </li>
+                  )}
+                  <ShowItem label={t('Release year')} value={result.releaseYear?.raw} />
+                  <ShowItem label={t('Registration country')} value={result.registrationCountry?.raw} />
+                  <ShowItem label={t('Platform')} value={result.platform?.raw} />
+                  <ShowItem label={t('Kind')} value={result.kind?.raw} />
+                  <ShowItem label={t('Deposit date')} value={result.depositDate?.raw} />
+                  <ShowItem label={t('Activity sector')} value={result.activitySector?.raw} />
+                  <ShowItem label={t('Knowledge areas')} value={result.knowledgeAreas?.raw} />
+                  <ShowItem label={t('Keywords')} value={result.keywords?.raw} />
+                  <ShowItem label={t('Has Language')} value={result.language?.raw} />
+                  <ShowItem label={t('Environment')} value={result.environment?.raw} />
+                  <ShowItem label={t('Availability')} value={result.availability?.raw} />
+                  <ShowItem label={t('ConcessionDate')} value={result.concessionDate?.raw} />
+                  <ShowItem label={t('FundingInstitution')} value={result.fundingInstitution?.raw} />
+                  <ShowItem label={t('RegistrationInstitution')} value={result.registrationInstitution?.raw} />
+                  <ShowItem label={t('InpiUrl')} value={result.inpiUrl?.raw} />
+                  <ShowItem label={t('Doi')} value={result.doi?.raw} />
+                  <ShowItem label={t('InpiRegistrationCode')} value={result.inpiRegistrationCode?.raw} />
+                  {result.brcrisId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('BrCris identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                </ul>
+              </div>
             </div>
           ))}
       </ErrorBoundary>

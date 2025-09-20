@@ -81,10 +81,37 @@ export default function SoftawareDetailsPage() {
         knowledgeAreas: {
           raw: {},
         },
-        keyword: {
+        keywords: {
           raw: {},
         },
         language: {
+          raw: {},
+        },
+        brcrisId: {
+          raw: {},
+        },
+        inpiRegistrationCode: {
+          raw: {},
+        },
+        doi: {
+          raw: {},
+        },
+        inpiUrl: {
+          raw: {},
+        },
+        registrationInstitution: {
+          raw: {},
+        },
+        fundingInstitution: {
+          raw: {},
+        },
+        availability: {
+          raw: {},
+        },
+        environment: {
+          raw: {},
+        },
+        concessionDate: {
           raw: {},
         },
       },

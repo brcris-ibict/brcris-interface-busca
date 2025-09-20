@@ -39,7 +39,6 @@ export default function JournalDetails() {
                       />
                     </li>
                   )}
-
                   <ShowAuthorItem label={t('Publisher')} authors={result.publisher?.raw} />
                   <ShowItem label={t('Is open access')} value={result.isOA?.raw} />
                   <ShowItem label={t('Is in DOAJ')} value={result.isInDoaj?.raw} />

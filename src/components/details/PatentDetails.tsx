@@ -23,36 +23,38 @@ export default function PatentDetails() {
                 <title>{`${result.espacenetTitle?.raw} | BrCris`}</title>
               </Head>
               <h1 className="title">{result.espacenetTitle?.raw}</h1>
-              <ul>
-                <ShowAuthorItem label={t('Inventor(s)')} authors={result.inventor?.raw} />
-                {result.applicant === undefined ? null : (
-                  <li>
-                    <span className="sui-result__key">{t('Applicant')}</span>
-                    {result.applicant?.raw.map((applicant: OrgUnit, index: number) => (
-                      <span key={index} className="sui-result__value">
-                        <a key={applicant.id} href={`/organizations${applicant.id}`}>
-                          {applicant.name!}
-                        </a>
+              <div className="details-card">
+                <ul>
+                  <ShowAuthorItem label={t('Inventor(s)')} authors={result.inventor?.raw} />
+                  {result.applicant === undefined ? null : (
+                    <li>
+                      <span className="sui-result__key">{t('Applicant')}</span>
+                      {result.applicant?.raw.map((applicant: OrgUnit, index: number) => (
+                        <span key={index} className="sui-result__value">
+                          <a key={applicant.id} href={`/organizations${applicant.id}`}>
+                            {applicant.name!}
+                          </a>
+                        </span>
+                      ))}
+                    </li>
+                  )}
+                  <ShowItem label={t('Deposit date')} value={result.depositDate?.raw} />
+                  <ShowItem label={t('Kind Code')} value={result.kindCode?.raw} />
+                  <ShowItem label={t('Country Code')} value={result.countryCode?.raw} />
+                  <ShowItem label={t('Lattes Title')} value={result.lattesTitle?.raw} />
+                  <ShowItem label={t('Publication date')} value={result.publicationDate?.raw} />
+                  <ShowItem label={t('IPC Classification')} value={result.IPCclassification?.raw} />
+                  <ShowItem label={t('CPC Classification')} value={result.CPCclassification?.raw} />
+                  {result.brcrisId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('BrCris identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
                       </span>
-                    ))}
-                  </li>
-                )}
-                <ShowItem label={t('Deposit date')} value={result.depositDate?.raw} />
-                <ShowItem label={t('Kind Code')} value={result.kindCode?.raw} />
-                <ShowItem label={t('Country Code')} value={result.countryCode?.raw} />
-                <ShowItem label={t('Lattes Title')} value={result.lattesTitle?.raw} />
-                <ShowItem label={t('Publication date')} value={result.publicationDate?.raw} />
-                <ShowItem label={t('IPC Classification')} value={result.IPCclassification?.raw} />
-                <ShowItem label={t('CPC Classification')} value={result.CPCclassification?.raw} />
-                {result.brcrisId?.raw?.length > 0 && (
-                  <li>
-                    <span className="identifier-key">{t('BrCris identifier')}:</span>
-                    <span className="identifier-value">
-                      {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                    </span>
-                  </li>
-                )}
-              </ul>
+                    </li>
+                  )}
+                </ul>
+              </div>
             </div>
           ))}
       </ErrorBoundary>
