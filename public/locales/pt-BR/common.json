@@ -225,5 +225,11 @@
   "IPC Classification": "Classificação IPC",
   "CPC Classification": "Classificação CPC",
   "Has leader": "Líder",
-  "Has member": "Membros"
+  "Has member": "Membros",
+  "ConcessionDate": "Data de concessão",
+  "FundingInstitution": "Instituição financiadora",
+  "RegistrationInstitution": "Instituição de registro",
+  "InpiUrl": "URL do INPI",
+  "Doi": "DOI",
+  "InpiRegistrationCode": "Código de registro INPI"
 }

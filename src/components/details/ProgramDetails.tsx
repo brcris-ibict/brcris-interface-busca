@@ -22,57 +22,59 @@ export default function ProgramDetails() {
                 <title>{`${result.name?.raw} | BrCris`}</title>
               </Head>
               <h1 className="title">{result.name?.raw}</h1>
-              <ul>
-                {result.orgUnit?.raw?.length > 0 && (
-                  <li>
-                    <span className="sui-result__key">{t('Organization')}</span>
-                    <span className="sui-result__value">
-                      {result.orgUnit?.raw.map((org: OrgUnit) => (
-                        <a key={org.id} href={`/organizations/${org.id}`}>
-                          {org.name!}
-                        </a>
-                      ))}
-                    </span>
-                  </li>
-                )}
-                <ShowItem
-                  label={t('Research field')}
-                  value={result.researchArea?.raw.map((researchArea: any, index: any) => (
-                    <span key={index}>{researchArea.name}</span>
-                  ))}
-                />
-                <ShowItem label={t('Evaluation area')} value={result.evaluationArea?.raw} />
-                {result.brcrisId?.raw?.length > 0 && (
-                  <li>
-                    <span className="identifier-key">{t('BrCris identifier')}:</span>
-                    <span className="identifier-value">
-                      {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                    </span>
-                  </li>
-                )}
-                {result.capesId?.raw?.length > 0 && (
-                  <li>
-                    <span className="identifier-key">{t('Capes identifier')}:</span>
-                    <span className="identifier-value">
-                      {result.capesId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                    </span>
-                  </li>
-                )}
-                {result.course?.raw?.length > 0 && (
-                  <li>
-                    <span className="sui-result__key">{t('Course')}</span>
-                    <ExpandableContent
-                      items={result.course?.raw}
-                      initialCount={5}
-                      renderItem={(item: any, idx: number) => (
-                        <div key={idx} className="course-item">
-                          <a href={`/courses/${item.id}`}>{item?.name}</a>
-                        </div>
-                      )}
-                    />
-                  </li>
-                )}
-              </ul>
+              <div className="details-card">
+                <ul>
+                  {result.orgUnit?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t('Organization')}</span>
+                      <span className="sui-result__value">
+                        {result.orgUnit?.raw.map((org: OrgUnit) => (
+                          <a key={org.id} href={`/organizations/${org.id}`}>
+                            {org.name!}
+                          </a>
+                        ))}
+                      </span>
+                    </li>
+                  )}
+                  <ShowItem
+                    label={t('Research field')}
+                    value={result.researchArea?.raw.map((researchArea: any, index: any) => (
+                      <span key={index}>{researchArea.name}</span>
+                    ))}
+                  />
+                  <ShowItem label={t('Evaluation area')} value={result.evaluationArea?.raw} />
+                  {result.brcrisId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('BrCris identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.capesId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">{t('Capes identifier')}:</span>
+                      <span className="identifier-value">
+                        {result.capesId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      </span>
+                    </li>
+                  )}
+                  {result.course?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t('Course')}</span>
+                      <ExpandableContent
+                        items={result.course?.raw}
+                        initialCount={5}
+                        renderItem={(item: any, idx: number) => (
+                          <div key={idx} className="course-item">
+                            <a href={`/courses/${item.id}`}>{item?.name}</a>
+                          </div>
+                        )}
+                      />
+                    </li>
+                  )}
+                </ul>
+              </div>
             </div>
           ))}
       </ErrorBoundary>
