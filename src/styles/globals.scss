@@ -916,6 +916,10 @@ li .sui-result__key:after {
   border-color: var(--border-color);
 }
 
+.popover-arrow {
+  display: none !important;
+}
+
 .dashboards {
   display: flex;
   flex-wrap: wrap;

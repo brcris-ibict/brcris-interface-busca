@@ -20,123 +20,129 @@ export default function PublicationDetails() {
           results &&
           results.length > 0 &&
           results?.map((result, index) => (
-            <div className="details-content" key={index}>
-              <div className="details-main">
-                <Head>
-                  <title>{`${result.name?.raw} | BrCris`}</title>
-                </Head>
-                <div className="d-flex justify-content-between align-items-center">
-                  <div className="author-header">
-                    <h1>{result.name?.raw}</h1>
-                    <span className="citation-name">{`(${result.citationName?.raw[0]})`}</span>
+            <div key={index}>
+              <div className="details-content">
+                <div className="details-main">
+                  <Head>
+                    <title>{`${result.name?.raw} | BrCris`}</title>
+                  </Head>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="author-header">
+                      <h1>{result.name?.raw}</h1>
+                      <span className="citation-name">{`(${result.citationName?.raw[0]})`}</span>
+                    </div>
+                    <div className="d-lg-none">
+                      <PopoverButton />
+                    </div>
                   </div>
-                  <div className="d-lg-none">
-                    <PopoverButton />
-                  </div>
-                </div>
-                <div className="d-flex flex-column flex-sm-row gap-2 mb-2">
-                  <span>
-                    <a href={`http://lattes.cnpq.br/${result.lattesId?.raw}`} target="_blank" rel="noopener noreferrer">
-                      <img className="lattes-logo" src="/logos/lattes.png" alt="logo do Lattes" />
-                      Lattes
-                    </a>
-                  </span>
-                  {result.orcid?.raw && (
+                  <div className="d-flex flex-column flex-sm-row gap-2 mb-2">
                     <span>
-                      <a href={`https://orcid.org/${result.orcid?.raw}`} target="_blank" rel="noopener noreferrer">
-                        <img className="orcid-logo" src="/logos/logo_orcid.png" alt="logo do Lattes" />
-                        ORCID
+                      <a
+                        href={`http://lattes.cnpq.br/${result.lattesId?.raw}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img className="lattes-logo" src="/logos/lattes.png" alt="logo do Lattes" />
+                        Lattes
                       </a>
                     </span>
-                  )}
-                </div>
-                <div className="details-card">
-                  <div>
-                    <ExpandableContent text={result.bio?.raw} maxLines={5} />
-                  </div>
-                  {result.researchArea?.raw?.length > 0 && (
-                    <div className="research-fields">
-                      <strong className="research-title">{t('Research field')}</strong>
-                      <div className="chips-container">
-                        {result.researchArea.raw
-                          .filter((area: any) => area?.name)
-                          .map((researchArea: any, index: number) => (
-                            <span key={index} className="chip">
-                              {researchArea.name}
-                            </span>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-                  <ul className="sui-result__details">
-                    <ShowItem label={t('Nationality')} value={result.nationality?.raw} />
-                    <ShowItem
-                      label={t('Affiliation')}
-                      value={result.affiliation?.raw?.map((orgunit: any, index: any) => (
-                        <span key={index} className="sui-result__value">
-                          <a key={orgunit.id} href={`/organizations/${orgunit?.id}`}>
-                            {orgunit?.name}
-                          </a>
-                        </span>
-                      ))}
-                    />
-
-                    {(result.memberOf?.raw?.length > 0 || result.leaderOf?.raw?.length > 0) && (
-                      <li>
-                        <span className="sui-result__key">{t('Research groups')}</span>
-                        <div className="d-flex flex-wrap gap-2">
-                          {(() => {
-                            const groupsMap = new Map<string, any>();
-
-                            (result.memberOf?.raw || []).forEach((item: any) => {
-                              if (item?.id) {
-                                groupsMap.set(item.id, { ...item, role: 'Member' });
-                              }
-                            });
-
-                            (result.leaderOf?.raw || []).forEach((item: any) => {
-                              if (item?.id) {
-                                groupsMap.set(item.id, { ...item, role: 'Leader of' });
-                              }
-                            });
-
-                            return Array.from(groupsMap.values()).map((item: any, index: number) => (
-                              <span key={index} className="group-item">
-                                {item.id ? <a href={`/research-groups/${item.id}`}>{item.name}</a> : item.name}
-                                {` (${t(item.role)})`}
-                              </span>
-                            ));
-                          })()}
-                        </div>
-                      </li>
+                    {result.orcid?.raw && (
+                      <span>
+                        <a href={`https://orcid.org/${result.orcid?.raw}`} target="_blank" rel="noopener noreferrer">
+                          <img className="orcid-logo" src="/logos/logo_orcid.png" alt="logo do Lattes" />
+                          ORCID
+                        </a>
+                      </span>
                     )}
-                    <li>
-                      <strong className="research-title">
-                        {t('Publications')} <Layers width={24} height={24} color="#210d41" />
-                      </strong>
-                      <ExpandableContent
-                        items={result.authorOf?.raw?.slice()?.sort((a: any, b: any) => {
-                          const dateA = new Date(a.publicationDate?.[0] || 0).getTime();
-                          const dateB = new Date(b.publicationDate?.[0] || 0).getTime();
-                          return dateB - dateA;
-                        })}
-                        initialCount={5}
-                        renderItem={(publication: any) => (
-                          <div className="publication-item">
-                            <a href={`/publications/${publication?.id}`}>{publication?.title}</a>
-                            <div className="publication-meta">
-                              {publication.publicationDate?.[0] && <span>{publication.publicationDate[0]}</span>}
-                              {publication.type?.[0] && <span className="type"> - {publication.type[0]}</span>}
-                            </div>
-                          </div>
-                        )}
+                  </div>
+                  <div className="details-card">
+                    <div>
+                      <ExpandableContent text={result.bio?.raw} maxLines={5} />
+                    </div>
+                    {result.researchArea?.raw?.length > 0 && (
+                      <div className="research-fields">
+                        <strong className="research-title">{t('Research field')}</strong>
+                        <div className="chips-container">
+                          {result.researchArea.raw
+                            .filter((area: any) => area?.name)
+                            .map((researchArea: any, index: number) => (
+                              <span key={index} className="chip">
+                                {researchArea.name}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                    <ul className="sui-result__details">
+                      <ShowItem label={t('Nationality')} value={result.nationality?.raw} />
+                      <ShowItem
+                        label={t('Affiliation')}
+                        value={result.affiliation?.raw?.map((orgunit: any, index: any) => (
+                          <span key={index} className="sui-result__value">
+                            <a key={orgunit.id} href={`/organizations/${orgunit?.id}`}>
+                              {orgunit?.name}
+                            </a>
+                          </span>
+                        ))}
                       />
-                    </li>
-                  </ul>
+
+                      {(result.memberOf?.raw?.length > 0 || result.leaderOf?.raw?.length > 0) && (
+                        <li>
+                          <span className="sui-result__key">{t('Research groups')}</span>
+                          <div className="d-flex flex-wrap gap-2">
+                            {(() => {
+                              const groupsMap = new Map<string, any>();
+
+                              (result.memberOf?.raw || []).forEach((item: any) => {
+                                if (item?.id) {
+                                  groupsMap.set(item.id, { ...item, role: 'Member' });
+                                }
+                              });
+
+                              (result.leaderOf?.raw || []).forEach((item: any) => {
+                                if (item?.id) {
+                                  groupsMap.set(item.id, { ...item, role: 'Leader of' });
+                                }
+                              });
+
+                              return Array.from(groupsMap.values()).map((item: any, index: number) => (
+                                <span key={index} className="group-item">
+                                  {item.id ? <a href={`/research-groups/${item.id}`}>{item.name}</a> : item.name}
+                                  {` (${t(item.role)})`}
+                                </span>
+                              ));
+                            })()}
+                          </div>
+                        </li>
+                      )}
+                      <li>
+                        <strong className="research-title">
+                          {t('Publications')} <Layers width={24} height={24} color="#210d41" />
+                        </strong>
+                        <ExpandableContent
+                          items={result.authorOf?.raw?.slice()?.sort((a: any, b: any) => {
+                            const dateA = new Date(a.publicationDate?.[0] || 0).getTime();
+                            const dateB = new Date(b.publicationDate?.[0] || 0).getTime();
+                            return dateB - dateA;
+                          })}
+                          initialCount={5}
+                          renderItem={(publication: any) => (
+                            <div className="publication-item">
+                              <a href={`/publications/${publication?.id}`}>{publication?.title}</a>
+                              <div className="publication-meta">
+                                {publication.publicationDate?.[0] && <span>{publication.publicationDate[0]}</span>}
+                                {publication.type?.[0] && <span className="type"> - {publication.type[0]}</span>}
+                              </div>
+                            </div>
+                          )}
+                        />
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-                <ChordDiagram authorId="7ea9469a-1088-4913-aa01-d161d440f564" />
+                <PersonProduction publications={result.authorOf?.raw} />
               </div>
-              <PersonProduction publications={result.authorOf?.raw} />
+              <ChordDiagram authorId="7ea9469a-1088-4913-aa01-d161d440f564" />
             </div>
           ))}
       </ErrorBoundary>
