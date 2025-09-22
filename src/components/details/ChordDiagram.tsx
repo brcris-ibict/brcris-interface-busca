@@ -172,7 +172,9 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
               <Popover.Header as="h3" className="popover-header">
                 {selectedNode.name} (Main Author)
               </Popover.Header>
-              <Popover.Body>Number of co-authors: {mainAuthor.coAuthors.length}</Popover.Body>
+              <Popover.Body>
+                {t('Number of co-authors')}: {mainAuthor.coAuthors.length}
+              </Popover.Body>
             </Popover>
           </div>
         </Rnd>
@@ -189,7 +191,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
                 <a href={`/people/${selectedNode.id}`}>{selectedNode.name}</a>
               </Popover.Header>
               <Popover.Body>
-                <span>{t('Publications')}:</span> {pubs.length}
+                <span>{` ${t('Publications with')} ${mainAuthor.name}: ${pubs.length}`}</span>
                 <ul>
                   {pubs.map((p: any) => (
                     <li key={p.id}>

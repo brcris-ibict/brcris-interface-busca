@@ -231,5 +231,7 @@
   "RegistrationInstitution": "Instituição de registro",
   "InpiUrl": "URL do INPI",
   "Doi": "DOI",
-  "InpiRegistrationCode": "Código de registro INPI"
+  "InpiRegistrationCode": "Código de registro INPI",
+  "Number of co-authors": "Número de coautores",
+  "Publications with": "Publicações com"
 }
