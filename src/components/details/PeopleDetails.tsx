@@ -36,6 +36,14 @@ export default function PublicationDetails() {
                     </div>
                   </div>
                   <div className="d-flex flex-column flex-sm-row gap-2 mb-2">
+                    {result.id?.raw && (
+                      <span>
+                        <a href={`/people/${result.id.raw}`} target="_blank" rel="noopener noreferrer">
+                          <img className="brcris-logo" src="/logos/logo-brcris.png" alt="logo do BrCris" />
+                          BrCris
+                        </a>
+                      </span>
+                    )}
                     <span>
                       <a
                         href={`http://lattes.cnpq.br/${result.lattesId?.raw}`}
@@ -87,9 +95,9 @@ export default function PublicationDetails() {
                       />
 
                       {(result.memberOf?.raw?.length > 0 || result.leaderOf?.raw?.length > 0) && (
-                        <li>
-                          <span className="sui-result__key">{t('Research groups')}</span>
-                          <div className="d-flex flex-wrap gap-2">
+                        <li className="sui-result__item">
+                          <span className="sui-result__key">{t('Research groups')}:</span>
+                          <span className="sui-result__value">
                             {(() => {
                               const groupsMap = new Map<string, any>();
 
@@ -109,10 +117,11 @@ export default function PublicationDetails() {
                                 <span key={index} className="group-item">
                                   {item.id ? <a href={`/research-groups/${item.id}`}>{item.name}</a> : item.name}
                                   {` (${t(item.role)})`}
+                                  {index < groupsMap.size - 1 && ', '}
                                 </span>
                               ));
                             })()}
-                          </div>
+                          </span>
                         </li>
                       )}
                       <li>
