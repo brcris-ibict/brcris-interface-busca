@@ -8,6 +8,7 @@ import Loader from '../Loader';
 import PopoverButton from '../PopOver';
 import ChordDiagram from './ChordDiagram';
 import PersonProduction from './PersonProduction';
+import CopyLink from '../CopyLink';
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation('common');
@@ -35,15 +36,14 @@ export default function PublicationDetails() {
                       <PopoverButton />
                     </div>
                   </div>
+                  {result.id?.raw && (
+                    <span className="d-flex flex-column flex-sm-row gap-2 mb-1">
+                      <img className="brcris-logo" src="/logos/logo-brcris.png" alt="logo do BrCris" />
+                      {`${location.origin}/people/${result.id.raw}`}
+                      <CopyLink link={`${location.origin}/people/${result.id.raw}`} />
+                    </span>
+                  )}
                   <div className="d-flex flex-column flex-sm-row gap-2 mb-2">
-                    {result.id?.raw && (
-                      <span>
-                        <a href={`/people/${result.id.raw}`} target="_blank" rel="noopener noreferrer">
-                          <img className="brcris-logo" src="/logos/logo-brcris.png" alt="logo do BrCris" />
-                          BrCris
-                        </a>
-                      </span>
-                    )}
                     <span>
                       <a
                         href={`http://lattes.cnpq.br/${result.lattesId?.raw}`}
