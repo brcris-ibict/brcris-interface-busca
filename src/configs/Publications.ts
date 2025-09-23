@@ -23,6 +23,7 @@ const config: CustomSearchDriverOptions = {
         weight: 3,
       },
       'author.name_text': {},
+      doi: {},
     },
     result_fields: {
       author: {

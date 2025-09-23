@@ -1211,6 +1211,10 @@ button.rc-pagination-item-link[disabled] {
   margin-right: 8px;
 }
 
+h3.popover-header a {
+  color: var(--bs-link-color);
+}
+
 @media (max-width: 800px) {
   .nav .nav-item {
     justify-content: flex-start;

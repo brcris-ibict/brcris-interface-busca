@@ -19,6 +19,9 @@ const config: CustomSearchDriverOptions = {
     },
     search_fields: {
       name_text: {},
+      orcid: {},
+      lattesId: {},
+      brcrisId: {},
     },
     result_fields: {
       id: {
