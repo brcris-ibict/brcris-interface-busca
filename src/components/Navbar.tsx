@@ -15,7 +15,7 @@ function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg py-0">
       <div className="container-fluid d-flex">
-        <div className="flex-nowrap d-flex align-items-end flex-justify-content-between gap-3 ms-5">
+        <div className="flex-nowrap d-flex align-items-end flex-justify-content-between gap-3 ms-md-5">
           <a className="navbar-brand" href="https://www.gov.br/ibict/pt-br" target="_blank" rel="noreferrer">
             <picture className="navbar-logo">
               <img className="img-fluid ibict" src="/logos/logo-ibict.png" alt="logo do ibict" />
