@@ -1217,6 +1217,10 @@ h3.popover-header a {
   color: var(--bs-link-color);
 }
 
+.logo-rodape {
+  max-height: 150px;
+}
+
 @media (max-width: 800px) {
   .nav .nav-item {
     justify-content: flex-start;
