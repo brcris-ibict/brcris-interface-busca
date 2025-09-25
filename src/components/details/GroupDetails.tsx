@@ -54,14 +54,19 @@ export default function GroupDetails() {
                       ))}
                     </li>
                   )}
-                  {result.brcrisId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('BrCris identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
+                 {result.brcrisId?.raw?.length > 0 && (
+  <li>
+    <span className="sui-result__key">{t('BrCris identifier')}</span>
+    <div >
+      <ExpandableContent
+        items={Array.isArray(result.brcrisId.raw) ? result.brcrisId.raw : [result.brcrisId.raw]}
+        initialCount={5}
+        renderItem={(id: string) => <>{id}</>}
+      />
+    </div>
+  </li>
+)}
+
                   <ShowItem label={t('URL')} value={result.url?.raw} urlLink={result.url?.raw} />
                   <ShowItem label={t('Status')} value={result.status?.raw} />
                   <ShowItem label={t('Application sector')} value={result.applicationSector?.raw} />

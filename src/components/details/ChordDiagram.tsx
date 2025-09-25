@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Overlay, Popover } from 'react-bootstrap';
 import { Rnd } from 'react-rnd';
 import coautoriaService from '../../services/CoautoriaService';
+import ExpandableContent from '../ExpandableContent';
 
 export default function ChordDiagram({ authorId }: { authorId: string }) {
   const { t } = useTranslation('common');
@@ -193,11 +194,31 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
               <Popover.Body>
                 <span>{` ${t('Publications with')} ${mainAuthor.name}: ${pubs.length}`}</span>
                 <ul>
-                  {pubs.map((p: any) => (
-                    <li key={p.id}>
-                      <a href={`/publications/${p.id}`}>{p.title}</a>
-                    </li>
-                  ))}
+                  <ExpandableContent
+            items={pubs
+              ?.slice()
+              ?.sort((a: any, b: any) => {
+                const dateA = new Date(a.publicationDate?.[0] || 0).getTime();
+                const dateB = new Date(b.publicationDate?.[0] || 0).getTime();
+                return dateB - dateA;
+              })}
+            initialCount={2}
+            renderItem={(publication: any) => (
+              <div key={publication.id} className="publication-item">
+                <a href={`/publications/${publication.id}`}>
+                  {publication.title}
+                </a>
+                <div className="publication-meta">
+                  {publication.publicationDate?.[0] && (
+                    <span>{publication.publicationDate[0]}</span>
+                  )}
+                  {publication.type?.[0] && (
+                    <span className="type"> - {publication.type[0]}</span>
+                  )}
+                </div>
+              </div>
+            )}
+          />
                 </ul>
               </Popover.Body>
             </Popover>

@@ -93,10 +93,9 @@ export default function PublicationDetails() {
                           </span>
                         ))}
                       />
-
                       {(result.memberOf?.raw?.length > 0 || result.leaderOf?.raw?.length > 0) && (
                         <li className="sui-result__item">
-                          <span className="sui-result__key">{t('Research groups')}:</span>
+                          <span className="sui-result__key">{t('Research groups')}</span>
                           <span className="sui-result__value">
                             {(() => {
                               const groupsMap = new Map<string, any>();
@@ -124,9 +123,21 @@ export default function PublicationDetails() {
                           </span>
                         </li>
                       )}
+                      {result.brcrisId?.raw?.length > 0 && (
+                          <li>
+                            <span className="sui-result__key">{t('BrCris identifier')}</span>
+                            <span>
+                              <ExpandableContent
+                                items={Array.isArray(result.brcrisId.raw) ? result.brcrisId.raw : [result.brcrisId.raw]}
+                                initialCount={5}
+                                renderItem={(id: string, idx: number) => <span key={idx}>{id}</span>}
+                              />
+                            </span>
+                          </li>
+                        )}
                       <li>
                         <strong className="research-title">
-                          {t('Publications')} <Layers width={24} height={24} color="#210d41" />
+                          {t('Publications')} ({result.authorOf?.raw?.length})
                         </strong>
                         <ExpandableContent
                           items={result.authorOf?.raw?.slice()?.sort((a: any, b: any) => {

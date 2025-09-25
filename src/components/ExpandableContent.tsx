@@ -20,6 +20,7 @@ export default function ExpandableContent<T>({
   const [isOverflowing, setIsOverflowing] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
   const { t } = useTranslation('common');
+
   useEffect(() => {
     if (text && textRef.current) {
       const el = textRef.current;
@@ -29,6 +30,7 @@ export default function ExpandableContent<T>({
     }
   }, [text, maxLines]);
 
+  // --- Caso texto ---
   if (text) {
     return (
       <div className="expandable-content overview">
@@ -48,7 +50,14 @@ export default function ExpandableContent<T>({
     );
   }
 
+  // --- Caso lista ---
   if (items && renderItem) {
+    // Se só 1 item → não usa expand/collapse
+    if (items.length === 1) {
+      return <>{renderItem(items[0], 0)}</>;
+    }
+
+    // Caso contrário → lista expandível
     const visibleItems = expanded ? items : items.slice(0, initialCount);
     return (
       <div className="expandable-content list">
@@ -65,6 +74,5 @@ export default function ExpandableContent<T>({
       </div>
     );
   }
-
   return null;
 }

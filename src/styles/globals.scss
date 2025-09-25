@@ -376,14 +376,6 @@ button[disabled]:hover {
   background: var(--secondary-color);
 }
 
-.sui-result__value span:after {
-  content: ', ';
-}
-
-.sui-result__value span:last-child:after {
-  content: '';
-}
-
 .sui-result__value div {
   display: inline;
 }
@@ -397,7 +389,9 @@ button[disabled]:hover {
 .sui-result__value a:last-child:after {
   content: '';
 }
-
+.sui-result__line{
+  display: block;
+}
 li .sui-result__key {
   font-weight: 500;
   font-size: 1rem;
@@ -1210,7 +1204,7 @@ button.rc-pagination-item-link[disabled] {
 
 .identifier-key {
   font-weight: 500;
-  margin-right: 8px;
+  margin-right: 2px;
 }
 
 h3.popover-header a {

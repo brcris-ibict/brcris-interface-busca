@@ -40,7 +40,7 @@ export default function PublicationDetails() {
                             ? `${t('Organization')}`
                             : `${t('Journals')}`}
                       </span>
-                      <span className="sui-result__value">
+                      <span>
                         {result.orgunit?.raw.map((org: OrgUnit) => (
                           <a key={org.id} href={`/organizations/${org.id}`}>
                             {org.name!}
@@ -63,19 +63,27 @@ export default function PublicationDetails() {
                       </span>
                     </li>
                   )}
-                  {result.capesId?.raw?.length > 0 && (
-                    <li>
+                 {result.capesId?.raw?.length > 0 && (
+                     <li>
                       <span className="identifier-key">{t('Capes identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.capesId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      <span>
+                        <ExpandableContent
+                          items={result.capesId.raw}
+                          initialCount={5}
+                          renderItem={(item: string) => <>{item}</>}
+                        />
                       </span>
                     </li>
                   )}
                   {result.oasisbrId?.raw?.length > 0 && (
                     <li>
                       <span className="identifier-key">{t('Oasisbr identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.oasisbrId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      <span >
+                        <ExpandableContent
+                          items={result.oasisbrId.raw}
+                          initialCount={5}
+                          renderItem={(item: string) => <>{item}</>}
+                        />
                       </span>
                     </li>
                   )}
@@ -116,30 +124,32 @@ export default function PublicationDetails() {
                   )}
                   {result.program?.raw?.length > 0 && (
                     <li>
-                      <span className="sui-result__key">{t('Program')}</span>
-                      <ExpandableContent
-                        items={result.program.raw}
-                        initialCount={5}
-                        renderItem={(program: any, idx: number) => (
-                          <div key={idx} className="programs-item">
-                            <a href={`/programs/${program.id}`}>{program.name}</a>
-                          </div>
-                        )}
-                      />
-                    </li>
+                  <span className="sui-result__key">{t('Program')}</span>
+                  <span >
+                    <ExpandableContent
+                      items={result.program.raw}
+                      initialCount={5}
+                      renderItem={(program: any, idx: number) => (
+                        <>{program.name && <a href={`/programs/${program.id}`}>{program.name}</a>}</>
+                      )}
+                    />
+                  </span>
+                </li>
                   )}
                   {result.course?.raw?.length > 0 && (
                     <li>
                       <span className="sui-result__key">{t('Course')}</span>
-                      <ExpandableContent
-                        items={result.course?.raw}
-                        initialCount={5}
-                        renderItem={(item: any, idx: number) => (
-                          <div key={idx} className="course-item">
-                            <a href={`/organizations/${item.id}`}>{item?.name}</a>
-                          </div>
-                        )}
-                      />
+                      <span>
+                        <ExpandableContent
+                          items={result.course.raw}
+                          initialCount={5}
+                          renderItem={(item: any, idx: number) => (
+                            <>
+                              <a href={`/organizations/${item.id}`}>{item?.name}</a>
+                            </>
+                          )}
+                        />
+                      </span>
                     </li>
                   )}
                   <ShowItem label={t('Series')} value={result.series?.raw} />

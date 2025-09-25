@@ -28,47 +28,57 @@ export default function OrganizationDetails() {
                   <ShowItem value={result.state?.raw} label={t('State')} />
                   <ShowItem value={result.city?.raw} label={t('City')} />
                   {result.brcrisId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('BrCris identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
-                  {result.capesId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('CAPES identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.capesId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
-                  {result.program?.raw?.length > 0 && (
-                    <li>
-                      <span className="sui-result__key">{t('Program')}</span>
+                        <li>
+                          <span className="sui-result__key">{t('BrCris identifier')}</span>
+                          <span>
+                            <ExpandableContent
+                              items={Array.isArray(result.brcrisId.raw) ? result.brcrisId.raw : [result.brcrisId.raw]}
+                              initialCount={5}
+                              renderItem={(id: string, idx: number) => <span key={idx}>{id}</span>}
+                            />
+                          </span>
+                        </li>
+                      )}
+                      {result.capesId?.raw?.length > 0 && (
+                        <li>
+                        <span className="identifier-key">{t('Capes identifier')}:</span>
+                        <span>
+                          <ExpandableContent
+                            items={result.capesId.raw}
+                            initialCount={5}
+                            renderItem={(item: string) => <>{item}</>}
+                          />
+                        </span>
+                      </li>
+                    )}
+                   {result.program?.raw?.length > 0 && (
+                      <li>
+                    <span className="sui-result__key">{t('Program')}</span>
+                    <span >
                       <ExpandableContent
                         items={result.program.raw}
                         initialCount={5}
                         renderItem={(program: any, idx: number) => (
-                          <div key={idx} className="programs-item">
-                            <a href={`/programs/${program.id}`}>{program.name}</a>
-                          </div>
+                        <>{program.name && <a href={`/programs/${program.id}`}>{program.name}</a>}</>
                         )}
                       />
-                    </li>
-                  )}
-                  {result.course?.raw?.length > 0 && (
-                    <li>
+                    </span>
+                  </li>
+                   )}
+                   {result.course?.raw?.length > 0 && (
+                      <li>
                       <span className="sui-result__key">{t('Course')}</span>
-                      <ExpandableContent
-                        items={result.course?.raw}
-                        initialCount={5}
-                        renderItem={(item: any, index: number) => (
-                          <div key={index} className="course-item">
-                            <a href={`/organizations/${item.id}`}>{item?.name}</a>
-                          </div>
-                        )}
-                      />
+                      <span>
+                        <ExpandableContent
+                          items={result.course.raw}
+                          initialCount={5}
+                          renderItem={(item: any, idx: number) => (
+                            <>
+                              <a href={`/organizations/${item.id}`}>{item?.name}</a>
+                            </>
+                          )}
+                        />
+                      </span>
                     </li>
                   )}
                   {result.publication?.raw?.length > 0 && (

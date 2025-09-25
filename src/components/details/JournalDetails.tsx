@@ -68,13 +68,17 @@ export default function JournalDetails() {
                   <ShowItem label={t('Country code')} value={result.countryCode?.raw} />
                   <ShowItem label={t('Assessment area')} value={result.assessmentArea?.raw} />
                   {result.brcrisId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('BrCris identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
+                      <li>
+                        <span className="sui-result__key">{t('BrCris identifier')}</span>
+                        <span>
+                          <ExpandableContent
+                            items={Array.isArray(result.brcrisId.raw) ? result.brcrisId.raw : [result.brcrisId.raw]}
+                            initialCount={5}
+                            renderItem={(id: string, idx: number) => <span key={idx}>{id}</span>}
+                          />
+                        </span>
+                      </li>
+                    )}
                   <ShowItem label={t('Keywords')} value={result.keywords?.raw} />
                 </ul>
               </div>

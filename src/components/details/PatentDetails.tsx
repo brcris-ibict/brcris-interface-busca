@@ -5,6 +5,7 @@ import Head from 'next/head';
 import ShowAuthorItem from '../customResultView/ShowAuthorItem';
 import ShowItem from '../customResultView/ShowItem';
 import { OrgUnit } from '../../types/Entities';
+import ExpandableContent from '../ExpandableContent';
 
 export default function PatentDetails() {
   const { wasSearched, isLoading, results } = useSearch();
@@ -45,14 +46,18 @@ export default function PatentDetails() {
                   <ShowItem label={t('Publication date')} value={result.publicationDate?.raw} />
                   <ShowItem label={t('IPC Classification')} value={result.IPCclassification?.raw} />
                   <ShowItem label={t('CPC Classification')} value={result.CPCclassification?.raw} />
-                  {result.brcrisId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">{t('BrCris identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
-                      </span>
-                    </li>
-                  )}
+                 {result.brcrisId?.raw?.length > 0 && (
+                  <li>
+                  <span className="sui-result__key">{t('BrCris identifier')}</span>
+                  <span>
+                    <ExpandableContent
+                      items={Array.isArray(result.brcrisId.raw) ? result.brcrisId.raw : [result.brcrisId.raw]}
+                      initialCount={5}
+                      renderItem={(id: string, idx: number) => <span key={idx}>{id}</span>}
+                    />
+                  </span>
+                </li>
+              )}
                 </ul>
               </div>
             </div>

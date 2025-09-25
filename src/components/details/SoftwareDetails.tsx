@@ -57,11 +57,15 @@ export default function SoftwareDetails() {
                   <ShowItem label={t('InpiUrl')} value={result.inpiUrl?.raw} />
                   <ShowItem label={t('Doi')} value={result.doi?.raw} />
                   <ShowItem label={t('InpiRegistrationCode')} value={result.inpiRegistrationCode?.raw} />
-                  {result.brcrisId?.raw?.length > 0 && (
+                 {result.brcrisId?.raw?.length > 0 && (
                     <li>
-                      <span className="identifier-key">{t('BrCris identifier')}:</span>
-                      <span className="identifier-value">
-                        {result.brcrisId?.raw.map((item: string, index: number) => <div key={index}>{item}</div>)}
+                      <span className="sui-result__key">{t('BrCris identifier')}</span>
+                      <span>
+                        <ExpandableContent
+                          items={Array.isArray(result.brcrisId.raw) ? result.brcrisId.raw : [result.brcrisId.raw]}
+                          initialCount={5}
+                          renderItem={(id: string, idx: number) => <span key={idx}>{id}</span>}
+                        />
                       </span>
                     </li>
                   )}
