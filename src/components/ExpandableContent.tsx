@@ -7,6 +7,7 @@ interface ExpandableContentProps<T = any> {
   renderItem?: (item: T, index: number) => JSX.Element;
   maxLines?: number;
   initialCount?: number;
+  scrollableOnExpand?: boolean;
 }
 
 export default function ExpandableContent<T>({
@@ -15,6 +16,7 @@ export default function ExpandableContent<T>({
   renderItem,
   maxLines = 5,
   initialCount = 10,
+  scrollableOnExpand = false,
 }: ExpandableContentProps<T>) {
   const [expanded, setExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -30,7 +32,6 @@ export default function ExpandableContent<T>({
     }
   }, [text, maxLines]);
 
-  // --- Caso texto ---
   if (text) {
     return (
       <div className="expandable-content overview">
@@ -50,17 +51,18 @@ export default function ExpandableContent<T>({
     );
   }
 
-  // --- Caso lista ---
   if (items && renderItem) {
-    // Se só 1 item → não usa expand/collapse
     if (items.length === 1) {
       return <>{renderItem(items[0], 0)}</>;
     }
 
-    // Caso contrário → lista expandível
     const visibleItems = expanded ? items : items.slice(0, initialCount);
+
     return (
-      <div className="expandable-content list">
+      <div
+        className="expandable-content list"
+        style={expanded && scrollableOnExpand ? { maxHeight: '200px', overflowY: 'auto' } : {}}
+      >
         {visibleItems.map((item, index) => (
           <div key={index} className="list-item">
             {renderItem(item, index)}

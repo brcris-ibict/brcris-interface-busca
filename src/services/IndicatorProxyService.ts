@@ -78,4 +78,6 @@ class IndicatorProxyService {
   }
 }
 
-export default new IndicatorProxyService();
+const indicatorProxyService = new IndicatorProxyService();
+
+export default indicatorProxyService;

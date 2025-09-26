@@ -63,8 +63,8 @@ export default function PublicationDetails() {
                       </span>
                     </li>
                   )}
-                 {result.capesId?.raw?.length > 0 && (
-                     <li>
+                  {result.capesId?.raw?.length > 0 && (
+                    <li>
                       <span className="identifier-key">{t('Capes identifier')}:</span>
                       <span>
                         <ExpandableContent
@@ -78,7 +78,7 @@ export default function PublicationDetails() {
                   {result.oasisbrId?.raw?.length > 0 && (
                     <li>
                       <span className="identifier-key">{t('Oasisbr identifier')}:</span>
-                      <span >
+                      <span>
                         <ExpandableContent
                           items={result.oasisbrId.raw}
                           initialCount={5}
@@ -124,17 +124,17 @@ export default function PublicationDetails() {
                   )}
                   {result.program?.raw?.length > 0 && (
                     <li>
-                  <span className="sui-result__key">{t('Program')}</span>
-                  <span >
-                    <ExpandableContent
-                      items={result.program.raw}
-                      initialCount={5}
-                      renderItem={(program: any, idx: number) => (
-                        <>{program.name && <a href={`/programs/${program.id}`}>{program.name}</a>}</>
-                      )}
-                    />
-                  </span>
-                </li>
+                      <span className="sui-result__key">{t('Program')}</span>
+                      <span>
+                        <ExpandableContent
+                          items={result.program.raw}
+                          initialCount={5}
+                          renderItem={(program: any) => (
+                            <>{program.name && <a href={`/programs/${program.id}`}>{program.name}</a>}</>
+                          )}
+                        />
+                      </span>
+                    </li>
                   )}
                   {result.course?.raw?.length > 0 && (
                     <li>
@@ -143,7 +143,7 @@ export default function PublicationDetails() {
                         <ExpandableContent
                           items={result.course.raw}
                           initialCount={5}
-                          renderItem={(item: any, idx: number) => (
+                          renderItem={(item: any) => (
                             <>
                               <a href={`/organizations/${item.id}`}>{item?.name}</a>
                             </>

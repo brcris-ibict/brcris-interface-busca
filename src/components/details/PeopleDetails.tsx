@@ -1,5 +1,4 @@
 import { ErrorBoundary, useSearch } from '@elastic/react-search-ui';
-import { Layers } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import ShowItem from '../customResultView/ShowItem';
@@ -124,17 +123,17 @@ export default function PublicationDetails() {
                         </li>
                       )}
                       {result.brcrisId?.raw?.length > 0 && (
-                          <li>
-                            <span className="sui-result__key">{t('BrCris identifier')}</span>
-                            <span>
-                              <ExpandableContent
-                                items={Array.isArray(result.brcrisId.raw) ? result.brcrisId.raw : [result.brcrisId.raw]}
-                                initialCount={5}
-                                renderItem={(id: string, idx: number) => <span key={idx}>{id}</span>}
-                              />
-                            </span>
-                          </li>
-                        )}
+                        <li>
+                          <span className="sui-result__key">{t('BrCris identifier')}</span>
+                          <span>
+                            <ExpandableContent
+                              items={Array.isArray(result.brcrisId.raw) ? result.brcrisId.raw : [result.brcrisId.raw]}
+                              initialCount={5}
+                              renderItem={(id: string, idx: number) => <span key={idx}>{id}</span>}
+                            />
+                          </span>
+                        </li>
+                      )}
                       <li>
                         <strong className="research-title">
                           {t('Publications')} ({result.authorOf?.raw?.length})

@@ -57,32 +57,32 @@ export default function ProgramDetails() {
                   )}
                   {result.capesId?.raw?.length > 0 && (
                     <li>
-                    <span className="identifier-key">{t('Capes identifier')}:</span>
-                    <span>
-                      <ExpandableContent
-                        items={result.capesId.raw}
-                        initialCount={5}
-                        renderItem={(item: string) => <>{item}</>}
-                      />
-                    </span>
-                  </li>
-                )}
-                 {result.course?.raw?.length > 0 && (
+                      <span className="identifier-key">{t('Capes identifier')}:</span>
+                      <span>
+                        <ExpandableContent
+                          items={result.capesId.raw}
+                          initialCount={5}
+                          renderItem={(item: string) => <>{item}</>}
+                        />
+                      </span>
+                    </li>
+                  )}
+                  {result.course?.raw?.length > 0 && (
                     <li>
-                    <span className="sui-result__key">{t('Course')}</span>
-                    <span>
-                      <ExpandableContent
-                        items={result.course.raw}
-                        initialCount={5}
-                        renderItem={(item: any, idx: number) => (
-                          <>
-                            <a href={`/organizations/${item.id}`}>{item?.name}</a>
-                          </>
-                        )}
-                      />
-                    </span>
-                  </li>
-                )}
+                      <span className="sui-result__key">{t('Course')}</span>
+                      <span>
+                        <ExpandableContent
+                          items={result.course.raw}
+                          initialCount={5}
+                          renderItem={(item: any) => (
+                            <>
+                              <a href={`/organizations/${item.id}`}>{item?.name}</a>
+                            </>
+                          )}
+                        />
+                      </span>
+                    </li>
+                  )}
                 </ul>
               </div>
             </div>

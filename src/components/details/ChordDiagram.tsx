@@ -195,30 +195,23 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
                 <span>{` ${t('Publications with')} ${mainAuthor.name}: ${pubs.length}`}</span>
                 <ul>
                   <ExpandableContent
-            items={pubs
-              ?.slice()
-              ?.sort((a: any, b: any) => {
-                const dateA = new Date(a.publicationDate?.[0] || 0).getTime();
-                const dateB = new Date(b.publicationDate?.[0] || 0).getTime();
-                return dateB - dateA;
-              })}
-            initialCount={2}
-            renderItem={(publication: any) => (
-              <div key={publication.id} className="publication-item">
-                <a href={`/publications/${publication.id}`}>
-                  {publication.title}
-                </a>
-                <div className="publication-meta">
-                  {publication.publicationDate?.[0] && (
-                    <span>{publication.publicationDate[0]}</span>
-                  )}
-                  {publication.type?.[0] && (
-                    <span className="type"> - {publication.type[0]}</span>
-                  )}
-                </div>
-              </div>
-            )}
-          />
+                    initialCount={5}
+                    scrollableOnExpand
+                    items={pubs?.slice()?.sort((a: any, b: any) => {
+                      const dateA = new Date(a.publicationDate?.[0] || 0).getTime();
+                      const dateB = new Date(b.publicationDate?.[0] || 0).getTime();
+                      return dateB - dateA;
+                    })}
+                    renderItem={(publication: any) => (
+                      <div key={publication.id} className="publication-item">
+                        <a href={`/publications/${publication.id}`}>{publication.title}</a>
+                        <div className="publication-meta">
+                          {publication.publicationDate?.[0] && <span>{publication.publicationDate[0]}</span>}
+                          {publication.type?.[0] && <span className="type"> - {publication.type[0]}</span>}
+                        </div>
+                      </div>
+                    )}
+                  />
                 </ul>
               </Popover.Body>
             </Popover>
