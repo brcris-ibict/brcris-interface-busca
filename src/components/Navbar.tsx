@@ -106,6 +106,11 @@ function Navbar() {
               </Link>
             </li>
             <li className="nav-item me-5" role="presentation">
+              <Link href="/faq" className="nav-link">
+                {t('Faq')}
+              </Link>
+            </li>
+            <li className="nav-item me-5" role="presentation">
               <div className={dropdownStyle.dropdown}>
                 <div className={dropdownStyle.flexCenter}>
                   <a href="#" className="nav-link">
