@@ -70,7 +70,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q1" className="accordion-collapse collapse" aria-labelledby="q1-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'BrCris is the Brazilian Current Research Information System, a platform developed by Ibict to gather, integrate, and provide information about scientific and technological research in Brazil. It strengthens transparency, management, and visibility of science, and supports public policies in science, technology, and innovation.'
                 )}
@@ -90,7 +90,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q2" className="accordion-collapse collapse" aria-labelledby="q2-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'Anyone can access it: researchers, science and technology managers, funding agencies, science journalists, and interested citizens. BrCris is free and open access.'
                 )}
@@ -110,7 +110,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q3" className="accordion-collapse collapse" aria-labelledby="q3-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'BrCris integrates information about researchers, institutions, research groups, graduate programs, publications, journals, patents, and software, gathering data from sources such as Lattes Platform, CNPq Directories, Oasisbr, OpenAlex, OpenAIRE, Capes/Sucupira, DOAJ, Espacenet, INPI, NDLTD, ROR, and Wikidata.'
                 )}
@@ -130,7 +130,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q4" className="accordion-collapse collapse" aria-labelledby="q4-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'BrCris performs batch updates every six months. This happens because data is collected from multiple external sources, and the update schedule also depends on those sources. Individual changes cannot be made immediately. This process ensures consistency and standardization of information about researchers, institutions, publications, and other entities.'
                 )}
@@ -150,7 +150,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q5" className="accordion-collapse collapse" aria-labelledby="q5-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'Currently, BrCris API is not available for external use. The Ibict team is working to provide this feature in the future. In the meantime, queries must be made directly on the platform.'
                 )}
@@ -175,7 +175,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q6" className="accordion-collapse collapse" aria-labelledby="q6-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'BrCris does not accept direct submissions. Materials are integrated through existing databases (such as Lattes, Sucupira, Oasisbr, among others), previously selected to be part of the platform ecosystem. No individual agreement is required for inclusion, as long as the source is integrated and data is open and available for collection. It is important to highlight that only master’s and doctoral profiles are visible on BrCris, according to the defined integration criteria.'
                 )}
@@ -195,7 +195,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q7" className="accordion-collapse collapse" aria-labelledby="q7-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'The data displayed on BrCris comes from primary sources (such as Lattes, Oasisbr, OpenAlex, and others). Therefore, the most effective way to request deletion or correction is directly at the primary source, so the change is reflected across all platforms using that information. However, if the user wishes not to appear specifically on BrCris, they can fill out a contact form available on our page and send it to support. In this case, the removal will be executed in the next data update batch, so the record will no longer be displayed on BrCris, although it will remain available at the source.'
                 )}
@@ -215,7 +215,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q8" className="accordion-collapse collapse" aria-labelledby="q8-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'BrCris does not alter the original data content. A technical process of standardization, normalization, and deduplication occurs to ensure consistency and integrity of information when integrating multiple sources.'
                 )}
@@ -236,10 +236,10 @@ export default function FaqPage() {
             </h3>
             <div id="q9" className="accordion-collapse collapse" aria-labelledby="q9-h">
               <div
-                className="accordion-body"
+                className="accordion-body lh-lg"
                 dangerouslySetInnerHTML={{
                   __html: t(
-                    "According to ABNT NBR 6023:2018, websites must be cited with the institutional author, title, location, responsible institution, year, link, and access date.<br/><br/>Example of a citation from a BrCris page:<br/>BRAZIL. Brazilian Institute of Information in Science and Technology (IBICT). BrCris. Brasília: IBICT, 2025. Available at: <a href='https://brcris.ibict.br' target='_blank'>https://brcris.ibict.br</a>. Accessed on: Aug. 26, 2025.<br/><br/>In addition, BrCris has scientific and institutional publications that describe its functionalities, including integration, visualization, and data export processes. These materials can also be used as references or citations, and the BrCris team can provide the official references list upon request through the support channel."
+                    "According to ABNT NBR 6023:2018, websites must be cited with the institutional author, title, location, responsible institution, year, link, and access date.<br/>Example of a citation from a BrCris page:<br/>BRAZIL. Brazilian Institute of Information in Science and Technology (IBICT). BrCris. Brasília: IBICT, 2025. Available at: <a href='https://brcris.ibict.br' target='_blank'>https://brcris.ibict.br</a>. Accessed on: Aug. 26, 2025.<br/>In addition, BrCris has scientific and institutional publications that describe its functionalities, including integration, visualization, and data export processes. These materials can also be used as references or citations, and the BrCris team can provide the official references list upon request through the support channel."
                   ),
                 }}
               />
@@ -263,7 +263,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q10" className="accordion-collapse collapse" aria-labelledby="q10-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'Clear the browser cache, try using an incognito tab, or another browser. If the issue persists, contact support.'
                 )}
@@ -283,7 +283,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q11" className="accordion-collapse collapse" aria-labelledby="q11-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'BrCris profiles come from external databases (such as Lattes Platform and other integrated sources) and are updated in periodic batches. Therefore, immediate corrections cannot be made inside BrCris. Report issues to support with full name, CPF, and institution.'
                 )}
@@ -303,7 +303,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q12" className="accordion-collapse collapse" aria-labelledby="q12-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'BrCris integrates information from multiple external databases (Lattes, Oasisbr, OpenAlex, etc.). Sometimes only publications from certain years appear due to source limitations or batch updates. Verify data in source databases and contact support if inconsistencies persist.'
                 )}
@@ -329,7 +329,7 @@ export default function FaqPage() {
             </h3>
             <div id="q13" className="accordion-collapse collapse" aria-labelledby="q13-h">
               <div
-                className="accordion-body"
+                className="accordion-body lh-lg"
                 dangerouslySetInnerHTML={{
                   __html: t(
                     'Use the support available on the official page (https://brcris.ibict.br/contact). The team responds directly or forwards the request to the technical staff.'
@@ -351,7 +351,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q14" className="accordion-collapse collapse" aria-labelledby="q14-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t('Yes. You can send your proposal via the support channel')}{' '}
                 <a href="https://brcris.ibict.br/contact" target="_blank" rel="noopener noreferrer">
                   (https://brcris.ibict.br/contact)
@@ -378,7 +378,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q15" className="accordion-collapse collapse" aria-labelledby="q15-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'Yes. The platform integrates data from different public databases in compliance with LGPD (General Data Protection Law).'
                 )}
@@ -398,7 +398,7 @@ export default function FaqPage() {
               </button>
             </h3>
             <div id="q16" className="accordion-collapse collapse" aria-labelledby="q16-h">
-              <div className="accordion-body">
+              <div className="accordion-body lh-lg">
                 {t(
                   'Data is processed according to LGPD principles (purpose, adequacy, and necessity) and, whenever possible, anonymized.'
                 )}

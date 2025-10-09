@@ -44,8 +44,23 @@ export default function PatentDetails() {
                   <ShowItem label={t('Country code')} value={result.countryCode?.raw} />
                   <ShowItem label={t('Lattes Title')} value={result.lattesTitle?.raw} />
                   <ShowItem label={t('Publication date')} value={result.publicationDate?.raw} />
-                  <ShowItem label={t('IPC Classification')} value={result.IPCclassification?.raw} />
                   <ShowItem label={t('CPC Classification')} value={result.CPCclassification?.raw} />
+                  {result.IPCclassification?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t('IPC Classification')}</span>
+                      <span>
+                        <ExpandableContent
+                          items={
+                            Array.isArray(result.IPCclassification.raw)
+                              ? result.IPCclassification.raw
+                              : [result.IPCclassification.raw]
+                          }
+                          initialCount={5}
+                          renderItem={(ipc: string, idx: number) => <span key={idx}>{ipc}</span>}
+                        />
+                      </span>
+                    </li>
+                  )}
                   {result.brcrisId?.raw?.length > 0 && (
                     <li>
                       <span className="sui-result__key">{t('BrCris identifier')}</span>
