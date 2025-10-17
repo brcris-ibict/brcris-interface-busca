@@ -141,7 +141,7 @@ export default function App() {
               />
             </div>
             <button
-              type="button"
+              type="submit"
               disabled={term?.trim().length < 3}
               className="btn btn-primary search-button"
               title={t("Search") || "Search"}

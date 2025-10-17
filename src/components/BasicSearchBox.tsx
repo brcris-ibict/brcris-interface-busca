@@ -91,7 +91,7 @@ const BasicSearchBox = ({
           </div>
 
           <button
-            type="button"
+            type="submit"
             disabled={getInputProps()?.value?.trim().length < 3}
             className="btn btn-primary search-button "
           >
