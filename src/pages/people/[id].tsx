@@ -1,27 +1,32 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { SearchProvider } from '@elastic/react-search-ui';
-import { RequestState, SearchDriverOptions } from '@elastic/search-ui';
-import { GetServerSideProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
-import { CustomProvider } from '../../components/context/CustomContext';
-import PeopleDetails from '../../components/details/PeopleDetails';
-import Loader from '../../components/Loader';
-import APIConnector from '../../services/APIConnector';
+import { SearchProvider } from "@elastic/react-search-ui";
+import type { RequestState, SearchDriverOptions } from "@elastic/search-ui";
+import type { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { CustomProvider } from "../../components/context/CustomContext";
+import PeopleDetails from "../../components/details/PeopleDetails";
+import Loader from "../../components/Loader";
+import APIConnector from "../../services/APIConnector";
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'en', ['common', 'navbar', 'advanced', 'facets'])),
+    ...(await serverSideTranslations(locale ?? "en", [
+      "common",
+      "navbar",
+      "advanced",
+      "facets",
+    ])),
   },
 });
 
-const indexName = process.env.INDEX_PERSON || '';
+const indexName = process.env.INDEX_PERSON || "";
 
 const routingOptions = {
-  readUrl: () => '',
+  readUrl: () => "",
   writeUrl: () => {},
   urlToState: () => ({}) as RequestState,
-  stateToUrl: () => '',
+  stateToUrl: () => "",
   routeChangeHandler: () => () => {},
 };
 
@@ -35,11 +40,11 @@ export default function PublicationDetailsPage() {
     routingOptions: routingOptions,
     apiConnector: new APIConnector(),
     initialState: {
-      filters: [{ field: '_id', type: 'all', values: [id!] }],
+      filters: [{ field: "_id", type: "all", values: [id!] }],
       resultsPerPage: 1,
     },
     searchQuery: {
-      // @ts-ignore
+      // @ts-expect-error
       index: indexName,
       result_fields: {
         id: {

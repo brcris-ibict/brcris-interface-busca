@@ -1,20 +1,20 @@
 /** @type {import('next-sitemap').IConfig} */
 
 module.exports = {
-  siteUrl: 'https://brcris.ibict.br',
-  changefreq: 'weekly',
+  siteUrl: "https://brcris.ibict.br",
+  changefreq: "weekly",
   priority: 0.7,
   sitemapSize: 5000,
   generateRobotsTxt: true,
   generateIndexSitemap: false,
   alternateRefs: [
     {
-      href: 'https://brcris.ibict.br/en',
-      hreflang: 'en',
+      href: "https://brcris.ibict.br/en",
+      hreflang: "en",
     },
     {
-      href: 'https://brcris.ibict.br',
-      hreflang: 'pt-BR',
+      href: "https://brcris.ibict.br",
+      hreflang: "pt-BR",
     },
   ],
   transform: async (config, path) => {
@@ -26,7 +26,7 @@ module.exports = {
       alternateRefs:
         config.alternateRefs.map((alternate) => {
           // Ex: try to find '/en/'
-          const hasPathLocale = path.substring(1, 3) === 'en';
+          const hasPathLocale = path.substring(1, 3) === "en";
 
           //  Only fix alternateRefs if path has a locale en
           return hasPathLocale
@@ -43,8 +43,8 @@ module.exports = {
   robotsTxtOptions: {
     policies: [
       {
-        userAgent: '*',
-        allow: '/',
+        userAgent: "*",
+        allow: "/",
       },
     ],
   },

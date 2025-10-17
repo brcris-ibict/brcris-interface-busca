@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/useIframeTitle: <explanation> */
 type IframeProps = {
   url: string;
 };

@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-non-null-asserted-optional-chain */
-import { ResultViewProps } from '@elastic/react-search-ui-views';
-import { OrgUnit } from '../../types/Entities';
+import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import type { OrgUnit } from "../../types/Entities";
 
 const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
   return (
@@ -12,7 +12,9 @@ const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
           }}
         ></h3>
         <div className="result-metadata">
-          {result.affiliation?.raw.map((affiliation: OrgUnit) => <span key={affiliation.id}>{affiliation.name!}</span>)}
+          {result.affiliation?.raw.map((affiliation: OrgUnit) => (
+            <span key={affiliation.id}>{affiliation.name!}</span>
+          ))}
         </div>
       </a>
     </li>

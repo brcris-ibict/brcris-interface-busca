@@ -1,4 +1,4 @@
-import Publication from './Publication';
+import Publication from "./Publication";
 
 const Publications = () => {
   return (

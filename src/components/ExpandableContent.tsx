@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'next-i18next';
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: explanation */
+import { useTranslation } from "next-i18next";
+import { useEffect, useRef, useState } from "react";
 
 interface ExpandableContentProps<T = any> {
   text?: string;
@@ -21,12 +22,14 @@ export default function ExpandableContent<T>({
   const [expanded, setExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     if (text && textRef.current) {
       const el = textRef.current;
-      (el.style as CSSStyleDeclaration & { webkitLineClamp?: string }).webkitLineClamp = String(maxLines);
+      (
+        el.style as CSSStyleDeclaration & { webkitLineClamp?: string }
+      ).webkitLineClamp = String(maxLines);
       const overflowing = el.scrollHeight > el.clientHeight;
       setIsOverflowing(overflowing);
     }
@@ -37,14 +40,18 @@ export default function ExpandableContent<T>({
       <div className="expandable-content overview">
         <p
           ref={textRef}
-          className={expanded ? 'expanded' : 'clamped'}
-          style={{ WebkitLineClamp: expanded ? 'none' : maxLines }}
+          className={expanded ? "expanded" : "clamped"}
+          style={{ WebkitLineClamp: expanded ? "none" : maxLines }}
         >
           {text}
         </p>
         {isOverflowing && (
-          <button onClick={() => setExpanded(!expanded)} className="see-more-btn">
-            {expanded ? t('see less') : t('see more')}
+          <button
+            type="button"
+            onClick={() => setExpanded(!expanded)}
+            className="see-more-btn"
+          >
+            {expanded ? t("see less") : t("see more")}
           </button>
         )}
       </div>
@@ -61,7 +68,11 @@ export default function ExpandableContent<T>({
     return (
       <div
         className="expandable-content list"
-        style={expanded && scrollableOnExpand ? { maxHeight: '200px', overflowY: 'auto' } : {}}
+        style={
+          expanded && scrollableOnExpand
+            ? { maxHeight: "200px", overflowY: "auto" }
+            : {}
+        }
       >
         {visibleItems.map((item, index) => (
           <div key={index} className="list-item">
@@ -69,8 +80,12 @@ export default function ExpandableContent<T>({
           </div>
         ))}
         {items.length > initialCount && (
-          <button onClick={() => setExpanded(!expanded)} className="see-more-btn">
-            {expanded ? t('see less') : t('see more')}
+          <button
+            type="button"
+            onClick={() => setExpanded(!expanded)}
+            className="see-more-btn"
+          >
+            {expanded ? t("see less") : t("see more")}
           </button>
         )}
       </div>

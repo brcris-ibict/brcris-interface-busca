@@ -1,12 +1,17 @@
-import { ResultViewProps } from '@elastic/react-search-ui-views';
+import type { ResultViewProps } from "@elastic/react-search-ui-views";
 
-const CustomResultViewOrganizations = ({ result, onClickLink }: ResultViewProps) => {
+const CustomResultViewOrganizations = ({
+  result,
+  onClickLink,
+}: ResultViewProps) => {
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/organizations/${result.id.raw}`}>
         <h3
           dangerouslySetInnerHTML={{
-            __html: (result.name.snippet || result.name.raw) + (result.acronym?.raw ? ` (${result.acronym?.raw})` : ''),
+            __html:
+              (result.name.snippet || result.name.raw) +
+              (result.acronym?.raw ? ` (${result.acronym?.raw})` : ""),
           }}
         ></h3>
         <div className="result-metadata">

@@ -1,7 +1,10 @@
-import { ResultViewProps } from '@elastic/react-search-ui-views';
-import { Author } from '../../types/Entities';
+import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import type { Author } from "../../types/Entities";
 
-const CustomResultViewSoftwares = ({ result, onClickLink }: ResultViewProps) => {
+const CustomResultViewSoftwares = ({
+  result,
+  onClickLink,
+}: ResultViewProps) => {
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/software/${result.id.raw}`}>
@@ -12,9 +15,15 @@ const CustomResultViewSoftwares = ({ result, onClickLink }: ResultViewProps) => 
         ></h3>
         <div className="result-metadata">
           {result.creator?.raw && (
-            <span>{result.creator?.raw?.map((creator: Author) => <span key={creator.id}>{creator.name}</span>)}</span>
+            <span>
+              {result.creator?.raw?.map((creator: Author) => (
+                <span key={creator.id}>{creator.name}</span>
+              ))}
+            </span>
           )}
-          {result.description?.raw && <span className="limit-text-1-line">{result.description?.raw}</span>}
+          {result.description?.raw && (
+            <span className="limit-text-1-line">{result.description?.raw}</span>
+          )}
           {result.releaseYear?.raw && <span>{result.releaseYear?.raw}</span>}
         </div>
       </a>

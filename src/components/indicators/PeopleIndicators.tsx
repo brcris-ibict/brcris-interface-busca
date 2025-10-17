@@ -1,73 +1,91 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { SearchContext, withSearch } from '@elastic/react-search-ui';
-import { useContext, useEffect } from 'react';
-import { CSVLink } from 'react-csv';
-import styles from '../../styles/Indicators.module.css';
+import { SearchContext, withSearch } from "@elastic/react-search-ui";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { Download } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import { useContext, useEffect } from "react";
+import { Pie } from "react-chartjs-2";
+import { CSVLink } from "react-csv";
+// @ts-expect-error
+import { TagCloud } from "react-tagcloud";
+import {
+  CHART_BACKGROUD_COLORS,
+  CHART_BORDER_COLORS,
+} from "../../../utils/Utils";
+import indicatorProxy from "../../services/IndicatorProxyService";
+import styles from "../../styles/Indicators.module.css";
+import type { CustomSearchQuery, IndicatorType } from "../../types/Entities";
+import type { IndicatorsProps } from "../../types/Propos";
+import IndicatorContext from "../context/CustomContext";
+import { OptionsPie } from "./options/ChartsOptions";
+import { getAggregateQuery } from "./query/Query";
 
-import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
-// @ts-ignore
-import { TagCloud } from 'react-tagcloud';
-import indicatorProxy from '../../services/IndicatorProxyService';
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+);
+const INDEX_NAME = process.env.INDEX_PERSON || "";
 
-import { Download } from 'lucide-react';
-import { useTranslation } from 'next-i18next';
-import { CHART_BACKGROUD_COLORS, CHART_BORDER_COLORS } from '../../../utils/Utils';
-import { CustomSearchQuery, IndicatorType } from '../../types/Entities';
-import { IndicatorsProps } from '../../types/Propos';
-import IndicatorContext from '../context/CustomContext';
-import { OptionsPie } from './options/ChartsOptions';
-import { getAggregateQuery } from './query/Query';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
-const INDEX_NAME = process.env.INDEX_PERSON || '';
-
-export const optionsResearchArea = new OptionsPie('Affiliation');
+export const optionsResearchArea = new OptionsPie("Affiliation");
 
 const headersNacionality = [
-  { label: 'Nacionality', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Nacionality", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 
 const headersResearchArea = [
-  { label: 'Affiliation', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Affiliation", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 
 function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common");
   const { driver } = useContext(SearchContext);
-  const { indicators, setIndicatorsData, isEmpty } = useContext(IndicatorContext);
+  const { indicators, setIndicatorsData, isEmpty } =
+    useContext(IndicatorContext);
 
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
-  // @ts-ignore
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
-    // @ts-ignore
     optionsResearchArea.plugins.title.text = t(optionsResearchArea.title);
     try {
       const queries = [
         JSON.stringify(
           getAggregateQuery({
             size: 10,
-            indicadorName: 'nationality',
+            indicadorName: "nationality",
             searchTerm: resultSearchTerm,
             fields,
             operator,
             filters,
-          })
+          }),
         ),
         JSON.stringify(
           getAggregateQuery({
             size: 10,
-            indicadorName: 'affiliation.name',
+            indicadorName: "affiliation.name",
             searchTerm: resultSearchTerm,
             fields,
             operator,
             filters,
-          })
+          }),
         ),
       ];
       indicatorProxy.search(queries, INDEX_NAME).then((data) => {
@@ -82,13 +100,17 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
   const nationalities: IndicatorType[] = indicators ? indicators[0] : [];
 
   const nationalitiesTagsCloud =
-    nationalities != null ? nationalities.map((d) => ({ value: d.key, count: d.doc_count })) : [];
+    nationalities != null
+      ? nationalities.map((d) => ({ value: d.key, count: d.doc_count }))
+      : [];
 
   const researchArea: IndicatorType[] = indicators ? indicators[1] : [];
 
-  const researchAreaLabels = researchArea != null ? researchArea.map((d) => d.key) : [];
+  const researchAreaLabels =
+    researchArea != null ? researchArea.map((d) => d.key) : [];
 
-  const researchAreaValues = researchArea != null ? researchArea.map((d) => d.doc_count) : [];
+  const researchAreaValues =
+    researchArea != null ? researchArea.map((d) => d.doc_count) : [];
 
   return (
     <div className="indicators" hidden={isEmpty()}>
@@ -98,21 +120,21 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
           className={styles.download}
           title="Export to csv"
           data={researchArea ? researchArea : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersResearchArea}
         >
           <Download />
         </CSVLink>
         <Pie
           /**
-        // @ts-ignore */
+        // @ts-expect-error */
           options={optionsResearchArea}
           data={{
             labels: researchAreaLabels,
             datasets: [
               {
                 data: researchAreaValues,
-                label: '# People',
+                label: "# People",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -122,21 +144,25 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
         />
       </div>
 
-      <div className={styles.chart} hidden={nationalities == null || nationalities.length == 0}>
+      <div
+        className={styles.chart}
+        hidden={nationalities == null || nationalities.length === 0}
+      >
         <p
           style={{
-            display: nationalities && nationalities.length > 0 ? 'block' : 'none',
+            display:
+              nationalities && nationalities.length > 0 ? "block" : "none",
           }}
           className={styles.title}
         >
-          {t('Nationalities')}
+          {t("Nationalities")}
         </p>
         {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
           title="Exportar para csv"
           data={nationalities ? nationalities : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersNacionality}
         >
           <Download />
@@ -145,10 +171,10 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
           minSize={12}
           maxSize={35}
           tags={nationalitiesTagsCloud}
-          // @ts-ignore
+          // @ts-expect-error
           style={{
             width: 300,
-            textAlign: 'center',
+            textAlign: "center",
           }}
           randomSeed={42}
           // onClick={(tag: any) =>
@@ -159,11 +185,7 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
     </div>
   );
 }
-// @ts-ignore
-export default withSearch(
-  // @ts-ignore
-  ({ filters, resultSearchTerm }) => ({
-    filters,
-    resultSearchTerm,
-  })
-)(PeopleIndicators);
+export default withSearch(({ filters, resultSearchTerm }) => ({
+  filters,
+  resultSearchTerm,
+}))(PeopleIndicators);

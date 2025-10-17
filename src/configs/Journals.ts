@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import CustomResultViewJournals from '../components/customResultView/CustomResultViewJournals';
-import DefaultQueryConfig from '../components/DefaultQueryConfig';
-import JornalsIndicators from '../components/indicators/JornalsIndicators';
-import { CustomSearchDriverOptions } from '../types/Entities';
-import { Index, SortOptionsType } from '../types/Propos';
-import indexes from './Indexes';
+import CustomResultViewJournals from "../components/customResultView/CustomResultViewJournals";
+import DefaultQueryConfig from "../components/DefaultQueryConfig";
+import JornalsIndicators from "../components/indicators/JornalsIndicators";
+import type { CustomSearchDriverOptions } from "../types/Entities";
+import type { Index, SortOptionsType } from "../types/Propos";
+import indexes from "./Indexes";
 
-const indexName = process.env.INDEX_JOURNAL || '';
+const indexName = process.env.INDEX_JOURNAL || "";
 
 const config: CustomSearchDriverOptions = {
   ...DefaultQueryConfig(),
   searchQuery: {
     index: indexName,
-    operator: 'OR',
+    operator: "OR",
     search_fields: {
       title_text: {
         weight: 3,
@@ -43,9 +43,9 @@ const config: CustomSearchDriverOptions = {
     disjunctiveFacets: [],
 
     facets: {
-      type: { type: 'value' },
-      'publisher.name': { type: 'value' },
-      'researchArea.name': { type: 'value' },
+      type: { type: "value" },
+      "publisher.name": { type: "value" },
+      "researchArea.name": { type: "value" },
     },
   },
   autocompleteQuery: {
@@ -67,7 +67,7 @@ const config: CustomSearchDriverOptions = {
     },
     suggestions: {
       types: {
-        results: { fields: ['title_completion'] },
+        results: { fields: ["title_completion"] },
       },
       size: 5,
     },
@@ -76,24 +76,24 @@ const config: CustomSearchDriverOptions = {
 
 const sortOptions: SortOptionsType[] = [
   {
-    name: 'Relevance',
+    name: "Relevance",
     value: [],
   },
   {
-    name: 'Title ASC',
+    name: "Title ASC",
     value: [
       {
-        field: 'title',
-        direction: 'asc',
+        field: "title",
+        direction: "asc",
       },
     ],
   },
   {
-    name: 'Title DESC',
+    name: "Title DESC",
     value: [
       {
-        field: 'title',
-        direction: 'desc',
+        field: "title",
+        direction: "desc",
       },
     ],
   },
@@ -103,7 +103,7 @@ const index: Index = {
   config,
   sortOptions,
   name: indexName,
-  label: indexes.find((i) => i.name === indexName)?.label || '',
+  label: indexes.find((i) => i.name === indexName)?.label || "",
   customView: CustomResultViewJournals,
   indicators: JornalsIndicators,
 };

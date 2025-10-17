@@ -1,8 +1,8 @@
-import pino from 'pino';
-import { createFolderIfNotExists } from './createFolderIfNotExists';
+import pino from "pino";
+import { createFolderIfNotExists } from "./createFolderIfNotExists";
 
 const config = {
-  level: 'info',
+  level: "info",
   formatters: {
     level: (label: string) => {
       return { level: label.toUpperCase() };
@@ -14,7 +14,7 @@ const config = {
 createFolderIfNotExists(process.env.LOG_FOLDER_PATH);
 
 const fileTransport = pino.transport({
-  target: 'pino/file',
+  target: "pino/file",
   options: { destination: `${process.env.LOG_FOLDER_PATH}/app.log` },
 });
 

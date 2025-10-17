@@ -46,7 +46,7 @@
   background: #fff;
   border: 1px solid var(--border-color);
   border-radius: 100em;
-  content: '';
+  content: "";
   height: 30px;
   position: absolute;
   width: 52px;
@@ -59,7 +59,7 @@
 .br-switch input + label:after {
   background-color: #ccc;
   border-radius: 50%;
-  content: '';
+  content: "";
   height: 22px;
   position: absolute;
   transition: all 0.3s ease-in-out;

@@ -1,7 +1,10 @@
-import { ResultViewProps } from '@elastic/react-search-ui-views';
-import { Author, Conference, OrgUnit } from '../../types/Entities';
+import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import type { Author, Conference, OrgUnit } from "../../types/Entities";
 
-const CustomResultViewPublications = ({ result, onClickLink }: ResultViewProps) => {
+const CustomResultViewPublications = ({
+  result,
+  onClickLink,
+}: ResultViewProps) => {
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/publications/${result.id.raw}`}>
@@ -12,16 +15,29 @@ const CustomResultViewPublications = ({ result, onClickLink }: ResultViewProps) 
         ></h3>
         <div className="result-metadata">
           {result.author?.raw && (
-            <span>{result.author?.raw?.map((author: Author) => <span key={author.id}>{author.name}</span>)}</span>
+            <span>
+              {result.author?.raw?.map((author: Author) => (
+                <span key={author.id}>{author.name}</span>
+              ))}
+            </span>
           )}
-          {result.journal?.raw.map((journal: any, index: any) => (
-            <span key={index}> {journal.title ? journal.title : journal}</span>
+          {result.journal?.raw.map((journal: any) => (
+            <span key={journal.id}>
+              {" "}
+              {journal.title ? journal.title : journal}
+            </span>
           ))}
           {result.conference?.raw.map((conference: Conference) =>
-            conference.name?.map((name: string) => <span key={name}>{name}</span>)
+            conference.name?.map((name: string) => (
+              <span key={name}>{name}</span>
+            )),
           )}
-          {result.sponsorOrgUnit?.raw.map((org: OrgUnit) => <span key={org.id}>{org.name!}</span>)}
-          {result.publicationDate?.raw && <span>{result.publicationDate?.raw}</span>}
+          {result.sponsorOrgUnit?.raw.map((org: OrgUnit) => (
+            <span key={org.id}>{org.name!}</span>
+          ))}
+          {result.publicationDate?.raw && (
+            <span>{result.publicationDate?.raw}</span>
+          )}
         </div>
       </a>
     </li>

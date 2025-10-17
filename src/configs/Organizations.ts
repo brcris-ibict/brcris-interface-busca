@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import CustomResultViewOrganizations from '../components/customResultView/CustomResultViewOrganizations';
-import DefaultQueryConfig from '../components/DefaultQueryConfig';
-import OrgUnitIndicators from '../components/indicators/OrgUnitIndicators';
-import { CustomSearchDriverOptions } from '../types/Entities';
-import { Index, SortOptionsType } from '../types/Propos';
-import indexes from './Indexes';
+import CustomResultViewOrganizations from "../components/customResultView/CustomResultViewOrganizations";
+import DefaultQueryConfig from "../components/DefaultQueryConfig";
+import OrgUnitIndicators from "../components/indicators/OrgUnitIndicators";
+import type { CustomSearchDriverOptions } from "../types/Entities";
+import type { Index, SortOptionsType } from "../types/Propos";
+import indexes from "./Indexes";
 
-const indexName = process.env.INDEX_ORGUNIT || '';
+const indexName = process.env.INDEX_ORGUNIT || "";
 
 const config: CustomSearchDriverOptions = {
   ...DefaultQueryConfig(),
   searchQuery: {
     index: indexName,
-    operator: 'OR',
+    operator: "OR",
     search_fields: {
       name_text: {
         weight: 3,
@@ -47,9 +47,9 @@ const config: CustomSearchDriverOptions = {
       },
     },
     facets: {
-      country: { type: 'value' },
-      state: { type: 'value', size: 27 },
-      city: { type: 'value' },
+      country: { type: "value" },
+      state: { type: "value", size: 27 },
+      city: { type: "value" },
     },
   },
   autocompleteQuery: {
@@ -71,7 +71,7 @@ const config: CustomSearchDriverOptions = {
     },
     suggestions: {
       types: {
-        results: { fields: ['name_completion'] },
+        results: { fields: ["name_completion"] },
       },
       size: 5,
     },
@@ -80,24 +80,24 @@ const config: CustomSearchDriverOptions = {
 
 const sortOptions: SortOptionsType[] = [
   {
-    name: 'Relevance',
+    name: "Relevance",
     value: [],
   },
   {
-    name: 'Nome ASC',
+    name: "Nome ASC",
     value: [
       {
-        field: 'name',
-        direction: 'asc',
+        field: "name",
+        direction: "asc",
       },
     ],
   },
   {
-    name: 'Nome DESC',
+    name: "Nome DESC",
     value: [
       {
-        field: 'name',
-        direction: 'desc',
+        field: "name",
+        direction: "desc",
       },
     ],
   },
@@ -107,7 +107,7 @@ const index: Index = {
   config,
   sortOptions,
   name: indexName,
-  label: indexes.find((i) => i.name === indexName)?.label || '',
+  label: indexes.find((i) => i.name === indexName)?.label || "",
   customView: CustomResultViewOrganizations,
   indicators: OrgUnitIndicators,
 };

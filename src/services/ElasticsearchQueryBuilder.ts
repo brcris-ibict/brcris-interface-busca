@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { untranslatedFieldsNames } from '../components/SearchSanitization';
+import { untranslatedFieldsNames } from "../components/SearchSanitization";
 
 type BoolType = {
   bool: {
@@ -27,57 +27,65 @@ class ElasticsearchQueryBuilder {
     },
   };
 
-  private readonly ALL_FIELDS = 'all';
+  private readonly ALL_FIELDS = "all";
 
   public format(searchTerm: string, allFields: string[]) {
     if (!searchTerm) {
       return this.queryBase;
     }
-    if (searchTerm.indexOf('(') < 0) {
+    if (searchTerm.indexOf("(") < 0) {
       searchTerm = `(all:${searchTerm})`;
     }
     const input = untranslatedFieldsNames(searchTerm);
-    console.log('input', input);
-    console.log('allFields', allFields);
-    const items = input.split(')');
+    console.log("input", input);
+    console.log("allFields", allFields);
+    const items = input.split(")");
     items.pop();
     for (let index = 0; index < items.length; index++) {
-      const [operator, query] = items[index].split('(');
-      if (index == 0) {
-        const [field, value] = query.split(':');
+      const [operator, query] = items[index].split("(");
+      if (index === 0) {
+        const [field, value] = query.split(":");
         if (field === this.ALL_FIELDS) {
           allFields.forEach((field) => {
-            this.fillQuery('OR', field, value, []);
+            this.fillQuery("OR", field, value, []);
           });
         } else {
-          // @ts-ignore
-          let nextOperator = index + 1 < items.length ? items[index + 1].split('(').shift().trim() : 'AND';
-          if (nextOperator === 'AND NOT') {
-            nextOperator = 'AND';
+          let nextOperator =
+            index + 1 < items.length
+              ? items[index + 1]?.split("(")?.shift()?.trim()
+              : "AND";
+          if (nextOperator === "AND NOT") {
+            nextOperator = "AND";
           }
           this.fillQuery(nextOperator, field, value, []);
         }
       } else {
-        const [field, value] = query.split(':');
+        const [field, value] = query.split(":");
         this.fillQuery(operator, field, value, allFields);
       }
     }
     if (this.queryBase.bool?.should?.length > 0) {
       this.queryBase.bool.minimum_should_match = 1;
     }
-    console.log('this.queryBase', this.queryBase);
+    console.log("this.queryBase", this.queryBase);
     return this.queryBase;
   }
 
-  private fillQuery(operator: string, field: string, value: string, allFields: string[]) {
+  private fillQuery(
+    operator: string,
+    field: string,
+    value: string,
+    allFields: string[],
+  ) {
     this.validQuery(operator, field, value);
-    const match = value.startsWith('"') && value.endsWith('"') ? 'match_phrase' : 'match';
-    if (value === '*') {
+    const match =
+      value.startsWith('"') && value.endsWith('"') ? "match_phrase" : "match";
+    if (value === "*") {
       this.queryBase.bool.must.push({
         match_all: {},
       });
     } else if (field === this.ALL_FIELDS) {
-      if (operator.trim() === 'AND') {
+      if (operator.trim() === "AND") {
         const subQuery: BoolShouldType = {
           bool: {
             should: [],
@@ -86,12 +94,12 @@ class ElasticsearchQueryBuilder {
         allFields.forEach((fieldName) => {
           subQuery.bool.should.push({
             [match]: {
-              [fieldName]: value.replaceAll('"', ''),
+              [fieldName]: value.replaceAll('"', ""),
             },
           });
         });
         this.queryBase.bool.must.push(subQuery);
-      } else if (operator.trim() === 'OR') {
+      } else if (operator.trim() === "OR") {
         allFields.forEach((fieldName) => {
           this.shouldQuery(match, fieldName, value);
         });
@@ -100,11 +108,11 @@ class ElasticsearchQueryBuilder {
           this.mustNotQuery(match, fieldName, value);
         });
       }
-    } else if (operator.trim() === 'AND') {
+    } else if (operator.trim() === "AND") {
       this.mustQuery(match, field, value);
-    } else if (operator.trim() === 'OR') {
+    } else if (operator.trim() === "OR") {
       this.shouldQuery(match, field, value);
-    } else if (operator.trim() === 'AND NOT') {
+    } else if (operator.trim() === "AND NOT") {
       this.mustNotQuery(match, field, value);
     }
   }
@@ -112,7 +120,7 @@ class ElasticsearchQueryBuilder {
   private mustNotQuery(match: string, field: string, value: string) {
     this.queryBase.bool.must_not.push({
       [match]: {
-        [field]: value.replaceAll('"', ''),
+        [field]: value.replaceAll('"', ""),
       },
     });
   }
@@ -120,7 +128,7 @@ class ElasticsearchQueryBuilder {
   private mustQuery(match: string, field: string, value: string) {
     this.queryBase.bool.must.push({
       [match]: {
-        [field]: value.replaceAll('"', ''),
+        [field]: value.replaceAll('"', ""),
       },
     });
   }
@@ -128,14 +136,14 @@ class ElasticsearchQueryBuilder {
   private shouldQuery(match: string, field: string, value: string) {
     this.queryBase.bool.should.push({
       [match]: {
-        [field]: value.replaceAll('"', ''),
+        [field]: value.replaceAll('"', ""),
       },
     });
   }
 
   private validQuery(operator: string, field: string, value: string) {
     if (!operator || !field || !value) {
-      throw Error('Invalid search query');
+      throw Error("Invalid search query");
     }
   }
 }

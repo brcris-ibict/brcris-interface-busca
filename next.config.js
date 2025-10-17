@@ -1,8 +1,8 @@
-const { i18n } = require('./next-i18next.config.js');
+const { i18n } = require("./next-i18next.config.js");
 
 const nextConfig = {
   eslint: {
-    dirs: ['pages'],
+    dirs: ["pages"],
   },
   reactStrictMode: false,
   // swcMinify: false,
@@ -31,17 +31,13 @@ const nextConfig = {
     }
 
     config.plugins.push(
-      new webpack.NormalModuleReplacementPlugin(
-        /^node:/,
-        (resource) => {
-          resource.request = resource.request.replace(/^node:/, '');
-        },
-      ),
+      new webpack.NormalModuleReplacementPlugin(/^node:/, (resource) => {
+        resource.request = resource.request.replace(/^node:/, "");
+      }),
     );
 
     return config;
   },
-
 };
 
 module.exports = nextConfig;

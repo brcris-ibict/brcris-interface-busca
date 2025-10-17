@@ -1,7 +1,12 @@
-import { QueryDslOperator, QueryDslQueryContainer } from '@elastic/elasticsearch/lib/api/types';
-import { Filter, FilterValue } from '@elastic/search-ui';
-import ElasticsearchQueryBuilder from '../../../services/ElasticsearchQueryBuilder';
-import { untranslatedFieldsNames } from '../../SearchSanitization';
+/** biome-ignore-all lint/suspicious/useIterableCallbackReturn: <explanation> */
+import type {
+  QueryDslOperator,
+  QueryDslQueryContainer,
+} from "@elastic/elasticsearch/lib/api/types";
+import type { Filter, FilterValue } from "@elastic/search-ui";
+import ElasticsearchQueryBuilder from "../../../services/ElasticsearchQueryBuilder";
+import { untranslatedFieldsNames } from "../../SearchSanitization";
+
 type QueryProps = {
   size: number;
   indicadorName: string;
@@ -18,10 +23,15 @@ export function getAggregateQuery({
   fields,
   operator,
   filters,
-  order = { _count: 'desc' },
+  order = { _count: "desc" },
 }: QueryProps) {
   try {
-    const query: QueryDslQueryContainer = formatedQuery(searchTerm, fields, operator, filters);
+    const query: QueryDslQueryContainer = formatedQuery(
+      searchTerm,
+      fields,
+      operator,
+      filters,
+    );
     return {
       track_total_hits: true,
       _source: [indicadorName],
@@ -46,20 +56,20 @@ export function formatedQuery(
   searchTerm: string,
   fields: string[],
   operator: QueryDslOperator,
-  filters: Filter[]
+  filters: Filter[],
 ): QueryDslQueryContainer {
   let query: QueryDslQueryContainer = {};
-  if (searchTerm.indexOf('(') >= 0) {
+  if (searchTerm.indexOf("(") >= 0) {
     query = new ElasticsearchQueryBuilder().format(
       untranslatedFieldsNames(searchTerm),
-      fields
+      fields,
     ) as QueryDslQueryContainer;
   } else {
     query = {
       bool: {
         must: {
           query_string: {
-            query: searchTerm || '*',
+            query: searchTerm || "*",
             default_operator: operator,
             fields: searchTerm ? fields : [],
           },
@@ -67,15 +77,16 @@ export function formatedQuery(
       },
     };
   }
-  query.bool!.filter = filters && filters.length > 0 ? getFormatedFilters(filters) : [];
+  query.bool!.filter =
+    filters && filters.length > 0 ? getFormatedFilters(filters) : [];
   return query;
 }
 
 function getFormatedFilters(filters: Filter[]): any {
   const filterFormated: { terms: { [x: string]: FilterValue[] } }[] = [];
   filters.forEach((filter: Filter) => {
-    if (filter.type === 'none') {
-      const matrix = filter.values.map((val: any) => val.split(' - '));
+    if (filter.type === "none") {
+      const matrix = filter.values.map((val: any) => val.split(" - "));
       const values = [].concat(...matrix);
       values.sort();
       const from = values[0];

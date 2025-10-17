@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "prepare": "husky install",
-    "lint": "next lint --fix -d src",
     "dev": "set NODE_TLS_REJECT_UNAUTHORIZED=0 && next dev",
     "start": "PORT=3000 && next start -p $PORT",
     "build": "next build",
@@ -48,6 +47,7 @@
     "swr": "^1.3.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.5",
     "@elastic/react-search-ui": "1.24.2",
     "@elastic/react-search-ui-views": "1.24.2",
     "@elastic/search-ui": "1.24.2",
@@ -62,14 +62,8 @@
     "@types/react-google-recaptcha": "^2.1.5",
     "@types/react-tagcloud": "^1.1.7",
     "@types/vis": "^4.21.24",
-    "@typescript-eslint/eslint-plugin": "^8.16.0",
-    "@typescript-eslint/parser": "^8.16.0",
-    "eslint": "^9.16.0",
-    "eslint-config-next": "^15.0.3",
-    "eslint-config-prettier": "^8.5.0",
     "husky": "^8.0.1",
     "i": "^0.3.7",
-    "lint-staged": "^13.0.3",
     "npm": "^9.5.0",
     "prettier": "^3.4.1",
     "typescript": "^5.7.2"

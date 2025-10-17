@@ -18,7 +18,6 @@
 
 .group {
   border: 1px solid #ccc;
-  border-radius: 4px;
   padding: 0;
   width: 100%;
   margin-right: 8px;
@@ -44,7 +43,6 @@ input.firstInput {
   border: 0 !important;
   outline: 0 !important;
   box-shadow: none;
-  border-left: 1px solid #ccc;
   border-left: none;
 }
 

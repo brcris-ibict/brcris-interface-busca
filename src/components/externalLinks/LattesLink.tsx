@@ -10,9 +10,18 @@ type LattesAuthor = {
  */
 function LattesLink({ lattesId }: LattesAuthor) {
   return (
-    <a target="_blank" className="lattes-link" rel="noreferrer" href={`http://lattes.cnpq.br/${lattesId}`}>
+    <a
+      target="_blank"
+      className="lattes-link"
+      rel="noreferrer"
+      href={`http://lattes.cnpq.br/${lattesId}`}
+    >
       <picture>
-        <img className="lattes-icon" src="/logos/lattes.png" alt="logo do Lattes" />
+        <img
+          className="lattes-icon"
+          src="/logos/lattes.png"
+          alt="logo do Lattes"
+        />
       </picture>
     </a>
   );

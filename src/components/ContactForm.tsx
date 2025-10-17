@@ -1,26 +1,26 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useTranslation } from 'next-i18next';
-import { useRef, useState } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { alertService } from '../services/AlertService';
-import MailService from '../services/MailService';
-import style from '../styles/ContactForm.module.css';
-import Loader from './Loader';
+import { useTranslation } from "next-i18next";
+import { useRef, useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { alertService } from "../services/AlertService";
+import MailService from "../services/MailService";
+import style from "../styles/ContactForm.module.css";
+import Loader from "./Loader";
 
 function ContactForm() {
   /* const router = useRouter() */
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common");
 
   const options = {
     autoClose: true,
     keepAfterRouteChange: false,
   };
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
-  const [captchaCode, setCaptchaCode] = useState('');
+  const [captchaCode, setCaptchaCode] = useState("");
   const recaptchaRef = useRef(null);
 
   const handleSubmit = async (event: any) => {
@@ -40,16 +40,16 @@ function ContactForm() {
       const response = await MailService(JSON.stringify(data));
       setLoading(false);
       if (response.status === 200) {
-        setName('');
-        setEmail('');
-        setMessage('');
-        alertService.success(t('Mail sent success'), options);
+        setName("");
+        setEmail("");
+        setMessage("");
+        alertService.success(t("Mail sent success"), options);
       } else {
-        alertService.error(t('Mail sent error'), options);
+        alertService.error(t("Mail sent error"), options);
       }
     } finally {
-      setCaptchaCode('');
-      // @ts-ignore
+      setCaptchaCode("");
+      // @ts-expect-error
       recaptchaRef.current.reset();
       setLoading(false);
     }
@@ -59,15 +59,11 @@ function ContactForm() {
     setCaptchaCode(value);
   };
 
-  const PUBLIC_RECAPTCHA_SITE_KEY = process.env.PUBLIC_RECAPTCHA_SITE_KEY || '';
+  const PUBLIC_RECAPTCHA_SITE_KEY = process.env.PUBLIC_RECAPTCHA_SITE_KEY || "";
   return (
     <div>
-      {isLoading ? <Loader /> : ''}
+      {isLoading ? <Loader /> : ""}
       <div className={style.contact}>
-        <div className="page-title">
-          <h1 className="text-center">{t('ContactUs')}</h1>
-        </div>
-
         <form
           onSubmit={(event) => {
             handleSubmit(event);
@@ -77,7 +73,7 @@ function ContactForm() {
             <input
               className="form-control search-box"
               type="text"
-              placeholder={`${t('Name')}`}
+              placeholder={`${t("Name")}`}
               required
               value={name}
               onChange={(event) => {
@@ -90,7 +86,7 @@ function ContactForm() {
             <input
               className="form-control search-box"
               type="email"
-              placeholder={`${t('Email')}`}
+              placeholder={`${t("Email")}`}
               required
               value={email}
               onChange={(event) => {
@@ -103,7 +99,7 @@ function ContactForm() {
             <textarea
               className="form-control search-box"
               rows={6}
-              placeholder={`${t('Message')}`}
+              placeholder={`${t("Message")}`}
               required
               value={message}
               onChange={(event) => {
@@ -121,11 +117,18 @@ function ContactForm() {
               onChange={onReCAPTCHAChange}
             />
             <button
-              disabled={!(captchaCode !== '' && name !== '' && email !== '' && message !== '')}
+              disabled={
+                !(
+                  captchaCode !== "" &&
+                  name !== "" &&
+                  email !== "" &&
+                  message !== ""
+                )
+              }
               className="btn btn-primary px-4 py-2"
               type="submit"
             >
-              {t('Submit')}
+              {t("Submit")}
             </button>
           </div>
         </form>

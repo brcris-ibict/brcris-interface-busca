@@ -1,16 +1,16 @@
-import { ErrorBoundary, useSearch } from '@elastic/react-search-ui';
-import { useTranslation } from 'next-i18next';
-import Head from 'next/head';
-import ShowItem from '../customResultView/ShowItem';
-import ExpandableContent from '../ExpandableContent';
-import Loader from '../Loader';
-import PopoverButton from '../PopOver';
-import ChordDiagram from './ChordDiagram';
-import PersonProduction from './PersonProduction';
-import CopyLink from '../CopyLink';
+import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
+import Head from "next/head";
+import { useTranslation } from "next-i18next";
+import CopyLink from "../CopyLink";
+import ShowItem from "../customResultView/ShowItem";
+import ExpandableContent from "../ExpandableContent";
+import Loader from "../Loader";
+import PopoverButton from "../PopOver";
+import ChordDiagram from "./ChordDiagram";
+import PersonProduction from "./PersonProduction";
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common");
 
   return (
     <>
@@ -19,8 +19,8 @@ export default function PublicationDetails() {
         {wasSearched &&
           results &&
           results.length > 0 &&
-          results?.map((result, index) => (
-            <div key={index}>
+          results?.map((result) => (
+            <div key={result.id?.raw}>
               <div className="details-content">
                 <div className="details-main">
                   <Head>
@@ -37,9 +37,15 @@ export default function PublicationDetails() {
                   </div>
                   {result.id?.raw && (
                     <span className="d-flex flex-column flex-sm-row gap-2 mb-1">
-                      <img className="brcris-logo" src="/logos/logo-brcris.png" alt="logo do BrCris" />
+                      <img
+                        className="brcris-logo"
+                        src="/logos/logo-brcris.png"
+                        alt="logo do BrCris"
+                      />
                       {`${location.origin}/people/${result.id.raw}`}
-                      <CopyLink link={`${location.origin}/people/${result.id.raw}`} />
+                      <CopyLink
+                        link={`${location.origin}/people/${result.id.raw}`}
+                      />
                     </span>
                   )}
                   <div className="d-flex flex-column flex-sm-row gap-2 mb-2">
@@ -49,14 +55,26 @@ export default function PublicationDetails() {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <img className="lattes-logo" src="/logos/lattes.png" alt="logo do Lattes" />
+                        <img
+                          className="lattes-logo"
+                          src="/logos/lattes.png"
+                          alt="logo do Lattes"
+                        />
                         Lattes
                       </a>
                     </span>
                     {result.orcid?.raw && (
                       <span>
-                        <a href={`https://orcid.org/${result.orcid?.raw}`} target="_blank" rel="noopener noreferrer">
-                          <img className="orcid-logo" src="/logos/logo_orcid.png" alt="logo do Lattes" />
+                        <a
+                          href={`https://orcid.org/${result.orcid?.raw}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <img
+                            className="orcid-logo"
+                            src="/logos/logo_orcid.png"
+                            alt="logo do Lattes"
+                          />
                           ORCID
                         </a>
                       </span>
@@ -68,12 +86,14 @@ export default function PublicationDetails() {
                     </div>
                     {result.researchArea?.raw?.length > 0 && (
                       <div className="research-fields">
-                        <strong className="research-title">{t('Research field')}</strong>
+                        <strong className="research-title">
+                          {t("Research field")}
+                        </strong>
                         <div className="chips-container">
                           {result.researchArea.raw
                             .filter((area: any) => area?.name)
-                            .map((researchArea: any, index: number) => (
-                              <span key={index} className="chip">
+                            .map((researchArea: any) => (
+                              <span key={researchArea.id} className="chip">
                                 {researchArea.name}
                               </span>
                             ))}
@@ -81,76 +101,126 @@ export default function PublicationDetails() {
                       </div>
                     )}
                     <ul className="sui-result__details">
-                      <ShowItem label={t('Nationality')} value={result.nationality?.raw} />
                       <ShowItem
-                        label={t('Affiliation')}
-                        value={result.affiliation?.raw?.map((orgunit: any, index: any) => (
-                          <span key={index} className="sui-result__value">
-                            <a key={orgunit.id} href={`/organizations/${orgunit?.id}`}>
+                        label={t("Nationality")}
+                        value={result.nationality?.raw}
+                      />
+                      <ShowItem
+                        label={t("Affiliation")}
+                        value={result.affiliation?.raw?.map((orgunit: any) => (
+                          <span key={orgunit.id} className="sui-result__value">
+                            <a
+                              key={orgunit.id}
+                              href={`/organizations/${orgunit?.id}`}
+                            >
                               {orgunit?.name}
                             </a>
                           </span>
                         ))}
                       />
-                      {(result.memberOf?.raw?.length > 0 || result.leaderOf?.raw?.length > 0) && (
+                      {(result.memberOf?.raw?.length > 0 ||
+                        result.leaderOf?.raw?.length > 0) && (
                         <li className="sui-result__item">
-                          <span className="sui-result__key">{t('Research groups')}</span>
+                          <span className="sui-result__key">
+                            {t("Research groups")}
+                          </span>
                           <span className="sui-result__value">
                             {(() => {
                               const groupsMap = new Map<string, any>();
 
-                              (result.memberOf?.raw || []).forEach((item: any) => {
-                                if (item?.id) {
-                                  groupsMap.set(item.id, { ...item, role: 'Member' });
-                                }
-                              });
+                              (result.memberOf?.raw || []).forEach(
+                                (item: any) => {
+                                  if (item?.id) {
+                                    groupsMap.set(item.id, {
+                                      ...item,
+                                      role: "Member",
+                                    });
+                                  }
+                                },
+                              );
 
-                              (result.leaderOf?.raw || []).forEach((item: any) => {
-                                if (item?.id) {
-                                  groupsMap.set(item.id, { ...item, role: 'Leader of' });
-                                }
-                              });
+                              (result.leaderOf?.raw || []).forEach(
+                                (item: any) => {
+                                  if (item?.id) {
+                                    groupsMap.set(item.id, {
+                                      ...item,
+                                      role: "Leader of",
+                                    });
+                                  }
+                                },
+                              );
 
-                              return Array.from(groupsMap.values()).map((item: any, index: number) => (
-                                <span key={index} className="group-item">
-                                  {item.id ? <a href={`/research-groups/${item.id}`}>{item.name}</a> : item.name}
-                                  {` (${t(item.role)})`}
-                                  {index < groupsMap.size - 1 && ', '}
-                                </span>
-                              ));
+                              return Array.from(groupsMap.values()).map(
+                                (item: any, index: number) => (
+                                  <span key={item.id} className="group-item">
+                                    {item.id ? (
+                                      <a href={`/research-groups/${item.id}`}>
+                                        {item.name}
+                                      </a>
+                                    ) : (
+                                      item.name
+                                    )}
+                                    {` (${t(item.role)})`}
+                                    {index < groupsMap.size - 1 && ", "}
+                                  </span>
+                                ),
+                              );
                             })()}
                           </span>
                         </li>
                       )}
                       {result.brcrisId?.raw?.length > 0 && (
                         <li>
-                          <span className="sui-result__key">{t('BrCris identifier')}</span>
+                          <span className="sui-result__key">
+                            {t("BrCris identifier")}
+                          </span>
                           <span>
                             <ExpandableContent
-                              items={Array.isArray(result.brcrisId.raw) ? result.brcrisId.raw : [result.brcrisId.raw]}
+                              items={
+                                Array.isArray(result.brcrisId.raw)
+                                  ? result.brcrisId.raw
+                                  : [result.brcrisId.raw]
+                              }
                               initialCount={5}
-                              renderItem={(id: string, idx: number) => <span key={idx}>{id}</span>}
+                              renderItem={(id: string, idx: number) => (
+                                <span key={idx}>{id}</span>
+                              )}
                             />
                           </span>
                         </li>
                       )}
                       <li>
                         <strong className="research-title">
-                          {t('Publications')} ({result.authorOf?.raw?.length})
+                          {t("Publications")} ({result.authorOf?.raw?.length})
                         </strong>
                         <ExpandableContent
-                          items={result.authorOf?.raw?.slice()?.sort((a: any, b: any) => {
-                            const dateA = new Date(a.publicationDate?.[0] || 0).getTime();
-                            const dateB = new Date(b.publicationDate?.[0] || 0).getTime();
-                            return dateB - dateA;
-                          })}
+                          items={result.authorOf?.raw
+                            ?.slice()
+                            ?.sort((a: any, b: any) => {
+                              const dateA = new Date(
+                                a.publicationDate?.[0] || 0,
+                              ).getTime();
+                              const dateB = new Date(
+                                b.publicationDate?.[0] || 0,
+                              ).getTime();
+                              return dateB - dateA;
+                            })}
                           initialCount={5}
                           renderItem={(publication: any) => (
                             <div className="publication-item">
-                              <a href={`/publications/${publication?.id}`}>{publication?.title}</a>
+                              <a href={`/publications/${publication?.id}`}>
+                                {publication?.title}
+                              </a>
                               <div className="publication-meta">
-                                {publication.publicationDate?.[0] && <span>{publication.publicationDate[0]}</span>}
-                                {publication.type?.[0] && <span className="type"> - {publication.type[0]}</span>}
+                                {publication.publicationDate?.[0] && (
+                                  <span>{publication.publicationDate[0]}</span>
+                                )}
+                                {publication.type?.[0] && (
+                                  <span className="type">
+                                    {" "}
+                                    - {publication.type[0]}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           )}

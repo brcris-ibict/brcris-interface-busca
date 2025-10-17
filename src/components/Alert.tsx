@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
 
-import { alertService, AlertType } from '../services/AlertService';
+import { AlertType, alertService } from "../services/AlertService";
 
 export { Alert };
 
@@ -15,7 +16,7 @@ Alert.propTypes = {
 };
 
 Alert.defaultProps = {
-  id: 'default-alert',
+  id: "default-alert",
   fade: true,
 };
 
@@ -33,16 +34,16 @@ function Alert({ id, fade }: any) {
       if (!alert.message) {
         setAlerts((alerts) => {
           // filter out alerts without 'keepAfterRouteChange' flag
-          // @ts-ignore
+          // @ts-expect-error
           const filteredAlerts = alerts.filter((x) => x.keepAfterRouteChange);
 
           // remove 'keepAfterRouteChange' flag on the rest
-          return omit(filteredAlerts, 'keepAfterRouteChange');
+          return omit(filteredAlerts, "keepAfterRouteChange");
         });
       } else {
         // add alert to array with unique id
         alert.itemId = Math.random();
-        // @ts-ignore
+        // @ts-expect-error
         setAlerts((alerts) => [...alerts, alert]);
 
         // auto close alert if required
@@ -54,7 +55,7 @@ function Alert({ id, fade }: any) {
 
     // clear alerts on location change
     const clearAlerts = () => alertService.clear(id);
-    router.events.on('routeChangeStart', clearAlerts);
+    router.events.on("routeChangeStart", clearAlerts);
 
     // clean up function that runs when the component unmounts
     return () => {
@@ -62,7 +63,7 @@ function Alert({ id, fade }: any) {
 
       // unsubscribe to avoid memory leaks
       subscription.unsubscribe();
-      router.events.off('routeChangeStart', clearAlerts);
+      router.events.off("routeChangeStart", clearAlerts);
     };
   }, []);
 
@@ -79,16 +80,20 @@ function Alert({ id, fade }: any) {
 
     if (fade) {
       // fade out alert
-      setAlerts((alerts: any) => alerts.map((x: any) => (x.itemId === alert.itemId ? { ...x, fade: true } : x)));
+      setAlerts((alerts: any) =>
+        alerts.map((x: any) =>
+          x.itemId === alert.itemId ? { ...x, fade: true } : x,
+        ),
+      );
 
       // remove alert after faded out
       setTimeout(() => {
-        // @ts-ignore
+        // @ts-expect-error
         setAlerts((alerts) => alerts.filter((x) => x.itemId !== alert.itemId));
       }, 250);
     } else {
       // remove alert
-      // @ts-ignore
+      // @ts-expect-error
       setAlerts((alerts) => alerts.filter((x) => x.itemId !== alert.itemId));
     }
   }
@@ -96,22 +101,22 @@ function Alert({ id, fade }: any) {
   function cssClasses(alert: any) {
     if (!alert) return;
 
-    const classes = ['alert', 'alert-dismissible'];
+    const classes = ["alert", "alert-dismissible"];
 
     const alertTypeClass = {
-      [AlertType.Success]: 'alert-success',
-      [AlertType.Error]: 'alert-danger',
-      [AlertType.Info]: 'alert-info',
-      [AlertType.Warning]: 'alert-warning',
+      [AlertType.Success]: "alert-success",
+      [AlertType.Error]: "alert-danger",
+      [AlertType.Info]: "alert-info",
+      [AlertType.Warning]: "alert-warning",
     };
 
     classes.push(alertTypeClass[alert.type]);
 
     if (alert.fade) {
-      classes.push('fade');
+      classes.push("fade");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   if (!alerts.length) return null;
@@ -122,10 +127,15 @@ function Alert({ id, fade }: any) {
 
   return (
     <div className="alert-container">
-      {alerts.map((alert: Alert, index) => (
-        <div key={index} className={cssClasses(alert)}>
+      {alerts.map((alert: Alert) => (
+        <div key={alert.message} className={cssClasses(alert)}>
           <div dangerouslySetInnerHTML={{ __html: alert.message }}></div>
-          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
         </div>
       ))}
     </div>

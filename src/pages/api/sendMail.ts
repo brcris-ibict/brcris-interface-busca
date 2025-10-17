@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
-import logger from '../../services/Logger';
+import nodemailer from "nodemailer";
+import logger from "../../services/Logger";
 
 export type BodyType = {
   recipient: string;
@@ -20,9 +20,9 @@ export async function sendMail({ recipient, subject, text, html }: BodyType) {
     const RECIPIENT = process.env.MAIL_RECIPIENT;
 
     if (!MAILPORT || !MAILHOST || !MAILSENDER || !PASSWORD || !recipient) {
-      logger.error('Variáveis de ambiente faltando ou indefinidas');
-      console.log('Variáveis de ambiente faltando ou indefinidas');
-      throw new Error('Variáveis de ambiente faltando ou indefinidas');
+      logger.error("Variáveis de ambiente faltando ou indefinidas");
+      console.log("Variáveis de ambiente faltando ou indefinidas");
+      throw new Error("Variáveis de ambiente faltando ou indefinidas");
     }
     const transporter = nodemailer.createTransport({
       port: Number(MAILPORT),
@@ -48,7 +48,7 @@ export async function sendMail({ recipient, subject, text, html }: BodyType) {
     };
 
     const mailResponse = await transporter.sendMail(mailData);
-    console.log('Fim do sendMail');
+    console.log("Fim do sendMail");
     return mailResponse;
   } catch (err) {
     logger.error(err);

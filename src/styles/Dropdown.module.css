@@ -1,5 +1,4 @@
 .dropbtn {
-
   border: none;
   cursor: pointer;
 }
@@ -28,7 +27,7 @@
 }
 
 .dropdownContent a:hover {
-  background-color: #eee
+  background-color: #eee;
 }
 
 .dropdown:hover .dropdownContent {

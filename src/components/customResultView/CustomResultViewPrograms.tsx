@@ -1,5 +1,5 @@
-import { ResultViewProps } from '@elastic/react-search-ui-views';
-import { OrgUnit, ResearchArea } from '../../types/Entities';
+import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import type { OrgUnit, ResearchArea } from "../../types/Entities";
 
 const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
   return (
@@ -11,9 +11,13 @@ const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
           }}
         ></h3>
         <div className="result-metadata">
-          {result.orgUnit?.raw.map((org: OrgUnit) => <span key={org.id}>{org.name!}</span>)}
+          {result.orgUnit?.raw.map((org: OrgUnit) => (
+            <span key={org.id}>{org.name!}</span>
+          ))}
           {result.researchArea?.raw.map((researchArea: ResearchArea) =>
-            researchArea.name?.map((name: string) => <span key={name}>{name}</span>)
+            researchArea.name?.map((name: string) => (
+              <span key={name}>{name}</span>
+            )),
           )}
         </div>
       </a>

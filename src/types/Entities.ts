@@ -1,5 +1,9 @@
-import type { SearchDriverOptions, SearchFieldConfiguration, SearchQuery } from '@elastic/search-ui';
-import { QueryDslOperator } from 'es7/api/types';
+import type {
+  SearchDriverOptions,
+  SearchFieldConfiguration,
+  SearchQuery,
+} from "@elastic/search-ui";
+import type { QueryDslOperator } from "es7/api/types";
 export type Author = {
   id: string;
   name?: string;

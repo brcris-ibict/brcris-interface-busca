@@ -3,7 +3,7 @@ class APIConnector {
 
   // optional. Called when a result has been clicked
   onResultClick() {
-    console.log('onResultClicked');
+    console.log("onResultClicked");
   }
 
   // optional. Called when an autocomplete result has been clicked
@@ -64,10 +64,10 @@ class APIConnector {
     //   return cachedData;
     // }
 
-    console.log('Fetching fresh data');
-    const response = await fetch('/api/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    console.log("Fetching fresh data");
+    const response = await fetch("/api/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ requestState, queryConfig }),
     });
     const data = await response.json();
@@ -78,9 +78,9 @@ class APIConnector {
 
   async onAutocomplete(requestState: any, queryConfig: any) {
     queryConfig.index = queryConfig.results.index;
-    const response = await fetch('/api/autocomplete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/autocomplete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ requestState, queryConfig }),
     });
     return response.json();

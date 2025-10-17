@@ -1,21 +1,23 @@
-import { useTranslation } from 'next-i18next';
-import { PropsWithChildren, useState } from 'react';
+import { useTranslation } from "next-i18next";
+import { type PropsWithChildren, useState } from "react";
 
 interface CollapseProps extends PropsWithChildren {
   id: string;
 }
 
 function getSanitizedId(id: string) {
-  const cleanId = id.replaceAll('-', '');
-  return 'a' + cleanId;
+  const cleanId = id.replaceAll("-", "");
+  return "a" + cleanId;
 }
 
 const ReadMoreCollapse = ({ children, id }: CollapseProps) => {
-  const { t } = useTranslation('common');
-  const [buttonReadText, setButtonReadText] = useState('Read more...');
+  const { t } = useTranslation("common");
+  const [buttonReadText, setButtonReadText] = useState("Read more...");
 
   function handleClick() {
-    setButtonReadText(buttonReadText == 'Read more...' ? 'Read less' : 'Read more...');
+    setButtonReadText(
+      buttonReadText === "Read more..." ? "Read less" : "Read more...",
+    );
   }
   const sanitizedId = getSanitizedId(id);
   return (

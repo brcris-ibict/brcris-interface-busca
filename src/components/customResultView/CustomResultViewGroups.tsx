@@ -1,5 +1,5 @@
-import { ResultViewProps } from '@elastic/react-search-ui-views';
-import { Author, OrgUnit } from '../../types/Entities';
+import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import type { Author, OrgUnit } from "../../types/Entities";
 
 const CustomResultViewGroups = ({ result, onClickLink }: ResultViewProps) => {
   return (
@@ -21,7 +21,11 @@ const CustomResultViewGroups = ({ result, onClickLink }: ResultViewProps) => {
           {result.leaderOrgUnit?.raw.map((leaderOrgUnit: OrgUnit) => (
             <span key={leaderOrgUnit.id}>{leaderOrgUnit.name!}</span>
           ))}
-          {result.researchLine?.raw && <span className="limit-text-1-line ">{result.researchLine?.raw}</span>}
+          {result.researchLine?.raw && (
+            <span className="limit-text-1-line ">
+              {result.researchLine?.raw}
+            </span>
+          )}
         </div>
       </a>
     </li>
