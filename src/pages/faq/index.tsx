@@ -2,7 +2,7 @@ import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
@@ -19,29 +19,25 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
 export default function FaqPage() {
   const { t } = useTranslation("faq");
 
+  const [expanded, setExpanded] = useState(false);
+
   useEffect(() => {
     const yearEl = document.getElementById("year");
     if (yearEl) yearEl.textContent = new Date().getFullYear().toString();
+  }, []);
 
-    const expandBtn = document.getElementById("btnExpandAll");
-    const collapseBtn = document.getElementById("btnCollapseAll");
-
-    expandBtn?.addEventListener("click", () => {
+  const handleToggle = () => {
+    if (!expanded) {
       document
         .querySelectorAll(".accordion-button.collapsed")
-        .forEach((btn) => {
-          (btn as HTMLElement).click();
-        });
-    });
-
-    collapseBtn?.addEventListener("click", () => {
+        .forEach((btn) => (btn as HTMLElement).click());
+    } else {
       document
         .querySelectorAll(".accordion-button:not(.collapsed)")
-        .forEach((btn) => {
-          (btn as HTMLElement).click();
-        });
-    });
-  }, []);
+        .forEach((btn) => (btn as HTMLElement).click());
+    }
+    setExpanded(!expanded);
+  };
 
   return (
     <>
@@ -49,30 +45,25 @@ export default function FaqPage() {
         <title>{t("FAQ BrCris")}</title>
       </Head>
 
-      <header className="bg-light border-bottom">
-        <div className="container py-3 d-flex flex-wrap align-items-center justify-content-between">
-          <h1 className="h3 m-0">{t("FAQ BrCris")}</h1>
-          <div className="d-flex flex-wrap gap-2">
-            <button
-              type="button"
-              id="btnExpandAll"
-              className="btn btn-outline-primary btn-sm"
-            >
-              {t("Expand all")}
-            </button>
-            <button
-              type="button"
-              id="btnCollapseAll"
-              className="btn btn-outline-secondary btn-sm"
-            >
-              {t("Collapse all")}
-            </button>
+     <header>
+        <div className="container py-3 d-flex align-items-center justify-content-between flex-wrap">
+          <div className="flex-grow-1 text-center">
+            <h1 className="h3 m-0">{t("FAQ BrCris")}</h1>
           </div>
-        </div>
+          <div>
+              <button
+                type="button"
+                id="btnToggle"
+                onClick={handleToggle}
+                className="btn btn-outline-secondary btn-sm"
+              >
+                {expanded ? t("Collapse all") : t("Expand all")}
+              </button>
+            </div>
+          </div>
       </header>
-
-      <main className="container my-4">
-        <h2 id="sobre" className="h4">
+      <main className="container">
+        <h2 id="about" className="h4">
           1. {t("About BrCris")}
         </h2>
         <div className="accordion mb-4" id="faq-sobre">
@@ -177,7 +168,7 @@ export default function FaqPage() {
           </div>
         </div>
 
-        <h2 id="materiais" className="h4 mt-4">
+        <h2 id="materials" className="h4 mt-4">
           2. {t("Materials and Content")}
         </h2>
         <div className="accordion mb-4" id="faq-materiais">
@@ -265,7 +256,7 @@ export default function FaqPage() {
           </div>
         </div>
 
-        <h2 id="problemas" className="h4 mt-4">
+        <h2 id="problems" className="h4 mt-4">
           3. {t("Technical Issues")}
         </h2>
         <div className="accordion mb-4" id="faq-problemas">
@@ -332,7 +323,7 @@ export default function FaqPage() {
           </div>
         </div>
 
-        <h2 id="suporte" className="h4 mt-4">
+        <h2 id="support" className="h4 mt-4">
           4. {t("Support and Contact")}
         </h2>
         <div className="accordion mb-4" id="faq-suporte">
@@ -391,7 +382,7 @@ export default function FaqPage() {
           </div>
         </div>
 
-        <h2 id="privacidade" className="h4 mt-4">
+        <h2 id="privacy" className="h4 mt-4">
           5. {t("Privacy Policy")}
         </h2>
         <div className="accordion mb-4" id="faq-privacidade">
