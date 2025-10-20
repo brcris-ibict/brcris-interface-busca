@@ -41,7 +41,11 @@ function Footer() {
       </div>
       <div className="footer">
         <picture>
-          <img src="/logos/footer-logo.png" className="logo-rodape" alt="imagem com logo do ibict, minc e gov.br" />
+          <img
+            src="/logos/Logo_MCTI_COR_RGB_Positivo.png"
+            className="logo-rodape"
+            alt="imagem com logo do ibict, minc e gov.br"
+          />
         </picture>
         <p className="footer-adress">
           Instituto Brasileiro de Informação em Ciência e Tecnologia (Ibict)
