@@ -17,6 +17,7 @@ const nextConfig = {
     INDEX_PATENT: process.env.INDEX_PATENT,
     INDEX_GROUP: process.env.INDEX_GROUP,
     INDEX_SOFTWARE: process.env.INDEX_SOFTWARE,
+    INDEX_COURSE: process.env.INDEX_COURSE,
     BRCRIS_HOST_BASE: process.env.BRCRIS_HOST_BASE,
   },
   i18n,

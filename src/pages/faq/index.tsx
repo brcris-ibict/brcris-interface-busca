@@ -22,22 +22,26 @@ export default function FaqPage() {
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
-    const yearEl = document.getElementById("year");
-    if (yearEl) yearEl.textContent = new Date().getFullYear().toString();
-  }, []);
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear().toString();
+}, []);
 
-  const handleToggle = () => {
-    if (!expanded) {
-      document
-        .querySelectorAll(".accordion-button.collapsed")
-        .forEach((btn) => (btn as HTMLElement).click());
-    } else {
-      document
-        .querySelectorAll(".accordion-button:not(.collapsed)")
-        .forEach((btn) => (btn as HTMLElement).click());
-    }
-    setExpanded(!expanded);
-  };
+const handleToggle = () => {
+  if (!expanded) {
+    document
+      .querySelectorAll(".accordion-button.collapsed")
+      .forEach((btn) => {
+        (btn as HTMLElement).click();
+      });
+  } else {
+    document
+      .querySelectorAll(".accordion-button:not(.collapsed)")
+      .forEach((btn) => {
+        (btn as HTMLElement).click();
+      });
+  }
+  setExpanded(!expanded);
+};
 
   return (
     <>

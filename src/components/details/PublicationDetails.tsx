@@ -50,7 +50,7 @@ export default function PublicationDetails() {
                       <span>
                         {result.orgunit?.raw.map((org: OrgUnit) => (
                           <a key={org.id} href={`/organizations/${org.id}`}>
-                            {org.name!}
+                            {org?.name}
                           </a>
                         ))}
 
