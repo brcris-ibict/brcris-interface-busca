@@ -21,8 +21,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   },
 });
 
-const indexName = process.env.INDEX_COURSE || ""
-console.log("idex",indexName)
+const indexName = process.env.INDEX_COURSE || "";
 
 const routingOptions = {
   readUrl: () => "",
@@ -61,10 +60,10 @@ export default function CourseDetailsPage() {
         startDate: { raw: {} },
         endDate: { raw: {} },
         program: { raw: [] },
-        publication: { raw: []},
+        publication: { raw: [] },
         orgUnit: { raw: [] },
         brcrisId: { raw: {} },
-        capesId: {raw: {} },
+        capesId: { raw: {} },
       },
     },
   };

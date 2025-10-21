@@ -2,7 +2,7 @@ import type { GetServerSideProps } from "next";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
@@ -22,26 +22,26 @@ export default function FaqPage() {
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
-  const yearEl = document.getElementById("year");
-  if (yearEl) yearEl.textContent = new Date().getFullYear().toString();
-}, []);
+    const yearEl = document.getElementById("year");
+    if (yearEl) yearEl.textContent = new Date().getFullYear().toString();
+  }, []);
 
-const handleToggle = () => {
-  if (!expanded) {
-    document
-      .querySelectorAll(".accordion-button.collapsed")
-      .forEach((btn) => {
-        (btn as HTMLElement).click();
-      });
-  } else {
-    document
-      .querySelectorAll(".accordion-button:not(.collapsed)")
-      .forEach((btn) => {
-        (btn as HTMLElement).click();
-      });
-  }
-  setExpanded(!expanded);
-};
+  const handleToggle = () => {
+    if (!expanded) {
+      document
+        .querySelectorAll(".accordion-button.collapsed")
+        .forEach((btn) => {
+          (btn as HTMLElement).click();
+        });
+    } else {
+      document
+        .querySelectorAll(".accordion-button:not(.collapsed)")
+        .forEach((btn) => {
+          (btn as HTMLElement).click();
+        });
+    }
+    setExpanded(!expanded);
+  };
 
   return (
     <>
@@ -49,22 +49,22 @@ const handleToggle = () => {
         <title>{t("FAQ BrCris")}</title>
       </Head>
 
-     <header>
+      <header>
         <div className="container py-3 d-flex align-items-center justify-content-between flex-wrap">
           <div className="flex-grow-1 text-center">
             <h1 className="h3 m-0">{t("FAQ BrCris")}</h1>
           </div>
           <div>
-              <button
-                type="button"
-                id="btnToggle"
-                onClick={handleToggle}
-                className="btn btn-outline-secondary btn-sm"
-              >
-                {expanded ? t("Collapse all") : t("Expand all")}
-              </button>
-            </div>
+            <button
+              type="button"
+              id="btnToggle"
+              onClick={handleToggle}
+              className="btn btn-outline-secondary btn-sm"
+            >
+              {expanded ? t("Collapse all") : t("Expand all")}
+            </button>
           </div>
+        </div>
       </header>
       <main className="container">
         <h2 id="about" className="h4">

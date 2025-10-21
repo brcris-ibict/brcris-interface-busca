@@ -141,11 +141,10 @@ function CoursesIndicators({
   }, [filters, resultSearchTerm, isLoading]);
 
   // Extração de dados
- const degreeIndicators: IndicatorType[] = indicators?.[0] ?? [];
-const typeIndicators: IndicatorType[] = indicators?.[1] ?? [];
-const startYearIndicators: IndicatorType[] = indicators?.[2] ?? [];
-const endYearIndicators: IndicatorType[] = indicators?.[3] ?? [];
-
+  const degreeIndicators: IndicatorType[] = indicators?.[0] ?? [];
+  const typeIndicators: IndicatorType[] = indicators?.[1] ?? [];
+  const startYearIndicators: IndicatorType[] = indicators?.[2] ?? [];
+  const endYearIndicators: IndicatorType[] = indicators?.[3] ?? [];
 
   const degreeLabels = degreeIndicators.map((d) => d.key);
   const degreeCount = degreeIndicators.map((d) => d.doc_count);

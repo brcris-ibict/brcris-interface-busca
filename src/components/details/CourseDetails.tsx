@@ -34,10 +34,7 @@ export default function CourseDetails() {
                     label={t("Start date")}
                     value={result.startDate?.raw}
                   />
-                  <ShowItem
-                    label={t("End date")}
-                    value={result.endDate?.raw}
-                  />
+                  <ShowItem label={t("End date")} value={result.endDate?.raw} />
 
                   {result.program && result.program.raw?.length > 0 && (
                     <li>
@@ -86,58 +83,58 @@ export default function CourseDetails() {
                       </span>
                     </li>
                   )}
-                   {result.publication?.raw?.length > 0 && (
+                  {result.publication?.raw?.length > 0 && (
                     <li>
-                    <span className="sui-result__key">
+                      <span className="sui-result__key">
                         {t("Publications")}
-                    </span>
-                    <ExpandableContent
+                      </span>
+                      <ExpandableContent
                         items={result.publication?.raw}
                         initialCount={5}
                         renderItem={(publication: any) => (
-                        <div className="publication-item">
+                          <div className="publication-item">
                             <a href={`/publications/${publication?.id}`}>
-                            {publication?.title}
+                              {publication?.title}
                             </a>
-                        </div>
+                          </div>
                         )}
-                    />
+                      />
                     </li>
-                )}
-                 {result.brcrisId?.raw?.length > 0 && (
+                  )}
+                  {result.brcrisId?.raw?.length > 0 && (
                     <li>
-                    <span className="sui-result__key">
+                      <span className="sui-result__key">
                         {t("BrCris identifier")}
-                    </span>
-                    <span>
+                      </span>
+                      <span>
                         <ExpandableContent
-                        items={
+                          items={
                             Array.isArray(result.brcrisId.raw)
-                            ? result.brcrisId.raw
-                            : [result.brcrisId.raw]
-                        }
-                        initialCount={5}
-                        renderItem={(id: string, idx: number) => (
+                              ? result.brcrisId.raw
+                              : [result.brcrisId.raw]
+                          }
+                          initialCount={5}
+                          renderItem={(id: string, idx: number) => (
                             <span key={idx}>{id}</span>
-                        )}
+                          )}
                         />
-                    </span>
+                      </span>
                     </li>
-                    )}
-                     {result.capesId?.raw?.length > 0 && (
-                        <li>
-                            <span className="identifier-key">
-                            {t("Capes identifier")}:
-                            </span>
-                            <span>
-                            <ExpandableContent
-                                items={result.capesId.raw}
-                                initialCount={5}
-                                renderItem={(item: string) => <>{item}</>}
-                            />
-                            </span>
-                        </li>
-                        )}
+                  )}
+                  {result.capesId?.raw?.length > 0 && (
+                    <li>
+                      <span className="identifier-key">
+                        {t("Capes identifier")}:
+                      </span>
+                      <span>
+                        <ExpandableContent
+                          items={result.capesId.raw}
+                          initialCount={5}
+                          renderItem={(item: string) => <>{item}</>}
+                        />
+                      </span>
+                    </li>
+                  )}
                 </ul>
               </div>
             </div>

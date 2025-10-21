@@ -8,7 +8,8 @@
     "start": "PORT=3000 && next start -p $PORT",
     "build": "next build",
     "postbuild": "next-sitemap",
-    "deploy": "yarn && yarn build && pm2 start yarn --name 'brcris-nextjs' --interpreter bash -- start"
+    "deploy": "yarn && yarn build && pm2 start yarn --name 'brcris-nextjs' --interpreter bash -- start",
+    "lint": "biome check ."
   },
   "dependencies": {
     "@json2csv/plainjs": "^7.0.6",

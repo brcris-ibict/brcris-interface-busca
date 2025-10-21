@@ -40,21 +40,21 @@ const CustomResultViewCourses = ({ result, onClickLink }: ResultViewProps) => {
           )}
 
           {result.orgUnit?.raw && result.orgUnit.raw.length > 0 && (
-          <div className="sui-result__item">
-            <span className="sui-result__key">
-              {t("Organizational Unit")}:
-            </span>{" "}
-            <span className="sui-result__value">
-              {result.orgUnit.raw
-                .map((o: { name: string }) => o.name)
-                .join(", ")}
-            </span>
-          </div>
-        )}
-          </div>
-              </a>
-            </li>
-          );
-        };
+            <div className="sui-result__item">
+              <span className="sui-result__key">
+                {t("Organizational Unit")}:
+              </span>{" "}
+              <span className="sui-result__value">
+                {result.orgUnit.raw
+                  .map((o: { name: string }) => o.name)
+                  .join(", ")}
+              </span>
+            </div>
+          )}
+        </div>
+      </a>
+    </li>
+  );
+};
 
 export default CustomResultViewCourses;

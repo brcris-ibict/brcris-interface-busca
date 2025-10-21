@@ -125,7 +125,7 @@ const sortOptions: SortOptionsType[] = [
       },
     ],
   },
-]
+];
 
 const index: Index = {
   config,

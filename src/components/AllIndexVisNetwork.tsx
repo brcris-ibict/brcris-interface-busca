@@ -248,11 +248,8 @@ function VisGraph() {
         nodes[i].title = `${numberFormat.format(indexStat["docs.count"])} `;
         // nodes[i].widthConstraint = getSizeOfNode(maxSizeOfNode, indexStat['docs.count']);
       }
-      // @ts-expect-error
       nodes[i].label = t(nodes[i].indexLabel);
-      // @ts-expect-error
       if (!nodes[i].title?.includes(nodes[i].label)) {
-        // @ts-expect-error
         nodes[i].title += nodes[i].label;
       }
       newNodes.push({ ...nodes[i] });
