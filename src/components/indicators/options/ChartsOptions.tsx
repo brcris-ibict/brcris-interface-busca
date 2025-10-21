@@ -3,12 +3,12 @@ export class OptionsPie {
   responsive = true;
   plugins = {
     legend: {
-      position: 'bottom',
+      position: "bottom",
       display: true,
     },
     title: {
       display: true,
-      text: '', // 'Research groups by Research line',
+      text: "", // 'Research groups by Research line',
     },
   };
   constructor(title: string) {
@@ -22,17 +22,17 @@ export class OptionsBar {
   responsive = true;
   aspectRatio = 1;
   parsing = {
-    xAxisKey: 'key',
-    yAxisKey: 'doc_count',
+    xAxisKey: "key",
+    yAxisKey: "doc_count",
   };
   plugins = {
     legend: {
-      position: 'bottom',
+      position: "bottom",
       display: false,
     },
     title: {
       display: true,
-      text: '',
+      text: "",
     },
   };
   scales = {

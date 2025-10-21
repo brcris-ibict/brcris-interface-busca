@@ -1,112 +1,140 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { SearchContext, withSearch } from '@elastic/react-search-ui';
-import { useTranslation } from 'next-i18next';
-import { useContext, useEffect } from 'react';
-import { CSVLink } from 'react-csv';
-import { IoCloudDownloadOutline } from 'react-icons/io5';
-import styles from '../../styles/Indicators.module.css';
+import { SearchContext, withSearch } from "@elastic/react-search-ui";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { Download } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import { useContext, useEffect } from "react";
+import { Bar, Pie } from "react-chartjs-2";
+import { CSVLink } from "react-csv";
+import {
+  CHART_BACKGROUD_COLORS,
+  CHART_BORDER_COLORS,
+} from "../../../utils/Utils";
+import indicatorProxyService from "../../services/IndicatorProxyService";
+import styles from "../../styles/Indicators.module.css";
+import type { CustomSearchQuery, IndicatorType } from "../../types/Entities";
+import type { IndicatorsProps } from "../../types/Propos";
+import IndicatorContext from "../context/CustomContext";
+import PopoverButton from "../PopOver";
+import { OptionsBar, OptionsPie } from "./options/ChartsOptions";
+import { getAggregateQuery } from "./query/Query";
 
-import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { Bar, Pie } from 'react-chartjs-2';
-import { CHART_BACKGROUD_COLORS, CHART_BORDER_COLORS } from '../../../utils/Utils';
-import indicatorProxyService from '../../services/IndicatorProxyService';
-import { CustomSearchQuery, IndicatorType } from '../../types/Entities';
-import { IndicatorsProps } from '../../types/Propos';
-import IndicatorContext from '../context/CustomContext';
-import { OptionsBar, OptionsPie } from './options/ChartsOptions';
-import { getAggregateQuery } from './query/Query';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
-const INDEX_NAME = process.env.INDEX_PUBLICATION || '';
-export const options = new OptionsBar('Documents by year');
-export const optionsType = new OptionsPie('Documents by type');
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+);
+const INDEX_NAME = process.env.INDEX_PUBLICATION || "";
+export const options = new OptionsBar("Publicatons by year");
+export const optionsType = new OptionsPie("Publicatons by type");
 
 const headersPublicationsByYear = [
-  { label: 'Year', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Year", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 
 const headersType = [
-  { label: 'Type', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Type", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 
-function PublicationsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) {
-  const { t } = useTranslation('common');
+function PublicationsIndicators({
+  filters,
+  resultSearchTerm,
+  isLoading,
+}: IndicatorsProps) {
+  const { t } = useTranslation("common");
 
   const { driver } = useContext(SearchContext);
-  const { indicators, setIndicatorsData, isEmpty } = useContext(IndicatorContext);
+  const { indicators, setIndicatorsData, isEmpty } =
+    useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
-  // @ts-ignore
+  // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
     // tradução
-    // @ts-ignore
     options.plugins.title.text = t(options.title);
-    // @ts-ignore
     optionsType.plugins.title.text = t(optionsType.title);
+    console.log("resultSearchTerm", resultSearchTerm, isLoading);
+    if (!resultSearchTerm) return;
     try {
       const pdQuery = JSON.stringify(
         getAggregateQuery({
           size: 10,
-          indicadorName: 'publicationDate',
-          searchTerm,
+          indicadorName: "publicationDate",
+          searchTerm: resultSearchTerm,
           fields,
           operator,
           filters,
-          order: { _key: 'desc' },
-        })
+          order: { _key: "desc" },
+        }),
       );
       const typeQuery = JSON.stringify(
         getAggregateQuery({
           size: 10,
-          indicadorName: 'type',
-          searchTerm,
+          indicadorName: "type",
+          searchTerm: resultSearchTerm,
           fields,
           operator,
           filters,
-        })
+        }),
       );
-      if (isLoading) {
-        indicatorProxyService.search([pdQuery, typeQuery], INDEX_NAME).then((data) => {
+      indicatorProxyService
+        .search([pdQuery, typeQuery], INDEX_NAME)
+        .then((data) => {
           setIndicatorsData(data);
         });
-      } else {
-        const data = indicatorProxyService.searchFromCacheOnly([pdQuery, typeQuery], INDEX_NAME);
-        if (data) setIndicatorsData(data);
-      }
     } catch (err) {
       console.error(err);
       setIndicatorsData([]);
     }
-  }, [filters, searchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading]);
 
   const yearIndicators: IndicatorType[] = indicators ? indicators[0] : [];
-  const yearLabels = yearIndicators != null ? yearIndicators.map((d) => d.key) : [];
+  const yearLabels =
+    yearIndicators != null ? yearIndicators.map((d) => d.key) : [];
   const typeIndicators: IndicatorType[] = indicators ? indicators[1] : [];
-  const typeLabels = typeIndicators != null ? typeIndicators.map((d) => d.key) : [];
-  const typeDoc_count = typeIndicators != null ? typeIndicators.map((d) => d.doc_count) : [];
+  const typeLabels =
+    typeIndicators != null ? typeIndicators.map((d) => d.key) : [];
+  const typeDoc_count =
+    typeIndicators != null ? typeIndicators.map((d) => d.doc_count) : [];
 
-  yearIndicators && yearIndicators.sort((a, b) => Number(a.key) - Number(b.key));
+  yearIndicators &&
+    yearIndicators.sort((a, b) => Number(a.key) - Number(b.key));
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
+      <PopoverButton />
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
           title="Export to csv"
           data={yearIndicators ? yearIndicators : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersPublicationsByYear}
         >
-          <IoCloudDownloadOutline />
+          <Download />
         </CSVLink>
         <Bar
           /**
-      // @ts-ignore */
+      // @ts-expect-error */
           options={options}
           width="500"
           data={{
@@ -114,7 +142,7 @@ function PublicationsIndicators({ filters, searchTerm, isLoading }: IndicatorsPr
             datasets: [
               {
                 data: yearIndicators,
-                label: 'Articles per Year',
+                label: "Articles per Year",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -128,16 +156,16 @@ function PublicationsIndicators({ filters, searchTerm, isLoading }: IndicatorsPr
         {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
-          title={t('Export to csv') || ''}
+          title={t("Export to csv") || ""}
           data={typeIndicators ? typeIndicators : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersType}
         >
-          <IoCloudDownloadOutline />
+          <Download />
         </CSVLink>
         <Pie
           /**
-      // @ts-ignore */
+      // @ts-expect-error */
           options={optionsType}
           width="500"
           data={{
@@ -145,7 +173,7 @@ function PublicationsIndicators({ filters, searchTerm, isLoading }: IndicatorsPr
             datasets: [
               {
                 data: typeDoc_count,
-                label: '# of Votes',
+                label: "# of Votes",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -157,11 +185,8 @@ function PublicationsIndicators({ filters, searchTerm, isLoading }: IndicatorsPr
     </div>
   );
 }
-export default withSearch(
-  // @ts-ignore
-  ({ filters, searchTerm, isLoading }) => ({
-    filters,
-    searchTerm,
-    isLoading,
-  })
-)(PublicationsIndicators);
+export default withSearch(({ filters, resultSearchTerm, isLoading }) => ({
+  filters,
+  resultSearchTerm,
+  isLoading,
+}))(PublicationsIndicators);

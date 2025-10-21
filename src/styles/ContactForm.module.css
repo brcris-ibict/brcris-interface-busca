@@ -1,5 +1,4 @@
-.contact{
-  background-color: #fff !important;
+.contact {
   color: var(--dark-color);
 }
 .contactUs {
@@ -7,7 +6,7 @@
   justify-content: center;
 }
 
-.contactUs h5{
+.contactUs h5 {
   border-bottom: 2px solid #960080;
   padding-bottom: 0.5rem;
 }

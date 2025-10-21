@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import type { SearchDriverOptions } from '@elastic/search-ui'
+import type { SearchDriverOptions } from "@elastic/search-ui";
 
 type OperatorSelectProps = {
-  config: SearchDriverOptions
-}
+  config: SearchDriverOptions;
+};
 
 export default function OperatorSelect({ config }: OperatorSelectProps) {
   return (
@@ -14,13 +14,13 @@ export default function OperatorSelect({ config }: OperatorSelectProps) {
       <select
         id="operator"
         onChange={(e) => {
-          // @ts-ignore
-          config.searchQuery.operator = e.target.value
+          // @ts-expect-error
+          config.searchQuery.operator = e.target.value;
         }}
       >
         <option value="AND">AND</option>
         <option value="OR">OR</option>
       </select>
     </div>
-  )
+  );
 }

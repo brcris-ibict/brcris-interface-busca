@@ -1,29 +1,45 @@
-import { ResultViewProps } from '@elastic/react-search-ui-views';
-import { useTranslation } from 'next-i18next';
-import ShowAuthorItem from './ShowAuthorItem';
-import ShowItem from './ShowItem';
+import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import type { Author, Conference, OrgUnit } from "../../types/Entities";
 
-const CustomResultViewPublications = ({ result, onClickLink }: ResultViewProps) => {
-  const { t } = useTranslation('common');
+const CustomResultViewPublications = ({
+  result,
+  onClickLink,
+}: ResultViewProps) => {
   return (
     <li className="sui-result">
-      <div>
-        <div className="sui-result__header">
-          <h6>
-            <a onClick={onClickLink} href={`/publications/${result.id.raw}`}>
-              {result.title?.raw}
-            </a>
-          </h6>
+      <a onClick={onClickLink} href={`/publications/${result.id.raw}`}>
+        <h3
+          dangerouslySetInnerHTML={{
+            __html: result.title?.snippet || result.title.raw,
+          }}
+        ></h3>
+        <div className="result-metadata">
+          {result.author?.raw && (
+            <span>
+              {result.author?.raw?.map((author: Author) => (
+                <span key={author.id}>{author.name}</span>
+              ))}
+            </span>
+          )}
+          {result.journal?.raw.map((journal: any) => (
+            <span key={journal.id}>
+              {" "}
+              {journal.title ? journal.title : journal}
+            </span>
+          ))}
+          {result.conference?.raw.map((conference: Conference) =>
+            conference.name?.map((name: string) => (
+              <span key={name}>{name}</span>
+            )),
+          )}
+          {result.sponsorOrgUnit?.raw.map((org: OrgUnit) => (
+            <span key={org.id}>{org.name!}</span>
+          ))}
+          {result.publicationDate?.raw && (
+            <span>{result.publicationDate?.raw}</span>
+          )}
         </div>
-
-        <div className="sui-result__body">
-          <ul className="sui-result__details">
-            <ShowAuthorItem label={t('Author')} authors={result.author?.raw} />
-            <ShowItem label={t('Year')} value={result.publicationDate?.raw} />
-            <ShowItem label={t('Type')} value={result.type?.raw} />
-          </ul>
-        </div>
-      </div>
+      </a>
     </li>
   );
 };

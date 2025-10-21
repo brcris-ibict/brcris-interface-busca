@@ -1,106 +1,130 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { SearchContext, withSearch } from '@elastic/react-search-ui';
-import { useTranslation } from 'next-i18next';
-import { useContext, useEffect } from 'react';
-import { CSVLink } from 'react-csv';
-import { IoCloudDownloadOutline } from 'react-icons/io5';
-import styles from '../../styles/Indicators.module.css';
+import { SearchContext, withSearch } from "@elastic/react-search-ui";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { Download } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import { useContext, useEffect } from "react";
+import { Bar } from "react-chartjs-2";
+import { CSVLink } from "react-csv";
+import {
+  CHART_BACKGROUD_COLORS,
+  CHART_BORDER_COLORS,
+} from "../../../utils/Utils";
+import indicatorProxyService from "../../services/IndicatorProxyService";
+import styles from "../../styles/Indicators.module.css";
+import type { CustomSearchQuery, IndicatorType } from "../../types/Entities";
+import type { IndicatorsProps } from "../../types/Propos";
+import IndicatorContext from "../context/CustomContext";
+import { OptionsBar } from "./options/ChartsOptions";
+import { getAggregateQuery } from "./query/Query";
 
-import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { CHART_BACKGROUD_COLORS, CHART_BORDER_COLORS } from '../../../utils/Utils';
-import indicatorProxyService from '../../services/IndicatorProxyService';
-import { CustomSearchQuery, IndicatorType } from '../../types/Entities';
-import { IndicatorsProps } from '../../types/Propos';
-import IndicatorContext from '../context/CustomContext';
-import { OptionsBar } from './options/ChartsOptions';
-import { getAggregateQuery } from './query/Query';
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+);
+const INDEX_NAME = process.env.INDEX_ORGUNIT || "";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
-const INDEX_NAME = process.env.INDEX_ORGUNIT || '';
-
-const options = new OptionsBar('Organizations by country');
-const optionsState = new OptionsBar('Organizations by state');
+const options = new OptionsBar("Organizations by country");
+const optionsState = new OptionsBar("Organizations by state");
 
 const headersOrgUnit = [
-  { label: 'Country', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Country", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 const headersOrgUnitState = [
-  { label: 'State', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "State", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 
-function OrgUnitIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) {
-  const { t } = useTranslation('common');
+function OrgUnitIndicators({
+  filters,
+  resultSearchTerm,
+  isLoading,
+}: IndicatorsProps) {
+  const { t } = useTranslation("common");
 
   const { driver } = useContext(SearchContext);
-  const { indicators, setIndicatorsData, isEmpty } = useContext(IndicatorContext);
+  const { indicators, setIndicatorsData, isEmpty } =
+    useContext(IndicatorContext);
 
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
-  // @ts-ignore
+  // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
     // tradução
-    // @ts-ignore
     options.plugins.title.text = t(options.title);
-    // @ts-ignore
     optionsState.plugins.title.text = t(optionsState.title);
 
     const countryQuery = JSON.stringify(
       getAggregateQuery({
         size: 10,
-        indicadorName: 'country',
-        searchTerm,
+        indicadorName: "country",
+        searchTerm: resultSearchTerm,
         fields,
         operator,
         filters,
-      })
+      }),
     );
     const stateQuery = JSON.stringify(
       getAggregateQuery({
         size: 10,
-        indicadorName: 'state',
-        searchTerm,
+        indicadorName: "state",
+        searchTerm: resultSearchTerm,
         fields,
         operator,
         filters,
-      })
+      }),
     );
     if (isLoading) {
-      indicatorProxyService.search([countryQuery, stateQuery], INDEX_NAME).then((data) => {
-        setIndicatorsData(data);
-      });
-    } else {
-      const data = indicatorProxyService.searchFromCacheOnly([countryQuery, stateQuery], INDEX_NAME);
-      setIndicatorsData(data);
+      indicatorProxyService
+        .search([countryQuery, stateQuery], INDEX_NAME)
+        .then((data) => {
+          setIndicatorsData(data);
+        });
     }
-  }, [filters, searchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading]);
 
   const countryIndicators: IndicatorType[] = indicators ? indicators[0] : [];
-  const countryLabels = countryIndicators != null ? countryIndicators.map((d) => d.key) : [];
+  const countryLabels =
+    countryIndicators != null ? countryIndicators.map((d) => d.key) : [];
 
   const stateIndicators: IndicatorType[] = indicators ? indicators[1] : [];
-  const stateLabels = stateIndicators != null ? stateIndicators.map((d) => d.key) : [];
+  const stateLabels =
+    stateIndicators != null ? stateIndicators.map((d) => d.key) : [];
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
           title="Export to csv"
           data={countryIndicators ? countryIndicators : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersOrgUnit}
         >
-          <IoCloudDownloadOutline />
+          <Download />
         </CSVLink>
         <Bar
           /**
-      // @ts-ignore */
+      // @ts-expect-error */
           options={options}
           width="500"
           data={{
@@ -108,7 +132,7 @@ function OrgUnitIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
             datasets: [
               {
                 data: countryIndicators,
-                label: t('Organizations') || '',
+                label: t("Organizations") || "",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -124,14 +148,14 @@ function OrgUnitIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
           className={styles.download}
           title="Export to csv"
           data={stateIndicators ? stateIndicators : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersOrgUnitState}
         >
-          <IoCloudDownloadOutline />
+          <Download />
         </CSVLink>
         <Bar
           /**
-      // @ts-ignore */
+      // @ts-expect-error */
           options={optionsState}
           width="500"
           data={{
@@ -139,7 +163,7 @@ function OrgUnitIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
             datasets: [
               {
                 data: stateIndicators,
-                label: t('Organizations') || '',
+                label: t("Organizations") || "",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -151,11 +175,8 @@ function OrgUnitIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
     </div>
   );
 }
-export default withSearch(
-  // @ts-ignore
-  ({ filters, searchTerm, isLoading }) => ({
-    filters,
-    searchTerm,
-    isLoading,
-  })
-)(OrgUnitIndicators);
+export default withSearch(({ filters, resultSearchTerm, isLoading }) => ({
+  filters,
+  resultSearchTerm,
+  isLoading,
+}))(OrgUnitIndicators);

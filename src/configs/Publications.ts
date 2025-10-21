@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import CustomResultViewPublications from '../components/customResultView/CustomResultViewPublications';
-import DefaultQueryConfig from '../components/DefaultQueryConfig';
-import PublicationsIndicators from '../components/indicators/PublicationsIndicators';
-import { CustomSearchDriverOptions } from '../types/Entities';
-import { Index, SortOptionsType } from '../types/Propos';
-import indexes from './Indexes';
+import CustomResultViewPublications from "../components/customResultView/CustomResultViewPublications";
+import DefaultQueryConfig from "../components/DefaultQueryConfig";
+import PublicationsIndicators from "../components/indicators/PublicationsIndicators";
+import type { CustomSearchDriverOptions } from "../types/Entities";
+import type { Index, SortOptionsType } from "../types/Propos";
+import indexes from "./Indexes";
 
-const indexName = process.env.INDEX_PUBLICATION || '';
+const indexName = process.env.INDEX_PUBLICATION || "";
 
 const config: CustomSearchDriverOptions = {
   ...DefaultQueryConfig(),
   searchQuery: {
-    operator: 'OR',
+    operator: "OR",
     index: indexName,
     advanced_fields: {
       publicationDate: {},
@@ -22,81 +22,74 @@ const config: CustomSearchDriverOptions = {
       title_text: {
         weight: 3,
       },
-      'author.name_text': {},
+      "author.name_text": {},
+      doi: {},
     },
     result_fields: {
       author: {
-        raw: [],
+        snippet: {},
       },
       publicationDate: {
-        snippet: {},
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
       },
       title: {
         snippet: {},
       },
-      type: {
-        raw: {},
-      },
+      journal: { raw: {} },
+      type: { raw: {} },
+      conference: { raw: {} },
+      sponsorOrgUnit: { raw: {} },
+      id: { raw: {} },
     },
-    disjunctiveFacets: [
-      'language.type',
-      'author.name',
-      'keyword.type',
-      'cnpqResearchArea.type',
-      'publicationDate.type',
-      'course.name',
-      'program.name',
-      'conference.name',
-    ],
+    disjunctiveFacets: [],
 
     facets: {
-      language: { type: 'value' },
-      'author.name': { type: 'value' },
-      keyword: { type: 'value' },
-      'orgunit.name': { type: 'value' },
-      'journal.title': { type: 'value' },
-      type: { type: 'value' },
-      'course.name': { type: 'value' },
-      'program.name': { type: 'value' },
-      'conference.name': { type: 'value' },
-      researchArea: { type: 'value' },
+      "author.name": { type: "value" },
+      type: { type: "value" },
+      "journal.title": { type: "value" },
+      "conference.name": { type: "value" },
+      "sponsorOrgUnit.name": { type: "value" },
+      researchArea: { type: "value" },
       publicationDate: {
-        type: 'range',
+        type: "range",
         ranges: [
           {
-            from: '2024',
+            from: "2024",
             to: new Date().getUTCFullYear().toString(),
             name: `2024 - ${new Date().getUTCFullYear()}`,
           },
           {
-            from: '2021',
-            to: '2023',
-            name: '2021 - 2023',
+            from: "2021",
+            to: "2023",
+            name: "2021 - 2023",
           },
           {
-            from: '2016',
-            to: '2020',
-            name: '2016 - 2020',
+            from: "2016",
+            to: "2020",
+            name: "2016 - 2020",
           },
           {
-            from: '2011',
-            to: '2015',
-            name: '2011 - 2015',
+            from: "2011",
+            to: "2015",
+            name: "2011 - 2015",
           },
           {
-            from: '2001',
-            to: '2010',
-            name: '2001 - 2010',
+            from: "2001",
+            to: "2010",
+            name: "2001 - 2010",
           },
           {
-            from: '1991',
-            to: '2000',
-            name: '1991 - 2000',
+            from: "1991",
+            to: "2000",
+            name: "1991 - 2000",
           },
           {
-            from: '1950',
-            to: '1990',
-            name: '1950 - 1990',
+            from: "1950",
+            to: "1990",
+            name: "1950 - 1990",
           },
         ],
       },
@@ -104,7 +97,7 @@ const config: CustomSearchDriverOptions = {
   },
   autocompleteQuery: {
     results: {
-      // @ts-ignore foi adiciona o index aqui para não dar erro no autocomplete
+      // @ts-expect-error foi adiciona o index aqui para não dar erro no autocomplete
       index: indexName,
       resultsPerPage: 6,
       search_fields: {
@@ -123,7 +116,7 @@ const config: CustomSearchDriverOptions = {
     },
     suggestions: {
       types: {
-        results: { fields: ['title_completion'] },
+        results: { fields: ["title_completion"] },
       },
       size: 5,
     },
@@ -132,24 +125,24 @@ const config: CustomSearchDriverOptions = {
 
 const sortOptions: SortOptionsType[] = [
   {
-    name: 'Relevance',
+    name: "Relevance",
     value: [],
   },
   {
-    name: 'Ano ASC',
+    name: "Ano ASC",
     value: [
       {
-        field: 'publicationDate',
-        direction: 'asc',
+        field: "publicationDate",
+        direction: "asc",
       },
     ],
   },
   {
-    name: 'Ano DESC',
+    name: "Ano DESC",
     value: [
       {
-        field: 'publicationDate',
-        direction: 'desc',
+        field: "publicationDate",
+        direction: "desc",
       },
     ],
   },
@@ -159,7 +152,7 @@ const index: Index = {
   config,
   sortOptions,
   name: indexName,
-  label: indexes.find((i) => i.name === indexName)?.label || '',
+  label: indexes.find((i) => i.name === indexName)?.label || "",
   customView: CustomResultViewPublications,
   indicators: PublicationsIndicators,
 };

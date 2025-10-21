@@ -1,6 +1,9 @@
-import indexes from '../configs/Indexes';
+import indexes from "../configs/Indexes";
 
-export function getIndexStats(indexLabel: string, setDocsCount: (count: string) => void) {
+export function getIndexStats(
+  indexLabel: string,
+  setDocsCount: (count: string) => void,
+) {
   const indexCount = localStorage.getItem(indexLabel);
   if (indexCount) {
     setDocsCount(indexCount);
@@ -9,8 +12,8 @@ export function getIndexStats(indexLabel: string, setDocsCount: (count: string) 
     if (index) {
       proxy(index?.name)
         .then((res) => {
-          console.log('buscando remoto');
-          const count = res['docs.count'];
+          console.log("buscando remoto");
+          const count = res["docs.count"];
           localStorage.setItem(indexLabel, count);
           setDocsCount(count);
         })

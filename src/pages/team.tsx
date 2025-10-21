@@ -1,22 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { GetStaticProps } from 'next';
-import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Head from 'next/head';
-import { useEffect, useState } from 'react';
-import currentMembersData from '../../team/current.json';
-import egressMembersData from '../../team/egress.json';
-import Member from '../components/team/Member';
-import { MemberType } from '../types/Entities';
+import type { GetStaticProps } from "next";
+import Head from "next/head";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useEffect, useState } from "react";
+import currentMembersData from "../../team/current.json";
+import egressMembersData from "../../team/egress.json";
+import Member from "../components/team/Member";
+import type { MemberType } from "../types/Entities";
 
-// @ts-ignore
-type Props = {
-  // Add custom props here
-};
+type Props = {};
 
 export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
   props: {
-    ...(await serverSideTranslations(locale ?? 'en', ['navbar', 'common'])),
+    ...(await serverSideTranslations(locale ?? "en", ["navbar", "common"])),
   },
 });
 
@@ -29,7 +26,7 @@ const shuffle = (array: MemberType[]) => {
 };
 
 export default function Team() {
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(["common"]);
 
   const [currentMembers, setCurrentMembers] = useState<MemberType[]>([]);
   const [egressMembers, setEgessMembers] = useState<MemberType[]>([]);
@@ -44,14 +41,17 @@ export default function Team() {
   return (
     <>
       <Head>
-        <title>{`BrCris - ${t('Team')}`}</title>
+        <title>{`BrCris - ${t("Team")}`}</title>
       </Head>
       <div className="App">
         <div className="container page tablist d-flex align-content-center flex-column">
           <div className="page-title">
-            <h1>{t('Team')}</h1>
+            <h1>{t("Team")}</h1>
           </div>
-          <ul className="nav nav-tabs d-flex justify-content-center" id="teamTab" role="tablist">
+          <ul
+            className="nav nav-tabs d-flex justify-content-center"
+            id="teamTab"
+          >
             <li className="nav-item" role="presentation">
               <button
                 className="nav-link active"
@@ -63,7 +63,7 @@ export default function Team() {
                 aria-controls="current"
                 aria-selected="true"
               >
-                {t('Current')}
+                {t("Current")}
               </button>
             </li>
             <li className="nav-item" role="presentation">
@@ -77,17 +77,22 @@ export default function Team() {
                 aria-controls="egress"
                 aria-selected="false"
               >
-                {t('Egress')}
+                {t("Egress")}
               </button>
             </li>
           </ul>
 
           <div className="tab-content">
-            <div className="tab-pane active" id="current" role="tabpanel" aria-labelledby="current-tab">
+            <div
+              className="tab-pane active"
+              id="current"
+              role="tabpanel"
+              aria-labelledby="current-tab"
+            >
               <div className="team">
-                {shuffle(currentMembers).map((member: MemberType, index: number) => (
+                {shuffle(currentMembers).map((member: MemberType) => (
                   <Member
-                    key={index}
+                    key={member.lattes}
                     image={member.image}
                     name={member.name}
                     lattes={member.lattes}
@@ -96,11 +101,16 @@ export default function Team() {
                 ))}
               </div>
             </div>
-            <div className="tab-pane" id="egress" role="tabpanel" aria-labelledby="egress-tab">
+            <div
+              className="tab-pane"
+              id="egress"
+              role="tabpanel"
+              aria-labelledby="egress-tab"
+            >
               <div className="team">
-                {shuffle(egressMembers).map((member: MemberType, index: number) => (
+                {shuffle(egressMembers).map((member: MemberType) => (
                   <Member
-                    key={index}
+                    key={member.lattes}
                     image={member.image}
                     name={member.name}
                     lattes={member.lattes}

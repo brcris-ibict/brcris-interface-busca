@@ -1,4 +1,4 @@
-import { MemberType } from '../../types/Entities';
+import type { MemberType } from "../../types/Entities";
 
 const Member = ({ name, image, lattes, period }: MemberType) => {
   return (

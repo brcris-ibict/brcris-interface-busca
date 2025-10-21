@@ -1,41 +1,40 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import CustomResultViewPeople from '../components/customResultView/CustomResultViewPrograms';
-import DefaultQueryConfig from '../components/DefaultQueryConfig';
-import ProgramsIndicators from '../components/indicators/ProgramsIndicators';
-import { CustomSearchDriverOptions } from '../types/Entities';
-import { Index, SortOptionsType } from '../types/Propos';
-import indexes from './Indexes';
+import CustomResultViewPeople from "../components/customResultView/CustomResultViewPrograms";
+import DefaultQueryConfig from "../components/DefaultQueryConfig";
+import ProgramsIndicators from "../components/indicators/ProgramsIndicators";
+import type { CustomSearchDriverOptions } from "../types/Entities";
+import type { Index, SortOptionsType } from "../types/Propos";
+import indexes from "./Indexes";
 
-const indexName = process.env.INDEX_PROGRAM || '';
+const indexName = process.env.INDEX_PROGRAM || "";
 
 const config: CustomSearchDriverOptions = {
   ...DefaultQueryConfig(),
   searchQuery: {
     index: indexName,
-    operator: 'OR',
+    operator: "OR",
     search_fields: {
-      name_text: {},
-      'orgunit.name_text': {},
+      name: {},
+      "orgUnit.name_text": {},
     },
     result_fields: {
       name: {
-        raw: {},
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
       },
-      orgunit: {
+      orgUnit: {
         raw: [],
       },
       researchArea: {
         raw: {},
       },
-      evaluationArea: {
-        raw: {},
-      },
     },
     facets: {
-      researchArea: { type: 'value' },
-      'orgunit.name': { type: 'value' },
-      evaluationArea: { type: 'value' },
+      "researchArea.name": { type: "value" },
+      "orgUnit.name": { type: "value" },
     },
   },
   autocompleteQuery: {
@@ -57,7 +56,7 @@ const config: CustomSearchDriverOptions = {
     },
     suggestions: {
       types: {
-        results: { fields: ['name_completion'] },
+        results: { fields: ["name_completion"] },
       },
       size: 4,
     },
@@ -66,24 +65,24 @@ const config: CustomSearchDriverOptions = {
 
 const sortOptions: SortOptionsType[] = [
   {
-    name: 'Relevance',
+    name: "Relevance",
     value: [],
   },
   {
-    name: 'Nome ASC',
+    name: "Nome ASC",
     value: [
       {
-        field: 'name',
-        direction: 'asc',
+        field: "name",
+        direction: "asc",
       },
     ],
   },
   {
-    name: 'Nome DESC',
+    name: "Nome DESC",
     value: [
       {
-        field: 'name',
-        direction: 'desc',
+        field: "name",
+        direction: "desc",
       },
     ],
   },
@@ -93,7 +92,7 @@ const index: Index = {
   config,
   sortOptions,
   name: indexName,
-  label: indexes.find((i) => i.name === indexName)?.label || '',
+  label: indexes.find((i) => i.name === indexName)?.label || "",
   customView: CustomResultViewPeople,
   indicators: ProgramsIndicators,
 };

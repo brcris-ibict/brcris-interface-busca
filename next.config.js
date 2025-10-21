@@ -1,8 +1,8 @@
-const { i18n } = require('./next-i18next.config.js');
+const { i18n } = require("./next-i18next.config.js");
 
 const nextConfig = {
   eslint: {
-    dirs: ['pages'],
+    dirs: ["pages"],
   },
   reactStrictMode: false,
   // swcMinify: false,
@@ -17,6 +17,7 @@ const nextConfig = {
     INDEX_PATENT: process.env.INDEX_PATENT,
     INDEX_GROUP: process.env.INDEX_GROUP,
     INDEX_SOFTWARE: process.env.INDEX_SOFTWARE,
+    INDEX_COURSE: process.env.INDEX_COURSE,
     BRCRIS_HOST_BASE: process.env.BRCRIS_HOST_BASE,
   },
   i18n,
@@ -31,17 +32,13 @@ const nextConfig = {
     }
 
     config.plugins.push(
-      new webpack.NormalModuleReplacementPlugin(
-        /^node:/,
-        (resource) => {
-          resource.request = resource.request.replace(/^node:/, '');
-        },
-      ),
+      new webpack.NormalModuleReplacementPlugin(/^node:/, (resource) => {
+        resource.request = resource.request.replace(/^node:/, "");
+      }),
     );
 
     return config;
   },
-
 };
 
 module.exports = nextConfig;

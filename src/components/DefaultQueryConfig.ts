@@ -1,5 +1,5 @@
-import { PagingInfoViewProps } from '@elastic/react-search-ui-views';
-import APIConnector from '../services/APIConnector';
+import type { PagingInfoViewProps } from "@elastic/react-search-ui-views";
+import APIConnector from "../services/APIConnector";
 
 const DefaultQueryConfig = () => {
   return {
@@ -10,12 +10,17 @@ const DefaultQueryConfig = () => {
     alwaysSearchOnInitialLoad: false,
     hasA11yNotifications: true,
     a11yNotificationMessages: {
-      searchResults: ({ start, end, totalResults, searchTerm }: PagingInfoViewProps) =>
+      searchResults: ({
+        start,
+        end,
+        totalResults,
+        searchTerm,
+      }: PagingInfoViewProps) =>
         `Searching for "${searchTerm}". Showing ${start} to ${end} results out of ${totalResults}.`,
     },
     apiConnector: new APIConnector(),
     initialState: {
-      searchTerm: '',
+      searchTerm: "",
       resultsPerPage: 10,
     },
   };

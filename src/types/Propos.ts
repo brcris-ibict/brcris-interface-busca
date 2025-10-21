@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ResultViewProps } from '@elastic/react-search-ui-views';
-import { ChartOptions } from 'chart.js';
-import { ComponentType } from 'react';
-import { CustomSearchDriverOptions } from './Entities';
+import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import type { ChartOptions } from "chart.js";
+import type { ComponentType } from "react";
+import type { CustomSearchDriverOptions } from "./Entities";
 export type IndicatorsProps = {
   filters?: any;
-  searchTerm?: any;
+  resultSearchTerm?: any;
   isLoading?: any;
 };
 

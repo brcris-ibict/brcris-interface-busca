@@ -1,6 +1,7 @@
-import { Client } from 'es7';
-import { NextApiRequest, NextApiResponse } from 'next';
-import logger from '../../services/Logger';
+import { Client } from "es7";
+import type { NextApiRequest, NextApiResponse } from "next";
+import logger from "../../services/Logger";
+
 const client = new Client({
   maxRetries: 5,
   requestTimeout: 60000,
@@ -29,7 +30,9 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       body: queries,
     });
 
-    const buckets = body.responses.map((resp: any) => resp.aggregations?.aggregate.buckets);
+    const buckets = body.responses.map(
+      (resp: any) => resp.aggregations?.aggregate.buckets,
+    );
     res.json(buckets);
   } catch (err) {
     logger.error(err);

@@ -1,5 +1,9 @@
-import type { SearchDriverOptions, SearchFieldConfiguration, SearchQuery } from '@elastic/search-ui';
-import { QueryDslOperator } from 'es7/api/types';
+import type {
+  SearchDriverOptions,
+  SearchFieldConfiguration,
+  SearchQuery,
+} from "@elastic/search-ui";
+import type { QueryDslOperator } from "es7/api/types";
 export type Author = {
   id: string;
   name?: string;
@@ -14,6 +18,21 @@ export type OrgUnit = {
 export type Service = {
   id: string;
   title: string[];
+};
+
+export type Publisher = {
+  id: string;
+  name: string;
+};
+
+export type Conference = {
+  id: string;
+  name: string[];
+};
+
+export type ResearchArea = {
+  id: string;
+  name: string[];
 };
 
 export type IndicatorType = {
@@ -40,7 +59,7 @@ export interface CustomSearchDriverOptions extends SearchDriverOptions {
 }
 
 export type QueryItem = {
-  field?: string;
+  field: string;
   operator?: string;
-  value?: string;
+  value: string;
 };

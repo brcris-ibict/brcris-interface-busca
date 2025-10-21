@@ -7,7 +7,7 @@ class IndicatorProxyService {
 
   private getFromCache(key: string): any | null {
     const cachedStr = localStorage.getItem(key);
-
+    console.log("Getting from cache", key, cachedStr);
     if (!cachedStr) return null;
 
     try {
@@ -47,25 +47,25 @@ class IndicatorProxyService {
    * Perform a search with caching
    */
   public async search(queries: string[], index: string): Promise<any> {
-    Promise.resolve().then(() => this.cleanupCache());
+    // Promise.resolve().then(() => this.cleanupCache());
 
-    const key = this.getCacheKey(queries, index);
+    // const key = this.getCacheKey(queries, index);
 
-    const cachedData = this.getFromCache(key);
-    if (cachedData) {
-      console.log('Returning cached data');
-      return cachedData;
-    }
+    // const cachedData = this.getFromCache(key);
+    // if (cachedData) {
+    //   console.log('Returning cached data');
+    //   return cachedData;
+    // }
 
-    console.log('Fetching fresh data');
+    console.log("Fetching fresh data");
     const body = JSON.stringify({ queries, index });
-    const response = await fetch('/api/indicators', {
-      method: 'POST',
+    const response = await fetch("/api/indicators", {
+      method: "POST",
       body,
     });
     const data = await response.json();
 
-    this.saveToCache(key, data);
+    // this.saveToCache(key, data);
     return data;
   }
 
@@ -78,4 +78,6 @@ class IndicatorProxyService {
   }
 }
 
-export default new IndicatorProxyService();
+const indicatorProxyService = new IndicatorProxyService();
+
+export default indicatorProxyService;

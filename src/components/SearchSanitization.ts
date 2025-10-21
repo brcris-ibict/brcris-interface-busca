@@ -1,18 +1,17 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import en from '../../public/locales/en/advanced.json';
-// @ts-ignore
-import ptBr from '../../public/locales/pt-BR/advanced.json';
+/** biome-ignore-all lint/suspicious/noAssignInExpressions: explanation */
+/** biome-ignore-all lint/suspicious/noImplicitAnyLet: explanation */
+import en from "../../public/locales/en/advanced.json";
+import ptBr from "../../public/locales/pt-BR/advanced.json";
 
 export function findPropertyByValue(value: string) {
   for (const property in ptBr) {
-    //@ts-ignore
+    //@ts-expect-error
     if (ptBr[property] === value) {
       return property;
     }
   }
   for (const property in en) {
-    //@ts-ignore
+    //@ts-expect-error
     if (en[property] === value) {
       return property;
     }

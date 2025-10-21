@@ -1,17 +1,11 @@
-.charts {
-  width: 27%;
-  min-width: 250px;
-}
-
 .chart {
-  padding: 0;
-  margin-right: 16px;
+  padding: 4px;
   width: 100%;
   position: relative;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
   margin-bottom: 16px;
-  padding: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
 }
 
 .title {
@@ -34,6 +28,6 @@
     max-width: 100%;
     width: 100%;
     padding: 0 16px;
-    margin-top: 20px;
+    /* margin-top: 20px; */
   }
 }

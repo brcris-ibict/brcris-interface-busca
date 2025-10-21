@@ -1,86 +1,109 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { SearchContext, withSearch } from '@elastic/react-search-ui';
-import { useTranslation } from 'next-i18next';
-import { useContext, useEffect } from 'react';
-import { CSVLink } from 'react-csv';
-import { IoCloudDownloadOutline } from 'react-icons/io5';
-import styles from '../../styles/Indicators.module.css';
+import { SearchContext, withSearch } from "@elastic/react-search-ui";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { Download } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import { useContext, useEffect } from "react";
+import { Bar } from "react-chartjs-2";
+import { CSVLink } from "react-csv";
+import {
+  CHART_BACKGROUD_COLORS,
+  CHART_BORDER_COLORS,
+} from "../../../utils/Utils";
+import indicatorProxyService from "../../services/IndicatorProxyService";
+import styles from "../../styles/Indicators.module.css";
+import type { CustomSearchQuery, IndicatorType } from "../../types/Entities";
+import type { IndicatorsProps } from "../../types/Propos";
+import IndicatorContext from "../context/CustomContext";
+import { OptionsBar } from "./options/ChartsOptions";
+import { getAggregateQuery } from "./query/Query";
 
-import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { CHART_BACKGROUD_COLORS, CHART_BORDER_COLORS } from '../../../utils/Utils';
-import indicatorProxyService from '../../services/IndicatorProxyService';
-import { CustomSearchQuery, IndicatorType } from '../../types/Entities';
-import { IndicatorsProps } from '../../types/Propos';
-import IndicatorContext from '../context/CustomContext';
-import { OptionsBar } from './options/ChartsOptions';
-import { getAggregateQuery } from './query/Query';
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+);
+const INDEX_NAME = process.env.INDEX_PROGRAM || "";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
-const INDEX_NAME = process.env.INDEX_PROGRAM || '';
-
-export const options = new OptionsBar('Program by OrgUnit');
+export const options = new OptionsBar("Program by OrgUnit");
 
 const headersOrgUnit = [
-  { label: 'Organization', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Organization", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 
-function ProgramsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) {
-  const { t } = useTranslation('common');
+function ProgramsIndicators({
+  filters,
+  resultSearchTerm,
+  isLoading,
+}: IndicatorsProps) {
+  const { t } = useTranslation("common");
 
   const { driver } = useContext(SearchContext);
-  const { indicators, setIndicatorsData, isEmpty } = useContext(IndicatorContext);
+  const { indicators, setIndicatorsData, isEmpty } =
+    useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
-  // @ts-ignore
+
+  // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
     // tradução
-    // @ts-ignore
     options.plugins.title.text = t(options.title);
     const queries = [
       JSON.stringify(
         getAggregateQuery({
           size: 10,
-          indicadorName: 'orgunit.acronym',
-          searchTerm,
+          indicadorName: "orgunit.acronym",
+          searchTerm: resultSearchTerm,
           fields,
           operator,
           filters,
-        })
+        }),
       ),
     ];
     if (isLoading) {
       indicatorProxyService.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
-    } else {
-      const data = indicatorProxyService.searchFromCacheOnly(queries, INDEX_NAME);
-      if (data) setIndicatorsData(data);
     }
-  }, [filters, searchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading]);
 
   const orgUnitIndicators: IndicatorType[] = indicators ? indicators[0] : [];
-  const orgUnitLabels = orgUnitIndicators != null ? orgUnitIndicators.map((d) => d.key) : [];
+  const orgUnitLabels =
+    orgUnitIndicators != null ? orgUnitIndicators.map((d) => d.key) : [];
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
           title="Export to csv"
           data={orgUnitIndicators ? orgUnitIndicators : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersOrgUnit}
         >
-          <IoCloudDownloadOutline />
+          <Download />
         </CSVLink>
         <Bar
           /**
-      // @ts-ignore */
+      // @ts-expect-error */
           options={options}
           width="500"
           data={{
@@ -88,7 +111,7 @@ function ProgramsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps)
             datasets: [
               {
                 data: orgUnitIndicators,
-                label: t('Programs') || '',
+                label: t("Programs") || "",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -100,11 +123,8 @@ function ProgramsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps)
     </div>
   );
 }
-export default withSearch(
-  // @ts-ignore
-  ({ filters, searchTerm, isLoading }) => ({
-    filters,
-    searchTerm,
-    isLoading,
-  })
-)(ProgramsIndicators);
+export default withSearch(({ filters, resultSearchTerm, isLoading }) => ({
+  filters,
+  resultSearchTerm,
+  isLoading,
+}))(ProgramsIndicators);

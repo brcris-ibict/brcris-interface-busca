@@ -1,56 +1,50 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import CustomResultViewPeople from '../components/customResultView/CustomResultViewPeople';
-import DefaultQueryConfig from '../components/DefaultQueryConfig';
-import PeopleIndicators from '../components/indicators/PeopleIndicators';
-import { CustomSearchDriverOptions } from '../types/Entities';
-import { Index, SortOptionsType } from '../types/Propos';
-import indexes from './Indexes';
+import CustomResultViewPeople from "../components/customResultView/CustomResultViewPeople";
+import DefaultQueryConfig from "../components/DefaultQueryConfig";
+import PeopleIndicators from "../components/indicators/PeopleIndicators";
+import type { CustomSearchDriverOptions } from "../types/Entities";
+import type { Index, SortOptionsType } from "../types/Propos";
+import indexes from "./Indexes";
 
-const indexName = process.env.INDEX_PERSON || '';
+const indexName = process.env.INDEX_PERSON || "";
 
 const config: CustomSearchDriverOptions = {
   ...DefaultQueryConfig(),
   searchQuery: {
-    operator: 'OR',
+    operator: "OR",
     index: indexName,
     advanced_fields: {
-      'orgunit.name_text': {},
-      nationality: {},
-      lattesId: {},
+      "affiliation.name_text": {},
     },
     search_fields: {
       name_text: {},
+      orcid: {},
+      lattesId: {},
+      brcrisId: {},
     },
     result_fields: {
       id: {
         raw: {},
       },
       name: {
-        raw: {},
+        snippet: {
+          size: 100,
+          fallback: true,
+        },
       },
-      lattesId: {
-        raw: {},
-      },
-      orcid: {
-        raw: {},
-      },
-      researchArea: {
-        raw: {},
-      },
-      orgunit: {
-        raw: {},
+      affiliation: {
+        snippet: {},
       },
     },
-    disjunctiveFacets: ['nationality', 'researchArea'],
+    disjunctiveFacets: [],
     facets: {
-      'researchArea.name': { type: 'value' },
-      'orgunit.name': { type: 'value' },
+      "affiliation.name": { type: "value" },
     },
   },
   autocompleteQuery: {
     results: {
-      // @ts-ignore foi adiciona o index aqui para não dar erro no autocomplete
+      // @ts-expect-error foi adiciona o index aqui para não dar erro no autocomplete
       index: indexName,
       resultsPerPage: 5,
       search_fields: {
@@ -69,7 +63,7 @@ const config: CustomSearchDriverOptions = {
     },
     suggestions: {
       types: {
-        results: { fields: ['name_completion'] },
+        results: { fields: ["name_completion"] },
       },
       size: 5,
     },
@@ -78,24 +72,24 @@ const config: CustomSearchDriverOptions = {
 
 const sortOptions: SortOptionsType[] = [
   {
-    name: 'Relevance',
+    name: "Relevance",
     value: [],
   },
   {
-    name: 'Nome ASC',
+    name: "Nome ASC",
     value: [
       {
-        field: 'name',
-        direction: 'asc',
+        field: "name",
+        direction: "asc",
       },
     ],
   },
   {
-    name: 'Nome DESC',
+    name: "Nome DESC",
     value: [
       {
-        field: 'name',
-        direction: 'desc',
+        field: "name",
+        direction: "desc",
       },
     ],
   },
@@ -105,7 +99,7 @@ const index: Index = {
   config,
   sortOptions,
   name: indexName,
-  label: indexes.find((i) => i.name === indexName)?.label || '',
+  label: indexes.find((i) => i.name === indexName)?.label || "",
   customView: CustomResultViewPeople,
   indicators: PeopleIndicators,
 };

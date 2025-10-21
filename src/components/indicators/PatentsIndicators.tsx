@@ -1,159 +1,201 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { SearchContext, withSearch } from '@elastic/react-search-ui';
-import { useTranslation } from 'next-i18next';
-import { useContext, useEffect } from 'react';
-import { CSVLink } from 'react-csv';
-import { IoCloudDownloadOutline } from 'react-icons/io5';
-import styles from '../../styles/Indicators.module.css';
+import { SearchContext, withSearch } from "@elastic/react-search-ui";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { Download } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import { useContext, useEffect } from "react";
+import { Bar, Pie } from "react-chartjs-2";
+import { CSVLink } from "react-csv";
+import {
+  CHART_BACKGROUD_COLORS,
+  CHART_BORDER_COLORS,
+} from "../../../utils/Utils";
+import indicatorProxyService from "../../services/IndicatorProxyService";
+import styles from "../../styles/Indicators.module.css";
+import type { CustomSearchQuery, IndicatorType } from "../../types/Entities";
+import type { IndicatorsProps } from "../../types/Propos";
+import IndicatorContext from "../context/CustomContext";
+import { OptionsBar, OptionsPie } from "./options/ChartsOptions";
+import { getAggregateQuery } from "./query/Query";
 
-import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip } from 'chart.js';
-import { Bar, Pie } from 'react-chartjs-2';
-import { CHART_BACKGROUD_COLORS, CHART_BORDER_COLORS } from '../../../utils/Utils';
-import indicatorProxyService from '../../services/IndicatorProxyService';
-import { CustomSearchQuery, IndicatorType } from '../../types/Entities';
-import { IndicatorsProps } from '../../types/Propos';
-import IndicatorContext from '../context/CustomContext';
-import { OptionsBar, OptionsPie } from './options/ChartsOptions';
-import { getAggregateQuery } from './query/Query';
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+);
+const INDEX_NAME = process.env.INDEX_PATENT || "";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
-const INDEX_NAME = process.env.INDEX_PATENT || '';
-
-const optDepositDate = new OptionsBar('Patents by deposit year');
-const optPubDate = new OptionsBar('Patents by publication year');
-const optCountryCode = new OptionsPie('Patents by country code');
-const optKindCode = new OptionsPie('Patents by kind code');
+const optDepositDate = new OptionsBar("Patents by deposit year");
+const optPubDate = new OptionsBar("Patents by publication year");
+const optCountryCode = new OptionsPie("Patents by country code");
+const optKindCode = new OptionsPie("Patents by kind code");
 
 const headersByDepositDate = [
-  { label: 'Deposit year', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Deposit year", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 
 const headersBypublicationDate = [
-  { label: 'Publication year', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Publication year", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 
 const headersCountryCode = [
-  { label: 'Country code', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Country code", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 const headersKindCode = [
-  { label: 'Kind code', key: 'key' },
-  { label: 'Quantity', key: 'doc_count' },
+  { label: "Kind code", key: "key" },
+  { label: "Quantity", key: "doc_count" },
 ];
 
-function PatentsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) {
-  const { t } = useTranslation('common');
+function PatentsIndicators({
+  filters,
+  resultSearchTerm,
+  isLoading,
+}: IndicatorsProps) {
+  const { t } = useTranslation("common");
 
   const { driver } = useContext(SearchContext);
-  const { indicators, setIndicatorsData, isEmpty } = useContext(IndicatorContext);
+  const { indicators, setIndicatorsData, isEmpty } =
+    useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
-  // @ts-ignore
+  // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
     // tradução
-    // @ts-ignore
     optDepositDate.plugins.title.text = t(optDepositDate.title);
-    // @ts-ignore
     optPubDate.plugins.title.text = t(optPubDate.title);
-    // @ts-ignore
     optCountryCode.plugins.title.text = t(optCountryCode.title);
-    // @ts-ignore
     optKindCode.plugins.title.text = t(optKindCode.title);
 
     const queries = [
       JSON.stringify(
         getAggregateQuery({
           size: 10,
-          indicadorName: 'depositDate',
-          searchTerm,
+          indicadorName: "depositDate",
+          searchTerm: resultSearchTerm,
           fields,
           operator,
           filters,
-          order: { _key: 'desc' },
-        })
+          order: { _key: "desc" },
+        }),
       ),
       JSON.stringify(
         getAggregateQuery({
           size: 10,
-          indicadorName: 'publicationDate',
-          searchTerm,
+          indicadorName: "publicationDate",
+          searchTerm: resultSearchTerm,
           fields,
           operator,
           filters,
-          order: { _key: 'desc' },
-        })
+          order: { _key: "desc" },
+        }),
       ),
       JSON.stringify(
         getAggregateQuery({
           size: 10,
-          indicadorName: 'countryCode',
-          searchTerm,
+          indicadorName: "countryCode",
+          searchTerm: resultSearchTerm,
           fields,
           operator,
           filters,
-        })
+        }),
       ),
       JSON.stringify(
         getAggregateQuery({
           size: 10,
-          indicadorName: 'kindCode',
-          searchTerm,
+          indicadorName: "kindCode",
+          searchTerm: resultSearchTerm,
           fields,
           operator,
           filters,
-        })
+        }),
       ),
     ];
     if (isLoading) {
       indicatorProxyService.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
-    } else {
-      const data = indicatorProxyService.searchFromCacheOnly(queries, INDEX_NAME);
-      if (data) setIndicatorsData(data);
     }
-  }, [filters, searchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading]);
 
   // deposite date
-  const depositeDateIndicators: IndicatorType[] = indicators ? indicators[0] : [];
-  const depositeDateLabels = depositeDateIndicators != null ? depositeDateIndicators.map((d) => d.key) : [];
+  const depositeDateIndicators: IndicatorType[] = indicators
+    ? indicators[0]
+    : [];
+  const depositeDateLabels =
+    depositeDateIndicators != null
+      ? depositeDateIndicators.map((d) => d.key)
+      : [];
   //  publication date
-  const publicationDateIndicators: IndicatorType[] = indicators ? indicators[1] : [];
-  const publicationDateLabels = publicationDateIndicators != null ? publicationDateIndicators.map((d) => d.key) : [];
+  const publicationDateIndicators: IndicatorType[] = indicators
+    ? indicators[1]
+    : [];
+  const publicationDateLabels =
+    publicationDateIndicators != null
+      ? publicationDateIndicators.map((d) => d.key)
+      : [];
 
   // country Code
-  const countryCodeIndicators: IndicatorType[] = indicators ? indicators[2] : [];
-  const countryCodeLabels = countryCodeIndicators != null ? countryCodeIndicators.map((d) => d.key) : [];
-  const countryCodeCount = countryCodeIndicators != null ? countryCodeIndicators.map((d) => d.doc_count) : [];
+  const countryCodeIndicators: IndicatorType[] = indicators
+    ? indicators[2]
+    : [];
+  const countryCodeLabels =
+    countryCodeIndicators != null
+      ? countryCodeIndicators.map((d) => d.key)
+      : [];
+  const countryCodeCount =
+    countryCodeIndicators != null
+      ? countryCodeIndicators.map((d) => d.doc_count)
+      : [];
 
   // kind Code
   const kindCodeIndicators: IndicatorType[] = indicators ? indicators[3] : [];
-  const kindCodeLabels = kindCodeIndicators != null ? kindCodeIndicators.map((d) => d.key) : [];
-  const kindCodeCount = kindCodeIndicators != null ? kindCodeIndicators.map((d) => d.doc_count) : [];
+  const kindCodeLabels =
+    kindCodeIndicators != null ? kindCodeIndicators.map((d) => d.key) : [];
+  const kindCodeCount =
+    kindCodeIndicators != null
+      ? kindCodeIndicators.map((d) => d.doc_count)
+      : [];
 
-  depositeDateIndicators && depositeDateIndicators.sort((a, b) => Number(a.key) - Number(b.key));
-  publicationDateIndicators && publicationDateIndicators.sort((a, b) => Number(a.key) - Number(b.key));
+  depositeDateIndicators &&
+    depositeDateIndicators.sort((a, b) => Number(a.key) - Number(b.key));
+  publicationDateIndicators &&
+    publicationDateIndicators.sort((a, b) => Number(a.key) - Number(b.key));
 
   return (
-    <div className={styles.charts} hidden={isEmpty()}>
+    <div className="indicators" hidden={isEmpty()}>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
           title="Export to csv"
           data={depositeDateIndicators ? depositeDateIndicators : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersByDepositDate}
         >
-          <IoCloudDownloadOutline />
+          <Download />
         </CSVLink>
         <Bar
           /**
-      // @ts-ignore */
+      // @ts-expect-error */
           options={optDepositDate}
           width="500"
           data={{
@@ -161,7 +203,7 @@ function PatentsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
             datasets: [
               {
                 data: depositeDateIndicators,
-                label: 'Articles per Year',
+                label: "Articles per Year",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -177,14 +219,14 @@ function PatentsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
           className={styles.download}
           title="Export to csv"
           data={publicationDateIndicators ? publicationDateIndicators : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersByDepositDate}
         >
-          <IoCloudDownloadOutline />
+          <Download />
         </CSVLink>
         <Bar
           /**
-      // @ts-ignore */
+      // @ts-expect-error */
           options={optPubDate}
           width="500"
           data={{
@@ -192,7 +234,7 @@ function PatentsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
             datasets: [
               {
                 data: publicationDateIndicators,
-                label: 'Articles per Year',
+                label: "Articles per Year",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -206,16 +248,16 @@ function PatentsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
         {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
-          title={t('Export to csv') || ''}
+          title={t("Export to csv") || ""}
           data={countryCodeIndicators ? countryCodeIndicators : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersCountryCode}
         >
-          <IoCloudDownloadOutline />
+          <Download />
         </CSVLink>
         <Pie
           /**
-      // @ts-ignore */
+      // @ts-expect-error */
           options={optCountryCode}
           width="500"
           data={{
@@ -223,7 +265,7 @@ function PatentsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
             datasets: [
               {
                 data: countryCodeCount,
-                label: '# of Votes',
+                label: "# of Votes",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -237,16 +279,16 @@ function PatentsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
         {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
-          title={t('Export to csv') || ''}
+          title={t("Export to csv") || ""}
           data={kindCodeIndicators ? kindCodeIndicators : []}
-          filename={'arquivo.csv'}
+          filename={"arquivo.csv"}
           headers={headersKindCode}
         >
-          <IoCloudDownloadOutline />
+          <Download />
         </CSVLink>
         <Pie
           /**
-      // @ts-ignore */
+      // @ts-expect-error */
           options={optKindCode}
           width="500"
           data={{
@@ -254,7 +296,7 @@ function PatentsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
             datasets: [
               {
                 data: kindCodeCount,
-                label: '# of codes',
+                label: "# of codes",
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -266,11 +308,8 @@ function PatentsIndicators({ filters, searchTerm, isLoading }: IndicatorsProps) 
     </div>
   );
 }
-export default withSearch(
-  // @ts-ignore
-  ({ filters, searchTerm, isLoading }) => ({
-    filters,
-    searchTerm,
-    isLoading,
-  })
-)(PatentsIndicators);
+export default withSearch(({ filters, resultSearchTerm, isLoading }) => ({
+  filters,
+  resultSearchTerm,
+  isLoading,
+}))(PatentsIndicators);

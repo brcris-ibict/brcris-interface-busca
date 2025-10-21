@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subject } from "rxjs";
+import { filter } from "rxjs/operators";
 
 export const alertService = {
   onAlert,
@@ -13,18 +13,18 @@ export const alertService = {
 };
 
 export const AlertType = {
-  Success: 'Success',
-  Error: 'Error',
-  Info: 'Info',
-  Warning: 'Warning',
+  Success: "Success",
+  Error: "Error",
+  Info: "Info",
+  Warning: "Warning",
 };
 
 const alertSubject = new Subject();
-const defaultId = 'default-alert';
+const defaultId = "default-alert";
 
 // enable subscribing to alerts observable
 function onAlert(id = defaultId) {
-  // @ts-ignore
+  // @ts-expect-error
   return alertSubject.asObservable().pipe(filter((x) => x && x.id === id));
 }
 

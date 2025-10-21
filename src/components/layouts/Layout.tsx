@@ -1,20 +1,22 @@
-import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { PropsWithChildren } from 'react';
-import Footer from '../Footer';
-import Navbar from '../Navbar';
-import CookieConsent from '../banners/CookieConsent';
+import Head from "next/head";
+import { useRouter } from "next/router";
+import type { PropsWithChildren } from "react";
+import CookieConsent from "../banners/CookieConsent";
+import Footer from "../Footer";
+import Navbar from "../Navbar";
 
 interface LayoutProps extends PropsWithChildren {
   fontFamily: string;
 }
 
 export default function Layout({ children, fontFamily }: LayoutProps) {
-  const BRCRIS_HOST_BASE = process.env.BRCRIS_HOST_BASE || 'https://brcris.ibict.br';
+  const BRCRIS_HOST_BASE =
+    process.env.BRCRIS_HOST_BASE || "https://brcris.ibict.br";
   const router = useRouter();
   const locales = router.locales;
   const defaultLocale = router.defaultLocale;
   const currentPath = router.asPath;
+
   return (
     <>
       <Head>
@@ -23,13 +25,19 @@ export default function Layout({ children, fontFamily }: LayoutProps) {
             key={lang}
             rel="alternate"
             hrefLang={lang}
-            href={`${BRCRIS_HOST_BASE}${lang != defaultLocale ? '/' + lang : ''}${currentPath}`}
+            href={`${BRCRIS_HOST_BASE}${lang !== defaultLocale ? "/" + lang : ""}${currentPath}`}
           />
         ))}
       </Head>
       <Navbar />
       {/* <Alert /> */}
-      <main className={fontFamily}>{children}</main>
+
+      <main
+        style={{ paddingTop: "100px" }}
+        className={`container-fluid ${fontFamily}`}
+      >
+        {children}
+      </main>
       <CookieConsent />
       <Footer />
     </>

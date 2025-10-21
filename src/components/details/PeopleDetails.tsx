@@ -1,14 +1,16 @@
-import Loader from '../Loader';
-import { useTranslation } from 'next-i18next';
-import { ErrorBoundary, useSearch } from '@elastic/react-search-ui';
-import Head from 'next/head';
-import LattesLink from '../externalLinks/LattesLink';
-import ShowItem from '../customResultView/ShowItem';
-import PersonProduction from './PersonProduction';
-
+import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
+import Head from "next/head";
+import { useTranslation } from "next-i18next";
+import CopyLink from "../CopyLink";
+import ShowItem from "../customResultView/ShowItem";
+import ExpandableContent from "../ExpandableContent";
+import Loader from "../Loader";
+import PopoverButton from "../PopOver";
+import ChordDiagram from "./ChordDiagram";
+import PersonProduction from "./PersonProduction";
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation("common");
 
   return (
     <>
@@ -17,63 +19,219 @@ export default function PublicationDetails() {
         {wasSearched &&
           results &&
           results.length > 0 &&
-          results.map((result, index) => (
-            <div className="details-content" key={index}>
-              <div className="details-main">
-                <Head>
-                  <title>{`${result.name?.raw} | BrCris`}</title>
-                </Head>
-                <h1>
-                  {result.name?.raw}
-                  {result.lattesId ? <LattesLink lattesId={result.lattesId.raw!} /> : ''}
-                </h1>
-                <ul>
-                  <ShowItem label={t('Nationality')} value={result.nationality?.raw} />
-                  <ShowItem
-                    label={t('Orcid')}
-                    value={
-                      result.orcid
-                        ? result.orcid?.raw.toString().startsWith('https')
-                          ? result.orcid?.raw
-                          : `https://orcid.org/${result.orcid?.raw}`
-                        : ''
-                    }
-                    urlLink={
-                      result.orcid
-                        ? result.orcid?.raw.toString().startsWith('https')
-                          ? result.orcid?.raw
-                          : `https://orcid.org/${result.orcid?.raw}`
-                        : ''
-                    }
-                  />
-
-                  <ShowItem
-                    label={t('Organization')}
-                    value={result.orgunit?.raw.map((orgunit: any, index: any) => (
-                      <span key={index} className="sui-result__value">
-                        <a key={orgunit.id} href={`/organizations/${orgunit.id}`}>
-                          {orgunit.name!}
+          results?.map((result) => (
+            <div key={result.id?.raw}>
+              <div className="details-content">
+                <div className="details-main">
+                  <Head>
+                    <title>{`${result.name?.raw} | BrCris`}</title>
+                  </Head>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="author-header">
+                      <h1>{result.name?.raw}</h1>
+                      <span className="citation-name">{`(${result.citationName?.raw[0]})`}</span>
+                    </div>
+                    <div className="d-lg-none">
+                      <PopoverButton />
+                    </div>
+                  </div>
+                  {result.id?.raw && (
+                    <span className="d-flex flex-column flex-sm-row gap-2 mb-1">
+                      <img
+                        className="brcris-logo"
+                        src="/logos/logo-brcris.png"
+                        alt="logo do BrCris"
+                      />
+                      {`${location.origin}/people/${result.id.raw}`}
+                      <CopyLink
+                        link={`${location.origin}/people/${result.id.raw}`}
+                      />
+                    </span>
+                  )}
+                  <div className="d-flex flex-column flex-sm-row gap-2 mb-2">
+                    <span>
+                      <a
+                        href={`http://lattes.cnpq.br/${result.lattesId?.raw}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          className="lattes-logo"
+                          src="/logos/lattes.png"
+                          alt="logo do Lattes"
+                        />
+                        Lattes
+                      </a>
+                    </span>
+                    {result.orcid?.raw && (
+                      <span>
+                        <a
+                          href={`https://orcid.org/${result.orcid?.raw}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <img
+                            className="orcid-logo"
+                            src="/logos/logo_orcid.png"
+                            alt="logo do Lattes"
+                          />
+                          ORCID
                         </a>
                       </span>
-                    ))}
-                  />
-                  <ShowItem
-                    label={t('Research field')}
-                    value={result.researchArea?.raw.map((researchArea: any, index: any) => (
-                      <span key={index}>{researchArea.name}</span>
-                    ))}
-                  />
-                  <li>
-                    <span className="sui-result__key">{t('Community')}</span>
-                    <span className="sui-result__value">
-                      {result.community?.raw.map((community: any, index: any) => (
-                        <span key={index}>{community.name}</span>
-                      ))}
-                    </span>
-                  </li>
-                </ul>
+                    )}
+                  </div>
+                  <div className="details-card">
+                    <div>
+                      <ExpandableContent text={result.bio?.raw} maxLines={5} />
+                    </div>
+                    {result.researchArea?.raw?.length > 0 && (
+                      <div className="research-fields">
+                        <strong className="research-title">
+                          {t("Research field")}
+                        </strong>
+                        <div className="chips-container">
+                          {result.researchArea.raw
+                            .filter((area: any) => area?.name)
+                            .map((researchArea: any) => (
+                              <span key={researchArea.id} className="chip">
+                                {researchArea.name}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+                    <ul className="sui-result__details">
+                      <ShowItem
+                        label={t("Nationality")}
+                        value={result.nationality?.raw}
+                      />
+                      <ShowItem
+                        label={t("Affiliation")}
+                        value={result.affiliation?.raw?.map((orgunit: any) => (
+                          <span key={orgunit.id} className="sui-result__value">
+                            <a
+                              key={orgunit.id}
+                              href={`/organizations/${orgunit?.id}`}
+                            >
+                              {orgunit?.name}
+                            </a>
+                          </span>
+                        ))}
+                      />
+                      {(result.memberOf?.raw?.length > 0 ||
+                        result.leaderOf?.raw?.length > 0) && (
+                        <li className="sui-result__item">
+                          <span className="sui-result__key">
+                            {t("Research groups")}
+                          </span>
+                          <span className="sui-result__value">
+                            {(() => {
+                              const groupsMap = new Map<string, any>();
+
+                              (result.memberOf?.raw || []).forEach(
+                                (item: any) => {
+                                  if (item?.id) {
+                                    groupsMap.set(item.id, {
+                                      ...item,
+                                      role: "Member",
+                                    });
+                                  }
+                                },
+                              );
+
+                              (result.leaderOf?.raw || []).forEach(
+                                (item: any) => {
+                                  if (item?.id) {
+                                    groupsMap.set(item.id, {
+                                      ...item,
+                                      role: "Leader of",
+                                    });
+                                  }
+                                },
+                              );
+
+                              return Array.from(groupsMap.values()).map(
+                                (item: any, index: number) => (
+                                  <span key={item.id} className="group-item">
+                                    {item.id ? (
+                                      <a href={`/research-groups/${item.id}`}>
+                                        {item.name}
+                                      </a>
+                                    ) : (
+                                      item.name
+                                    )}
+                                    {` (${t(item.role)})`}
+                                    {index < groupsMap.size - 1 && ", "}
+                                  </span>
+                                ),
+                              );
+                            })()}
+                          </span>
+                        </li>
+                      )}
+                      {result.brcrisId?.raw?.length > 0 && (
+                        <li>
+                          <span className="sui-result__key">
+                            {t("BrCris identifier")}
+                          </span>
+                          <span>
+                            <ExpandableContent
+                              items={
+                                Array.isArray(result.brcrisId.raw)
+                                  ? result.brcrisId.raw
+                                  : [result.brcrisId.raw]
+                              }
+                              initialCount={5}
+                              renderItem={(id: string, idx: number) => (
+                                <span key={idx}>{id}</span>
+                              )}
+                            />
+                          </span>
+                        </li>
+                      )}
+                      <li>
+                        <strong className="research-title">
+                          {t("Publications")} ({result.authorOf?.raw?.length})
+                        </strong>
+                        <ExpandableContent
+                          items={result.authorOf?.raw
+                            ?.slice()
+                            ?.sort((a: any, b: any) => {
+                              const dateA = new Date(
+                                a.publicationDate?.[0] || 0,
+                              ).getTime();
+                              const dateB = new Date(
+                                b.publicationDate?.[0] || 0,
+                              ).getTime();
+                              return dateB - dateA;
+                            })}
+                          initialCount={5}
+                          renderItem={(publication: any) => (
+                            <div className="publication-item">
+                              <a href={`/publications/${publication?.id}`}>
+                                {publication?.title}
+                              </a>
+                              <div className="publication-meta">
+                                {publication.publicationDate?.[0] && (
+                                  <span>{publication.publicationDate[0]}</span>
+                                )}
+                                {publication.type?.[0] && (
+                                  <span className="type">
+                                    {" "}
+                                    - {publication.type[0]}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        />
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <PersonProduction publications={result.authorOf?.raw} />
               </div>
-              <PersonProduction authorId={result.id?.raw} />
+              <ChordDiagram authorId="7ea9469a-1088-4913-aa01-d161d440f564" />
             </div>
           ))}
       </ErrorBoundary>

@@ -1,64 +1,22 @@
 /* eslint-disable  @typescript-eslint/no-non-null-asserted-optional-chain */
-import { ResultViewProps } from '@elastic/react-search-ui-views';
-import { useTranslation } from 'next-i18next';
-import AuthorLink from '../externalLinks/AuthorLink';
-import ShowItem from './ShowItem';
+import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import type { OrgUnit } from "../../types/Entities";
 
-const CustomResultViewPeople = ({ result }: ResultViewProps) => {
-  const { t } = useTranslation('common');
+const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
   return (
     <li className="sui-result">
-      <div>
-        <div className="sui-result__header">
-          <h6>
-            <AuthorLink
-              key={result.id.raw}
-              id={result.id.raw}
-              name={result.name?.raw}
-              idLattes={result.lattesId?.raw!}
-            />
-          </h6>
+      <a onClick={onClickLink} href={`/people/${result.id.raw}`}>
+        <h3
+          dangerouslySetInnerHTML={{
+            __html: result.name.snippet || result.name.raw,
+          }}
+        ></h3>
+        <div className="result-metadata">
+          {result.affiliation?.raw.map((affiliation: OrgUnit) => (
+            <span key={affiliation.id}>{affiliation.name!}</span>
+          ))}
         </div>
-
-        <div className="sui-result__body">
-          <ul className="sui-result__details">
-            <ShowItem
-              label={t('Orcid')}
-              value={
-                result.orcid
-                  ? result.orcid?.raw.toString().startsWith('https')
-                    ? result.orcid?.raw
-                    : `https://orcid.org/${result.orcid?.raw}`
-                  : ''
-              }
-              urlLink={
-                result.orcid
-                  ? result.orcid?.raw.toString().startsWith('https')
-                    ? result.orcid?.raw
-                    : `https://orcid.org/${result.orcid?.raw}`
-                  : ''
-              }
-            />
-
-            <ShowItem
-              label={t('Organization')}
-              value={result.orgunit?.raw.map((orgunit: any, index: any) => (
-                <span key={index} className="sui-result__value">
-                  <a key={orgunit.id} href={`/organizations/${orgunit.id}`}>
-                    {orgunit.name!}
-                  </a>
-                </span>
-              ))}
-            />
-            <ShowItem
-              label={t('Research field')}
-              value={result.researchArea?.raw.map((researchArea: any, index: any) => (
-                <span key={index}>{researchArea.name}</span>
-              ))}
-            />
-          </ul>
-        </div>
-      </div>
+      </a>
     </li>
   );
 };

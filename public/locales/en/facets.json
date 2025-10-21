@@ -6,6 +6,7 @@
   "type": "Type",
   "publicationdate": "Publication year",
   "orgunit.name": "Organization",
+  "sponsororgunit.name": "Organization",
   "researcharea.name": "Research field",
   "community.name": "community",
   "course.name": "Course",

@@ -1,31 +1,46 @@
-import { useTranslation } from 'next-i18next';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import dropdownStyle from '../styles/Dropdown.module.css';
+/** biome-ignore-all lint/a11y/useValidAnchor: explanation */
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import dropdownStyle from "../styles/Dropdown.module.css";
 
 function Navbar() {
-  const LANGUAGES = process.env.LANGUAGES?.split(',');
+  const LANGUAGES = process.env.LANGUAGES?.split(",");
   const router = useRouter();
-  const { t } = useTranslation('navbar');
+  const { t } = useTranslation("navbar");
 
   const { asPath } = router;
 
   const changeTo = (lang: string) => lang;
 
   return (
-    <nav className="navbar navbar-dark navbar-expand-lg bg-violet py-0">
+    <nav className="navbar navbar-expand-lg py-0">
       <div className="container-fluid d-flex">
-        <div className="flex-nowrap d-flex align-items-center flex-justify-content-between">
-          <Link href="/" className="navbar-brand">
+        <div className="flex-nowrap d-flex align-items-end flex-justify-content-between gap-3 ms-md-5">
+          <a
+            className="navbar-brand"
+            href="https://www.gov.br/ibict/pt-br"
+            target="_blank"
+            rel="noreferrer"
+          >
             <picture className="navbar-logo">
-              <img className="img-fluid brcris" src="/logos/logo-brcris-pb.png" alt="logo do brcris" />
-            </picture>
-          </Link>
-          <a className="navbar-brand" href="https://www.gov.br/ibict/pt-br" target="_blank" rel="noreferrer">
-            <picture className="navbar-logo">
-              <img className="img-fluid ibict" src="/logos/logo-ibict-pb-st.png" alt="logo do ibict" />
+              <img
+                className="img-fluid ibict"
+                src="/logos/logo-ibict.png"
+                alt="logo do ibict"
+              />
             </picture>
           </a>
+          <span className="divider"> </span>
+          <Link href="/" className="navbar-brand">
+            <picture className="navbar-logo">
+              <img
+                className="img-fluid brcris"
+                src="/logos/logo-brcris.png"
+                alt="logo do brcris"
+              />
+            </picture>
+          </Link>
 
           <button
             className="navbar-toggler"
@@ -42,16 +57,16 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
           <div className="navbar-nav me-auto mb-2 mb-lg-0"></div>
 
-          <ul className="navbar-nav nav nav-tabs" role="tablist">
+          <ul className="navbar-nav nav nav-tabs">
             <li className="nav-item me-5" role="presentation">
               <Link href="/" className="nav-link">
-                {t('Home')}
+                {t("Home")}
               </Link>
             </li>
 
             <li className="nav-item me-5" role="presentation">
               <Link href="/dashboards" className="nav-link">
-                {t('Dashboards')}
+                {t("Dashboards")}
               </Link>
             </li>
             {/* <li className="nav-item me-5" role="presentation">
@@ -91,24 +106,29 @@ function Navbar() {
 
             <li className="nav-item me-5" role="presentation">
               <Link href="/team" className="nav-link">
-                {t('Team')}
+                {t("Team")}
               </Link>
             </li>
             <li className="nav-item me-5" role="presentation">
               <Link href="/about" className="nav-link">
-                {t('About')}
+                {t("About")}
               </Link>
             </li>
             <li className="nav-item me-5" role="presentation">
               <Link href="/contact" className="nav-link">
-                {t('Contact')}
+                {t("Contact")}
+              </Link>
+            </li>
+            <li className="nav-item me-5" role="presentation">
+              <Link href="/faq" className="nav-link">
+                {t("Faq")}
               </Link>
             </li>
             <li className="nav-item me-5" role="presentation">
               <div className={dropdownStyle.dropdown}>
                 <div className={dropdownStyle.flexCenter}>
                   <a href="#" className="nav-link">
-                    {t(router.locale || 'en')}
+                    {t(router.locale || "en")}
                     <svg
                       height="20"
                       width="20"

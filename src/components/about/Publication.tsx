@@ -5,14 +5,19 @@ type PublicationProps = {
   journal: string;
 };
 
-export default function Publication({ authors, title, link, journal }: PublicationProps) {
+export default function Publication({
+  authors,
+  title,
+  link,
+  journal,
+}: PublicationProps) {
   return (
     <>
       <p>
-        {authors}{' '}
+        {authors}{" "}
         <a href={link} target="_blank" rel="noreferrer">
           {title}
-        </a>{' '}
+        </a>{" "}
         {journal}
       </p>
     </>

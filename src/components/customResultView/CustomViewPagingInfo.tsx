@@ -1,5 +1,5 @@
-import { PagingInfoViewProps } from '@elastic/react-search-ui-views';
-import { useTranslation } from 'next-i18next';
+import type { PagingInfoViewProps } from "@elastic/react-search-ui-views";
+import { useTranslation } from "next-i18next";
 
 function CustomViewPagingInfo({
   className,
@@ -8,18 +8,18 @@ function CustomViewPagingInfo({
   start,
   totalResults,
 }: PagingInfoViewProps & React.HTMLAttributes<HTMLDivElement>) {
-  const { t } = useTranslation(['common', 'format']);
-  const formattedNumber = t('numberFormat', { value: totalResults });
+  const { t } = useTranslation(["common", "format"]);
+  const formattedNumber = t("numberFormat", { value: totalResults });
   return (
     <div className={`sui-paging-info ${className}`}>
-      {t('Showing')}{' '}
+      {t("Showing")}{" "}
       <strong>
         {start} - {end}
-      </strong>{' '}
-      {t('out of')} <strong>{formattedNumber}</strong>{' '}
+      </strong>{" "}
+      {t("out of")} <strong>{formattedNumber}</strong>{" "}
       {searchTerm && (
         <>
-          {t('for')}: <em>{searchTerm}</em>
+          {t("for")}: <em>{searchTerm}</em>
         </>
       )}
     </div>

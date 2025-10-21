@@ -3,7 +3,7 @@ class APIConnector {
 
   // optional. Called when a result has been clicked
   onResultClick() {
-    console.log('onResultClicked');
+    console.log("onResultClicked");
   }
 
   // optional. Called when an autocomplete result has been clicked
@@ -54,33 +54,33 @@ class APIConnector {
   }
 
   async onSearch(requestState: any, queryConfig: any) {
-    Promise.resolve().then(() => this.cleanupCache());
+    // Promise.resolve().then(() => this.cleanupCache());
 
-    const key = this.getCacheKey(requestState, queryConfig);
+    // const key = this.getCacheKey(requestState, queryConfig);
 
-    const cachedData = this.getFromCache(key);
-    if (cachedData) {
-      console.log('Returning cached data');
-      return cachedData;
-    }
+    // const cachedData = this.getFromCache(key);
+    // if (cachedData) {
+    //   console.log('Returning cached data');
+    //   return cachedData;
+    // }
 
-    console.log('Fetching fresh data');
-    const response = await fetch('/api/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    console.log("Fetching fresh data");
+    const response = await fetch("/api/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ requestState, queryConfig }),
     });
     const data = await response.json();
 
-    this.saveToCache(key, data);
+    // this.saveToCache(key, data);
     return data;
   }
 
   async onAutocomplete(requestState: any, queryConfig: any) {
     queryConfig.index = queryConfig.results.index;
-    const response = await fetch('/api/autocomplete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/autocomplete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ requestState, queryConfig }),
     });
     return response.json();

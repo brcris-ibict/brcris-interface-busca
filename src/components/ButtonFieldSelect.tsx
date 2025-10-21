@@ -1,11 +1,12 @@
-import type { SearchDriverOptions } from '@elastic/search-ui'
+/** biome-ignore-all lint/suspicious/noAssignInExpressions: explanation */
+import type { SearchDriverOptions } from "@elastic/search-ui";
 
 type ButtonFieldSelectProps = {
-  title: string
-  active: boolean
-  config: SearchDriverOptions
-  searchField: string
-}
+  title: string;
+  active: boolean;
+  config: SearchDriverOptions;
+  searchField: string;
+};
 
 export default function ButtonFieldSelect({
   title,
@@ -15,7 +16,7 @@ export default function ButtonFieldSelect({
 }: ButtonFieldSelectProps) {
   return (
     <button
-      className={active ? 'nav-link active' : 'nav-link'}
+      className={active ? "nav-link active" : "nav-link"}
       data-bs-toggle="tab"
       data-bs-target="#home"
       type="button"
@@ -28,10 +29,10 @@ export default function ButtonFieldSelect({
           ? (config.searchQuery.search_fields = {
               [searchField]: {},
             })
-          : null
+          : null;
       }}
     >
       {title}
     </button>
-  )
+  );
 }

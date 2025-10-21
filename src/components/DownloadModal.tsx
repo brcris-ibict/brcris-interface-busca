@@ -1,18 +1,21 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { QueryDslOperator, QueryDslQueryContainer } from '@elastic/elasticsearch/lib/api/types';
-import { SearchContext, withSearch } from '@elastic/react-search-ui';
-import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
-import { useContext, useRef, useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { FaFileExport } from 'react-icons/fa6';
-import { alertService } from '../services/AlertService';
-import ExportService from '../services/ExportService';
-import { CustomSearchQuery } from '../types/Entities';
-import { Alert } from './Alert';
-import Loader from './Loader';
-import { formatedQuery } from './indicators/query/Query';
+import type {
+  QueryDslOperator,
+  QueryDslQueryContainer,
+} from "@elastic/elasticsearch/lib/api/types";
+import { SearchContext, withSearch } from "@elastic/react-search-ui";
+import { Download } from "lucide-react";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import { useContext, useRef, useState } from "react";
+import { Button, Modal } from "react-bootstrap";
+import ReCAPTCHA from "react-google-recaptcha";
+import { alertService } from "../services/AlertService";
+import ExportService from "../services/ExportService";
+import type { CustomSearchQuery } from "../types/Entities";
+import { Alert } from "./Alert";
+import { formatedQuery } from "./indicators/query/Query";
+import Loader from "./Loader";
 
 type DownloadModalProps = {
   filters?: any;
@@ -26,27 +29,33 @@ const alertOptions = {
   keepAfterRouteChange: false,
 };
 
-const DownloadModal = ({ filters, searchTerm, totalResults, typeArq }: DownloadModalProps) => {
-  const { t } = useTranslation('common');
+const DownloadModal = ({
+  filters,
+  searchTerm,
+  totalResults,
+  typeArq,
+}: DownloadModalProps) => {
+  const { t } = useTranslation("common");
   const router = useRouter();
-  const PUBLIC_RECAPTCHA_SITE_KEY = process.env.PUBLIC_RECAPTCHA_SITE_KEY || '';
+  const PUBLIC_RECAPTCHA_SITE_KEY = process.env.PUBLIC_RECAPTCHA_SITE_KEY || "";
   const { driver } = useContext(SearchContext);
   const [show, setShow] = useState(false);
-  const [downloadLink, setDownloadLink] = useState('');
+  const [downloadLink, setDownloadLink] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [formSent, setFormSent] = useState(false);
-  const [email, setEmail] = useState('');
-  const [captcha, setCaptcha] = useState('');
+  const [email, setEmail] = useState("");
+  const [captcha, setCaptcha] = useState("");
   const recaptchaRef = useRef(null);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const { search_fields, result_fields, operator, index } = driver.searchQuery as CustomSearchQuery;
-  // @ts-ignore
+  const { search_fields, result_fields, operator, index } =
+    driver.searchQuery as CustomSearchQuery;
+  // @ts-expect-error
   const fields = Object.keys(search_fields);
-  // @ts-ignore
+  // @ts-expect-error
   const resultFields = Object.keys(result_fields);
 
-  const title = typeArq === undefined ? 'csv' : typeArq;
+  const title = typeArq === undefined ? "csv" : typeArq;
 
   async function handleDownload() {
     handleShow();
@@ -55,16 +64,21 @@ const DownloadModal = ({ filters, searchTerm, totalResults, typeArq }: DownloadM
       try {
         setLoading(true);
         if (typeArq === undefined) {
-          typeArq = 'csv';
+          typeArq = "csv";
         }
-        const query: QueryDslQueryContainer = formatedQuery(searchTerm, fields, operator as QueryDslOperator, filters);
+        const query: QueryDslQueryContainer = formatedQuery(
+          searchTerm,
+          fields,
+          operator as QueryDslOperator,
+          filters,
+        );
         const response = await new ExportService().search(
           index,
           query,
           resultFields,
           totalResults,
           getIndexName(),
-          typeArq
+          typeArq,
         );
         const { file } = await response.json();
         const nextDownloadLink = getDownloadLink(file);
@@ -83,9 +97,14 @@ const DownloadModal = ({ filters, searchTerm, totalResults, typeArq }: DownloadM
 
     try {
       setLoading(true);
-      const query: QueryDslQueryContainer = formatedQuery(searchTerm, fields, operator as QueryDslOperator, filters);
+      const query: QueryDslQueryContainer = formatedQuery(
+        searchTerm,
+        fields,
+        operator as QueryDslOperator,
+        filters,
+      );
       if (typeArq === undefined) {
-        typeArq = 'csv';
+        typeArq = "csv";
       }
 
       const response = await new ExportService().search(
@@ -96,7 +115,7 @@ const DownloadModal = ({ filters, searchTerm, totalResults, typeArq }: DownloadM
         getIndexName(),
         typeArq,
         email,
-        captcha
+        captcha,
       );
       const { file } = await response.json();
       setLoading(false);
@@ -105,21 +124,21 @@ const DownloadModal = ({ filters, searchTerm, totalResults, typeArq }: DownloadM
         setDownloadLink(nextDownloadLink);
       } else {
         if (response.status === 200) {
-          setEmail('');
+          setEmail("");
           alertService.info(
             t(
-              'Export processing. The download link will be sent to the e-mail address provided when the file is ready.'
+              "Export processing. The download link will be sent to the e-mail address provided when the file is ready.",
             ),
-            alertOptions
+            alertOptions,
           );
         } else if (response.status === 507) {
         } else {
-          alertService.error(t('Export failed, try again later'), alertOptions);
+          alertService.error(t("Export failed, try again later"), alertOptions);
         }
       }
     } finally {
-      setCaptcha('');
-      // @ts-ignore
+      setCaptcha("");
+      // @ts-expect-error
       recaptchaRef.current.reset();
       setLoading(false);
       setFormSent(true);
@@ -142,34 +161,35 @@ const DownloadModal = ({ filters, searchTerm, totalResults, typeArq }: DownloadM
   return (
     <>
       <button
+        type="button"
         title={t(`Exportar ${title}`) || `Exportar ${title}`}
         className="btn-header btn btn-outline-secondary d-flex align-items-center flex-gap-8"
         onClick={handleDownload}
       >
-        <FaFileExport />
+        <Download />
         {t(`${title}`)}
       </button>
-      {isLoading ? <Loader /> : ''}
+      {isLoading ? <Loader /> : ""}
 
       <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>{t('Download')}</Modal.Title>
+          <Modal.Title>{t("Download")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Alert />
           {downloadLink && (
             <a href={downloadLink} target="_blank" rel="noreferrer">
-              {t('Download file')}
+              {t("Download file")}
             </a>
           )}
           {totalResults > 1000 && !formSent && (
             <div>
               <p>
                 {t(
-                  'For searches involving a large number of records, the export file may not be immediately available for download. In such cases, the download link for the file will be sent via email shortly.'
+                  "For searches involving a large number of records, the export file may not be immediately available for download. In such cases, the download link for the file will be sent via email shortly.",
                 )}
               </p>
-              <p>{t('Enter your email in the field below:')}</p>
+              <p>{t("Enter your email in the field below:")}</p>
               <form
                 onSubmit={(event) => {
                   handleSubmit(event);
@@ -178,7 +198,7 @@ const DownloadModal = ({ filters, searchTerm, totalResults, typeArq }: DownloadM
                 <input
                   className="form-control search-box"
                   type="email"
-                  placeholder={`${t('Email')}`}
+                  placeholder={`${t("Email")}`}
                   required
                   value={email}
                   onChange={(event) => {
@@ -195,11 +215,11 @@ const DownloadModal = ({ filters, searchTerm, totalResults, typeArq }: DownloadM
                   />
 
                   <button
-                    disabled={!(captcha !== '' && email !== '')}
+                    disabled={!(captcha !== "" && email !== "")}
                     className="btn btn-primary px-4 py-2"
                     type="submit"
                   >
-                    {t('Submit')}
+                    {t("Submit")}
                   </button>
                 </div>
               </form>
@@ -208,7 +228,7 @@ const DownloadModal = ({ filters, searchTerm, totalResults, typeArq }: DownloadM
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            {t('Close')}
+            {t("Close")}
           </Button>
         </Modal.Footer>
       </Modal>
