@@ -111,6 +111,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       .attr("stroke", "#000")
       .attr(
         "class",
+        // @ts-expect-error
         (d) => `ribbon-${nodes[d.source.index].id}-${nodes[d.target.index].id}`,
       );
 
@@ -140,22 +141,24 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       .style("text-decoration", "underline")
       .style("cursor", "pointer")
       .on("click", (event, d) => {
+        // @ts-expect-error
         setSelectedNode(nodes[d.index]);
         setTarget(event.currentTarget as HTMLElement);
+        // @ts-expect-error
         const rect = chartRef.current.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
         setPopoverPos({ x, y });
 
         // 🔥 Highlight logic
-        ribbonGroup
-          .selectAll("path")
-          .style("opacity", (r: any) =>
-            r.source.index === d.index || r.target.index === d.index ? 1 : 0.1,
-          );
+        ribbonGroup.selectAll("path").style("opacity", (r: any) =>
+          // @ts-expect-error
+          r.source.index === d.index || r.target.index === d.index ? 1 : 0.1,
+        );
 
         group
           .selectAll("path")
+          // @ts-expect-error
           .style("opacity", (g: any) => (g.index === d.index ? 1 : 0.2));
       })
       .append("title")
@@ -165,8 +168,9 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           return `Co-authors: ${mainAuthor.coAuthors.length}`;
         } else {
           const pubs = mainAuthor.publications.filter(
-            //@ts-expect-error
+            // @ts-expect-error
             (p) =>
+              // @ts-expect-error
               p.authors.includes(nodes[d.index].id) &&
               p.authors.includes(mainAuthor.id),
           );

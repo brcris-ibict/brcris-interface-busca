@@ -13,9 +13,7 @@ import indexes from "../configs/Indexes";
 import { getIndexStats } from "../services/ElasticSearchStatsService";
 import styles from "../styles/Home.module.css";
 
-type Props = {
-  // Add custom props here
-};
+type Props = {};
 // or getServerSideProps: GetServerSideProps<Props> = async ({ locale })
 export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
   props: {
@@ -172,6 +170,7 @@ export default function App() {
           <h2 className="text-center">{t("BrCris Partners")}</h2>
           <div className="partners">
             {partners.map((partner) => (
+              // @ts-expect-error
               <div key={partner.id} className={partner.class}>
                 <a href={partner.url} target="_blank" rel="noreferrer">
                   <picture>

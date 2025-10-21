@@ -57,6 +57,7 @@ class ElasticsearchQueryBuilder {
           if (nextOperator === "AND NOT") {
             nextOperator = "AND";
           }
+          // @ts-expect-error
           this.fillQuery(nextOperator, field, value, []);
         }
       } else {

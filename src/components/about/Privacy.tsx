@@ -4,10 +4,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 
-//@ts-expect-error
-type Props = {
-  // Add custom props here
-};
+type Props = {};
 export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
   props: {
     ...(await serverSideTranslations(locale ?? "en", [

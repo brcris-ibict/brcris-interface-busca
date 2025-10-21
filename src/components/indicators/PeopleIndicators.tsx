@@ -17,7 +17,6 @@ import { useTranslation } from "next-i18next";
 import { useContext, useEffect } from "react";
 import { Pie } from "react-chartjs-2";
 import { CSVLink } from "react-csv";
-// @ts-expect-error
 import { TagCloud } from "react-tagcloud";
 import {
   CHART_BACKGROUD_COLORS,
@@ -61,6 +60,7 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
     useContext(IndicatorContext);
 
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {

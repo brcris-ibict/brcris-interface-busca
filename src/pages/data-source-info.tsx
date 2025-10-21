@@ -3,9 +3,7 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-type Props = {
-  // Add custom props here
-};
+type Props = {};
 
 export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
   props: {

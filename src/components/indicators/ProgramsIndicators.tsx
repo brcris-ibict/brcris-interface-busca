@@ -58,6 +58,8 @@ function ProgramsIndicators({
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+
+  // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {

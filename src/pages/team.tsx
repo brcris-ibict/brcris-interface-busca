@@ -9,10 +9,7 @@ import egressMembersData from "../../team/egress.json";
 import Member from "../components/team/Member";
 import type { MemberType } from "../types/Entities";
 
-// @ts-expect-error
-type Props = {
-  // Add custom props here
-};
+type Props = {};
 
 export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
   props: {
