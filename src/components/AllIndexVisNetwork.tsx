@@ -249,8 +249,8 @@ function VisGraph() {
         // nodes[i].widthConstraint = getSizeOfNode(maxSizeOfNode, indexStat['docs.count']);
       }
       nodes[i].label = t(nodes[i].indexLabel);
-      if (!nodes[i].title?.includes(nodes[i].label)) {
-        nodes[i].title += nodes[i].label;
+      if (!nodes[i].title?.includes(nodes[i].label as string)) {
+        (nodes[i] as { title: string; label: string }).title += nodes[i].label;
       }
       newNodes.push({ ...nodes[i] });
     }
