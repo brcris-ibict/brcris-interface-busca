@@ -7,7 +7,6 @@ const indexes = [
   { label: "Programs", name: process.env.INDEX_PROGRAM || "" },
   { label: "Research groups", name: process.env.INDEX_GROUP || "" },
   { label: "Software", name: process.env.INDEX_SOFTWARE || "" },
-  { label: "Courses", name: process.env.INDEX_COURSE || "" },
 ];
 
 export default indexes;

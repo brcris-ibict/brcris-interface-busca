@@ -29,56 +29,53 @@ export default function PublicationDetails() {
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="author-header">
                       <h1>{result.name?.raw}</h1>
-                      <span className="citation-name">{`(${result.citationName?.raw[0]})`}</span>
                     </div>
                     <div className="d-lg-none">
                       <PopoverButton />
                     </div>
                   </div>
+                   <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
+                  <a
+                    href={`http://lattes.cnpq.br/${result.lattesId?.raw}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="d-flex align-items-center gap-2"
+                  >
+                    <img
+                      className="lattes-logo"
+                      src="/logos/lattes.png"
+                      alt="logo do Lattes"
+                    />
+                    Lattes
+                  </a>
+
+                  {result.orcid?.raw && (
+                    <a
+                      href={`https://orcid.org/${result.orcid?.raw}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="d-flex align-items-center gap-2"
+                    >
+                      <img
+                        className="orcid-logo"
+                        src="/logos/logo_orcid.png"
+                        alt="logo do ORCID"
+                      />
+                      ORCID
+                    </a>
+                  )}
+
                   {result.id?.raw && (
-                    <span className="d-flex flex-column flex-sm-row gap-2 mb-1">
+                    <div className="d-flex align-items-center gap-2">
                       <img
                         className="brcris-logo"
                         src="/logos/logo-brcris.png"
                         alt="logo do BrCris"
                       />
-                      {`${location.origin}/people/${result.id.raw}`}
-                      <CopyLink
-                        link={`${location.origin}/people/${result.id.raw}`}
-                      />
-                    </span>
+                      <CopyLink link={`${location.origin}/people/${result.id.raw}`} />
+                    </div>
                   )}
-                  <div className="d-flex flex-column flex-sm-row gap-2 mb-2">
-                    <span>
-                      <a
-                        href={`http://lattes.cnpq.br/${result.lattesId?.raw}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <img
-                          className="lattes-logo"
-                          src="/logos/lattes.png"
-                          alt="logo do Lattes"
-                        />
-                        Lattes
-                      </a>
-                    </span>
-                    {result.orcid?.raw && (
-                      <span>
-                        <a
-                          href={`https://orcid.org/${result.orcid?.raw}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <img
-                            className="orcid-logo"
-                            src="/logos/logo_orcid.png"
-                            alt="logo do Lattes"
-                          />
-                          ORCID
-                        </a>
-                      </span>
-                    )}
+  
                   </div>
                   <div className="details-card">
                     <div>

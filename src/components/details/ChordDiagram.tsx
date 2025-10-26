@@ -140,6 +140,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       .style("fill", "blue")
       .style("text-decoration", "underline")
       .style("cursor", "pointer")
+      .style("font-size", "0.7rem")
       .on("click", (event, d) => {
         // @ts-expect-error
         setSelectedNode(nodes[d.index]);

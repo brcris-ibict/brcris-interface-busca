@@ -23,6 +23,7 @@ const CopyLink = ({ link }: { link: string }) => {
         onClick={handleCopy}
         style={{ cursor: "pointer", color: "var(--bs-link-color)" }}
       >
+       <span>BrCris ID</span>{" "}
         <Copy />
       </span>
       <span
@@ -41,7 +42,9 @@ const CopyLink = ({ link }: { link: string }) => {
           pointerEvents: "none",
           width: "max-content",
         }}
+        
       >
+        
         {t("Link copied!")}
       </span>
     </div>
