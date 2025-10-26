@@ -6,16 +6,28 @@ const CopyLink = ({ link }: { link: string }) => {
   const { t } = useTranslation("common");
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async () => {
+   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(link);
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(link);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = link;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
   };
-
   return (
     <div style={{ display: "inline-block", position: "relative" }}>
       <span
