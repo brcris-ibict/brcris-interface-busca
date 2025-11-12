@@ -241,5 +241,12 @@
   "Start date": "Data de início",
   "End date": "Data de término",
   "Program": "Programa",
-  "Organizational Unit": "Organização"
+  "Organizational Unit": "Organização",
+  "Advisor": "Orientador",
+  "Doctoral thesis": "Tese de Doutorado",
+  "Master thesis": "Dissertação de Mestrado",
+  "Advising statistics": "Estatísticas de orientações",
+  "Advising Network": "Rede de Orientações",
+  "Master and Doctoral Theses Advising Network": "Rede de Orientações de Mestrado e Doutorado",
+  "Download as picture": "Baixar como imagem"
 }

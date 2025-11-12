@@ -240,5 +240,13 @@
   "Start date": "Start date",
   "End date": "End date",
   "Program": "Program",
-  "Organizational Unit": "Organization"
+  "Organizational Unit": "Organization",
+  "Advisor": "Advisor",
+  "Doctoral thesis": "Doctoral thesis",
+  "Master thesis": "Master thesis",
+  "Advising statistics":"Advising statistics",
+  "Advising Network": "Advising Network",
+  "Master and Doctoral Theses Advising Network": "Master and Doctoral Theses Advising Network",
+  "Download as picture": "Download as picture"
+
 }

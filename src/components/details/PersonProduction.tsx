@@ -11,7 +11,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { Download, Users } from "lucide-react";
+import { Download, GraduationCap, Users } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { Bar, Pie } from "react-chartjs-2";
 import { CSVLink } from "react-csv";
@@ -101,7 +101,14 @@ export default function PersonProduction({
         <a href="#coautoria">
           <Users /> {t("Co-authorship Network")}
         </a>
+
       </div>
+        <h3>{t("Advising statistics")}</h3>
+      <div className="card p-2 mb-3">
+      <a href="#orientacoes">
+        <GraduationCap /> {t("Advising Network")}
+      </a>
+    </div>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

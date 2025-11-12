@@ -8,6 +8,7 @@ import Loader from "../Loader";
 import PopoverButton from "../PopOver";
 import ChordDiagram from "./ChordDiagram";
 import PersonProduction from "./PersonProduction";
+import AdvisorGraph from "./AdvisorGraph";
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
@@ -229,6 +230,7 @@ export default function PublicationDetails() {
                 <PersonProduction publications={result.authorOf?.raw} />
               </div>
               <ChordDiagram authorId="7ea9469a-1088-4913-aa01-d161d440f564" />
+              <AdvisorGraph advisorId="16aebc49-33c0-48c2-8de5-3189cbdf7280" />
             </div>
           ))}
       </ErrorBoundary>
