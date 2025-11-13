@@ -93,14 +93,14 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
         "width:100%; height:auto; background:white; font-family:sans-serif; display:block; margin:auto;"
       );
 
-    svg.selectAll("*").remove();
+      svg.selectAll("*").remove();
 
     svg
       .append("text")
       .attr("x", 60)
       .attr("y", 50)
       .attr("fill", "#6a0dad")
-      .attr("font-size", 22)
+      .attr("font-size", 25)
       .attr("font-weight", "bold")
       .attr("text-anchor", "start")
       .text(advisorName);
@@ -110,7 +110,7 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
     const titleText = titleGroup
       .append("text")
       .attr("fill", "#111827")
-      .attr("font-size", 18)
+      .attr("font-size", 25)
       .attr("font-weight", "bold")
       .attr("text-anchor", "start")
       .text(t("Master and Doctoral Theses Advising Network"));
@@ -122,7 +122,7 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
       .attr("x", titleWidth + 10)
       .attr("y", 0)
       .attr("fill", "#6a0dad")
-      .attr("font-size", 14)
+      .attr("font-size", 17)
       .attr("font-weight", "normal")
       .attr("text-anchor", "start")
       .style("cursor", "pointer")
@@ -141,7 +141,7 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
       { color: "#2ca02c", text: t("Master thesis") },
     ];
 
-    const legend = svg.append("g").attr("transform", `translate(${width - 220}, 50)`);
+    const legend = svg.append("g").attr("transform", `translate(${width - 250}, 50)`);
 
     legend
       .selectAll("circle")
@@ -158,9 +158,11 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
       .join("text")
       .attr("x", 15)
       .attr("y", (_, i) => i * 25 + 4)
-      .attr("font-size", 15)
+      .attr("font-size", 18)
       .attr("fill", "#333")
       .text((d) => d.text);
+
+    const graphOffsetY = 40;
 
     const simulation = d3
       .forceSimulation<Advisee>(nodes)
@@ -177,46 +179,55 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
 
     const link = svg
       .append("g")
+      .attr("transform", `translate(0, ${graphOffsetY})`)
       .attr("stroke", "#ccc")
       .attr("stroke-width", 1)
       .selectAll("line")
       .data(links)
       .join("line");
 
-    const node = svg.append("g").selectAll("g").data(nodes).join("g");
+    const node = svg
+    .append("g")
+    .attr("transform", `translate(0, ${graphOffsetY})`)
+    .selectAll("g")
+    .data(nodes)
+    .join("g");
 
-    node
-      .append("circle")
-      .attr("r", 12)
-      .attr("fill", (d) => color(d.level))
-      .style("cursor", "grab");
+      node
+        .append("circle")
+        .attr("r", 12)
+        .attr("fill", (d) => color(d.level))
 
-    node
-      .append("text")
-      .text((d) => d.name)
-      .attr("x", 18)
-      .attr("y", 5)
-      .attr("font-size", 13)
-      .attr("fill", "#333")
-      .style("pointer-events", "none")
-      .style("alignment-baseline", "middle");
+      node
+        .append("text")
+        .text((d) => d.name)
+        .attr("x", 18)
+        .attr("y", 5)
+        .attr("font-size", 13)
+        .attr("fill", "#333")
+        .style("pointer-events", "none")
+        .style("alignment-baseline", "middle");
 
-    const drag = d3
-      .drag<SVGGElement, Advisee>()
-      .on("start", (event, d) => {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-      })
-      .on("drag", (event, d) => {
-        d.fx = event.x;
-        d.fy = event.y;
-      })
-      .on("end", (event, d) => {
-        if (!event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-      });
+      node
+        .append("title")
+        .text((d) => d.name);
+
+        const drag = d3
+          .drag<SVGGElement, Advisee>()
+          .on("start", (event, d) => {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+          })
+          .on("drag", (event, d) => {
+            d.fx = event.x;
+            d.fy = event.y;
+          })
+          .on("end", (event, d) => {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+          });
 
     node.call(drag as any);
 
