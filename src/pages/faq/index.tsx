@@ -363,7 +363,7 @@ export default function FaqPage() {
                 data-bs-target="#q14"
               >
                 {t(
-                  "I need support for a BrCris-related project. Is it possible?",
+                  "I need support for a project related to BrCris. Is it possible?",
                 )}
               </button>
             </h3>

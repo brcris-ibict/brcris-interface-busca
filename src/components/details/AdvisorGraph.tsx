@@ -95,45 +95,41 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
 
       svg.selectAll("*").remove();
 
-    svg
-      .append("text")
-      .attr("x", 60)
-      .attr("y", 50)
-      .attr("fill", "#6a0dad")
-      .attr("font-size", 25)
-      .attr("font-weight", "bold")
-      .attr("text-anchor", "start")
-      .text(advisorName);
 
-    const titleGroup = svg.append("g").attr("transform", "translate(60, 80)");
+svg.selectAll("*").remove();
 
-    const titleText = titleGroup
-      .append("text")
-      .attr("fill", "#111827")
-      .attr("font-size", 25)
-      .attr("font-weight", "bold")
-      .attr("text-anchor", "start")
-      .text(t("Master and Doctoral Theses Advising Network"));
+const headerGroup = svg.append("g").attr("transform", "translate(60, 20)");
 
-    const titleWidth = (titleText.node() as SVGTextElement).getBBox().width;
+const titleText = headerGroup
+  .append("text")
+  .attr("x", -50)
+  .attr("y", 5)
+  .attr("fill", "#1f2937")        
+  .attr("font-size", 20)        
+  .attr("font-weight", "600")     
+  .attr("text-anchor", "start")
+  .text(`${t("Master and Doctoral Theses Advising Network")} - ${advisorName}`);
 
-    titleGroup
-      .append("text")
-      .attr("x", titleWidth + 10)
-      .attr("y", 0)
-      .attr("fill", "#6a0dad")
-      .attr("font-size", 17)
-      .attr("font-weight", "normal")
-      .attr("text-anchor", "start")
-      .style("cursor", "pointer")
-      .text(`(${t("Download as picture")})`)
-      .on("click", handleDownload)
-      .on("mouseover", function () {
-        d3.select(this).attr("text-decoration", "underline");
-      })
-      .on("mouseout", function () {
-        d3.select(this).attr("text-decoration", "none");
-      });
+const titleWidth = (titleText.node() as SVGTextElement).getBBox().width;
+
+headerGroup
+  .append("text")
+  .attr("x", titleWidth + -40)
+  .attr("y", 5)
+  .attr("fill", "#6a0dad")
+  .attr("font-size", 16)
+  .attr("font-weight", "normal")
+  .attr("text-anchor", "start")
+  .style("cursor", "pointer")
+  .text(`(${t("Download as picture")})`)
+  .on("click", handleDownload)
+  .on("mouseover", function () {
+    d3.select(this).attr("text-decoration", "underline");
+  })
+  .on("mouseout", function () {
+    d3.select(this).attr("text-decoration", "none");
+  });
+
 
     const legendData = [
       { color: "#1f77b4", text: t("Advisor") },
@@ -158,7 +154,7 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
       .join("text")
       .attr("x", 15)
       .attr("y", (_, i) => i * 25 + 4)
-      .attr("font-size", 18)
+      .attr("font-size", 15)
       .attr("fill", "#333")
       .text((d) => d.text);
 

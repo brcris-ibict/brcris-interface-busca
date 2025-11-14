@@ -103,7 +103,7 @@ export default function PersonProduction({
         </a>
 
       </div>
-        <h3>{t("Advising statistics")}</h3>
+        <h3>{t("Publication and advising indicators")}</h3>
       <div className="card p-2 mb-3">
       <a href="#orientacoes">
         <GraduationCap /> {t("Advising Network")}
