@@ -96,14 +96,13 @@ export default function PersonProduction({
   return (
     <div className="indicators">
       <PopoverButton />
-      <h3>{t("Publication statistics")}</h3>
+      <h3 className="title-indicators">{t("Publication and advising indicators")}</h3>
       <div className="card p-2 mb-3">
         <a href="#coautoria">
           <Users /> {t("Co-authorship Network")}
         </a>
 
       </div>
-        <h3>{t("Publication and advising indicators")}</h3>
       <div className="card p-2 mb-3">
       <a href="#orientacoes">
         <GraduationCap /> {t("Advising Network")}

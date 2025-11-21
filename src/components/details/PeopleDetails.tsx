@@ -31,9 +31,6 @@ export default function PublicationDetails() {
                     <div className="author-header">
                       <h1>{result.name?.raw}</h1>
                     </div>
-                    <div className="d-lg-none">
-                      <PopoverButton />
-                    </div>
                   </div>
                    <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
                   <a

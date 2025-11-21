@@ -1119,7 +1119,7 @@ button.rc-pagination-item-link[disabled] {
 }
 
 .details-page .custom-popover-btn {
-  top: -1.5rem;
+  top: -1.8rem;
 }
 
 .custom-popover-btn:hover {
@@ -1218,6 +1218,9 @@ h3.popover-header a {
   margin: 20px 0;
 }
 
+.title-indicators {
+  white-space: nowrap;
+  }
 @media (max-width: 800px) {
   .nav .nav-item {
     justify-content: flex-start;
@@ -1364,4 +1367,10 @@ h3.popover-header a {
   .details-content .indicators {
     width: 100%;
   }
+  .title-indicators {
+    font-size: 16px;
+  }
+  .details-page .custom-popover-btn {
+  top: -0.1rem;
+}
 }
