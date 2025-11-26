@@ -158,23 +158,7 @@ const nodes: IndexNode[] = [
       size: 14,
     },
   },
-  {
-  id: 9,
-  index: process.env.INDEX_COURSE || "",
-  indexLabel:
-    indexes.find((i) => i.name === process.env.INDEX_COURSE)?.label || "",
-  label: "",
-  title: "100",
-  widthConstraint: 95,
-  level: 9,
-  shape: "circle",
-  color: "#4CAF50", 
-  font: {
-    color: "#fff",
-    size: 14,
-  },
-},
-
+ 
 ];
 
 const edges: Edge = [
