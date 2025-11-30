@@ -27,6 +27,7 @@ import CustomSearchBox from "./CustomSearchBox";
 import CustomViewPagingInfo from "./customResultView/CustomViewPagingInfo";
 import DownloadModal from "./DownloadModal";
 import Loader from "./Loader";
+import { useEffect } from "react";
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
@@ -46,6 +47,29 @@ export type SearchProps = {
 export default function Search({ index }: SearchProps) {
   const { t } = useTranslation(["common", "facets"]);
   const router = useRouter();
+
+useEffect(() => {
+  const observer = new MutationObserver(() => {
+    const moreButtons = document.querySelectorAll<HTMLButtonElement>(".sui-facet-view-more");
+    moreButtons.forEach((btn) => {
+      if (btn.textContent !== t("+ more...")) {
+        btn.textContent = t("+ more...");
+      }
+    });
+
+    const lessButtons = document.querySelectorAll<HTMLButtonElement>(".sui-facet-view-less");
+    lessButtons.forEach((btn) => {
+      if (btn.textContent !== t("- less...")) {
+        btn.textContent = t("- less...");
+      }
+    });
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  return () => observer.disconnect();
+}, [t]);
+
 
   const handleSelectIndex = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -148,23 +172,41 @@ export default function Search({ index }: SearchProps) {
                                 containsResults(wasSearched, results) && (
                                   <>
                                     <div className="sui-layout-sidebar">
-                                     <Sorting
-                                     
-                                      label={t("Sort by") || ""}
-                                      
-                                      sortOptions={index.sortOptions.map((option: any) => {
-                                        
-                                        const translatedName =
-                                          option.name === "Relevance" ? t("Relevance") : option.name;
+                                    <Sorting
+  label={t("Sort by") || ""}
+  sortOptions={index.sortOptions.map((option: any) => {
+    let translatedName: string; 
 
-                                        return {
-                                          ...option,
-                                          name: translatedName,
-                                          label: translatedName, 
-                                        };
-                                      })}
-                                      
+    switch(option.name) {
+      case "Relevance":
+        translatedName = t("Relevance");
+        break;
+       case "Ano ASC":
+        translatedName = t("Year (oldest → newest)");
+        break;
+      case "Ano DESC":
+        translatedName = t("Year (newest → oldest)");
+        break;
+      default:
+        translatedName = option.name;
+    }
+
+    return {
+      ...option,
+      name: translatedName,
+      label: translatedName,
+    };
+  })}
+/>
+
+                                      {Object.keys(index.config.searchQuery.facets || {}).map((facet, i) => (
+                                    <Facet
+                                      key={i}
+                                      field={facet}
+                                      className={`facet-${facet}`}
+                                      label={t(facet.toLowerCase(), { ns: "facets" })}
                                     />
+                                  ))}
                                     </div>
                                     <div className="result">
                                       <Results resultView={index.customView} />{" "}
