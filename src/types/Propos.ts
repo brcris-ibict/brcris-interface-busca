@@ -14,6 +14,7 @@ export interface CustomChartOptions extends ChartOptions {
 }
 
 export type SortOptionsType = {
+  label: any;
   name: string;
   value: any[];
 };

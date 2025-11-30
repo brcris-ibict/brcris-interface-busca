@@ -148,25 +148,23 @@ export default function Search({ index }: SearchProps) {
                                 containsResults(wasSearched, results) && (
                                   <>
                                     <div className="sui-layout-sidebar">
-                                      <Sorting
-                                        label={t("Sort by") || ""}
-                                        sortOptions={index.sortOptions}
-                                      />
-                                      {/* <div className="filters">
-                                        <span className="sui-sorting__label">{t('Filters')}</span>
-                                      </div> */}
-                                      {Object.keys(
-                                        index.config.searchQuery.facets!,
-                                      ).map((facet, i) => (
-                                        <Facet
-                                          className={`facet-${facet}`}
-                                          key={i}
-                                          field={facet}
-                                          label={t(facet.toLowerCase(), {
-                                            ns: "facets",
-                                          })}
-                                        />
-                                      ))}
+                                     <Sorting
+                                     
+                                      label={t("Sort by") || ""}
+                                      
+                                      sortOptions={index.sortOptions.map((option: any) => {
+                                        
+                                        const translatedName =
+                                          option.name === "Relevance" ? t("Relevance") : option.name;
+
+                                        return {
+                                          ...option,
+                                          name: translatedName,
+                                          label: translatedName, 
+                                        };
+                                      })}
+                                      
+                                    />
                                     </div>
                                     <div className="result">
                                       <Results resultView={index.customView} />{" "}
@@ -187,18 +185,24 @@ export default function Search({ index }: SearchProps) {
                             </div>
                           )}
 
-                          {containsResults(wasSearched, results) && (
-                            <div className="d-flex gap-2  align-items-center">
-                              {
-                                <>
-                                  <ResultsPerPage options={[10, 20, 50]} />
-                                  {/* @ts-ignore */}
-                                  <DownloadModal typeArq={typeArqw} />
-                                  <DownloadModal />{" "}
-                                </>
-                              }
-                            </div>
-                          )}
+                       {containsResults(wasSearched, results) && (
+                    <div className="d-flex gap-2 align-items-center">
+
+                      <span className="custom-rpp-label">
+                        {t("Show")}
+                      </span>
+
+                      <ResultsPerPage options={[10, 20, 50]} />
+
+                      {/* Download RIs */}
+                      {/* @ts-ignore */}
+                      <DownloadModal typeArq={typeArqw} />
+
+                      {/* Download Padrão */}
+                      <DownloadModal />
+                    </div>
+                  )}
+
                         </ErrorBoundary>
                       }
                       // bodyFooter={}

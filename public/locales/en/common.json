@@ -100,7 +100,7 @@
   "Research groups by status": "Research groups by status",
   "Read more...": "Read more...",
   "Read less": "Read less",
-  "Learn more about BrCris": "Learn more about BrCris",
+  "Learn more": "Learn more",
   "Open link": "Open link",
   "Country": "Country",
   "State": "State",
@@ -166,7 +166,7 @@
   "All fields": "All fields",
   "Glossary and search help": "Glossary and search help",
   "Close": "Close",
-  "You can enrich your search in a very simple way. Use the search indexes combined with the connectors (AND, OR or AND NOT) and specify more your search.": "You can enrich your search in a very simple way. Use the search indexes combined with the connectors (AND, OR or AND NOT) and specify more your search.",
+  "You can enrich your search in a very simple way. Use the search indexes combined with the Operators (AND, OR or AND NOT) and specify more your search.": "You can enrich your search in a very simple way. Use the search indexes combined with the Operators (AND, OR or AND NOT) and specify more your search.",
   "For example, if you want to search for publications on Computing in 2018, excluding master thesis: go to the ": "For example, if you want to search for publications on 'Computing' in 2018, excluding master thesis: go to the ",
   "index page and use the query below": "index page and use the query below",
   "See below for the full list of search fields that can be used for the index of": "See below for the full list of search fields that can be used for the index of",
@@ -247,6 +247,6 @@
   "Publication and advising indicators": "Indicators of publications and advisorships",
   "Advising Network": "Advising Network",
   "Master and Doctoral Theses Advising Network": "Master and Doctoral Theses Advising Network",
-  "Download as picture": "Download as picture"
-
+  "Download as picture": "Download as picture",
+  "Show": "Show"
 }

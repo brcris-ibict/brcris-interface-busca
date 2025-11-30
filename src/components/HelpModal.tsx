@@ -25,12 +25,12 @@ const HelpModal = ({ fields }: HelpModalProps) => {
 
       <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>{t("Glossary and search help")}</Modal.Title>
+          <Modal.Title>{t("Advanced search")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
             {t(
-              "You can enrich your search in a very simple way. Use the search indexes combined with the connectors (AND, OR or AND NOT) and specify more your search.",
+              "You can enrich your search in a very simple way. Use the search indexes combined with the Operators (AND, OR or AND NOT) and specify more your search.",
             )}
           </p>
           <p>
@@ -55,10 +55,11 @@ const HelpModal = ({ fields }: HelpModalProps) => {
             <b>{t(router.pathname.replaceAll("/", ""))}</b>.
           </p>
           <ul>
-            {fields.map((field) => (
-              <li key={field}>{t(field, { ns: "advanced" })}</li>
-            ))}
-          </ul>
+        {fields.map((field) => {
+          const label = field.toLowerCase() === "doi" ? "DOI" : t(field, { ns: "advanced" });
+          return <li key={field}>{label}</li>;
+        })}
+      </ul>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

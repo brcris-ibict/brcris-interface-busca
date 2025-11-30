@@ -1221,6 +1221,14 @@ h3.popover-header a {
 .title-indicators {
   white-space: nowrap;
   }
+  .sui-results-per-page__label {
+  display: none !important;
+}
+.custom-rpp-label {
+  font-size: 12px;
+  color: #333;
+}
+
 @media (max-width: 800px) {
   .nav .nav-item {
     justify-content: flex-start;

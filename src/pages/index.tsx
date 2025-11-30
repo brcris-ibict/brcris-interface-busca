@@ -162,7 +162,7 @@ export default function App() {
               )}
             </p>
             <div className="text-right">
-              <Link href="/about">{t("Learn more about BrCris")}</Link>
+              <Link href="/about">{t("Learn more")}</Link>
             </div>
           </div>
         </section>

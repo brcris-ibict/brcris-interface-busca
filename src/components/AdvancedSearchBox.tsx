@@ -115,12 +115,12 @@ const AdvancedSearchBox = ({
                 }
                 className="form-select"
               >
-                <option value="Select">{t("Select")}</option>
-                {fieldNames.map((field) => (
-                  <option key={field} value={field}>
-                    {field}
-                  </option>
-                ))}
+            <option value="Select">{t("Select")}</option>
+            {fieldNames.map((field) => (
+              <option key={field} value={field}>
+                {field.toLowerCase() === "doi" ? "DOI" : field}
+              </option>
+            ))}
               </select>
             </div>
             {index > 0 && (
