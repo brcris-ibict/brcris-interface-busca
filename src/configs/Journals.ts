@@ -77,10 +77,12 @@ const config: CustomSearchDriverOptions = {
 const sortOptions: SortOptionsType[] = [
   {
     name: "Relevance",
+    label: "Relevance",
     value: [],
   },
   {
     name: "Title ASC",
+    label: "Title ASC",
     value: [
       {
         field: "title",
@@ -90,6 +92,7 @@ const sortOptions: SortOptionsType[] = [
   },
   {
     name: "Title DESC",
+    label: "Title DESC",
     value: [
       {
         field: "title",
