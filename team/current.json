@@ -88,5 +88,10 @@
     "image": "/images/team/marcel.gif",
     "name": "Marcel Garcia",
     "lattes": "http://lattes.cnpq.br/9517728665816047"
-  }
+  },
+  {
+  "image": "/images/team/eric.png",
+  "name": "Eric Santos",
+  "lattes": "https://lattes.cnpq.br/0486623082767843"
+}
 ]

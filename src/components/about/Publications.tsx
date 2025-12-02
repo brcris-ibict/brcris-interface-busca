@@ -64,7 +64,7 @@ const Publications = () => {
       />
       <Publication
         authors="PINTO; A. L.; CARVALHO SEGUNDO; W. L. R.; DIAS; T. M. R.; SILVA; V. S. S.; GOMES; J. C.; QUONIAM; L"
-        title="Brazil Developing Current Research Information Systems (BrCRIS) as data sources for studies of research."
+        title="Brazil Developing Current Research Information Systems (BrCris) as data sources for studies of research."
         link="https://dialnet.unirioja.es/servlet/articulo?codigo=8634724"
         journal="Iberoamerican Journal of Science Measurement and Communication, v. 2, n. 1, 2022."
       />
@@ -114,7 +114,7 @@ const Publications = () => {
       />
       <Publication
         authors="DIAS; T. M. R.; PINTO; A. L.; MENA-CHALCO; J. P.; CARVALHO SEGUNDO; W. L. R.; GOMES; J. C.; SILVA; R. R.; QUONIAM; L"
-        title="A informação patentária no contexto do BrCRIS"
+        title="A informação patentária no contexto do BrCris"
         link="https://repositorio.unb.br/bitstream/10482/43602/1/LIVRO_MultiplosCenariosInformacao.pdf"
         journal="In: , 2021. ."
       />
@@ -127,7 +127,7 @@ const Publications = () => {
       <Publication
         authors="PINTO; A. L.; DIAS; T. M. R.; SILVA; V. S.; GOMES; J. C.; CARVALHO SEGUNDO; W. L. R"
         title="BrCris como um sistema de recomendação científico-tecnológica"
-        link="https://www.researchgate.net/publication/356640074_BrCRIS_COMO_UM_SISTEMA_DE_RECOMENDACAO_CIENTIFICO-TECNOLOGICA"
+        link="https://www.researchgate.net/publication/356640074_BrCris_COMO_UM_SISTEMA_DE_RECOMENDACAO_CIENTIFICO-TECNOLOGICA"
         journal="[Anais...]: XXI Encontro Nacional de Pesquisa e Pós-Graduação em Ciência da Informação, Rio de Janeiro, Brasil, 2021."
       />
       <Publication

@@ -127,7 +127,7 @@
   "numberFormat": "{{value, number}}",
   "Got it": "Got it",
   "Contact": "Contact",
-  "Email": "Email",
+  "E-mail": "-mail",
   "Message": "Message",
   "Submit": "Submit",
   "ContactUs": "Get in Touch",
@@ -253,5 +253,6 @@
   "- less...": "- less...",
   "Download file": "Download file",
  "Year (oldest → newest)": "Year (oldest → newest)",
-  "Year (newest → oldest)": "Year (newest → oldest)"
+  "Year (newest → oldest)": "Year (newest → oldest)",
+  "Team": "Team"
 }

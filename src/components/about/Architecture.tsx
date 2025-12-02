@@ -37,8 +37,7 @@ const Architecture = () => {
           dangerouslySetInnerHTML={{
             __html:
               t(
-                "It is based on the infrastructure of Brazilian scientific repositories and journals, these aggregated by the Oasisbr Portal <https://oasisbr.ibict.br>, based on the software provided by the LA Referencia network. Information is collected from national and international sources. All the information collected is duplicated and exported to indexes of the Elasticsearch search engine, and also to an instance of the VIVO software.",
-              ) || "",
+            "It is based on the infrastructure of Brazilian scientific repositories and journals, these aggregated by the Oasisbr Portal <https://oasisbr.ibict.br>, based on the software provided by the LA Referencia network. Information is collected from national and international sources. All the information collected is duplicated and exported to indexes of the Elasticsearch search engine."              ) || "",
           }}
         />
       </p>
@@ -54,8 +53,7 @@ const Architecture = () => {
       <br />
       <p>
         {t(
-          "Under the Elasticsearch indexes a search interface is generated, and a set of indicator dashboards. In the interface of the VIVO instance it is possible to perform visualizations under individual records of different agents of the Ecosystem.",
-        )}
+          "Under the Elasticsearch indexes a search interface is generated, and a set of indicator dashboards that allow visualizations on individual records of different agents of the Ecosystem."      )}
       </p>
     </>
   );

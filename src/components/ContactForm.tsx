@@ -86,7 +86,7 @@ function ContactForm() {
             <input
               className="form-control search-box"
               type="email"
-              placeholder={`${t("Email")}`}
+              placeholder={`${t("E-mail")}`}
               required
               value={email}
               onChange={(event) => {

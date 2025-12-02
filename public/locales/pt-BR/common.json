@@ -128,7 +128,7 @@
   "numberFormat": "{{value, number}}",
   "Got it": "Prosseguir",
   "Contact": "Contato",
-  "Email": "Email",
+  "E-mail": "E-mail",
   "Message": "Mensagem",
   "Submit": "Enviar",
   "ContactUs": "Fale conosco",
@@ -254,5 +254,6 @@
   "- less...": "- menos...",
   "Download file": "Baixar arquivo",
   "Year (oldest → newest)": "Ano (mais antigo → mais recente)",
-  "Year (newest → oldest)": "Ano (mais recente → mais antigo)"
+  "Year (newest → oldest)": "Ano (mais recente → mais antigo)",
+  "Team": "Equipe"
 }

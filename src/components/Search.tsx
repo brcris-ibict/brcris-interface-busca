@@ -173,31 +173,31 @@ useEffect(() => {
                                   <>
                                     <div className="sui-layout-sidebar">
                                     <Sorting
-  label={t("Sort by") || ""}
-  sortOptions={index.sortOptions.map((option: any) => {
-    let translatedName: string; 
+                                    label={t("Sort by") || ""}
+                                    sortOptions={index.sortOptions.map((option: any) => {
+                                      let translatedName: string; 
 
-    switch(option.name) {
-      case "Relevance":
-        translatedName = t("Relevance");
-        break;
-       case "Ano ASC":
-        translatedName = t("Year (oldest → newest)");
-        break;
-      case "Ano DESC":
-        translatedName = t("Year (newest → oldest)");
-        break;
-      default:
-        translatedName = option.name;
-    }
+                                      switch(option.name) {
+                                        case "Relevance":
+                                          translatedName = t("Relevance");
+                                          break;
+                                        case "Ano ASC":
+                                          translatedName = t("Year (oldest → newest)");
+                                          break;
+                                        case "Ano DESC":
+                                          translatedName = t("Year (newest → oldest)");
+                                          break;
+                                        default:
+                                          translatedName = option.name;
+                                      }
 
-    return {
-      ...option,
-      name: translatedName,
-      label: translatedName,
-    };
-  })}
-/>
+                                      return {
+                                        ...option,
+                                        name: translatedName,
+                                        label: translatedName,
+                                      };
+                                    })}
+                                        />
 
                                       {Object.keys(index.config.searchQuery.facets || {}).map((facet, i) => (
                                     <Facet
