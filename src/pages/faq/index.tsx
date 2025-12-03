@@ -46,13 +46,13 @@ export default function FaqPage() {
   return (
     <>
       <Head>
-        <title>{t("FAQ BrCris")}</title>
+        <title>{t("Frequently Asked Questions")}</title>
       </Head>
 
       <header>
         <div className="container py-3 d-flex align-items-center justify-content-between flex-wrap">
           <div className="flex-grow-1 text-center">
-            <h1 className="h3 m-0">{t("FAQ BrCris")}</h1>
+            <h1 className="h3 m-0">{t("Frequently Asked Questions")}</h1>
           </div>
           <div>
             <button

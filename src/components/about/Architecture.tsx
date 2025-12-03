@@ -46,7 +46,7 @@ const Architecture = () => {
       <picture className="d-flex justify-content-center">
         <img
           className="img-fluid"
-          src="/images/ecossistema.png"
+          src="/images/ecossistema.jpeg"
           alt="entidades que compõe o ecossistema do BrCris"
         />
       </picture>

@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
+/** biome-ignore-all lint/a11y/useAnchorContent: <explanation> */
 function Footer() {
   return (
     <footer id="more">
@@ -41,24 +42,11 @@ function Footer() {
             ></path>
           </svg>
         </a>
-        <a
-          href="https://x.com/ibictbr"
-          target="_blank"
-          rel="noreferrer"
-          title="X do IBICT"
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M19.9442 7.92639C19.9569 8.10405 19.9569 8.28175 19.9569 8.4594C19.9569 13.8782 15.8326 20.1219 8.29444 20.1219C5.97209 20.1219 3.81473 19.4492 2 18.2818C2.32996 18.3198 2.64719 18.3325 2.98985 18.3325C4.90607 18.3325 6.67006 17.6853 8.0787 16.5813C6.27666 16.5432 4.7665 15.363 4.24618 13.7386C4.50001 13.7766 4.7538 13.802 5.02032 13.802C5.38833 13.802 5.75638 13.7513 6.099 13.6625C4.22083 13.2817 2.81215 11.632 2.81215 9.6396V9.58886C3.35782 9.89343 3.99239 10.0838 4.66493 10.1091C3.56087 9.37308 2.83754 8.11675 2.83754 6.69541C2.83754 5.934 3.04055 5.23603 3.3959 4.62689C5.41369 7.1142 8.44671 8.73854 11.8477 8.91624C11.7843 8.61167 11.7462 8.29444 11.7462 7.97717C11.7462 5.71826 13.5736 3.87817 15.8452 3.87817C17.0254 3.87817 18.0914 4.3731 18.8401 5.17259C19.7665 4.99494 20.6548 4.65228 21.4416 4.18275C21.137 5.13455 20.4898 5.93404 19.6396 6.44162C20.4645 6.35283 21.264 6.12435 22 5.80713C21.4417 6.61928 20.7437 7.3426 19.9442 7.92639V7.92639Z"
-              fill="white"
-            ></path>
-          </svg>
+       <a href="https://twitter.com/ibictbr" target="_blank" rel="noreferrer" >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <rect width="24" height="24" rx="4" fill="white" fill-opacity="0"></rect>
+        <path d="M6 6L11 13L6.5 18H8.2L11.8 14.2L14.8 18H18L12.9 11L17 6H15.3L12 9.6L9.3 6H6Z" fill="white"/>
+      </svg>
         </a>
         <a
           href="https://www.linkedin.com/company/ibict---instituto-brasileiro-de-informa-o-em-ci-ncia-e-tecnologia/mycompany/"
