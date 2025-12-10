@@ -1178,14 +1178,12 @@ button.rc-pagination-item-link[disabled] {
 .see-more-btn {
   background: none;
   border: none;
-  color: var(--bs-link-color);
   cursor: pointer;
-  padding: 0;
   align-self: flex-start;
-  font-weight: 700;
-
 }
-
+.btn-primary {
+ 
+}
 .publication-meta {
   font-size: 0.8rem;
   color: #555;

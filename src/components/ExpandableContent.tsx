@@ -49,7 +49,7 @@ export default function ExpandableContent<T>({
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
-            className="see-more-btn"
+            className="see-more-btn btn btn-primary"
           >
             {expanded ? t("see less") : t("see more")}
           </button>
@@ -83,7 +83,7 @@ export default function ExpandableContent<T>({
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
-            className="see-more-btn"
+            className="see-more-btn btn btn-primary"
           >
             {expanded ? t("see less") : t("see more")}
           </button>

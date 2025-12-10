@@ -187,7 +187,14 @@ useEffect(() => {
                                         case "Ano DESC":
                                           translatedName = t("Year (newest → oldest)");
                                           break;
-                                        default:
+                                           case "Nome ASC":
+                                        translatedName = t("Name — alphabetical order from A to Z");
+                                        break;
+
+                                      case "Nome DESC":
+                                        translatedName = t("Name — alphabetical order from Z to A");
+                                        break;
+                                          default:
                                           translatedName = option.name;
                                       }
 

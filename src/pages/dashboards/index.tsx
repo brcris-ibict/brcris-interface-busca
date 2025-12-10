@@ -139,7 +139,7 @@ export default function Dashboards() {
               </Link>
             </div>
             <div className="card text-center p-2">
-              <Link href="/dashboards/software">
+              <Link href="/dashboards/programs">
                 <h2>{t("Software")}</h2>
                 <picture className="d-flex justify-content-center">
                   <img
@@ -158,7 +158,7 @@ export default function Dashboards() {
               </Link>
             </div>
             <div className="card text-center p-2">
-              <Link href="/dashboards/organizations">
+              <Link href="/dashboards/institutions">
                 <h2>{t("Organizations")}</h2>
                 <picture className="d-flex justify-content-center">
                   <img
