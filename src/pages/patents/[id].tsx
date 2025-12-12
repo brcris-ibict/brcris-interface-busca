@@ -55,7 +55,7 @@ export default function PatentDetailsPage() {
         id: {
           raw: {},
         },
-        espacenetTitle: {
+        title: {
           raw: {},
         },
         applicant: {

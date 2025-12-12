@@ -18,7 +18,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { authorId } = req.query as { authorId: string };
     const response = await client.search({
-      index: "r3-new-publication",
+      index: "brc-nov2025-publication",
       _source: ["id", "title", "author"],
       body: {
         query: {

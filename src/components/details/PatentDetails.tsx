@@ -21,9 +21,9 @@ export default function PatentDetails() {
           results.map((result) => (
             <div key={result.id?.raw}>
               <Head>
-                <title>{`${result.espacenetTitle?.raw} | BrCris`}</title>
+                <title>{`${result.title?.raw} | BrCris`}</title>
               </Head>
-              <h1 className="title">{result.espacenetTitle?.raw}</h1>
+              <h1 className="title">{result.title?.raw}</h1>
               <div className="details-card">
                 <ul>
                   <ShowAuthorItem

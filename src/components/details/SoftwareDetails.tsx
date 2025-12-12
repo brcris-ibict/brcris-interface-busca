@@ -19,9 +19,9 @@ export default function SoftwareDetails() {
           results.map((result) => (
             <div key={result.id}>
               <Head>
-                <title>{`${result.name?.raw} | BrCris`}</title>
+                <title>{`${result.title?.raw} | BrCris`}</title>
               </Head>
-              <h1 className="title">{result.name?.raw}</h1>
+              <h1 className="title">{result.title?.raw}</h1>
               <div className="details-card">
                 <ul>
                   <ShowItem

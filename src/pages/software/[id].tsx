@@ -59,6 +59,9 @@ export default function SoftawareDetailsPage() {
         name: {
           raw: {},
         },
+        title: {
+          raw: {},
+        },
         description: {
           raw: {},
         },
