@@ -1,8 +1,8 @@
 "use client";
 
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "next-i18next";
+import { useEffect, useRef, useState } from "react";
 
 type Advisee = {
   id: string;
@@ -26,7 +26,11 @@ interface AdvisingGraphProps {
   advisees: { adviseeName: string; advisee: string; level: string }[];
 }
 
-function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps) {
+function AdvisingGraph({
+  advisorName,
+  advisorUri,
+  advisees,
+}: AdvisingGraphProps) {
   const ref = useRef<SVGSVGElement | null>(null);
   const { t } = useTranslation("common");
 
@@ -74,7 +78,9 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
     const handleDownload = () => {
       const serializer = new XMLSerializer();
       const svgString = serializer.serializeToString(ref.current!);
-      const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+      const blob = new Blob([svgString], {
+        type: "image/svg+xml;charset=utf-8",
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -90,46 +96,46 @@ function AdvisingGraph({ advisorName, advisorUri, advisees }: AdvisingGraphProps
       .attr("viewBox", [0, 0, width, height])
       .attr(
         "style",
-        "width:100%; height:auto; background:white; font-family:sans-serif; display:block; margin:auto;"
+        "width:100%; height:auto; background:white; font-family:sans-serif; display:block; margin:auto;",
       );
 
-      svg.selectAll("*").remove();
+    svg.selectAll("*").remove();
 
+    svg.selectAll("*").remove();
 
-svg.selectAll("*").remove();
+    const headerGroup = svg.append("g").attr("transform", "translate(60, 20)");
 
-const headerGroup = svg.append("g").attr("transform", "translate(60, 20)");
+    const titleText = headerGroup
+      .append("text")
+      .attr("x", -50)
+      .attr("y", 5)
+      .attr("fill", "#1f2937")
+      .attr("font-size", 20)
+      .attr("font-weight", "600")
+      .attr("text-anchor", "start")
+      .text(
+        `${t("Master and Doctoral Theses Advising Network")} - ${advisorName}`,
+      );
 
-const titleText = headerGroup
-  .append("text")
-  .attr("x", -50)
-  .attr("y", 5)
-  .attr("fill", "#1f2937")        
-  .attr("font-size", 20)        
-  .attr("font-weight", "600")     
-  .attr("text-anchor", "start")
-  .text(`${t("Master and Doctoral Theses Advising Network")} - ${advisorName}`);
+    const titleWidth = (titleText.node() as SVGTextElement).getBBox().width;
 
-const titleWidth = (titleText.node() as SVGTextElement).getBBox().width;
-
-headerGroup
-  .append("text")
-  .attr("x", titleWidth + -40)
-  .attr("y", 5)
-  .attr("fill", "#6a0dad")
-  .attr("font-size", 16)
-  .attr("font-weight", "normal")
-  .attr("text-anchor", "start")
-  .style("cursor", "pointer")
-  .text(`(${t("Download as picture")})`)
-  .on("click", handleDownload)
-  .on("mouseover", function () {
-    d3.select(this).attr("text-decoration", "underline");
-  })
-  .on("mouseout", function () {
-    d3.select(this).attr("text-decoration", "none");
-  });
-
+    headerGroup
+      .append("text")
+      .attr("x", titleWidth + -40)
+      .attr("y", 5)
+      .attr("fill", "#6a0dad")
+      .attr("font-size", 16)
+      .attr("font-weight", "normal")
+      .attr("text-anchor", "start")
+      .style("cursor", "pointer")
+      .text(`(${t("Download as picture")})`)
+      .on("click", handleDownload)
+      .on("mouseover", function () {
+        d3.select(this).attr("text-decoration", "underline");
+      })
+      .on("mouseout", function () {
+        d3.select(this).attr("text-decoration", "none");
+      });
 
     const legendData = [
       { color: "#1f77b4", text: t("Advisor") },
@@ -137,7 +143,9 @@ headerGroup
       { color: "#2ca02c", text: t("Master thesis") },
     ];
 
-    const legend = svg.append("g").attr("transform", `translate(${width - 250}, 50)`);
+    const legend = svg
+      .append("g")
+      .attr("transform", `translate(${width - 250}, 50)`);
 
     legend
       .selectAll("circle")
@@ -167,7 +175,7 @@ headerGroup
         d3
           .forceLink<Advisee, Link>(links)
           .id((d) => d.id)
-          .distance(300)
+          .distance(300),
       )
       .force("charge", d3.forceManyBody().strength(-1800))
       .force("center", d3.forceCenter(width / 2, height / 2))
@@ -183,56 +191,62 @@ headerGroup
       .join("line");
 
     const node = svg
-    .append("g")
-    .attr("transform", `translate(0, ${graphOffsetY})`)
-    .selectAll("g")
-    .data(nodes)
-    .join("g");
+      .append("g")
+      .attr("transform", `translate(0, ${graphOffsetY})`)
+      .selectAll("g")
+      .data(nodes)
+      .join("g");
 
-      node
-        .append("circle")
-        .attr("r", 12)
-        .attr("fill", (d) => color(d.level))
+    node
+      .append("circle")
+      .attr("r", 12)
+      .attr("fill", (d) => color(d.level));
 
-      node
-        .append("text")
-        .text((d) => d.name)
-        .attr("x", 18)
-        .attr("y", 5)
-        .attr("font-size", 13)
-        .attr("fill", "#333")
-        .style("pointer-events", "none")
-        .style("alignment-baseline", "middle");
+    node
+      .append("text")
+      .text((d) => d.name)
+      .attr("x", 18)
+      .attr("y", 5)
+      .attr("font-size", 13)
+      .attr("fill", "#333")
+      .style("pointer-events", "none")
+      .style("alignment-baseline", "middle");
 
-      node
-        .append("title")
-        .text((d) => d.name);
+    node.append("title").text((d) => d.name);
 
-        const drag = d3
-          .drag<SVGGElement, Advisee>()
-          .on("start", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          })
-          .on("drag", (event, d) => {
-            d.fx = event.x;
-            d.fy = event.y;
-          })
-          .on("end", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-          });
+    const drag = d3
+      .drag<SVGGElement, Advisee>()
+      .on("start", (event, d) => {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      })
+      .on("drag", (event, d) => {
+        d.fx = event.x;
+        d.fy = event.y;
+      })
+      .on("end", (event, d) => {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      });
 
     node.call(drag as any);
 
     simulation.nodes(nodes).on("tick", () => {
       link
-        .attr("x1", (d) => (typeof d.source === "object" ? d.source.x ?? 0 : 0))
-        .attr("y1", (d) => (typeof d.source === "object" ? d.source.y ?? 0 : 0))
-        .attr("x2", (d) => (typeof d.target === "object" ? d.target.x ?? 0 : 0))
-        .attr("y2", (d) => (typeof d.target === "object" ? d.target.y ?? 0 : 0));
+        .attr("x1", (d) =>
+          typeof d.source === "object" ? (d.source.x ?? 0) : 0,
+        )
+        .attr("y1", (d) =>
+          typeof d.source === "object" ? (d.source.y ?? 0) : 0,
+        )
+        .attr("x2", (d) =>
+          typeof d.target === "object" ? (d.target.x ?? 0) : 0,
+        )
+        .attr("y2", (d) =>
+          typeof d.target === "object" ? (d.target.y ?? 0) : 0,
+        );
 
       node.attr("transform", (d) => `translate(${d.x ?? 0},${d.y ?? 0})`);
     });
@@ -257,7 +271,10 @@ export default function AdvisorGraph({ advisorId }: { advisorId: string }) {
   if (!data || !data.advisees?.length) return null;
 
   return (
-    <div id="orientacoes" className="p-6 flex flex-col items-center justify-center w-full">
+    <div
+      id="orientacoes"
+      className="p-6 flex flex-col items-center justify-center w-full"
+    >
       <AdvisingGraph
         advisorName={data.name}
         advisorUri={data.id}

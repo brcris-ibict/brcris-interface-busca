@@ -6,7 +6,7 @@ const CopyLink = ({ link }: { link: string }) => {
   const { t } = useTranslation("common");
   const [copied, setCopied] = useState(false);
 
-   const handleCopy = async () => {
+  const handleCopy = async () => {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(link);
@@ -35,8 +35,7 @@ const CopyLink = ({ link }: { link: string }) => {
         onClick={handleCopy}
         style={{ cursor: "pointer", color: "var(--bs-link-color)" }}
       >
-       <span>BrCris ID</span>{" "}
-        <Copy />
+        <span>BrCris ID</span> <Copy />
       </span>
       <span
         style={{
@@ -54,9 +53,7 @@ const CopyLink = ({ link }: { link: string }) => {
           pointerEvents: "none",
           width: "max-content",
         }}
-        
       >
-        
         {t("Link copied!")}
       </span>
     </div>

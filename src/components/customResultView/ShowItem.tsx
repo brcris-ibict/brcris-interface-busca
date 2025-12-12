@@ -13,9 +13,12 @@ const ShowItem = ({ label, value, urlLink }: ShowItemProps) => {
 
       <span className="sui-result__value">
         {typeof value === "string" ? (
-          urlLink ? <a href={urlLink}>{value}</a> : value
+          urlLink ? (
+            <a href={urlLink}>{value}</a>
+          ) : (
+            value
+          )
         ) : (
-        
           value.map((v: string, i: number) => (
             <span key={v}>
               {urlLink ? <a href={urlLink}>{v}</a> : v}

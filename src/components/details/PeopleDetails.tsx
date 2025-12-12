@@ -5,13 +5,26 @@ import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
-import PopoverButton from "../PopOver";
+import AdvisorGraph from "./AdvisorGraph";
 import ChordDiagram from "./ChordDiagram";
 import PersonProduction from "./PersonProduction";
-import AdvisorGraph from "./AdvisorGraph";
-export default function PublicationDetails() {
+
+export default function PeopleDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
+  const { i18n } = useTranslation();
+
+  function getBioByLanguage(bioArray: string[] | undefined) {
+    if (!Array.isArray(bioArray) || bioArray.length === 0) return "";
+
+    const lang = i18n.language;
+
+    if (bioArray.length === 2) {
+      return lang.startsWith("pt") ? bioArray[1] : bioArray[0];
+    }
+
+    return bioArray[0];
+  }
 
   return (
     <>
@@ -32,69 +45,75 @@ export default function PublicationDetails() {
                       <h1>{result.name?.raw}</h1>
                     </div>
                   </div>
-                   <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
-                  <a
-                    href={`http://lattes.cnpq.br/${result.lattesId?.raw}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="d-flex align-items-center gap-2"
-                  >
-                    <img
-                      className="lattes-logo"
-                      src="/logos/lattes.png"
-                      alt="logo do Lattes"
-                    />
-                    Lattes
-                  </a>
+                  <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
+                    {result.lattes?.raw[0] && (
+                      <a
+                        href={`http://lattes.cnpq.br/${result.lattesId?.raw[0]}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="d-flex align-items-center gap-2"
+                      >
+                        <img
+                          className="lattes-logo"
+                          src="/logos/lattes.png"
+                          alt="logo do Lattes"
+                        />
+                        Lattes
+                      </a>
+                    )}
 
-                  {result.orcid?.raw && (
-                    <a
-                      href={`https://orcid.org/${result.orcid?.raw}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="d-flex align-items-center gap-2"
-                    >
-                      <img
-                        className="orcid-logo"
-                        src="/logos/logo_orcid.png"
-                        alt="logo do ORCID"
-                      />
-                      ORCID
-                    </a>
-                  )}
+                    {result.orcid?.raw && (
+                      <a
+                        href={`https://orcid.org/${result.orcid?.raw}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="d-flex align-items-center gap-2"
+                      >
+                        <img
+                          className="orcid-logo"
+                          src="/logos/logo_orcid.png"
+                          alt="logo do ORCID"
+                        />
+                        ORCID
+                      </a>
+                    )}
 
-                  {result.id?.raw && (
-                    <div className="d-flex align-items-center gap-2">
-                      <img
-                        className="brcris-logo"
-                        src="/logos/logo-brcris.png"
-                        alt="logo do BrCris"
-                      />
-                      <CopyLink link={`${location.origin}/people/${result.id.raw}`} />
-                    </div>
-                  )}
-  
+                    {result.id?.raw && (
+                      <div className="d-flex align-items-center gap-2">
+                        <img
+                          className="brcris-logo"
+                          src="/logos/logo-brcris.png"
+                          alt="logo do BrCris"
+                        />
+                        <CopyLink
+                          link={`${location.origin}/people/${result.id.raw}`}
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="details-card">
                     <div>
-                      <ExpandableContent text={result.bio?.raw} maxLines={5} />
+                      <ExpandableContent
+                        text={getBioByLanguage(result.bio?.raw)}
+                        maxLines={5}
+                      />
                     </div>
-                    {result.researchArea?.raw?.length > 0 && (
-                      <div className="research-fields">
-                        <strong className="research-title">
-                          {t("Research field")}
-                        </strong>
-                        <div className="chips-container">
-                          {result.researchArea.raw
-                            .filter((area: any) => area?.name)
-                            .map((researchArea: any) => (
-                              <span key={researchArea.id} className="chip">
-                                {researchArea.name}
+                    {Array.isArray(result.researchArea?.raw) &&
+                      result.researchArea.raw.length > 0 && (
+                        <div className="research-fields">
+                          <strong className="research-title">
+                            {t("Research field")}
+                          </strong>
+
+                          <div className="chips-container">
+                            {result.researchArea.raw.map((area: string) => (
+                              <span key={area} className="chip">
+                                {area}
                               </span>
                             ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                     <ul className="sui-result__details">
                       <ShowItem
                         label={t("Nationality")}

@@ -7,7 +7,10 @@ const client = new Client({
   auth: { apiKey: process.env.API_KEY! },
 });
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   try {
     const { advisorId } = req.query as { advisorId: string };
 
@@ -43,7 +46,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const thesisType = Array.isArray(pub.type) ? pub.type[0] : pub.type;
 
       // 🔸 Filtra apenas "master thesis" e "doctoral thesis"
-      if (thesisType !== "master thesis" && thesisType !== "doctoral thesis") return;
+      if (thesisType !== "master thesis" && thesisType !== "doctoral thesis")
+        return;
 
       if (Array.isArray(pub.author)) {
         pub.author.forEach((a: any) => {

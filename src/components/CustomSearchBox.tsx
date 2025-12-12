@@ -42,7 +42,8 @@ const CustomSearchBox = ({
           onChange={() => setShowAdvanced((prev) => !prev)}
         />
         <label htmlFor="switch-default">{t("Advanced search")}</label>
-        <HelpModal fields={fieldNames} />      </div>
+        <HelpModal fields={fieldNames} />{" "}
+      </div>
       {showAdvanced ? (
         //@ts-expect-error
         <AdvancedSearchBox indexName={indexLabel} fieldNames={fieldNames} />

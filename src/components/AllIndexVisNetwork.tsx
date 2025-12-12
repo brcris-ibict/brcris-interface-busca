@@ -158,7 +158,6 @@ const nodes: IndexNode[] = [
       size: 14,
     },
   },
- 
 ];
 
 const edges: Edge = [
@@ -173,8 +172,7 @@ const edges: Edge = [
   { from: 2, to: 6, id: 17 },
   { from: 1, to: 4, id: 18 },
   { from: 9, to: 2, id: 19 },
-{ from: 9, to: 6, id: 20 },
-
+  { from: 9, to: 6, id: 20 },
 ];
 
 const options: Options = {

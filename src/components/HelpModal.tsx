@@ -55,11 +55,14 @@ const HelpModal = ({ fields }: HelpModalProps) => {
             <b>{t(router.pathname.replaceAll("/", ""))}</b>.
           </p>
           <ul>
-        {fields.map((field) => {
-          const label = field.toLowerCase() === "doi" ? "DOI" : t(field, { ns: "advanced" });
-          return <li key={field}>{label}</li>;
-        })}
-      </ul>
+            {fields.map((field) => {
+              const label =
+                field.toLowerCase() === "doi"
+                  ? "DOI"
+                  : t(field, { ns: "advanced" });
+              return <li key={field}>{label}</li>;
+            })}
+          </ul>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

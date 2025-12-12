@@ -23,20 +23,20 @@ export default function OrganizationDetails() {
               <h1 className="title">{result.name?.raw}</h1>
               <div className="details-card">
                 <ul>
-                    {result.member?.raw?.length > 0 && (
-                      <li>
-                        <span className="sui-result__key">{t("Has member")}</span>
-                        <ExpandableContent
-                          items={result.member?.raw}
-                          initialCount={5}
-                          renderItem={(item: any, idx: number) => (
-                            <div key={idx} className="member-item">
-                              <a href={`/people/${item.id}`}>{item?.name}</a>
-                            </div>
-                          )}
-                        />
-                      </li>
-                    )}
+                  {result.member?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t("Has member")}</span>
+                      <ExpandableContent
+                        items={result.member?.raw}
+                        initialCount={5}
+                        renderItem={(item: any, idx: number) => (
+                          <div key={idx} className="member-item">
+                            <a href={`/people/${item.id}`}>{item?.name}</a>
+                          </div>
+                        )}
+                      />
+                    </li>
+                  )}
                   <ShowItem value={result.acronym?.raw} label={t("Acronym")} />
                   <ShowItem value={result.country?.raw} label={t("Country")} />
                   <ShowItem value={result.state?.raw} label={t("State")} />

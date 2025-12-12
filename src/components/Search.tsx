@@ -19,7 +19,7 @@ import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { containsResults, replaceSpacesWithHyphens } from "../../utils/Utils";
 import styles from "../styles/Home.module.css";
 import type { Index } from "../types/Propos";
@@ -27,7 +27,6 @@ import CustomSearchBox from "./CustomSearchBox";
 import CustomViewPagingInfo from "./customResultView/CustomViewPagingInfo";
 import DownloadModal from "./DownloadModal";
 import Loader from "./Loader";
-import { useEffect } from "react";
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => ({
   props: {
@@ -48,28 +47,31 @@ export default function Search({ index }: SearchProps) {
   const { t } = useTranslation(["common", "facets"]);
   const router = useRouter();
 
-useEffect(() => {
-  const observer = new MutationObserver(() => {
-    const moreButtons = document.querySelectorAll<HTMLButtonElement>(".sui-facet-view-more");
-    moreButtons.forEach((btn) => {
-      if (btn.textContent !== t("+ more...")) {
-        btn.textContent = t("+ more...");
-      }
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const moreButtons = document.querySelectorAll<HTMLButtonElement>(
+        ".sui-facet-view-more",
+      );
+      moreButtons.forEach((btn) => {
+        if (btn.textContent !== t("+ more...")) {
+          btn.textContent = t("+ more...");
+        }
+      });
+
+      const lessButtons = document.querySelectorAll<HTMLButtonElement>(
+        ".sui-facet-view-less",
+      );
+      lessButtons.forEach((btn) => {
+        if (btn.textContent !== t("- less...")) {
+          btn.textContent = t("- less...");
+        }
+      });
     });
 
-    const lessButtons = document.querySelectorAll<HTMLButtonElement>(".sui-facet-view-less");
-    lessButtons.forEach((btn) => {
-      if (btn.textContent !== t("- less...")) {
-        btn.textContent = t("- less...");
-      }
-    });
-  });
+    observer.observe(document.body, { childList: true, subtree: true });
 
-  observer.observe(document.body, { childList: true, subtree: true });
-
-  return () => observer.disconnect();
-}, [t]);
-
+    return () => observer.disconnect();
+  }, [t]);
 
   const handleSelectIndex = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -172,48 +174,62 @@ useEffect(() => {
                                 containsResults(wasSearched, results) && (
                                   <>
                                     <div className="sui-layout-sidebar">
-                                    <Sorting
-                                    label={t("Sort by") || ""}
-                                    sortOptions={index.sortOptions.map((option: any) => {
-                                      let translatedName: string; 
+                                      <Sorting
+                                        label={t("Sort by") || ""}
+                                        sortOptions={index.sortOptions.map(
+                                          (option: any) => {
+                                            let translatedName: string;
 
-                                      switch(option.name) {
-                                        case "Relevance":
-                                          translatedName = t("Relevance");
-                                          break;
-                                        case "Ano ASC":
-                                          translatedName = t("Year (oldest → newest)");
-                                          break;
-                                        case "Ano DESC":
-                                          translatedName = t("Year (newest → oldest)");
-                                          break;
-                                           case "Nome ASC":
-                                        translatedName = t("Name — alphabetical order from A to Z");
-                                        break;
+                                            switch (option.name) {
+                                              case "Relevance":
+                                                translatedName = t("Relevance");
+                                                break;
+                                              case "Ano ASC":
+                                                translatedName = t(
+                                                  "Year (oldest → newest)",
+                                                );
+                                                break;
+                                              case "Ano DESC":
+                                                translatedName = t(
+                                                  "Year (newest → oldest)",
+                                                );
+                                                break;
+                                              case "Nome ASC":
+                                                translatedName = t(
+                                                  "Name — alphabetical order from A to Z",
+                                                );
+                                                break;
 
-                                      case "Nome DESC":
-                                        translatedName = t("Name — alphabetical order from Z to A");
-                                        break;
-                                          default:
-                                          translatedName = option.name;
-                                      }
+                                              case "Nome DESC":
+                                                translatedName = t(
+                                                  "Name — alphabetical order from Z to A",
+                                                );
+                                                break;
+                                              default:
+                                                translatedName = option.name;
+                                            }
 
-                                      return {
-                                        ...option,
-                                        name: translatedName,
-                                        label: translatedName,
-                                      };
-                                    })}
+                                            return {
+                                              ...option,
+                                              name: translatedName,
+                                              label: translatedName,
+                                            };
+                                          },
+                                        )}
+                                      />
+
+                                      {Object.keys(
+                                        index.config.searchQuery.facets || {},
+                                      ).map((facet, i) => (
+                                        <Facet
+                                          key={i}
+                                          field={facet}
+                                          className={`facet-${facet}`}
+                                          label={t(facet.toLowerCase(), {
+                                            ns: "facets",
+                                          })}
                                         />
-
-                                      {Object.keys(index.config.searchQuery.facets || {}).map((facet, i) => (
-                                    <Facet
-                                      key={i}
-                                      field={facet}
-                                      className={`facet-${facet}`}
-                                      label={t(facet.toLowerCase(), { ns: "facets" })}
-                                    />
-                                  ))}
+                                      ))}
                                     </div>
                                     <div className="result">
                                       <Results resultView={index.customView} />{" "}
@@ -234,24 +250,22 @@ useEffect(() => {
                             </div>
                           )}
 
-                       {containsResults(wasSearched, results) && (
-                    <div className="d-flex gap-2 align-items-center">
+                          {containsResults(wasSearched, results) && (
+                            <div className="d-flex gap-2 align-items-center">
+                              <span className="custom-rpp-label">
+                                {t("Show")}
+                              </span>
 
-                      <span className="custom-rpp-label">
-                        {t("Show")}
-                      </span>
+                              <ResultsPerPage options={[10, 20, 50]} />
 
-                      <ResultsPerPage options={[10, 20, 50]} />
+                              {/* Download RIs */}
+                              {/* @ts-ignore */}
+                              <DownloadModal typeArq={typeArqw} />
 
-                      {/* Download RIs */}
-                      {/* @ts-ignore */}
-                      <DownloadModal typeArq={typeArqw} />
-
-                      {/* Download Padrão */}
-                      <DownloadModal />
-                    </div>
-                  )}
-
+                              {/* Download Padrão */}
+                              <DownloadModal />
+                            </div>
+                          )}
                         </ErrorBoundary>
                       }
                       // bodyFooter={}

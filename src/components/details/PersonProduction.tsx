@@ -72,6 +72,9 @@ export default function PersonProduction({
   publications: any[];
 }) {
   const { t } = useTranslation("common");
+  if (!publications || publications.length === 0) {
+    return null;
+  }
   options.plugins.title.text = t(options.title);
   optionsType.plugins.title.text = t(optionsType.title);
 
@@ -96,18 +99,19 @@ export default function PersonProduction({
   return (
     <div className="indicators">
       <PopoverButton />
-      <h3 className="title-indicators">{t("Publication and advising indicators")}</h3>
+      <h3 className="title-indicators">
+        {t("Publication and advising indicators")}
+      </h3>
       <div className="card p-2 mb-3">
         <a href="#coautoria">
           <Users /> {t("Co-authorship Network")}
         </a>
-
       </div>
       <div className="card p-2 mb-3">
-      <a href="#orientacoes">
-        <GraduationCap /> {t("Advising Network")}
-      </a>
-    </div>
+        <a href="#orientacoes">
+          <GraduationCap /> {t("Advising Network")}
+        </a>
+      </div>
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink
