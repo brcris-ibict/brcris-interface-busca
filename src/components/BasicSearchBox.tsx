@@ -79,12 +79,11 @@ const BasicSearchBox = ({
             </div>
             <input
               {...getInputProps({
-                placeholder: `${t("Enter at least 3 characters and search among")} ${t(
-                  "numberFormat",
-                  {
-                    value: docsCount || 0,
-                  },
-                )} ${t("records")}`,
+                placeholder: `${t(
+                  "Enter at least 3 characters and search among",
+                )} ${t("numberFormat", {
+                  value: docsCount || 0,
+                })} ${t(indexLabel)}`,
               })}
             />
             {getAutocomplete()}
