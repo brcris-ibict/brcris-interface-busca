@@ -51,7 +51,7 @@ export default function FaqPage() {
 
       <header>
         <div className="container py-3 d-flex align-items-center justify-content-between flex-wrap">
-          <div className="flex-grow-1 text-center">
+          <div className="flex-grow-1 text-center" id="top">
             <h1 className="h3 m-0">{t("Frequently Asked Questions")}</h1>
           </div>
           <div>
@@ -432,7 +432,7 @@ export default function FaqPage() {
         </div>
 
         <p className="text-end mt-5">
-          <a href="#topo" className="btn btn-link">
+          <a href="#top" className="btn btn-link">
             {t("Back to top")}
           </a>
         </p>

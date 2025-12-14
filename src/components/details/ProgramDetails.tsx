@@ -84,20 +84,24 @@ export default function ProgramDetails() {
                   )}
                   {result.course?.raw?.length > 0 && (
                     <li>
-                      <span className="sui-result__key">{t("Course")}</span>
-                      <span>
-                        <ExpandableContent
-                          items={result.course.raw}
-                          initialCount={5}
-                          renderItem={(item: any) => (
-                            <>
-                              <a href={`/organizations/${item.id}`}>
-                                {item?.name}
-                              </a>
-                            </>
-                          )}
-                        />
-                      </span>
+                      <strong className="research-title">{t("Course")}</strong>
+                      <ExpandableContent
+                        items={result.course.raw}
+                        initialCount={5}
+                        renderItem={(course: any) => {
+                          const name = course.name?.[0] ?? course.name;
+                          const degree = course.degree?.[0];
+
+                          return (
+                            <div className="course-item" key={course.id}>
+                              <a href={`/courses/${course.id}`}>{name}</a>
+                              <div className="course-meta">
+                                <span className="type">{t(degree)}</span>
+                              </div>
+                            </div>
+                          );
+                        }}
+                      />
                     </li>
                   )}
                 </ul>

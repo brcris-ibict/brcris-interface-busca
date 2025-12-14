@@ -181,7 +181,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
   }, [chords, nodes]);
 
   if (!mainAuthor) {
-    return <p>Loading co-authorship data...</p>;
+    return null;
   }
 
   // ...

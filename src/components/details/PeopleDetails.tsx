@@ -25,6 +25,14 @@ export default function PeopleDetails() {
 
     return bioArray[0];
   }
+  function getLattesIdentifier(lattesId?: string[]) {
+    if (!Array.isArray(lattesId) || lattesId.length === 0) return null;
+
+    const clean = lattesId.find((id) => !id.includes("::"));
+    if (clean) return clean;
+
+    return lattesId[0].split("::").pop() ?? null;
+  }
 
   return (
     <>
@@ -46,12 +54,11 @@ export default function PeopleDetails() {
                     </div>
                   </div>
                   <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
-                    {result.lattes?.raw[0] && (
+                    {getLattesIdentifier(result.lattesId?.raw) && (
                       <a
-                        href={`http://lattes.cnpq.br/${result.lattesId?.raw[0]}`}
+                        href={`http://lattes.cnpq.br/${getLattesIdentifier(result.lattesId?.raw)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="d-flex align-items-center gap-2"
                       >
                         <img
                           className="lattes-logo"
@@ -61,7 +68,6 @@ export default function PeopleDetails() {
                         Lattes
                       </a>
                     )}
-
                     {result.orcid?.raw && (
                       <a
                         href={`https://orcid.org/${result.orcid?.raw}`}
