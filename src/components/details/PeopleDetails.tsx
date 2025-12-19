@@ -14,17 +14,39 @@ export default function PeopleDetails() {
   const { t } = useTranslation("common");
   const { i18n } = useTranslation();
 
+  function detectBioLanguage(text: string): "pt" | "en" {
+    const ptHits = (
+      text.match(
+        /\b(de|da|do|dos|das|com|pela|pelo|foi|atuou|atualmente|possui|seus|sua|universidade)\b/gi,
+      ) || []
+    ).length;
+
+    const enHits = (
+      text.match(
+        /\b(at|from|has|experience|focusing|acting|currently|research|and)\b/gi,
+      ) || []
+    ).length;
+
+    return enHits >= ptHits ? "en" : "pt";
+  }
+
   function getBioByLanguage(bioArray: string[] | undefined) {
     if (!Array.isArray(bioArray) || bioArray.length === 0) return "";
 
-    const lang = i18n.language;
+    const lang = i18n.language.startsWith("pt") ? "pt" : "en";
 
-    if (bioArray.length === 2) {
-      return lang.startsWith("pt") ? bioArray[1] : bioArray[0];
-    }
+    if (bioArray.length === 1) return bioArray[0];
 
-    return bioArray[0];
+    const scored = bioArray.map((text) => ({
+      text,
+      lang: detectBioLanguage(text),
+    }));
+
+    const preferred = scored.find((b) => b.lang === lang);
+
+    return preferred?.text ?? bioArray[0];
   }
+
   function getLattesIdentifier(lattesId?: string[]) {
     if (!Array.isArray(lattesId) || lattesId.length === 0) return null;
 
@@ -32,6 +54,12 @@ export default function PeopleDetails() {
     if (clean) return clean;
 
     return lattesId[0].split("::").pop() ?? null;
+  }
+
+  function getLastResearchArea(area: string) {
+    if (!area) return "";
+    const parts = area.split("/");
+    return parts[parts.length - 1].trim();
   }
 
   return (
@@ -114,7 +142,7 @@ export default function PeopleDetails() {
                           <div className="chips-container">
                             {result.researchArea.raw.map((area: string) => (
                               <span key={area} className="chip">
-                                {area}
+                                {getLastResearchArea(area)}
                               </span>
                             ))}
                           </div>
