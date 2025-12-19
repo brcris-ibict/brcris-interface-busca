@@ -56,12 +56,6 @@ export default function PeopleDetails() {
     return lattesId[0].split("::").pop() ?? null;
   }
 
-  function getLastResearchArea(area: string) {
-    if (!area) return "";
-    const parts = area.split("/");
-    return parts[parts.length - 1].trim();
-  }
-
   return (
     <>
       {isLoading && <Loader />}
@@ -142,7 +136,7 @@ export default function PeopleDetails() {
                           <div className="chips-container">
                             {result.researchArea.raw.map((area: string) => (
                               <span key={area} className="chip">
-                                {getLastResearchArea(area)}
+                                {area}
                               </span>
                             ))}
                           </div>
@@ -237,9 +231,10 @@ export default function PeopleDetails() {
                           </span>
                         </li>
                       )}
+                      {/*
                       <li>
                         <strong className="research-title">
-                          {t("Publications")} ({result.authorOf?.raw?.length})
+                          {t("Publications")} ()
                         </strong>
                         <ExpandableContent
                           items={result.authorOf?.raw
@@ -274,6 +269,7 @@ export default function PeopleDetails() {
                           )}
                         />
                       </li>
+                      */}
                     </ul>
                   </div>
                 </div>
