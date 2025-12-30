@@ -82,9 +82,8 @@ const patentInventorsProxy = async (
       },
     });
 
-    // @ts-expect-error
     const peopleHits: InventorFull[] = peopleResp.body.hits.hits.map(
-      (h) => h._source,
+      (h: any) => h._source,
     );
 
     const peopleMap = new Map<string, InventorFull>(
