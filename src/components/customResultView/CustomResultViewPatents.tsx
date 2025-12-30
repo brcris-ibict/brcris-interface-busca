@@ -9,7 +9,7 @@ const CustomResultViewPatents = ({ result, onClickLink }: ResultViewProps) => {
       <a onClick={onClickLink} href={`/patents/${result.id.raw}`}>
         <h3
           dangerouslySetInnerHTML={{
-            __html: result.espacenetTitle.snippet || result.espacenetTitle.raw,
+            __html: result.title.snippet || result.title.raw,
           }}
         ></h3>
         <div className="result-metadata">

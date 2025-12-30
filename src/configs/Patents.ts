@@ -21,14 +21,14 @@ const config: CustomSearchDriverOptions = {
       countryCode: {},
     },
     search_fields: {
-      espacenetTitle_text: {},
+      title_text: {},
       "inventor.name_text": {},
     },
     result_fields: {
       id: {
         raw: {},
       },
-      espacenetTitle: {
+      title: {
         snippet: {
           size: 100,
           fallback: true,
@@ -58,7 +58,7 @@ const config: CustomSearchDriverOptions = {
       "publicationDate",
       "depositDate",
       "inventor",
-      "espacenetTitle",
+      "title",
       "inventor.name",
     ],
     facets: {
@@ -72,12 +72,12 @@ const config: CustomSearchDriverOptions = {
     results: {
       resultsPerPage: 5,
       search_fields: {
-        espacenetTitle_suggest: {
+        title_suggest: {
           weight: 3,
         },
       },
       result_fields: {
-        espacenetTitle: {
+        title: {
           snippet: {
             size: 100,
             fallback: true,
@@ -87,7 +87,7 @@ const config: CustomSearchDriverOptions = {
     },
     suggestions: {
       types: {
-        results: { fields: ["espacenetTitle_completion"] },
+        results: { fields: ["title_completion"] },
       },
       size: 5,
     },

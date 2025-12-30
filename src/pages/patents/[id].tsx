@@ -48,7 +48,7 @@ export default function PatentDetailsPage() {
       // @ts-expect-error
       index: indexName,
       search_fields: {
-        espacenetTitle_text: {},
+        title_text: {},
         "inventor.name_text": {},
       },
       result_fields: {

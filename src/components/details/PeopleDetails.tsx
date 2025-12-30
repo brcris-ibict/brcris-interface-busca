@@ -8,6 +8,7 @@ import Loader from "../Loader";
 import AdvisorGraph from "./AdvisorGraph";
 import ChordDiagram from "./ChordDiagram";
 import PersonProduction from "./PersonProduction";
+import SoftwareTitle from "./SoftwareTitle";
 
 export default function PeopleDetails() {
   const { wasSearched, isLoading, results } = useSearch();
@@ -231,6 +232,26 @@ export default function PeopleDetails() {
                           </span>
                         </li>
                       )}
+                      {/* Criador de conteúdos */}
+                      {result.creatorOf?.raw?.length > 0 && (
+                        <li>
+                          <strong className="research-title">
+                            {t("Creator of")}
+                          </strong>
+                          <ExpandableContent
+                            items={result.creatorOf.raw}
+                            initialCount={5}
+                            renderItem={(item: any, idx: number) => (
+                              <span key={idx}>
+                                <a href={`/software/${item.id}`}>
+                                  <SoftwareTitle softwareId={item.id} />
+                                </a>
+                              </span>
+                            )}
+                          />
+                        </li>
+                      )}
+
                       {/*
                       <li>
                         <strong className="research-title">
