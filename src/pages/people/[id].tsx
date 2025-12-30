@@ -95,6 +95,9 @@ export default function PublicationDetailsPage() {
         creatorOf: {
           raw: {},
         },
+        inventorOf: {
+          raw: {},
+        },
         brcrisId: {
           raw: {},
         },

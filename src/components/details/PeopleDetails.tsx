@@ -7,6 +7,7 @@ import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
 import AdvisorGraph from "./AdvisorGraph";
 import ChordDiagram from "./ChordDiagram";
+import PatentTitle from "./PatentTitle";
 import PersonProduction from "./PersonProduction";
 import SoftwareTitle from "./SoftwareTitle";
 
@@ -232,11 +233,29 @@ export default function PeopleDetails() {
                           </span>
                         </li>
                       )}
-                      {/* Criador de conteúdos */}
+                      {result.inventorOf?.raw?.length > 0 && (
+                        <li>
+                          <strong className="research-title">
+                            {t("Patents")}
+                          </strong>
+                          <ExpandableContent
+                            items={result.inventorOf.raw}
+                            initialCount={5}
+                            renderItem={(item: any, idx: number) => (
+                              <span key={idx}>
+                                <a href={`/patents/${item.id}`}>
+                                  <PatentTitle patentId={item.id} />
+                                </a>
+                              </span>
+                            )}
+                          />
+                        </li>
+                      )}
+
                       {result.creatorOf?.raw?.length > 0 && (
                         <li>
                           <strong className="research-title">
-                            {t("Creator of")}
+                            {t("Software")}
                           </strong>
                           <ExpandableContent
                             items={result.creatorOf.raw}

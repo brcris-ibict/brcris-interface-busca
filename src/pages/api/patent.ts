@@ -14,21 +14,21 @@ const client = new Client({
   },
 });
 
-const softwareProxy = async (req: NextApiRequest, res: NextApiResponse) => {
+const patentProxy = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { softwareId } = req.query as { softwareId: string };
+    const { patentId } = req.query as { patentId: string };
 
-    if (!softwareId) {
-      return res.status(400).json({ error: "softwareId is required" });
+    if (!patentId) {
+      return res.status(400).json({ error: "patentId is required" });
     }
 
     const response = await client.search({
-      index: "brc-nov2025-software",
-      _source: ["id", "title", "authors"],
+      index: "brc-nov2025-patent",
+      _source: ["id", "title"],
       body: {
         query: {
           match: {
-            id: softwareId,
+            id: patentId,
           },
         },
       },
@@ -38,15 +38,14 @@ const softwareProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     const hits = response.body.hits.hits.map((h) => h._source);
 
     if (!hits.length) {
-      return res.status(404).json({ error: "Software not found" });
+      return res.status(404).json({ error: "Patent not found" });
     }
 
-    const software = hits[0];
+    const patent = hits[0];
 
     const result = {
-      id: software.id,
-      title: software.title,
-      authors: software.authors || [],
+      id: patent.id,
+      title: patent.title,
     };
 
     res.json(result);
@@ -56,4 +55,4 @@ const softwareProxy = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default softwareProxy;
+export default patentProxy;
