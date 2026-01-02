@@ -2,11 +2,17 @@ import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
 import logger from "../../services/Logger";
 
+/**
+ * Inventor COM perfil (existe no índice de pessoas)
+ */
 interface InventorFull {
   id: string;
   name: string[];
 }
 
+/**
+ * Inventor SEM perfil (só existe na patente)
+ */
 interface InventorPartial {
   id: string;
   name: string[];
@@ -33,43 +39,58 @@ const patentInventorsProxy = async (
       return res.status(400).json({ error: "patentId is required" });
     }
 
+    /**
+     * 1️⃣ Buscar patente
+     */
     const patentResp = await client.search({
       index: process.env.INDEX_PATENT || "",
       _source: ["id", "inventor"],
       body: {
-        query: { term: { id: patentId } },
+        query: {
+          term: { id: patentId },
+        },
       },
     });
 
     // @ts-expect-error
     const patentHits = patentResp.body.hits.hits.map((h) => h._source);
+
     if (!patentHits.length) {
       return res.status(404).json({ error: "Patent not found" });
     }
 
     const patent = patentHits[0];
 
+    /**
+     * 2️⃣ Extrair IDs dos inventores
+     */
     const inventorIds: string[] = Array.isArray(patent.inventor)
-      ? patent.inventor.map((i: any) => (typeof i === "string" ? i : i.id))
-      : [
-          typeof patent.inventor === "string"
-            ? patent.inventor
-            : patent.inventor.id,
-        ];
+      ? patent.inventor.map((i: any) => i?.id).filter(Boolean)
+      : patent.inventor?.id
+        ? [patent.inventor.id]
+        : [];
 
     if (!inventorIds.length) {
       return res.json({ inventorsFull: [], inventorsPartial: [] });
     }
 
+    /**
+     * 3️⃣ Mapear nomes vindos da patente
+     * (usado quando NÃO existe perfil de pessoa)
+     */
     const inventorNameMap: Record<string, string[]> = {};
+
     if (Array.isArray(patent.inventor)) {
       patent.inventor.forEach((i: any) => {
-        const id = typeof i === "string" ? i : i.id;
-        const name = typeof i === "string" ? [i] : i.name || [];
-        inventorNameMap[id] = name;
+        if (i?.id && Array.isArray(i.name)) {
+          inventorNameMap[i.id] = i.name;
+        }
       });
     }
 
+    /**
+     * 4️⃣ Buscar pessoas no índice de pessoas
+     */
     const peopleResp = await client.search({
       index: process.env.INDEX_PATENTEOPLE || "",
       _source: ["id", "name"],
@@ -80,20 +101,30 @@ const patentInventorsProxy = async (
       },
     });
 
-    const peopleHits: InventorFull[] = peopleResp.body.hits.hits.map(
-      (h: any) => h._source,
-    );
+    const peopleHits: InventorFull[] =
+      // @ts-expect-error
+      peopleResp.body.hits.hits.map((h) => h._source);
 
     const peopleMap = new Map<string, InventorFull>(
       peopleHits.map((p) => [p.id, p]),
     );
 
+    /**
+     * 5️⃣ Separar inventores COM e SEM perfil
+     */
     const inventorsFull: InventorFull[] = [];
     const inventorsPartial: InventorPartial[] = [];
 
     inventorIds.forEach((id) => {
       const person = peopleMap.get(id);
-      if (person) {
+
+      const hasValidProfile =
+        person &&
+        Array.isArray(person.name) &&
+        person.name.length > 0 &&
+        person.id !== patent.id; // 🔴 REGRA CRÍTICA
+
+      if (hasValidProfile) {
         inventorsFull.push({
           id: person.id,
           name: person.name,
@@ -106,10 +137,18 @@ const patentInventorsProxy = async (
       }
     });
 
-    res.json({ inventorsFull, inventorsPartial });
+    /**
+     * 6️⃣ Resposta final
+     */
+    return res.json({
+      inventorsFull,
+      inventorsPartial,
+    });
   } catch (err: any) {
     logger.error(err);
-    res.status(400).json({ error: err.message });
+    return res.status(500).json({
+      error: err.message || "Internal server error",
+    });
   }
 };
 
