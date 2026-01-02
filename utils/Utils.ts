@@ -30,3 +30,18 @@ export function containsResults(wasSearched: any, results: any) {
 export function replaceSpacesWithHyphens(text: string) {
   return text.replace(" ", "-");
 }
+
+export function capitalizeName(name: string): string {
+  const lowerWords = ["da", "de", "do", "dos", "das", "e"];
+
+  return name
+    .toLowerCase()
+    .split(" ")
+    .filter(Boolean)
+    .map((word, index) =>
+      lowerWords.includes(word) && index !== 0
+        ? word
+        : word.charAt(0).toUpperCase() + word.slice(1),
+    )
+    .join(" ");
+}

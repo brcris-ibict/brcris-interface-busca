@@ -2,7 +2,6 @@ import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
 import logger from "../../services/Logger";
 
-// Tipos para inventores
 interface InventorFull {
   id: string;
   name: string[];
@@ -34,9 +33,8 @@ const patentInventorsProxy = async (
       return res.status(400).json({ error: "patentId is required" });
     }
 
-    // 1️⃣ Buscar patente
     const patentResp = await client.search({
-      index: "brc-nov2025-patent",
+      index: process.env.INDEX_PATENT || "",
       _source: ["id", "inventor"],
       body: {
         query: { term: { id: patentId } },
@@ -73,7 +71,7 @@ const patentInventorsProxy = async (
     }
 
     const peopleResp = await client.search({
-      index: "brc-nov2025-person",
+      index: process.env.INDEX_PATENTEOPLE || "",
       _source: ["id", "name"],
       body: {
         query: {
@@ -90,7 +88,6 @@ const patentInventorsProxy = async (
       peopleHits.map((p) => [p.id, p]),
     );
 
-    // 3️⃣ Separar inventores encontrados e não encontrados
     const inventorsFull: InventorFull[] = [];
     const inventorsPartial: InventorPartial[] = [];
 

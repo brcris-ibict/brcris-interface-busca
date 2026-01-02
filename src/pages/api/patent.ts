@@ -14,21 +14,21 @@ const client = new Client({
   },
 });
 
-const patentProxy = async (req: NextApiRequest, res: NextApiResponse) => {
+const patentsByInventor = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { patentId } = req.query as { patentId: string };
+    const { personId } = req.query as { personId: string };
 
-    if (!patentId) {
-      return res.status(400).json({ error: "patentId is required" });
+    if (!personId) {
+      return res.status(400).json({ error: "personId is required" });
     }
 
     const response = await client.search({
-      index: "brc-nov2025-patent",
+      index: process.env.INDEX_PATENT || "",
       _source: ["id", "title"],
       body: {
         query: {
-          match: {
-            id: patentId,
+          term: {
+            "inventor.id": personId,
           },
         },
       },
@@ -38,15 +38,13 @@ const patentProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     const hits = response.body.hits.hits.map((h) => h._source);
 
     if (!hits.length) {
-      return res.status(404).json({ error: "Patent not found" });
+      return res.json([]);
     }
 
-    const patent = hits[0];
-
-    const result = {
-      id: patent.id,
-      title: patent.title,
-    };
+    const result = hits.map((p: any) => ({
+      id: p.id,
+      title: p.title,
+    }));
 
     res.json(result);
   } catch (err: any) {
@@ -55,4 +53,4 @@ const patentProxy = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default patentProxy;
+export default patentsByInventor;

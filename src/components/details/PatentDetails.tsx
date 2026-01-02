@@ -2,16 +2,13 @@ import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
-
+import { capitalizeName } from "../../../utils/Utils";
 import type { OrgUnit } from "../../types/Entities";
-import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
-
 import {
   fetchPatentInventors,
-  Inventor,
   type PatentInventorsData,
 } from "./PatentInventor";
 
@@ -98,10 +95,10 @@ export default function PatentDetails() {
                             <span key={idx} className="sui-result__value">
                               {inventor.hasProfile ? (
                                 <a href={`/people/${inventor.id}`}>
-                                  {inventor.name.join("; ")}
+                                  {inventor.name.map(capitalizeName).join("; ")}
                                 </a>
                               ) : (
-                                inventor.name.join("; ")
+                                inventor.name.map(capitalizeName).join("; ")
                               )}
                             </span>
                           )}

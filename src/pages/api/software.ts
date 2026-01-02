@@ -23,7 +23,7 @@ const softwareProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const response = await client.search({
-      index: "brc-nov2025-software",
+      index: process.env.INDEX_SOFTWARE || "",
       _source: ["id", "title", "authors"],
       body: {
         query: {
