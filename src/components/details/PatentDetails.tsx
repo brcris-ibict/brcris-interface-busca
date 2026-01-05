@@ -1,52 +1,15 @@
 import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
 import { capitalizeName } from "../../../utils/Utils";
 import type { OrgUnit } from "../../types/Entities";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
-import {
-  fetchPatentInventors,
-  type PatentInventorsData,
-} from "./PatentInventor";
 
 export default function PatentDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
-
-  const [inventorsMap, setInventorsMap] = useState<
-    Record<string, PatentInventorsData>
-  >({});
-
-  useEffect(() => {
-    if (!results?.length) return;
-
-    const loadInventors = async () => {
-      const entries = await Promise.all(
-        results.map(async (r) => {
-          const patentId = r.id?.raw;
-          if (!patentId) return null;
-
-          const data = await fetchPatentInventors(patentId);
-          return [patentId, data] as const;
-        }),
-      );
-
-      const map: Record<string, PatentInventorsData> = {};
-      entries.forEach((entry) => {
-        if (entry) {
-          map[entry[0]] = entry[1];
-        }
-      });
-
-      setInventorsMap(map);
-    };
-
-    loadInventors();
-  }, [results]);
-
   return (
     <div>
       {isLoading && <Loader />}
@@ -57,21 +20,6 @@ export default function PatentDetails() {
           results.map((result) => {
             const patentId = result.id?.raw;
             if (!patentId) return null;
-
-            const inventors = inventorsMap[patentId];
-            const inventorsFull = inventors?.inventorsFull ?? [];
-            const inventorsPartial = inventors?.inventorsPartial ?? [];
-            const inventorsCombined = [
-              ...inventorsFull.map((i) => ({
-                ...i,
-                hasProfile: true,
-              })),
-              ...inventorsPartial.map((i) => ({
-                ...i,
-                hasProfile: false,
-              })),
-            ];
-
             return (
               <div key={patentId}>
                 <Head>
@@ -82,26 +30,31 @@ export default function PatentDetails() {
 
                 <div className="details-card">
                   <ul>
-                    {inventorsCombined.length > 0 && (
+                    {result.inventor?.raw && (
                       <li>
                         <span className="sui-result__key">
                           {t("Inventor(s)")}
                         </span>
 
                         <ExpandableContent
-                          items={inventorsCombined}
+                          items={result.inventor?.raw ?? []}
                           initialCount={5}
-                          renderItem={(inventor: any, idx: number) => (
-                            <span key={idx} className="sui-result__value">
-                              {inventor.hasProfile ? (
-                                <a href={`/people/${inventor.id}`}>
-                                  {inventor.name.map(capitalizeName).join("; ")}
-                                </a>
-                              ) : (
-                                inventor.name.map(capitalizeName).join("; ")
-                              )}
-                            </span>
-                          )}
+                          renderItem={(inventor: any, idx: number) => {
+                            const sameAsPatent = inventor.id === patentId;
+                            const name = inventor.name
+                              .map(capitalizeName)
+                              .join("; ");
+
+                            return (
+                              <span key={idx} className="sui-result__value">
+                                {sameAsPatent ? (
+                                  name
+                                ) : (
+                                  <a href={`/people/${inventor.id}`}>{name}</a>
+                                )}
+                              </span>
+                            );
+                          }}
                         />
                       </li>
                     )}
