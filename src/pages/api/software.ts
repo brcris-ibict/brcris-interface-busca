@@ -24,7 +24,7 @@ const softwareProxy = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const response = await client.search({
       index: process.env.INDEX_SOFTWARE || "",
-      _source: ["id", "title", "authors"],
+      _source: ["title"],
       body: {
         query: {
           match: {
@@ -46,7 +46,6 @@ const softwareProxy = async (req: NextApiRequest, res: NextApiResponse) => {
     const result = {
       id: software.id,
       title: software.title,
-      authors: software.authors || [],
     };
 
     res.json(result);
