@@ -69,10 +69,20 @@ export default function PublicationDetails() {
 
               <div className="details-card">
                 <ul>
-                  <ShowAuthorItem
-                    label={t("Author")}
-                    authors={result.author?.raw}
-                  />
+                  {result.author?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">{t("Author")}</span>
+                      <ExpandableContent
+                        items={result.author?.raw}
+                        initialCount={5}
+                        renderItem={(item: any, idx: number) => (
+                          <div key={idx} className="author-item">
+                            <a href={`/people/${item.id}`}>{item?.name}</a>
+                          </div>
+                        )}
+                      />
+                    </li>
+                  )}
                   <ShowItem
                     label={t("Year")}
                     value={result.publicationDate?.raw}

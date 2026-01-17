@@ -1379,10 +1379,12 @@ h3.popover-header a {
   .details-content .indicators {
     width: 100%;
   }
-  .title-indicators {
-    font-size: 14px;
+   .title-indicators {
+    font-size: 13px;
+    line-height: 1.3;
   }
+
   .details-page .custom-popover-btn {
-    top: -0.1rem;
-}
+    top: -3px; 
+  }
 }
