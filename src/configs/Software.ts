@@ -20,7 +20,7 @@ const config: CustomSearchDriverOptions = {
       kind: {},
     },
     search_fields: {
-      name_text: {
+      title_text: {
         weight: 3,
       },
     },
@@ -28,7 +28,7 @@ const config: CustomSearchDriverOptions = {
       id: {
         raw: {},
       },
-      name: {
+      title: {
         snippet: {
           size: 100,
           fallback: true,
@@ -56,14 +56,16 @@ const config: CustomSearchDriverOptions = {
   },
   autocompleteQuery: {
     results: {
+      // @ts-expect-error Search UI aceita index em runtime
+      index: indexName,
       resultsPerPage: 5,
       search_fields: {
-        name_suggest: {
+        title_suggest: {
           weight: 3,
         },
       },
       result_fields: {
-        name: {
+        title: {
           snippet: {
             size: 100,
             fallback: true,

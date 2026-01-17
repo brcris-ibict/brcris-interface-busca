@@ -60,6 +60,8 @@ const config: CustomSearchDriverOptions = {
   },
   autocompleteQuery: {
     results: {
+      // @ts-expect-error search-ui aceita index em runtime
+      index: indexName,
       resultsPerPage: 5,
       search_fields: {
         name_suggest: {

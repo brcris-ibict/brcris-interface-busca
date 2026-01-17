@@ -10,7 +10,7 @@ const CustomResultViewSoftwares = ({
       <a onClick={onClickLink} href={`/software/${result.id.raw}`}>
         <h3
           dangerouslySetInnerHTML={{
-            __html: result.name?.snippet || result.name.raw,
+            __html: result.title?.snippet || result.title.raw,
           }}
         ></h3>
         <div className="result-metadata">

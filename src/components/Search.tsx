@@ -85,6 +85,15 @@ export default function Search({ index }: SearchProps) {
 
   const typeArqw = "ris";
   const [isFluid, setIsFluid] = useState(false);
+  const resultFields = Object.keys(
+    index.config.searchQuery.result_fields || {},
+  );
+
+  const displayTitleField = resultFields.includes("name")
+    ? "name"
+    : resultFields.includes("title")
+      ? "title"
+      : resultFields[0] || "";
 
   return (
     <>
@@ -136,7 +145,7 @@ export default function Search({ index }: SearchProps) {
                     <Layout
                       header={
                         <CustomSearchBox
-                          titleFieldName="title"
+                          titleFieldName={displayTitleField}
                           setSearchTerm={setSearchTerm!}
                           handleSelectIndex={handleSelectIndex}
                           indexLabel={index.label}
