@@ -257,52 +257,55 @@ export default function PeopleDetails() {
                         </li>
                       )}
 
-                      {/*
-                      <li>
-                        <strong className="research-title">
-                          {t("Publications")} ()
-                        </strong>
-                        <ExpandableContent
-                          items={result.authorOf?.raw
-                            ?.slice()
-                            ?.sort((a: any, b: any) => {
-                              const dateA = new Date(
-                                a.publicationDate?.[0] || 0,
-                              ).getTime();
-                              const dateB = new Date(
-                                b.publicationDate?.[0] || 0,
-                              ).getTime();
-                              return dateB - dateA;
-                            })}
-                          initialCount={5}
-                          renderItem={(publication: any) => (
-                            <div className="publication-item">
-                              <a href={`/publications/${publication?.id}`}>
-                                {publication?.title}
-                              </a>
-                              <div className="publication-meta">
-                                {publication.publicationDate?.[0] && (
-                                  <span>{publication.publicationDate[0]}</span>
-                                )}
-                                {publication.type?.[0] && (
-                                  <span className="type">
-                                    {" "}
-                                    - {publication.type[0]}
-                                  </span>
-                                )}
+                      {result.authorOf?.raw?.length > 0 && (
+                        <li>
+                          <strong className="research-title">
+                            {t("Publications")} (
+                            {result.authorOf?.raw?.length ?? 0})
+                          </strong>
+                          <ExpandableContent
+                            items={result.authorOf?.raw
+                              ?.slice()
+                              ?.sort((a: any, b: any) => {
+                                const dateA = new Date(
+                                  a.publicationDate?.[0] || 0,
+                                ).getTime();
+                                const dateB = new Date(
+                                  b.publicationDate?.[0] || 0,
+                                ).getTime();
+                                return dateB - dateA;
+                              })}
+                            initialCount={5}
+                            renderItem={(publication: any) => (
+                              <div className="publication-item">
+                                <a href={`/publications/${publication?.id}`}>
+                                  {publication?.title}
+                                </a>
+                                <div className="publication-meta">
+                                  {publication.publicationDate?.[0] && (
+                                    <span>
+                                      {publication.publicationDate[0]}
+                                    </span>
+                                  )}
+                                  {publication.type?.[0] && (
+                                    <span className="type">
+                                      {" "}
+                                      - {publication.type[0]}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          )}
-                        />
-                      </li>
-                      */}
+                            )}
+                          />
+                        </li>
+                      )}
                     </ul>
                   </div>
                 </div>
                 <PersonProduction publications={result.authorOf?.raw} />
               </div>
-              <ChordDiagram authorId="7ea9469a-1088-4913-aa01-d161d440f564" />
-              <AdvisorGraph advisorId="16aebc49-33c0-48c2-8de5-3189cbdf7280" />
+              <ChordDiagram authorId={result.id?.raw} />
+              <AdvisorGraph advisorId={result.id?.raw} />
             </div>
           ))}
       </ErrorBoundary>
