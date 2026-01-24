@@ -51,14 +51,29 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
     coautoriaService
       .get(authorId)
       .then((data) => {
-        setMainAuthor(data);
+        const normalizedName = Array.isArray(data.name)
+          ? data.name[0]
+          : typeof data.name === "object"
+            ? data.name?.raw
+            : data.name;
 
-        const newNodes = [{ id: data.id, name: data.name }, ...data.coAuthors];
+        const normalizedAuthor = {
+          ...data,
+          name: normalizedName,
+        };
+
+        setMainAuthor(normalizedAuthor);
+
+        const newNodes = [
+          { id: normalizedAuthor.id, name: normalizedAuthor.name },
+          ...normalizedAuthor.coAuthors,
+        ];
+
         const nodeIndex = new Map(newNodes.map((a, i) => [a.id, i]));
         const n = newNodes.length;
         const newMatrix = Array.from({ length: n }, () => Array(n).fill(0));
 
-        data.publications.forEach((pub: any) => {
+        normalizedAuthor.publications.forEach((pub: any) => {
           for (let i = 0; i < pub.authors.length; i++) {
             for (let j = i + 1; j < pub.authors.length; j++) {
               const idx1 = nodeIndex.get(pub.authors[i]);
@@ -72,10 +87,9 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
         });
 
         const chord = d3.chord().padAngle(0.05).sortSubgroups(d3.descending);
-        const newChords = chord(newMatrix);
 
         setNodes(newNodes);
-        setChords(newChords);
+        setChords(chord(newMatrix));
       })
       .catch((err) => console.error("Erro ao carregar dados:", err));
   }, [authorId]);
@@ -204,8 +218,6 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
   if (!mainAuthor) {
     return null;
   }
-
-  // ...
 
   let popoverContent = null;
   if (selectedNode) {
