@@ -38,11 +38,9 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (!hits.length) return null;
 
-    // Obter nome do autor principal
     // @ts-expect-error
     const mainAuthorData = hits[0].author.find((a) => a.id === authorId);
 
-    // Montar coAuthors únicos
     const coAuthorsMap = new Map();
     // @ts-expect-error
     hits.forEach((pub) => {
@@ -56,7 +54,6 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       name,
     }));
 
-    // Montar publicações com array de ids de autores
     // @ts-expect-error
     const publications = hits.map((pub) => ({
       id: pub.id,
@@ -65,7 +62,6 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       authors: pub.author.map((a) => a.id),
     }));
 
-    // Objeto final
     const result = {
       id: authorId,
       name: mainAuthorData.name,

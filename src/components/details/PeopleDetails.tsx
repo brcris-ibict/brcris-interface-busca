@@ -1,6 +1,8 @@
 import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { CSVLink } from "react-csv";
+import { getBioByLanguage, getLattesIdentifier } from "../../../utils/Utils";
 import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
@@ -11,53 +13,17 @@ import PatentsByInventor from "./PatentsByInventor";
 import PersonProduction from "./PersonProduction";
 import SoftwareTitle from "./SoftwareTitle";
 
+const publicationCsvHeaders = [
+  { label: "Título", key: "title" },
+  { label: "Ano", key: "publicationDate[0]" },
+  { label: "Tipo", key: "type[0]" },
+  { label: "ID", key: "id" },
+];
 export default function PeopleDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
   const { i18n } = useTranslation();
-
-  function detectBioLanguage(text: string): "pt" | "en" {
-    const ptHits = (
-      text.match(
-        /\b(de|da|do|dos|das|com|pela|pelo|foi|atuou|atualmente|possui|seus|sua|universidade)\b/gi,
-      ) || []
-    ).length;
-
-    const enHits = (
-      text.match(
-        /\b(at|from|has|experience|focusing|acting|currently|research|and)\b/gi,
-      ) || []
-    ).length;
-
-    return enHits >= ptHits ? "en" : "pt";
-  }
-
-  function getBioByLanguage(bioArray: string[] | undefined) {
-    if (!Array.isArray(bioArray) || bioArray.length === 0) return "";
-
-    const lang = i18n.language.startsWith("pt") ? "pt" : "en";
-
-    if (bioArray.length === 1) return bioArray[0];
-
-    const scored = bioArray.map((text) => ({
-      text,
-      lang: detectBioLanguage(text),
-    }));
-
-    const preferred = scored.find((b) => b.lang === lang);
-
-    return preferred?.text ?? bioArray[0];
-  }
-
-  function getLattesIdentifier(lattesId?: string[]) {
-    if (!Array.isArray(lattesId) || lattesId.length === 0) return null;
-
-    const clean = lattesId.find((id) => !id.includes("::"));
-    if (clean) return clean;
-
-    return lattesId[0].split("::").pop() ?? null;
-  }
-
+  const lang = i18n.language.startsWith("pt") ? "pt" : "en";
   return (
     <>
       {isLoading && <Loader />}
@@ -70,7 +36,11 @@ export default function PeopleDetails() {
               <div className="details-content">
                 <div className="details-main">
                   <Head>
-                    <title>{`${result.name?.raw} | BrCris`}</title>
+                    <title>
+                      {result.name?.raw
+                        ? `${result.name.raw} | BrCris`
+                        : "BrCris"}
+                    </title>
                   </Head>
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="author-header">
@@ -124,7 +94,7 @@ export default function PeopleDetails() {
                   <div className="details-card">
                     <div>
                       <ExpandableContent
-                        text={getBioByLanguage(result.bio?.raw)}
+                        text={getBioByLanguage(result.bio?.raw, lang)}
                         maxLines={5}
                       />
                     </div>
@@ -259,10 +229,21 @@ export default function PeopleDetails() {
 
                       {result.authorOf?.raw?.length > 0 && (
                         <li>
-                          <strong className="research-title">
-                            {t("Publications")} (
-                            {result.authorOf?.raw?.length ?? 0})
-                          </strong>
+                          <div className="d-flex justify-content-between align-items-center mb-2">
+                            <strong className="research-title">
+                              {t("Publications")} (
+                              {result.authorOf?.raw?.length ?? 0})
+                            </strong>
+                            {/* @ts-ignore */}
+                            <CSVLink
+                              data={result.authorOf?.raw ?? []}
+                              headers={publicationCsvHeaders}
+                              filename={`publicacoes-${result.name?.raw ?? "autor"}.csv`}
+                              className="btn btn-primary btn-sm"
+                            >
+                              ⬇ {t("Export csv")}
+                            </CSVLink>
+                          </div>
                           <ExpandableContent
                             items={result.authorOf?.raw
                               ?.slice()

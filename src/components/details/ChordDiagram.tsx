@@ -24,6 +24,27 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
     y: 0,
   });
 
+  const handleDownload = () => {
+    if (!chartRef.current) return;
+
+    const svg = chartRef.current.querySelector("svg");
+    if (!svg) return;
+
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+
+    const blob = new Blob([svgString], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${mainAuthor?.name?.replace(/\s+/g, "_")}_coauthorship_network.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     if (!authorId) return;
 
@@ -138,7 +159,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       //@ts-expect-error
       .text((d) => nodes[d.index].name)
       .style("fill", "blue")
-      .style("text-decoration", "underline")
+      .style("text-decoration", "none")
       .style("cursor", "pointer")
       .style("font-size", "0.7rem")
       .on("click", (event, d) => {
@@ -277,9 +298,30 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
 
   return (
     <div id="coautoria" className="card my-3 p-2">
-      <h3>
-        {t("Co-authorship Network")} - {mainAuthor.name}
+      <h3
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <span>
+          {t("Co-authorship Network")} - {mainAuthor.name}
+        </span>
+
+        <span
+          className="mt-2"
+          style={{
+            color: "#6a0dad",
+            cursor: "pointer",
+            fontSize: "16px",
+          }}
+          onClick={handleDownload}
+        >
+          ({t("Download as picture")})
+        </span>
       </h3>
+
       {/** @ts-ignore */}
       <div ref={chartRef}></div>
 
