@@ -19,21 +19,17 @@ export default function PublicationDetails() {
   ) {
     if (!input) return "";
 
-    // ✅ Garante string
     let t = Array.isArray(input) ? input[0] : input;
 
     if (typeof t !== "string") return "";
 
-    // Decodifica HTML
     t = t.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
 
-    // Normalizações científicas
     t = t.replace(/<\/sup>\s*o/g, "</sup>O");
     t = t.replace(/<\/sup>\s*c/g, "</sup>C");
     t = t.replace(/co<sub>2<\/sub>/gi, "CO<sub>2</sub>");
     t = t.replace(/\bamazonian\b/gi, "Amazonian");
 
-    // Texto puro (SEO / <title>)
     if (format === "text") {
       t = t
         .replace(/<[^>]+>/g, "")
@@ -43,6 +39,17 @@ export default function PublicationDetails() {
     }
 
     return t;
+  }
+  function normalizeDoiList(input: string | string[] | undefined): string[] {
+    if (!input) return [];
+
+    const raw = Array.isArray(input) ? input.join(",") : input;
+
+    return raw
+      .replace(/^DOI/i, "")
+      .split(",")
+      .map((d) => d.trim())
+      .filter(Boolean);
   }
 
   return (
@@ -169,7 +176,31 @@ export default function PublicationDetails() {
                   />
 
                   {/* <ShowItem label={t('Year 2')} value={result.year?.raw} /> */}
-                  <ShowItem label={t("DOI")} value={result.doi?.raw} />
+                  {result.doi?.raw &&
+                    normalizeDoiList(result.doi.raw).length > 0 && (
+                      <li>
+                        <span className="identifier-key">{t("DOI")}:</span>
+                        <span>
+                          <ExpandableContent
+                            items={normalizeDoiList(result.doi.raw)}
+                            initialCount={5}
+                            renderItem={(doi: string) => {
+                              const url = `https://doi.org/${doi}`;
+                              return (
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {url}
+                                </a>
+                              );
+                            }}
+                          />
+                        </span>
+                      </li>
+                    )}
+
                   <ShowItem
                     label={t("OpenalexId")}
                     value={result.openalexId?.raw}

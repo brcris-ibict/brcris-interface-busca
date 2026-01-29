@@ -63,10 +63,38 @@ export default function JournalDetails() {
                     value={result.i10_index?.raw}
                   />
                   <ShowItem label={t("ISSN-L")} value={result.issn_l?.raw} />
-                  <ShowItem
-                    label={t("International Standard Serial Number (ISSN)")}
-                    value={result.issn?.raw}
-                  />
+                  {result.issn?.raw?.length > 0 && (
+                    <li>
+                      <span className="sui-result__key">
+                        {t("International Standard Serial Number (ISSN)")}
+                      </span>
+                      <span>
+                        <ExpandableContent
+                          items={
+                            Array.isArray(result.issn.raw)
+                              ? result.issn.raw
+                              : [result.issn.raw]
+                          }
+                          initialCount={5}
+                          renderItem={(issn: string, idx: number) => {
+                            const url = `https://portal.issn.org/resource/ISSN/${issn}`;
+                            return (
+                              <div key={idx}>
+                                <a
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {url}
+                                </a>
+                              </div>
+                            );
+                          }}
+                        />
+                      </span>
+                    </li>
+                  )}
+
                   <ShowItem
                     label={t("Qualis classification")}
                     value={result.qualis?.raw}
