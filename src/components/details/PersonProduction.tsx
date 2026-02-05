@@ -98,7 +98,7 @@ export default function PersonProduction({
 
   return (
     <div className="indicators">
-      <PopoverButton />
+      <PopoverButton className="position-absolute" />
       <h3 className="title-indicators">
         {t("Publication and advising indicators")}
       </h3>

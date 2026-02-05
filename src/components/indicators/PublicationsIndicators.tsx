@@ -120,7 +120,7 @@ function PublicationsIndicators({
 
   return (
     <div className="indicators" hidden={isEmpty()}>
-      <PopoverButton />
+      <PopoverButton className="position-absolute" />
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink

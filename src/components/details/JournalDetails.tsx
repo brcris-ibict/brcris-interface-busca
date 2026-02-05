@@ -5,6 +5,7 @@ import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
+import PopoverButton from "../PopOver";
 export default function JournalDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
@@ -21,7 +22,10 @@ export default function JournalDetails() {
               <Head>
                 <title>{`${result.title?.raw} | BrCris`}</title>
               </Head>
-              <h1 className="title">{result.title?.raw}</h1>
+              <div className="d-flex justify-content-between align-items-center mb-3 position-relative">
+                <h1 className="title mb-0">{result.title?.raw}</h1>
+                <PopoverButton />
+              </div>
               <div className="details-card">
                 <ul>
                   <ShowItem label={t("Type")} value={result.type?.raw} />

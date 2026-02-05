@@ -6,6 +6,7 @@ import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
+import PopoverButton from "../PopOver";
 
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
@@ -64,16 +65,19 @@ export default function PublicationDetails() {
               <Head>
                 <title>{`${_normalizeScientificTitle(result.title?.raw ?? "", "text")} | BrCris`}</title>
               </Head>
-              <h1
-                className="title"
-                dangerouslySetInnerHTML={{
-                  __html: _normalizeScientificTitle(
-                    result.title?.raw ?? "",
-                    "html",
-                  ),
-                }}
-              />
+              <div className="d-flex justify-content-between align-items-center mb-3 position-relative">
+                <h1
+                  className="title mb-0"
+                  dangerouslySetInnerHTML={{
+                    __html: _normalizeScientificTitle(
+                      result.title?.raw ?? "",
+                      "html",
+                    ),
+                  }}
+                />
 
+                <PopoverButton />
+              </div>
               <div className="details-card">
                 <ul>
                   {result.author?.raw?.length > 0 && (
