@@ -583,8 +583,6 @@ li .sui-result__key:after {
   margin: 0;
 }
 
-
-
 .page-search .sui-result {
   border: none;
   border-radius: 0;
@@ -1232,6 +1230,15 @@ h3.popover-header a {
 }
 .custom-select::before{
   display: none;
+}
+
+.nav-tabs .nav-link.active {
+  color: #660b6e !important;
+}
+
+.nav-tabs .nav-link:not(.active) {
+  background-color: transparent !important;
+  color: #660b6e !important;
 }
 
 @media (max-width: 800px) {
