@@ -213,7 +213,9 @@ export default function Search({ index }: SearchProps) {
                                                 translatedName = t(
                                                   "Name — alphabetical order from Z to A",
                                                 );
+
                                                 break;
+
                                               default:
                                                 translatedName = option.name;
                                             }

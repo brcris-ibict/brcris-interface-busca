@@ -13,6 +13,7 @@
   "program.name": "Program",
   "conference.name": "Conference",
   "inventor.name": "Inventor",
+  "affiliation.name": "Sort by Affiliation",
   "depositDate": "Deposit year",
   "kindCode": "Kind Code",
   "countryCode": "Country code",
