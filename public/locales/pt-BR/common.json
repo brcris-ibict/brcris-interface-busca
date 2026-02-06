@@ -206,7 +206,7 @@
   "Is in DOAJ": "Listada em DOAJ",
   "ISSN-L": "ISSN-L",
   "International Standard Serial Number (ISSN)": "ISSN Associados",
-  "Qualis": "Qualis classification",
+  "Qualis classification": "Classificação Qualis",
   "H index": "Indice H",
   "I10 index": "Índice i-10",
   "2 year mean citedness": "Média de citação (2 anos)",
@@ -258,5 +258,7 @@
   "Team": "Equipe",
   "Name — alphabetical order from A to Z": "Nome — ordem alfabética de A a Z",
   "Name — alphabetical order from Z to A": "Nome — ordem alfabética de Z a A",
-  "Creator of": "Criador de"
+  "Creator of": "Criador de",
+  "Yes": "Sim",
+  "No": "Não"
 }

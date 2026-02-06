@@ -89,3 +89,9 @@ export function getBioByLanguage(
 
   return preferred?.text ?? bioArray[0];
 }
+
+export function formatBooleanString(value: string | undefined, t: any) {
+  if (!value) return "-";
+  const boolValue = value.toLowerCase() === "true";
+  return boolValue ? t("Yes") : t("No");
+}

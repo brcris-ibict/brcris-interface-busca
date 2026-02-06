@@ -1,6 +1,7 @@
 import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { formatBooleanString } from "../../../utils/Utils";
 import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
@@ -51,11 +52,11 @@ export default function JournalDetails() {
                   />
                   <ShowItem
                     label={t("Is open access")}
-                    value={result.isOA?.raw}
+                    value={formatBooleanString(result.isOA?.raw[0], t)}
                   />
                   <ShowItem
                     label={t("Is in DOAJ")}
-                    value={result.isInDoaj?.raw}
+                    value={formatBooleanString(result.isInDoaj?.raw[0], t)}
                   />
                   <ShowItem
                     label={t("2 year mean citedness")}
