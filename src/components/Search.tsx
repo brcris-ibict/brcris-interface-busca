@@ -213,9 +213,17 @@ export default function Search({ index }: SearchProps) {
                                                 translatedName = t(
                                                   "Name — alphabetical order from Z to A",
                                                 );
-
                                                 break;
-
+                                              case "Title ASC":
+                                                translatedName = t(
+                                                  "Title — alphabetical order from A to Z",
+                                                );
+                                                break;
+                                              case "Title DESC":
+                                                translatedName = t(
+                                                  "Title — alphabetical order from Z to A",
+                                                );
+                                                break;
                                               default:
                                                 translatedName = option.name;
                                             }
