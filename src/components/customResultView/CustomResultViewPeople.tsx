@@ -6,11 +6,11 @@ const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/people/${result.id.raw}`}>
-        <h3
+        <h2
           dangerouslySetInnerHTML={{
             __html: result.name.snippet || result.name.raw,
           }}
-        ></h3>
+        ></h2>
         <div className="result-metadata">
           {result.affiliation?.raw.map((affiliation: OrgUnit) => (
             <span key={affiliation.id}>{affiliation.name!}</span>
