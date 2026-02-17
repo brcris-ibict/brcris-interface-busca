@@ -95,3 +95,17 @@ export function formatBooleanString(value: string | undefined, t: any) {
   const boolValue = value.toLowerCase() === "true";
   return boolValue ? t("Yes") : t("No");
 }
+
+export function normalizeDoiList(
+  input: string | string[] | undefined,
+): string[] {
+  if (!input) return [];
+
+  const raw = Array.isArray(input) ? input.join(",") : input;
+
+  return raw
+    .replace(/^DOI/i, "")
+    .split(",")
+    .map((d) => d.trim())
+    .filter(Boolean);
+}

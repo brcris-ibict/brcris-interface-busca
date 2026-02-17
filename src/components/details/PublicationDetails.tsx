@@ -1,13 +1,13 @@
 import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { normalizeDoiList } from "../../../utils/Utils";
 import type { OrgUnit, Service } from "../../types/Entities";
 import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
 import PopoverButton from "../PopOver";
-
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
@@ -40,17 +40,6 @@ export default function PublicationDetails() {
     }
 
     return t;
-  }
-  function normalizeDoiList(input: string | string[] | undefined): string[] {
-    if (!input) return [];
-
-    const raw = Array.isArray(input) ? input.join(",") : input;
-
-    return raw
-      .replace(/^DOI/i, "")
-      .split(",")
-      .map((d) => d.trim())
-      .filter(Boolean);
   }
 
   return (
