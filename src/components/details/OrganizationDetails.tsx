@@ -27,7 +27,10 @@ export default function OrganizationDetails() {
                     <li>
                       <span className="sui-result__key">{t("Has member")}</span>
                       <ExpandableContent
-                        items={result.member?.raw}
+                        items={[...result.member.raw].sort((a: any, b: any) =>
+                          String(a?.name?.raw ?? a?.name ?? "")
+                            .localeCompare(String(b?.name?.raw ?? b?.name ?? ""))
+                        )}
                         initialCount={5}
                         renderItem={(item: any, idx: number) => (
                           <div key={idx} className="member-item">
@@ -80,7 +83,10 @@ export default function OrganizationDetails() {
                       <span className="sui-result__key">{t("Program")}</span>
                       <span>
                         <ExpandableContent
-                          items={result.program.raw}
+                        items={[...result.program.raw].sort((a: any, b: any) =>
+                              String(a?.name?.raw ?? a?.name ?? "")
+                                .localeCompare(String(b?.name?.raw ?? b?.name ?? ""))
+                            )}
                           initialCount={5}
                           renderItem={(program: any) => (
                             <>
