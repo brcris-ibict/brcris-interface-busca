@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
 import { getBioByLanguage, getLattesIdentifier } from "../../../utils/Utils";
+import { useJournals } from "../../hooks/useJournals";
 import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
@@ -15,15 +16,26 @@ import SoftwareTitle from "./SoftwareTitle";
 
 const publicationCsvHeaders = [
   { label: "Título", key: "title" },
-  { label: "Ano", key: "publicationDate[0]" },
-  { label: "Tipo", key: "type[0]" },
+  { label: "Revista", key: "journal" },
+  { label: "Ano", key: "year" },
+  { label: "Tipo", key: "type" },
   { label: "ID", key: "id" },
 ];
 export default function PeopleDetails() {
   const { wasSearched, isLoading, results } = useSearch();
+  const journalsMap = useJournals(results);
   const { t } = useTranslation("common");
   const { i18n } = useTranslation();
   const lang = i18n.language.startsWith("pt") ? "pt" : "en";
+
+  const formattedPublicationsForCsv =
+    results?.[0]?.authorOf?.raw?.map((publication: any) => ({
+      title: publication?.title ?? "",
+      journal: journalsMap[publication?.id] ?? "",
+      year: publication?.publicationDate?.[0] ?? "",
+      type: publication?.type?.[0] ?? "",
+      id: publication?.id ?? "",
+    })) ?? [];
   return (
     <>
       {isLoading && <Loader />}
@@ -236,7 +248,7 @@ export default function PeopleDetails() {
                             </strong>
                             {/* @ts-ignore */}
                             <CSVLink
-                              data={result.authorOf?.raw ?? []}
+                              data={formattedPublicationsForCsv}
                               headers={publicationCsvHeaders}
                               filename={`publicacoes-${result.name?.raw ?? "autor"}.csv`}
                               className="btn btn-primary btn-sm"
@@ -263,17 +275,13 @@ export default function PeopleDetails() {
                                   {publication?.title}
                                 </a>
                                 <div className="publication-meta">
-                                  {publication.publicationDate?.[0] && (
-                                    <span>
-                                      {publication.publicationDate[0]}
-                                    </span>
-                                  )}
-                                  {publication.type?.[0] && (
-                                    <span className="type">
-                                      {" "}
-                                      - {publication.type[0]}
-                                    </span>
-                                  )}
+                                  {[
+                                    journalsMap[publication?.id],
+                                    publication.publicationDate?.[0],
+                                    publication.type?.[0],
+                                  ]
+                                    .filter(Boolean)
+                                    .join(" - ")}
                                 </div>
                               </div>
                             )}
