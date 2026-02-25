@@ -82,12 +82,15 @@ function CoursesIndicators({
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
-    // Traduções dinâmicas
+    if (!optDegree.plugins) optDegree.plugins = {};
+    if (!optDegree.plugins.title)
+      optDegree.plugins.title = { display: true, text: "" };
     optDegree.plugins.title.text = t(optDegree.title);
-    optType.plugins.title.text = t(optType.title);
-    optStartYear.plugins.title.text = t(optStartYear.title);
-    optEndYear.plugins.title.text = t(optEndYear.title);
 
+    if (!optType.plugins) optType.plugins = {};
+    if (!optType.plugins.title)
+      optType.plugins.title = { display: true, text: "" };
+    optType.plugins.title.text = t(optType.title);
     const queries = [
       JSON.stringify(
         getAggregateQuery({
@@ -173,7 +176,6 @@ function CoursesIndicators({
           <Download />
         </CSVLink>
         <Pie
-          // @ts-expect-error
           options={optDegree}
           width="500"
           data={{
@@ -204,7 +206,6 @@ function CoursesIndicators({
           <Download />
         </CSVLink>
         <Pie
-          // @ts-expect-error
           options={optType}
           width="500"
           data={{
@@ -235,7 +236,6 @@ function CoursesIndicators({
           <Download />
         </CSVLink>
         <Bar
-          // @ts-expect-error
           options={optStartYear}
           width="500"
           data={{
@@ -266,7 +266,6 @@ function CoursesIndicators({
           <Download />
         </CSVLink>
         <Bar
-          // @ts-expect-error
           options={optEndYear}
           width="500"
           data={{
