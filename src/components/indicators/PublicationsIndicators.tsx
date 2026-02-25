@@ -69,9 +69,15 @@ function PublicationsIndicators({
 
   useEffect(() => {
     // tradução
+    if (!options.plugins) options.plugins = {};
+    if (!options.plugins.title)
+      options.plugins.title = { display: true, text: "" };
     options.plugins.title.text = t(options.title);
+
+    if (!optionsType.plugins) optionsType.plugins = {};
+    if (!optionsType.plugins.title)
+      optionsType.plugins.title = { display: true, text: "" };
     optionsType.plugins.title.text = t(optionsType.title);
-    console.log("resultSearchTerm", resultSearchTerm, isLoading);
     if (!resultSearchTerm) return;
     try {
       const pdQuery = JSON.stringify(
@@ -133,8 +139,6 @@ function PublicationsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={options}
           width="500"
           data={{
@@ -164,8 +168,6 @@ function PublicationsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optionsType}
           width="500"
           data={{

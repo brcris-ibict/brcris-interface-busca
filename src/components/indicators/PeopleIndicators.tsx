@@ -64,7 +64,16 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
-    optionsResearchArea.plugins.title.text = t(optionsResearchArea.title);
+    const plugins = {
+      ...optionsResearchArea.plugins,
+      title: {
+        display: true,
+        text: t(optionsResearchArea.title),
+        ...(optionsResearchArea.plugins?.title ?? {}),
+      },
+    };
+
+    optionsResearchArea.plugins = plugins;
     try {
       const queries = [
         JSON.stringify(
@@ -88,6 +97,7 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
           }),
         ),
       ];
+
       indicatorProxy.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
@@ -126,8 +136,6 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
           <Download />
         </CSVLink>
         <Pie
-          /**
-        // @ts-expect-error */
           options={optionsResearchArea}
           data={{
             labels: researchAreaLabels,

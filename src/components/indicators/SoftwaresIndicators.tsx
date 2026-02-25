@@ -68,9 +68,24 @@ function SoftwaresIndicators({
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
-    // tradução
-    optPubDate.plugins.title.text = t(optPubDate.title);
-    optknowledgeAreas.plugins.title.text = t(optknowledgeAreas.title);
+    // Garantir que plugins e title existam antes de usar
+    optPubDate.plugins = {
+      ...optPubDate.plugins,
+      title: {
+        display: true,
+        text: t(optPubDate.title),
+        ...(optPubDate.plugins?.title ?? {}),
+      },
+    };
+
+    optknowledgeAreas.plugins = {
+      ...optknowledgeAreas.plugins,
+      title: {
+        display: true,
+        text: t(optknowledgeAreas.title),
+        ...(optknowledgeAreas.plugins?.title ?? {}),
+      },
+    };
 
     const queries = [
       JSON.stringify(
@@ -95,12 +110,13 @@ function SoftwaresIndicators({
         }),
       ),
     ];
+
     if (isLoading) {
       indicatorProxyService.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
     }
-  }, [filters, resultSearchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading, t, fields]);
 
   //  release date
   const releaseYearIndicators: IndicatorType[] = indicators
@@ -141,8 +157,6 @@ function SoftwaresIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optPubDate}
           width="500"
           data={{
@@ -172,8 +186,6 @@ function SoftwaresIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optknowledgeAreas}
           width="500"
           data={{

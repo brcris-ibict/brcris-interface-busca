@@ -79,12 +79,44 @@ function PatentsIndicators({
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
-    // tradução
-    optDepositDate.plugins.title.text = t(optDepositDate.title);
-    optPubDate.plugins.title.text = t(optPubDate.title);
-    optCountryCode.plugins.title.text = t(optCountryCode.title);
-    optKindCode.plugins.title.text = t(optKindCode.title);
+    // Garantindo que plugins e title existam
+    optDepositDate.plugins = {
+      ...optDepositDate.plugins,
+      title: {
+        display: true,
+        text: t(optDepositDate.title),
+        ...(optDepositDate.plugins?.title ?? {}),
+      },
+    };
 
+    optPubDate.plugins = {
+      ...optPubDate.plugins,
+      title: {
+        display: true,
+        text: t(optPubDate.title),
+        ...(optPubDate.plugins?.title ?? {}),
+      },
+    };
+
+    optCountryCode.plugins = {
+      ...optCountryCode.plugins,
+      title: {
+        display: true,
+        text: t(optCountryCode.title),
+        ...(optCountryCode.plugins?.title ?? {}),
+      },
+    };
+
+    optKindCode.plugins = {
+      ...optKindCode.plugins,
+      title: {
+        display: true,
+        text: t(optKindCode.title),
+        ...(optKindCode.plugins?.title ?? {}),
+      },
+    };
+
+    // Preparando queries
     const queries = [
       JSON.stringify(
         getAggregateQuery({
@@ -129,12 +161,13 @@ function PatentsIndicators({
         }),
       ),
     ];
+
     if (isLoading) {
       indicatorProxyService.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
     }
-  }, [filters, resultSearchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading, t, fields]);
 
   // deposite date
   const depositeDateIndicators: IndicatorType[] = indicators
@@ -194,8 +227,6 @@ function PatentsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optDepositDate}
           width="500"
           data={{
@@ -225,8 +256,6 @@ function PatentsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optPubDate}
           width="500"
           data={{
@@ -256,8 +285,6 @@ function PatentsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optCountryCode}
           width="500"
           data={{
@@ -287,8 +314,6 @@ function PatentsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optKindCode}
           width="500"
           data={{

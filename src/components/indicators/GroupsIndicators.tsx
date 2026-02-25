@@ -79,10 +79,10 @@ function GroupsIndicators({
 
   useEffect(() => {
     // tradução
+    if (!optCreatYear.plugins) optCreatYear.plugins = {};
+    if (!optCreatYear.plugins.title)
+      optCreatYear.plugins.title = { display: true, text: "" };
     optCreatYear.plugins.title.text = t(optCreatYear.title);
-    optStatus.plugins.title.text = t(optStatus.title);
-    optResearchLine.plugins.title.text = t(optResearchLine.title);
-    optKnowledgeArea.plugins.title.text = t(optKnowledgeArea.title);
     const queries = [
       JSON.stringify(
         getAggregateQuery({
@@ -192,8 +192,6 @@ function GroupsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optCreatYear}
           width="500"
           data={{
@@ -223,8 +221,6 @@ function GroupsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optResearchLine}
           width="500"
           data={{
@@ -254,8 +250,6 @@ function GroupsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optKnowledgeArea}
           width="500"
           data={{
@@ -285,8 +279,6 @@ function GroupsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optStatus}
           width="500"
           data={{

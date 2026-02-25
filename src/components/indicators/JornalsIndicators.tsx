@@ -63,7 +63,15 @@ function JornalsIndicators({
 
   useEffect(() => {
     // tradução
-    optQualis.plugins.title.text = t(optQualis.title);
+    const plugins = {
+      ...optQualis.plugins,
+      title: {
+        display: true,
+        text: t(optQualis.title),
+        ...(optQualis.plugins?.title ?? {}),
+      },
+    };
+    optQualis.plugins = plugins;
     const queries = [
       JSON.stringify(
         getAggregateQuery({
@@ -102,8 +110,6 @@ function JornalsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optQualis}
           width="500"
           data={{

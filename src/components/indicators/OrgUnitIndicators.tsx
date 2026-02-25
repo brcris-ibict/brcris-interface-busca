@@ -69,9 +69,25 @@ function OrgUnitIndicators({
 
   useEffect(() => {
     // tradução
-    options.plugins.title.text = t(options.title);
-    optionsState.plugins.title.text = t(optionsState.title);
+    const plugins = {
+      ...options.plugins,
+      title: {
+        display: true,
+        text: t(options.title),
+        ...(options.plugins?.title ?? {}),
+      },
+    };
+    options.plugins = plugins;
 
+    const pluginsState = {
+      ...optionsState.plugins,
+      title: {
+        display: true,
+        text: t(optionsState.title),
+        ...(optionsState.plugins?.title ?? {}),
+      },
+    };
+    optionsState.plugins = pluginsState;
     const countryQuery = JSON.stringify(
       getAggregateQuery({
         size: 10,
@@ -123,8 +139,6 @@ function OrgUnitIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={options}
           width="500"
           data={{
@@ -154,8 +168,6 @@ function OrgUnitIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optionsState}
           width="500"
           data={{
