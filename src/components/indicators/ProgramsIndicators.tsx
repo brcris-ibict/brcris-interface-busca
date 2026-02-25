@@ -63,8 +63,16 @@ function ProgramsIndicators({
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
-    // tradução
-    options.plugins.title.text = t(options.title);
+    // Garantir que plugins e plugins.title existam antes de usar
+    options.plugins = {
+      ...options.plugins,
+      title: {
+        display: true,
+        text: t(options.title),
+        ...(options.plugins?.title ?? {}),
+      },
+    };
+
     const queries = [
       JSON.stringify(
         getAggregateQuery({
@@ -77,12 +85,13 @@ function ProgramsIndicators({
         }),
       ),
     ];
+
     if (isLoading) {
       indicatorProxyService.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
     }
-  }, [filters, resultSearchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading, t, fields]);
 
   const orgUnitIndicators: IndicatorType[] = indicators ? indicators[0] : [];
   const orgUnitLabels =
@@ -102,8 +111,6 @@ function ProgramsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={options}
           width="500"
           data={{
