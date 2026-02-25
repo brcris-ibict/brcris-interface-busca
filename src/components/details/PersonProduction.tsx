@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import {
   ArcElement,
@@ -15,10 +14,6 @@ import { Download, GraduationCap, Users } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { Bar, Pie } from "react-chartjs-2";
 import { CSVLink } from "react-csv";
-import {
-  CHART_BACKGROUD_COLORS,
-  CHART_BORDER_COLORS,
-} from "../../../utils/Utils";
 import styles from "../../styles/Indicators.module.css";
 import type { IndicatorType } from "../../types/Entities";
 import { OptionsBar, OptionsPie } from "../indicators/options/ChartsOptions";
@@ -33,8 +28,9 @@ ChartJS.register(
   Legend,
   ArcElement,
 );
-export const options = new OptionsBar("Publicatons by year");
-export const optionsType = new OptionsPie("Publicatons by type");
+
+export const options = new OptionsBar("Publications by year");
+export const optionsType = new OptionsPie("Publications by type");
 
 const headersPublicationsByYear = [
   { label: "Year", key: "key" },
@@ -45,21 +41,18 @@ const headersType = [
   { label: "Type", key: "key" },
   { label: "Quantity", key: "doc_count" },
 ];
-
 function aggregateByField(items: any[], field: string): IndicatorType[] {
   return Object.values(
     items.reduce((acc: any, item: any) => {
-      // pega o valor do campo
       const rawKey = item[field];
-
-      // normaliza: se for array, pega o primeiro valor
       const key = Array.isArray(rawKey) ? rawKey[0] : rawKey;
 
-      if (!key) return acc; // ignora valores nulos ou undefined
+      if (!key) return acc;
 
       if (!acc[key]) {
         acc[key] = { key, doc_count: 0 };
       }
+
       acc[key].doc_count += 1;
       return acc;
     }, {}),
@@ -72,101 +65,153 @@ export default function PersonProduction({
   publications: any[];
 }) {
   const { t } = useTranslation("common");
+
   if (!publications || publications.length === 0) {
     return null;
   }
-  options.plugins.title.text = t(options.title);
-  optionsType.plugins.title.text = t(optionsType.title);
 
-  const yearIndicators: IndicatorType[] = aggregateByField(
-    publications,
-    "publicationDate",
+  if (options.plugins?.title) {
+    options.plugins.title.text = t(options.title);
+  }
+
+  if (optionsType.plugins?.title) {
+    optionsType.plugins.title.text = t(optionsType.title);
+  }
+
+  const TYPE_COLORS: Record<string, string> = {
+    Artigo: "rgba(255,0,0, 0.2)",
+    Dissertação: "rgba(54, 162, 235, 0.2)",
+    "Capítulo de Livro": "rgba(255,215,0, 0.2)",
+    Preprint: "rgba(0,128,128, 0.2)",
+    "conference proceedings": "rgba(153, 102, 255, 0.2)",
+    "Conjunto de Dados": "rgba(255,140,0, 0.2)",
+    Livro: "rgba(201, 203, 207, 0.2)",
+  };
+
+  const TYPE_BORDER_COLORS: Record<string, string> = {
+    Artigo: "rgba(255,0,0, 1)",
+    Dissertação: "rgba(54, 162, 235, 1)",
+    "Capítulo de Livro": "rgba(255,215,0, 1)",
+    Preprint: "rgba(0,128,128, 1)",
+    "conference proceedings": "rgba(153, 102, 255, 1)",
+    "Conjunto de Dados": "rgba(255,140,0, 1)",
+    Livro: "rgba(201, 203, 207, 1)",
+  };
+
+  const publicationsByYearAndType: Record<string, Record<string, number>> = {};
+
+  publications.forEach((pub) => {
+    const year = pub.publicationDate;
+    const type = Array.isArray(pub.type) ? pub.type[0] : pub.type;
+
+    if (!year || !type) return;
+
+    if (!publicationsByYearAndType[year]) {
+      publicationsByYearAndType[year] = {};
+    }
+
+    if (!publicationsByYearAndType[year][type]) {
+      publicationsByYearAndType[year][type] = 0;
+    }
+
+    publicationsByYearAndType[year][type] += 1;
+  });
+
+  const years = Object.keys(publicationsByYearAndType).sort(
+    (a, b) => Number(a) - Number(b),
   );
-  const yearLabels =
-    yearIndicators != null ? yearIndicators.map((d) => d.key) : [];
+
+  const allTypes = Array.from(
+    new Set(
+      publications.map((p) => (Array.isArray(p.type) ? p.type[0] : p.type)),
+    ),
+  );
+
+  const datasets = allTypes.map((type) => ({
+    label: type,
+    data: years.map((year) => publicationsByYearAndType[year]?.[type] || 0),
+    backgroundColor: TYPE_COLORS[type] || "#d9d9d9",
+    borderColor: TYPE_BORDER_COLORS[type] || "#999999",
+    borderWidth: 1,
+  }));
+
   const typeIndicators: IndicatorType[] = aggregateByField(
     publications,
     "type",
   );
-  const typeLabels =
-    typeIndicators != null ? typeIndicators.map((d) => d.key) : [];
-  const typeDoc_count =
-    typeIndicators != null ? typeIndicators.map((d) => d.doc_count) : [];
 
-  yearIndicators &&
-    yearIndicators.sort((a, b) => Number(a.key) - Number(b.key));
+  const typeLabels = typeIndicators.map((d) => d.key);
+  const typeDoc_count = typeIndicators.map((d) => d.doc_count);
+  const CSVLinkFix = CSVLink as any;
 
   return (
     <div className="indicators">
       <PopoverButton className="position-absolute" />
+
       <h3 className="title-indicators">
         {t("Publication and advising indicators")}
       </h3>
+
       <div className="card p-2 mb-3">
         <a href="#coautoria">
           <Users /> {t("Co-authorship Network")}
         </a>
       </div>
+
       <div className="card p-2 mb-3">
         <a href="#orientacoes">
           <GraduationCap /> {t("Advising Network")}
         </a>
       </div>
+
       <div className={styles.chart}>
-        {/* @ts-ignore */}
-        <CSVLink
+        <CSVLinkFix
           className={styles.download}
           title="Export to csv"
-          data={yearIndicators ? yearIndicators : []}
-          filename={"arquivo.csv"}
+          data={years.map((year) => ({
+            key: year,
+            doc_count: Object.values(publicationsByYearAndType[year]).reduce(
+              (a, b) => a + b,
+              0,
+            ),
+          }))}
+          filename={"publications_by_year.csv"}
           headers={headersPublicationsByYear}
         >
           <Download />
-        </CSVLink>
+        </CSVLinkFix>
         <Bar
-          /**
-      // @ts-expect-error */
           options={options}
-          width="500"
           data={{
-            labels: yearLabels,
-            datasets: [
-              {
-                data: yearIndicators,
-                label: "Articles per Year",
-                backgroundColor: CHART_BACKGROUD_COLORS,
-                borderColor: CHART_BORDER_COLORS,
-                borderWidth: 1,
-              },
-            ],
+            labels: years,
+            datasets: datasets,
           }}
         />
       </div>
 
       <div className={styles.chart}>
-        {/* @ts-ignore */}
-        <CSVLink
+        <CSVLinkFix
           className={styles.download}
           title={t("Export to csv") || ""}
-          data={typeIndicators ? typeIndicators : []}
-          filename={"arquivo.csv"}
+          data={typeIndicators}
+          filename={"publications_by_type.csv"}
           headers={headersType}
         >
           <Download />
-        </CSVLink>
+        </CSVLinkFix>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optionsType}
-          width="500"
           data={{
             labels: typeLabels,
             datasets: [
               {
                 data: typeDoc_count,
-                label: "# of Votes",
-                backgroundColor: CHART_BACKGROUD_COLORS,
-                borderColor: CHART_BORDER_COLORS,
+                backgroundColor: typeLabels.map(
+                  (type) => TYPE_COLORS[type] || "#d9d9d9",
+                ),
+                borderColor: typeLabels.map(
+                  (type) => TYPE_BORDER_COLORS[type] || "#999999",
+                ),
                 borderWidth: 1,
               },
             ],
