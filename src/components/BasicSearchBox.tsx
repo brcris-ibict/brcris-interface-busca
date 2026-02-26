@@ -23,7 +23,9 @@ const BasicSearchBox = ({
 }: BasicSearchBoxProps) => {
   const { t } = useTranslation("common");
   const router = useRouter();
-  const [docsCount, setDocsCount] = useState(localStorage.getItem(indexLabel));
+  const [docsCount, setDocsCount] = useState(
+    typeof window !== "undefined" ? localStorage.getItem(indexLabel) : null,
+  );
 
   useEffect(() => {
     getIndexStats(indexLabel, setDocsCount);
@@ -57,18 +59,18 @@ const BasicSearchBox = ({
           router.push(`${indexLabel.toLowerCase()}/${selection.id.raw}`);
         }
       }}
-      inputView={({
-        getAutocomplete,
-        getInputProps /** getButtonProps **/,
-      }) => (
+      inputView={({ getAutocomplete, getInputProps }) => (
         <div className="form-search">
           <div className="form-group">
+            <label htmlFor="index-select" className="visually-hidden">
+              {t("Select an entity")}
+            </label>
+
             <div className="custom-select">
               <select
                 defaultValue={indexLabel}
                 id="index-select"
                 onChange={handleSelectIndex}
-                title={t("Select an entity") || ""}
               >
                 {indexes.map((index) => (
                   <option key={index.label} value={index.label}>
@@ -77,7 +79,14 @@ const BasicSearchBox = ({
                 ))}
               </select>
             </div>
+
+            {/* Label invisível para o input */}
+            <label htmlFor="basic-search-input" className="visually-hidden">
+              {t("Search")}
+            </label>
+
             <input
+              id="basic-search-input"
               {...getInputProps({
                 placeholder: `${t(
                   "Enter at least 3 characters and search among",
@@ -86,19 +95,20 @@ const BasicSearchBox = ({
                 })} ${t(indexLabel)}`,
               })}
             />
+
             {getAutocomplete()}
           </div>
 
           <button
             type="submit"
             disabled={getInputProps()?.value?.trim().length < 3}
-            className="btn btn-primary search-button "
+            className="btn btn-primary search-button"
           >
             <Search /> {t("Search")}
           </button>
         </div>
       )}
-    ></SearchBox>
+    />
   );
 };
 

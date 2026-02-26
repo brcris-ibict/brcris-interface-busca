@@ -50,7 +50,6 @@ const AdvancedSearchBox = ({
   };
 
   const handleSubmit = (event: FormEvent) => {
-    console.log("Envio iniciado");
     event.preventDefault();
     if (inputs.length === 0 || !isFormValid) return;
 
@@ -60,13 +59,11 @@ const AdvancedSearchBox = ({
       const row = inputs[i];
       formatted += ` ${row.operator} (${row.field}:${row.value})`;
     }
+
     setSearchTerm(formatted);
-    console.log(`Envio formatado: ${formatted}`);
   };
 
-  useEffect(() => {
-    // getIndexStats(indexLabel, setDocsCount);
-  }, []);
+  useEffect(() => {}, []);
 
   const isFormValid = inputs.some(
     (input) =>
@@ -79,75 +76,102 @@ const AdvancedSearchBox = ({
   return (
     <div className="d-flex flex-column advanced">
       <form className={styles.advancedSearch} onSubmit={handleSubmit}>
-        {inputs.map((campo, index) => (
-          <div
-            className={`d-flex align-content-center ${styles.container}`}
-            key={index}
-          >
-            <div className={`d-flex flex-gap-0 ${styles.group}`}>
-              {index > 0 && (
-                <select
-                  value={campo.operator}
+        {inputs.map((campo, index) => {
+          const valueId = `search-value-${index}`;
+          const fieldId = `search-field-${index}`;
+          const operatorId = `search-operator-${index}`;
+
+          return (
+            <div
+              className={`d-flex align-content-center ${styles.container}`}
+              key={index}
+            >
+              <div className={`d-flex flex-gap-0 ${styles.group}`}>
+                {index > 0 && (
+                  <>
+                    <label htmlFor={operatorId} className="visually-hidden">
+                      {t("Operator")}
+                    </label>
+                    <select
+                      id={operatorId}
+                      value={campo.operator}
+                      onChange={(e) =>
+                        handleChange(index, {
+                          operator: e.target.value,
+                        } as QueryItem)
+                      }
+                      className={`form-select ${styles.op}`}
+                    >
+                      <option value="AND">AND</option>
+                      <option value="OR">OR</option>
+                      <option value="AND NOT">AND NOT</option>
+                    </select>
+                  </>
+                )}
+
+                <label htmlFor={valueId} className="visually-hidden">
+                  {t("Search value")}
+                </label>
+                <input
+                  id={valueId}
+                  value={campo.value}
                   onChange={(e) =>
-                    handleChange(index, {
-                      operator: e.target.value,
-                    } as QueryItem)
+                    handleChange(index, { value: e.target.value } as QueryItem)
                   }
-                  className={`form-select ${styles.op}`}
+                  type="text"
+                  className={`sui-search-box__text-input ${
+                    index === 0 ? styles.firstInput : ""
+                  }`}
+                />
+
+                <label htmlFor={fieldId} className="visually-hidden">
+                  {t("Field")}
+                </label>
+                <select
+                  id={fieldId}
+                  value={campo.field}
+                  onChange={(e) =>
+                    handleChange(index, { field: e.target.value } as QueryItem)
+                  }
+                  className="form-select"
                 >
-                  <option value="AND">AND</option>
-                  <option value="OR">OR</option>
-                  <option value="AND NOT">AND NOT</option>
+                  <option value="Select">{t("Select")}</option>
+                  {fieldNames.map((field) => (
+                    <option key={field} value={field}>
+                      {field.toLowerCase() === "doi" ? "DOI" : field}
+                    </option>
+                  ))}
                 </select>
+              </div>
+
+              {index > 0 && (
+                <span
+                  onClick={() => removeInput(index)}
+                  className="d-flex align-items-center"
+                >
+                  <CircleX aria-hidden="true" />
+                </span>
               )}
-              <input
-                value={campo.value}
-                onChange={(e) =>
-                  handleChange(index, { value: e.target.value } as QueryItem)
-                }
-                type="text"
-                className={`sui-search-box__text-input ${index === 0 ? styles.firstInput : ""}`}
-              />
-              <select
-                value={campo.field}
-                onChange={(e) =>
-                  handleChange(index, { field: e.target.value } as QueryItem)
-                }
-                className="form-select"
-              >
-                <option value="Select">{t("Select")}</option>
-                {fieldNames.map((field) => (
-                  <option key={field} value={field}>
-                    {field.toLowerCase() === "doi" ? "DOI" : field}
-                  </option>
-                ))}
-              </select>
             </div>
-            {index > 0 && (
-              <span
-                onClick={() => removeInput(index)}
-                className="d-flex align-items-center"
-              >
-                <CircleX />
-              </span>
-            )}
-          </div>
-        ))}
+          );
+        })}
+
         <div className="d-flex flex-justify-content-between">
           <button
             type="button"
             className="btn-link d-flex align-items-center flex-gap-8"
             onClick={addInput}
           >
-            <Plus />
+            <Plus aria-hidden="true" />
             Adicionar campo
           </button>
+
           <button
             disabled={!isFormValid}
             className="btn btn-primary search-button"
             type="submit"
           >
-            <Search /> {t("Search")}
+            <Search aria-hidden="true" /> {t("Search")}
           </button>
         </div>
       </form>

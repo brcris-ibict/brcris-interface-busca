@@ -8,7 +8,6 @@ import style from "../styles/ContactForm.module.css";
 import Loader from "./Loader";
 
 function ContactForm() {
-  /* const router = useRouter() */
   const { t } = useTranslation("common");
 
   const options = {
@@ -21,24 +20,19 @@ function ContactForm() {
   const [message, setMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [captchaCode, setCaptchaCode] = useState("");
-  const recaptchaRef = useRef(null);
+  const recaptchaRef = useRef<any>(null);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    if (!captchaCode) {
-      return;
-    }
-    const data = {
-      name,
-      email,
-      message,
-      captcha: captchaCode,
-    };
+    if (!captchaCode) return;
+
+    const data = { name, email, message, captcha: captchaCode };
 
     try {
       setLoading(true);
       const response = await MailService(JSON.stringify(data));
       setLoading(false);
+
       if (response.status === 200) {
         setName("");
         setEmail("");
@@ -49,62 +43,61 @@ function ContactForm() {
       }
     } finally {
       setCaptchaCode("");
-      // @ts-expect-error
-      recaptchaRef.current.reset();
+      recaptchaRef.current?.reset();
       setLoading(false);
     }
   };
 
-  const onReCAPTCHAChange = async (value: string) => {
-    setCaptchaCode(value);
-  };
-
   const PUBLIC_RECAPTCHA_SITE_KEY = process.env.PUBLIC_RECAPTCHA_SITE_KEY || "";
+
   return (
     <div>
-      {isLoading ? <Loader /> : ""}
+      {isLoading && <Loader />}
+
       <div className={style.contact}>
-        <form
-          onSubmit={(event) => {
-            handleSubmit(event);
-          }}
-        >
+        <form onSubmit={handleSubmit}>
           <div className="col-sm-12">
+            <label htmlFor="contact-name" className="visually-hidden">
+              {t("Name")}
+            </label>
             <input
+              id="contact-name"
               className="form-control search-box"
               type="text"
-              placeholder={`${t("Name")}`}
+              placeholder={t("Name")}
               required
               value={name}
-              onChange={(event) => {
-                setName(event.target.value);
-              }}
+              onChange={(event) => setName(event.target.value)}
             />
           </div>
 
           <div className="col-sm-12 my-3">
+            <label htmlFor="contact-email" className="visually-hidden">
+              {t("E-mail")}
+            </label>
             <input
+              id="contact-email"
               className="form-control search-box"
               type="email"
-              placeholder={`${t("E-mail")}`}
+              placeholder={t("E-mail")}
               required
               value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-              }}
+              onChange={(event) => setEmail(event.target.value)}
             />
           </div>
 
           <div className="col-sm-12">
+            <label htmlFor="contact-message" className="visually-hidden">
+              {t("Message")}
+            </label>
             <textarea
+              id="contact-message"
               className="form-control search-box"
               rows={6}
-              placeholder={`${t("Message")}`}
+              placeholder={t("Message")}
               required
               value={message}
-              onChange={(event) => {
-                setMessage(event.target.value);
-              }}
+              onChange={(event) => setMessage(event.target.value)}
             />
           </div>
 
@@ -114,17 +107,11 @@ function ContactForm() {
               size="normal"
               ref={recaptchaRef}
               sitekey={PUBLIC_RECAPTCHA_SITE_KEY}
-              onChange={onReCAPTCHAChange}
+              onChange={(value) => setCaptchaCode(value || "")}
             />
+
             <button
-              disabled={
-                !(
-                  captchaCode !== "" &&
-                  name !== "" &&
-                  email !== "" &&
-                  message !== ""
-                )
-              }
+              disabled={!(captchaCode && name && email && message)}
               className="btn btn-primary px-4 py-2"
               type="submit"
             >

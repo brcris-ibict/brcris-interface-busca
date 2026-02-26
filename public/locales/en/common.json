@@ -260,5 +260,10 @@
   "Title — alphabetical order from Z to A": "Title — alphabetical order from Z to A",
   "Title — alphabetical order from A to Z": "Title — alphabetical order from A to Z",
   "Yes": "Yes",
-  "No": "No"
+  "No": "No",
+  "Operator": "Operator",
+  "Field": "Field",
+  "Search value": "Search value",
+  "Select": "Select",
+  "Add field": "Add field"
 }

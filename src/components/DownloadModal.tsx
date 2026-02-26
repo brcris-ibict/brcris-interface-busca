@@ -195,15 +195,18 @@ const DownloadModal = ({
                   handleSubmit(event);
                 }}
               >
+                <label htmlFor="export-email" className="visually-hidden">
+                  {t("Email")}
+                </label>
+
                 <input
+                  id="export-email"
                   className="form-control search-box"
                   type="email"
-                  placeholder={`${t("Email")}`}
+                  placeholder={t("Email")}
                   required
                   value={email}
-                  onChange={(event) => {
-                    setEmail(event.target.value);
-                  }}
+                  onChange={(event) => setEmail(event.target.value)}
                 />
                 <div className="submit-btn col-sm-12 mt-2 d-flex justify-content-between align-items-center">
                   {/* @ts-ignore */}
