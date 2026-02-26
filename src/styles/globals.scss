@@ -398,6 +398,10 @@ li .sui-result__key {
   color: inherit;
 }
 
+.break-url {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
 li .sui-result__value {
   text-transform: capitalize;
   font-size: 1rem;

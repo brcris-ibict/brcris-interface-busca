@@ -1,16 +1,27 @@
 import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { CSVLink } from "react-csv";
 import { formatBooleanString } from "../../../utils/Utils";
 import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
 import PopoverButton from "../PopOver";
+
+const journalCsvHeaders = [
+  { label: "Título", key: "title" },
+  { label: "ID", key: "id" },
+];
 export default function JournalDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
 
+  const formattedPublicationsForCsv =
+    results?.[0]?.publication?.raw?.map((publication: any) => ({
+      title: publication?.title ?? "",
+      id: publication?.id ?? "",
+    })) ?? [];
   return (
     <div className="">
       {isLoading && <Loader />}
@@ -89,6 +100,7 @@ export default function JournalDetails() {
                                   href={url}
                                   target="_blank"
                                   rel="noopener noreferrer"
+                                  className="break-url"
                                 >
                                   {url}
                                 </a>
@@ -106,9 +118,22 @@ export default function JournalDetails() {
                   />
                   {result.publication?.raw?.length > 0 && (
                     <li>
-                      <span className="sui-result__key">
-                        {t("Publications")}
-                      </span>
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="sui-result__key">
+                          {t("Publications")} ({result.publication.raw.length})
+                        </span>
+
+                        {/* @ts-ignore */}
+                        <CSVLink
+                          data={formattedPublicationsForCsv}
+                          headers={journalCsvHeaders}
+                          filename={`publicacoes-${result.title?.raw ?? "journal"}.csv`}
+                          className="btn btn-primary btn-sm"
+                        >
+                          ⬇ {t("Export csv")}
+                        </CSVLink>
+                      </div>
+
                       <ExpandableContent
                         items={result.publication?.raw}
                         initialCount={5}
