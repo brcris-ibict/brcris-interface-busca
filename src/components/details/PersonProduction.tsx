@@ -79,25 +79,26 @@ export default function PersonProduction({
   }
 
   const TYPE_COLORS: Record<string, string> = {
-    Artigo: "rgba(255,0,0, 0.2)",
-    Dissertação: "rgba(54, 162, 235, 0.2)",
-    "Capítulo de Livro": "rgba(255,215,0, 0.2)",
-    Preprint: "rgba(0,128,128, 0.2)",
-    "conference proceedings": "rgba(153, 102, 255, 0.2)",
-    "Conjunto de Dados": "rgba(255,140,0, 0.2)",
-    Livro: "rgba(201, 203, 207, 0.2)",
+    Artigo: "#D9D2FF",
+    "Artigo de Conferência": "#FFD6E7",
+    "Capítulo de Livro": "#CFE7FF",
+    Livro: "#D7F5E3",
+    Dissertação: "#FFF0C2",
+    Tese: "#FFE3C8",
+    "Conjunto de Dados": "#CFF5F6",
+    Preprint: "#E3E7F0",
   };
 
   const TYPE_BORDER_COLORS: Record<string, string> = {
-    Artigo: "rgba(255,0,0, 1)",
-    Dissertação: "rgba(54, 162, 235, 1)",
-    "Capítulo de Livro": "rgba(255,215,0, 1)",
-    Preprint: "rgba(0,128,128, 1)",
-    "conference proceedings": "rgba(153, 102, 255, 1)",
-    "Conjunto de Dados": "rgba(255,140,0, 1)",
-    Livro: "rgba(201, 203, 207, 1)",
+    Artigo: "#B8A9FF",
+    "Artigo de Conferência": "#FF9FC5",
+    "Capítulo de Livro": "#9FD0FF",
+    Livro: "#9FE3C5",
+    Dissertação: "#FFD976",
+    Tese: "#FFC49C",
+    "Conjunto de Dados": "#8EE3E6",
+    Preprint: "#B5C0D6",
   };
-
   const publicationsByYearAndType: Record<string, Record<string, number>> = {};
 
   publications.forEach((pub) => {
