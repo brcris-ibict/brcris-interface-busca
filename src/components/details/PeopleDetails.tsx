@@ -238,7 +238,6 @@ export default function PeopleDetails() {
                           />
                         </li>
                       )}
-
                       {result.authorOf?.raw?.length > 0 && (
                         <li>
                           <div className="d-flex justify-content-between align-items-center mb-2">
@@ -246,6 +245,7 @@ export default function PeopleDetails() {
                               {t("Publications")} (
                               {result.authorOf?.raw?.length ?? 0})
                             </strong>
+
                             {/* @ts-ignore */}
                             <CSVLink
                               data={formattedPublicationsForCsv}
@@ -256,36 +256,84 @@ export default function PeopleDetails() {
                               ⬇ {t("Export csv")}
                             </CSVLink>
                           </div>
-                          <ExpandableContent
-                            items={result.authorOf?.raw
-                              ?.slice()
-                              ?.sort((a: any, b: any) => {
-                                const dateA = new Date(
-                                  a.publicationDate?.[0] || 0,
-                                ).getTime();
-                                const dateB = new Date(
-                                  b.publicationDate?.[0] || 0,
-                                ).getTime();
-                                return dateB - dateA;
-                              })}
-                            initialCount={5}
-                            renderItem={(publication: any) => (
-                              <div className="publication-item">
-                                <a href={`/publications/${publication?.id}`}>
-                                  {publication?.title}
-                                </a>
-                                <div className="publication-meta">
-                                  {[
-                                    journalsMap[publication?.id],
-                                    publication.publicationDate?.[0],
-                                    publication.type?.[0],
-                                  ]
-                                    .filter(Boolean)
-                                    .join(" - ")}
-                                </div>
-                              </div>
-                            )}
-                          />
+
+                          {(() => {
+                            const publications = result.authorOf?.raw || [];
+
+                            const publicationsByType = publications.reduce(
+                              (acc: any, pub: any) => {
+                                const type = pub?.type?.[0] || "Outros";
+
+                                if (!acc[type]) acc[type] = [];
+
+                                acc[type].push(pub);
+
+                                return acc;
+                              },
+                              {},
+                            );
+
+                            return Object.entries(publicationsByType).map(
+                              ([type, pubs]: any) => {
+                                const sortedPubs = pubs
+                                  .slice()
+                                  .sort((a: any, b: any) => {
+                                    const dateA = new Date(
+                                      a.publicationDate?.[0] || 0,
+                                    ).getTime();
+                                    const dateB = new Date(
+                                      b.publicationDate?.[0] || 0,
+                                    ).getTime();
+                                    return dateB - dateA;
+                                  });
+
+                                return (
+                                  <div
+                                    key={type}
+                                    className="publication-section"
+                                  >
+                                    <div className="publication-header">
+                                      <div className="publication-title">
+                                        <span className="publication-dot"></span>
+                                        {type}
+                                      </div>
+
+                                      <div className="publication-count">
+                                        {sortedPubs.length}
+                                      </div>
+                                    </div>
+
+                                    <div className="publication-group">
+                                      <ExpandableContent
+                                        items={sortedPubs}
+                                        initialCount={5}
+                                        renderItem={(publication: any) => (
+                                          <div className="publication-item">
+                                            <a
+                                              href={`/publications/${publication?.id}`}
+                                            >
+                                              {publication?.title}
+                                            </a>
+
+                                            <div className="publication-meta">
+                                              {[
+                                                journalsMap[publication?.id],
+                                                publication
+                                                  .publicationDate?.[0],
+                                                publication.type?.[0],
+                                              ]
+                                                .filter(Boolean)
+                                                .join(" - ")}
+                                            </div>
+                                          </div>
+                                        )}
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              },
+                            );
+                          })()}
                         </li>
                       )}
                     </ul>

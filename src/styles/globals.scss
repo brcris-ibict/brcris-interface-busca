@@ -1187,9 +1187,7 @@ button.rc-pagination-item-link[disabled] {
   cursor: pointer;
   align-self: flex-start;
 }
-.btn-primary {
- 
-}
+
 .publication-meta, .course-meta {
   font-size: 0.8rem;
   color: #555;
@@ -1246,7 +1244,60 @@ h3.popover-header a {
   background-color: transparent !important;
   color: #660b6e !important;
 }
+.publication-group {
+  border: 1px solid #e3e3eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  margin-top: 7px;
+  padding: 10px;
+}
 
+.publication-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f3f1f8;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+
+.publication-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.publication-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--secondary-color);
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  position: relative;
+}
+.publication-dot::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgba(111, 66, 193, 0.15); 
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.publication-count {
+  background-color: var(--bg);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--secondary-color);
+  font-weight: 600;
+}
 @media (max-width: 800px) {
   .nav .nav-item {
     justify-content: flex-start;
