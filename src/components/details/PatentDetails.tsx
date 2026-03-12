@@ -69,7 +69,7 @@ export default function PatentDetails() {
                             key={applicant.id}
                             className="sui-result__value"
                           >
-                            <a href={`/organizations${applicant.id}`}>
+                            <a href={`/organizations/${applicant.id}`}>
                               {applicant.name}
                             </a>
                           </span>

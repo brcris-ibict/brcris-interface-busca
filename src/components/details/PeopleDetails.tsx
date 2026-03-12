@@ -242,7 +242,7 @@ export default function PeopleDetails() {
                         <li>
                           <div className="d-flex justify-content-between align-items-center mb-2">
                             <strong className="research-title">
-                              {t("Publications")} (
+                              {t("Publications")}: (
                               {result.authorOf?.raw?.length ?? 0})
                             </strong>
 

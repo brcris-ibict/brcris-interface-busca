@@ -119,9 +119,10 @@ export default function JournalDetails() {
                   {result.publication?.raw?.length > 0 && (
                     <li>
                       <div className="d-flex justify-content-between align-items-center mb-2">
-                        <span className="sui-result__key">
-                          {t("Publications")} ({result.publication.raw.length})
-                        </span>
+                        <strong className="research-title">
+                          {t("Publications")}: (
+                          {result.publication?.raw?.length ?? 0})
+                        </strong>
 
                         {/* @ts-ignore */}
                         <CSVLink
