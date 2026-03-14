@@ -18,8 +18,9 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { authorId } = req.query as { authorId: string };
     const response = await client.search({
-      index: "brc-nov2025-publication",
-      _source: ["id", "title", "author"],
+      index: process.env.INDEX_PUBLICATION || "",
+      _source: ["id", "title", "author", "publicationDate"],
+
       body: {
         query: {
           match: {
@@ -29,12 +30,14 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    console.log(" response", JSON.stringify(response.body.hits.hits, null, 2));
-
     // @ts-expect-error
     const hits = response.body.hits.hits.map((h) => h._source);
+    const years = hits
+      .map((p: any) => Number(p.publicationDate))
+      .filter((y: any) => !isNaN(y));
 
-    console.log("hits", hits);
+    const earliest_publication = years.length ? Math.min(...years) : null;
+    const latest_publication = years.length ? Math.max(...years) : null;
 
     if (!hits.length) return null;
 
@@ -58,6 +61,8 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
     const publications = hits.map((pub) => ({
       id: pub.id,
       title: pub.title,
+      publicationDate: pub.publicationDate,
+
       // @ts-expect-error
       authors: pub.author.map((a) => a.id),
     }));
@@ -67,6 +72,9 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       name: mainAuthorData.name,
       coAuthors,
       publications,
+      number_of_authored_works: hits.length,
+      earliest_publication,
+      latest_publication,
     };
 
     res.json(result);

@@ -7,7 +7,6 @@ class IndicatorProxyService {
 
   private getFromCache(key: string): any | null {
     const cachedStr = localStorage.getItem(key);
-    console.log("Getting from cache", key, cachedStr);
     if (!cachedStr) return null;
 
     try {
@@ -57,7 +56,6 @@ class IndicatorProxyService {
     //   return cachedData;
     // }
 
-    console.log("Fetching fresh data");
     const body = JSON.stringify({ queries, index });
     const response = await fetch("/api/indicators", {
       method: "POST",

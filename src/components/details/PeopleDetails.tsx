@@ -339,7 +339,10 @@ export default function PeopleDetails() {
                     </ul>
                   </div>
                 </div>
-                <PersonProduction publications={result.authorOf?.raw} />
+                <PersonProduction
+                  publications={result.authorOf?.raw}
+                  authorId={result.id?.raw}
+                />
               </div>
               <ChordDiagram authorId={result.id?.raw} />
               <AdvisorGraph advisorId={result.id?.raw} />

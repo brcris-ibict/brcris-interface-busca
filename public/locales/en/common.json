@@ -127,7 +127,7 @@
   "numberFormat": "{{value, number}}",
   "Got it": "Got it",
   "Contact": "Contact",
-  "E-mail": "-mail",
+  "E-mail": "E-mail",
   "Message": "Message",
   "Submit": "Submit",
   "ContactUs": "Get in Touch",
@@ -265,5 +265,6 @@
   "Field": "Field",
   "Search value": "Search value",
   "Select": "Select",
-  "Add field": "Add field"
+  "Add field": "Add field",
+  "GraphML file": "GraphML file"
 }

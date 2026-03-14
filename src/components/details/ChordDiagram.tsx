@@ -107,7 +107,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
     d3.select(chartRef.current).selectAll("*").remove();
-    const margin = 200; // margem extra p/ labels
+    const margin = 200;
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -218,7 +218,16 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
   if (!mainAuthor) {
     return null;
   }
-
+  const handleDownloadGraphML = async () => {
+    const url = `/api/autor-xml?authorId=${authorId}`;
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${mainAuthor?.name?.replace(/\s+/g, "_")}_network.graphml`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
   let popoverContent = null;
   if (selectedNode) {
     if (selectedNode.id === mainAuthor.id) {
@@ -332,6 +341,17 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
         >
           ({t("Download as picture")})
         </span>
+        <span
+          className="mt-2"
+          style={{
+            color: "#6a0dad",
+            cursor: "pointer",
+            fontSize: "16px",
+          }}
+          onClick={handleDownloadGraphML}
+        >
+          ({t("GraphML file")})
+        </span>
       </h3>
 
       {/** @ts-ignore */}
@@ -348,11 +368,10 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           onHide={() => {
             setSelectedNode(null);
 
-            // 🔄 Reset highlight quando popover fecha
             if (chartRef.current) {
               const svg = d3.select(chartRef.current).select("svg");
 
-              svg.selectAll("path").style("opacity", 1); // restaura todos
+              svg.selectAll("path").style("opacity", 1);
             }
           }}
         >

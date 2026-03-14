@@ -12,8 +12,10 @@ import {
 } from "chart.js";
 import { Download, GraduationCap, Users } from "lucide-react";
 import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import { CSVLink } from "react-csv";
+import { fetchAuthorData } from "../../services/authorHelpers";
 import styles from "../../styles/Indicators.module.css";
 import type { IndicatorType } from "../../types/Entities";
 import { OptionsBar, OptionsPie } from "../indicators/options/ChartsOptions";
@@ -61,14 +63,12 @@ function aggregateByField(items: any[], field: string): IndicatorType[] {
 
 export default function PersonProduction({
   publications,
+  authorId,
 }: {
-  publications: any[];
+  publications?: any[];
+  authorId: any;
 }) {
   const { t } = useTranslation("common");
-
-  if (!publications || publications.length === 0) {
-    return null;
-  }
 
   if (options.plugins?.title) {
     options.plugins.title.text = t(options.title);
@@ -101,7 +101,7 @@ export default function PersonProduction({
   };
   const publicationsByYearAndType: Record<string, Record<string, number>> = {};
 
-  publications.forEach((pub) => {
+  publications?.forEach((pub) => {
     const year = pub.publicationDate;
     const type = Array.isArray(pub.type) ? pub.type[0] : pub.type;
 
@@ -124,7 +124,7 @@ export default function PersonProduction({
 
   const allTypes = Array.from(
     new Set(
-      publications.map((p) => (Array.isArray(p.type) ? p.type[0] : p.type)),
+      publications?.map((p) => (Array.isArray(p.type) ? p.type[0] : p.type)),
     ),
   );
 
@@ -137,14 +137,50 @@ export default function PersonProduction({
   }));
 
   const typeIndicators: IndicatorType[] = aggregateByField(
-    publications,
+    publications
+      ?.filter((p) => p.type)
+      .map((p) => ({
+        ...p,
+        type: Array.isArray(p.type) ? p.type[0] : p.type,
+      })) || [],
     "type",
   );
 
   const typeLabels = typeIndicators.map((d) => d.key);
   const typeDoc_count = typeIndicators.map((d) => d.doc_count);
   const CSVLinkFix = CSVLink as any;
+  // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
+  const [authorData, setAuthorData] = useState<{
+    coauthors: any[];
+    hasCoauthors: boolean;
+    advisees: any[];
+    hasAdvisees: boolean;
+  }>({
+    coauthors: [],
+    hasCoauthors: false,
+    advisees: [],
+    hasAdvisees: false,
+  });
 
+  useEffect(() => {
+    fetchAuthorData(authorId).then(setAuthorData);
+  }, [authorId]);
+  const hasPublications = (publications ?? []).length > 0;
+  const hasNetworks = authorData.hasCoauthors || authorData.hasAdvisees;
+  if (!hasPublications) {
+    return (
+      <div className="indicators">
+        <PopoverButton className="position-absolute" />
+      </div>
+    );
+  }
+  if (!hasNetworks) {
+    return (
+      <div className="indicators">
+        <PopoverButton className="position-absolute" />
+      </div>
+    );
+  }
   return (
     <div className="indicators">
       <PopoverButton className="position-absolute" />
@@ -152,18 +188,20 @@ export default function PersonProduction({
       <h3 className="title-indicators">
         {t("Publication and advising indicators")}
       </h3>
-
-      <div className="card p-2 mb-3">
-        <a href="#coautoria">
-          <Users /> {t("Co-authorship Network")}
-        </a>
-      </div>
-
-      <div className="card p-2 mb-3">
-        <a href="#orientacoes">
-          <GraduationCap /> {t("Advising Network")}
-        </a>
-      </div>
+      {authorData.hasCoauthors && (
+        <div className="card p-2 mb-3">
+          <a href="#coautoria">
+            <Users /> {t("Co-authorship Network")}
+          </a>
+        </div>
+      )}
+      {authorData.hasAdvisees && (
+        <div className="card p-2 mb-3">
+          <a href="#orientacoes">
+            <GraduationCap /> {t("Advising Network")}
+          </a>
+        </div>
+      )}
 
       <div className={styles.chart}>
         <CSVLinkFix

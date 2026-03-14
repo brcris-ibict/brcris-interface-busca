@@ -21,7 +21,6 @@ export async function sendMail({ recipient, subject, text, html }: BodyType) {
 
     if (!MAILPORT || !MAILHOST || !MAILSENDER || !PASSWORD || !recipient) {
       logger.error("Variáveis de ambiente faltando ou indefinidas");
-      console.log("Variáveis de ambiente faltando ou indefinidas");
       throw new Error("Variáveis de ambiente faltando ou indefinidas");
     }
     const transporter = nodemailer.createTransport({
@@ -48,7 +47,6 @@ export async function sendMail({ recipient, subject, text, html }: BodyType) {
     };
 
     const mailResponse = await transporter.sendMail(mailData);
-    console.log("Fim do sendMail");
     return mailResponse;
   } catch (err) {
     logger.error(err);
