@@ -25,31 +25,33 @@ const autorXML = async (req: NextApiRequest, res: NextApiResponse) => {
     const hits = response.body.hits.hits.map((h: any) => h._source);
     if (!hits.length) return res.send("<graphml></graphml>");
 
-    const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+    const protocol = req.headers["x-forwarded-proto"] || "http";
+    const host = req.headers.host;
 
+    const baseUrl = `${protocol}://${host}`;
     let graphml = `<?xml version="1.0" encoding="UTF-8"?>
-<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
-         http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+      <graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+            http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
 
-  <key attr.name="label" attr.type="string" for="node" id="label"/>
-  <key attr.name="url" attr.type="string" for="node" id="url"/>
-  <key attr.name="number_of_authored_works" attr.type="int" for="node" id="number_of_authored_works"/>
-  <key attr.name="earliest_publication" attr.type="int" for="node" id="earliest_publication"/>
-  <key attr.name="latest_publication" attr.type="int" for="node" id="latest_publication"/>
-  <key attr.name="num_earliest_publication" attr.type="int" for="node" id="num_earliest_publication"/>
-  <key attr.name="num_latest_publication" attr.type="int" for="node" id="num_latest_publication"/>
-  <key attr.name="collaborator1" attr.type="string" for="edge" id="collaborator1"/>
-  <key attr.name="collaborator2" attr.type="string" for="edge" id="collaborator2"/>
-  <key attr.name="number_of_coauthored_works" attr.type="int" for="edge" id="number_of_coauthored_works"/>
-  <key attr.name="earliest_collaboration" attr.type="int" for="edge" id="earliest_collaboration"/>
-  <key attr.name="num_earliest_collaboration" attr.type="int" for="edge" id="num_earliest_collaboration"/>
-  <key attr.name="latest_collaboration" attr.type="int" for="edge" id="latest_collaboration"/>
-  <key attr.name="num_latest_collaboration" attr.type="int" for="edge" id="num_latest_collaboration"/>
-  
-  <graph edgedefault="undirected">
-`;
+      <key attr.name="label" attr.type="string" for="node" id="label"/>
+      <key attr.name="url" attr.type="string" for="node" id="url"/>
+      <key attr.name="number_of_authored_works" attr.type="int" for="node" id="number_of_authored_works"/>
+      <key attr.name="earliest_publication" attr.type="int" for="node" id="earliest_publication"/>
+      <key attr.name="latest_publication" attr.type="int" for="node" id="latest_publication"/>
+      <key attr.name="num_earliest_publication" attr.type="int" for="node" id="num_earliest_publication"/>
+      <key attr.name="num_latest_publication" attr.type="int" for="node" id="num_latest_publication"/>
+      <key attr.name="collaborator1" attr.type="string" for="edge" id="collaborator1"/>
+      <key attr.name="collaborator2" attr.type="string" for="edge" id="collaborator2"/>
+      <key attr.name="number_of_coauthored_works" attr.type="int" for="edge" id="number_of_coauthored_works"/>
+      <key attr.name="earliest_collaboration" attr.type="int" for="edge" id="earliest_collaboration"/>
+      <key attr.name="num_earliest_collaboration" attr.type="int" for="edge" id="num_earliest_collaboration"/>
+      <key attr.name="latest_collaboration" attr.type="int" for="edge" id="latest_collaboration"/>
+      <key attr.name="num_latest_collaboration" attr.type="int" for="edge" id="num_latest_collaboration"/>
+      
+      <graph edgedefault="undirected">
+    `;
 
     const coAuthorsMap = new Map<string, string>();
     hits.forEach((pub: any) => {
@@ -127,10 +129,13 @@ const autorXML = async (req: NextApiRequest, res: NextApiResponse) => {
   </graph>
 </graphml>`;
 
+    res.setHeader("Content-Type", "application/xml");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="coauthorship-network-${authorId}.xml"`,
+      `attachment; filename="coauthorship-network-${authorId}.graphml"`,
     );
+
+    res.status(200).send(graphml);
     res.send(graphml);
   } catch (err: any) {
     logger.error(err);
