@@ -36,6 +36,17 @@ export default function PeopleDetails() {
       type: publication?.type?.[0] ?? "",
       id: publication?.id ?? "",
     })) ?? [];
+
+  const publicationTypeMap: Record<string, string> = {
+    Artigo: t("Journal article"),
+    "Artigo de Conferência": t("Conference paper"),
+    "Capítulo de Livro": t("Book chapter"),
+    Livro: t("Book"),
+    Dissertação: t("Dissertation"),
+    Tese: t("Thesis"),
+    "Conjunto de Dados": t("Dataset"),
+    Preprint: t("Preprint"),
+  };
   return (
     <>
       {isLoading && <Loader />}
@@ -273,7 +284,7 @@ export default function PeopleDetails() {
                                     <div className="publication-header">
                                       <div className="publication-title">
                                         <span className="publication-dot"></span>
-                                        {type}
+                                        {publicationTypeMap[type] || type}
                                       </div>
 
                                       <div className="publication-count">

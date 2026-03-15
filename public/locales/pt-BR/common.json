@@ -268,5 +268,13 @@
   "Search value": "Valor da busca",
   "Select": "Selecionar",
   "Add field": "Adicionar campo",
-  "GraphML file": "Arquivo GraphML"
+  "GraphML file": "Arquivo GraphML",
+  "Journal article": "Artigo",
+  "Conference paper": "Artigo de Conferência",
+  "Book chapter": "Capítulo de Livro",
+  "Book": "Livro",
+  "Dissertation": "Dissertação",
+  "Thesis": "Tese",
+  "Dataset": "Conjunto de Dados",
+  "Preprint": "Preprint"
 }
