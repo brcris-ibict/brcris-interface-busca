@@ -1,9 +1,17 @@
 import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { CSVLink } from "react-csv";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
+
+const membersCsvHeaders = [
+  { label: "Nome", key: "name" },
+  { label: "IDLattes", key: "lattesId" },
+  { label: "BrCrisID", key: "brcrisId" },
+];
+
 export default function OrganizationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
@@ -15,137 +23,166 @@ export default function OrganizationDetails() {
         {wasSearched &&
           results &&
           results.length > 0 &&
-          results.map((result) => (
-            <div key={result.id}>
-              <Head>
-                <title>{`${result.name?.raw} | BrCris`}</title>
-              </Head>
-              <h1 className="title">{result.name?.raw}</h1>
-              <div className="details-card">
-                <ul>
-                  {result.member?.raw?.length > 0 && (
-                    <li>
-                      <span className="sui-result__key">{t("Has member")}</span>
-                      <ExpandableContent
-                        items={[...result.member.raw].sort((a: any, b: any) =>
-                          String(a?.name?.raw ?? a?.name ?? "").localeCompare(
-                            String(b?.name?.raw ?? b?.name ?? ""),
-                          ),
-                        )}
-                        initialCount={5}
-                        renderItem={(item: any, idx: number) => (
-                          <div key={idx} className="member-item">
-                            <a href={`/people/${item.id}`}>{item?.name}</a>
-                          </div>
-                        )}
-                      />
-                    </li>
-                  )}
-                  <ShowItem value={result.acronym?.raw} label={t("Acronym")} />
-                  <ShowItem value={result.country?.raw} label={t("Country")} />
-                  <ShowItem value={result.state?.raw} label={t("State")} />
-                  <ShowItem value={result.city?.raw} label={t("City")} />
-                  {result.brcrisId?.raw?.length > 0 && (
-                    <li>
-                      <span className="sui-result__key">
-                        {t("BrCris identifier")}
-                      </span>
-                      <span>
+          results.map((result) => {
+            const membersCsvData =
+              result.member?.raw?.map((member: any) => ({
+                name: member?.name ?? "",
+                lattesId: member?.lattesId ?? "",
+                brcrisId: member?.brcrisId ?? "",
+              })) ?? [];
+
+            return (
+              <div key={result.id}>
+                <Head>
+                  <title>{`${result.name?.raw} | BrCris`}</title>
+                </Head>
+                <h1 className="title">{result.name?.raw}</h1>
+                <div className="details-card">
+                  <ul>
+                    {result.member?.raw?.length > 0 && (
+                      <li>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <span className="sui-result__key">
+                            {t("Has member")}
+                          </span>
+                          {/* @ts-ignore */}
+
+                          <CSVLink
+                            data={membersCsvData}
+                            headers={membersCsvHeaders}
+                            filename={`membros-${result.name?.raw ?? "organizacao"}.csv`}
+                            className="btn btn-primary btn-sm"
+                          >
+                            ⬇ {t("Export csv")}
+                          </CSVLink>
+                        </div>{" "}
                         <ExpandableContent
-                          items={
-                            Array.isArray(result.brcrisId.raw)
-                              ? result.brcrisId.raw
-                              : [result.brcrisId.raw]
-                          }
-                          initialCount={5}
-                          renderItem={(id: string, idx: number) => (
-                            <span key={idx}>{id}</span>
-                          )}
-                        />
-                      </span>
-                    </li>
-                  )}
-                  {result.capesId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">
-                        {t("Capes identifier")}:
-                      </span>
-                      <span>
-                        <ExpandableContent
-                          items={result.capesId.raw}
-                          initialCount={5}
-                          renderItem={(item: string) => <>{item}</>}
-                        />
-                      </span>
-                    </li>
-                  )}
-                  {result.program?.raw?.length > 0 && (
-                    <li>
-                      <span className="sui-result__key">{t("Program")}</span>
-                      <span>
-                        <ExpandableContent
-                          items={[...result.program.raw].sort(
-                            (a: any, b: any) =>
-                              String(
-                                a?.name?.raw ?? a?.name ?? "",
-                              ).localeCompare(
-                                String(b?.name?.raw ?? b?.name ?? ""),
-                              ),
+                          items={[...result.member.raw].sort((a: any, b: any) =>
+                            String(a?.name?.raw ?? a?.name ?? "").localeCompare(
+                              String(b?.name?.raw ?? b?.name ?? ""),
+                            ),
                           )}
                           initialCount={5}
-                          renderItem={(program: any) => (
-                            <>
-                              {program.name && (
-                                <a href={`/programs/${program.id}`}>
-                                  {program.name}
+                          renderItem={(item: any, idx: number) => (
+                            <div key={idx} className="member-item">
+                              <a href={`/people/${item.id}`}>{item?.name}</a>
+                            </div>
+                          )}
+                        />
+                      </li>
+                    )}
+                    <ShowItem
+                      value={result.acronym?.raw}
+                      label={t("Acronym")}
+                    />
+                    <ShowItem
+                      value={result.country?.raw}
+                      label={t("Country")}
+                    />
+                    <ShowItem value={result.state?.raw} label={t("State")} />
+                    <ShowItem value={result.city?.raw} label={t("City")} />
+                    {result.brcrisId?.raw?.length > 0 && (
+                      <li>
+                        <span className="sui-result__key">
+                          {t("BrCris identifier")}
+                        </span>
+                        <span>
+                          <ExpandableContent
+                            items={
+                              Array.isArray(result.brcrisId.raw)
+                                ? result.brcrisId.raw
+                                : [result.brcrisId.raw]
+                            }
+                            initialCount={5}
+                            renderItem={(id: string, idx: number) => (
+                              <span key={idx}>{id}</span>
+                            )}
+                          />
+                        </span>
+                      </li>
+                    )}
+                    {result.capesId?.raw?.length > 0 && (
+                      <li>
+                        <span className="identifier-key">
+                          {t("Capes identifier")}:
+                        </span>
+                        <span>
+                          <ExpandableContent
+                            items={result.capesId.raw}
+                            initialCount={5}
+                            renderItem={(item: string) => <>{item}</>}
+                          />
+                        </span>
+                      </li>
+                    )}
+                    {result.program?.raw?.length > 0 && (
+                      <li>
+                        <span className="sui-result__key">{t("Program")}</span>
+                        <span>
+                          <ExpandableContent
+                            items={[...result.program.raw].sort(
+                              (a: any, b: any) =>
+                                String(
+                                  a?.name?.raw ?? a?.name ?? "",
+                                ).localeCompare(
+                                  String(b?.name?.raw ?? b?.name ?? ""),
+                                ),
+                            )}
+                            initialCount={5}
+                            renderItem={(program: any) => (
+                              <>
+                                {program.name && (
+                                  <a href={`/programs/${program.id}`}>
+                                    {program.name}
+                                  </a>
+                                )}
+                              </>
+                            )}
+                          />
+                        </span>
+                      </li>
+                    )}
+                    {result.course?.raw?.length > 0 && (
+                      <li>
+                        <span className="sui-result__key">{t("Course")}</span>
+                        <span>
+                          <ExpandableContent
+                            items={result.course.raw}
+                            initialCount={5}
+                            renderItem={(item: any) => (
+                              <>
+                                <a href={`/organizations/${item.id}`}>
+                                  {item?.name}
                                 </a>
-                              )}
-                            </>
-                          )}
-                        />
-                      </span>
-                    </li>
-                  )}
-                  {result.course?.raw?.length > 0 && (
-                    <li>
-                      <span className="sui-result__key">{t("Course")}</span>
-                      <span>
+                              </>
+                            )}
+                          />
+                        </span>
+                      </li>
+                    )}
+                    {result.publication?.raw?.length > 0 && (
+                      <li>
+                        <span className="sui-result__key">
+                          {t("Publications")}
+                        </span>
                         <ExpandableContent
-                          items={result.course.raw}
+                          items={result.publication?.raw}
                           initialCount={5}
-                          renderItem={(item: any) => (
-                            <>
-                              <a href={`/organizations/${item.id}`}>
-                                {item?.name}
+                          renderItem={(publication: any, index: number) => (
+                            <div key={index} className="publication-item">
+                              <a href={`/publications/${publication?.id}`}>
+                                {publication?.title}
                               </a>
-                            </>
+                            </div>
                           )}
                         />
-                      </span>
-                    </li>
-                  )}
-                  {result.publication?.raw?.length > 0 && (
-                    <li>
-                      <span className="sui-result__key">
-                        {t("Publications")}
-                      </span>
-                      <ExpandableContent
-                        items={result.publication?.raw}
-                        initialCount={5}
-                        renderItem={(publication: any, index: number) => (
-                          <div key={index} className="publication-item">
-                            <a href={`/publications/${publication?.id}`}>
-                              {publication?.title}
-                            </a>
-                          </div>
-                        )}
-                      />
-                    </li>
-                  )}
-                </ul>
+                      </li>
+                    )}
+                  </ul>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
       </ErrorBoundary>
     </div>
   );

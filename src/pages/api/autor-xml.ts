@@ -136,7 +136,6 @@ const autorXML = async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     res.status(200).send(graphml);
-    res.send(graphml);
   } catch (err: any) {
     logger.error(err);
     res.status(400).json({ error: err.message });

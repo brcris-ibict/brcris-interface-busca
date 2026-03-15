@@ -216,28 +216,6 @@ export default function PeopleDetails() {
                         </li>
                       )}
 
-                      {result.id?.raw && (
-                        <PatentsByInventor personId={result.id.raw} />
-                      )}
-
-                      {result.creatorOf?.raw?.length > 0 && (
-                        <li>
-                          <strong className="research-title">
-                            {t("Software")}
-                          </strong>
-                          <ExpandableContent
-                            items={result.creatorOf.raw}
-                            initialCount={5}
-                            renderItem={(item: any, idx: number) => (
-                              <span key={idx}>
-                                <a href={`/software/${item.id}`}>
-                                  <SoftwareTitle softwareId={item.id} />
-                                </a>
-                              </span>
-                            )}
-                          />
-                        </li>
-                      )}
                       {result.authorOf?.raw?.length > 0 && (
                         <li>
                           <div className="d-flex justify-content-between align-items-center mb-2">
@@ -334,6 +312,28 @@ export default function PeopleDetails() {
                               },
                             );
                           })()}
+                        </li>
+                      )}
+                      {result.id?.raw && (
+                        <PatentsByInventor personId={result.id.raw} />
+                      )}
+
+                      {result.creatorOf?.raw?.length > 0 && (
+                        <li>
+                          <strong className="research-title">
+                            {t("Software")}
+                          </strong>
+                          <ExpandableContent
+                            items={result.creatorOf.raw}
+                            initialCount={5}
+                            renderItem={(item: any, idx: number) => (
+                              <span key={idx}>
+                                <a href={`/software/${item.id}`}>
+                                  <SoftwareTitle softwareId={item.id} />
+                                </a>
+                              </span>
+                            )}
+                          />
                         </li>
                       )}
                     </ul>
