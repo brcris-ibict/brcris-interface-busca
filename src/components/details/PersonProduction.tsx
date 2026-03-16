@@ -99,6 +99,17 @@ export default function PersonProduction({
     "Conjunto de Dados": "#8EE3E6",
     Preprint: "#B5C0D6",
   };
+
+  const publicationTypeMap: Record<string, string> = {
+    Artigo: t("Journal article"),
+    "Artigo de Conferência": t("Conference paper"),
+    "Capítulo de Livro": t("Book chapter"),
+    Livro: t("Book"),
+    Dissertação: t("Dissertation"),
+    Tese: t("Thesis"),
+    "Conjunto de Dados": t("Dataset"),
+    Preprint: t("Preprint"),
+  };
   const publicationsByYearAndType: Record<string, Record<string, number>> = {};
 
   publications?.forEach((pub) => {
@@ -129,7 +140,7 @@ export default function PersonProduction({
   );
 
   const datasets = allTypes.map((type) => ({
-    label: type,
+    label: publicationTypeMap[type] || type,
     data: years.map((year) => publicationsByYearAndType[year]?.[type] || 0),
     backgroundColor: TYPE_COLORS[type] || "#d9d9d9",
     borderColor: TYPE_BORDER_COLORS[type] || "#999999",
@@ -147,6 +158,9 @@ export default function PersonProduction({
   );
 
   const typeLabels = typeIndicators.map((d) => d.key);
+  const translatedTypeLabels = typeLabels.map(
+    (type) => publicationTypeMap[type] || type,
+  );
   const typeDoc_count = typeIndicators.map((d) => d.doc_count);
   const CSVLinkFix = CSVLink as any;
   // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
@@ -241,7 +255,7 @@ export default function PersonProduction({
         <Pie
           options={optionsType}
           data={{
-            labels: typeLabels,
+            labels: translatedTypeLabels,
             datasets: [
               {
                 data: typeDoc_count,
