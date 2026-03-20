@@ -2,13 +2,13 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 "use client";
 import * as d3 from "d3";
+import { Download, Share2 } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Overlay, Popover } from "react-bootstrap";
 import { Rnd } from "react-rnd";
 import coautoriaService from "../../services/CoautoriaService";
 import ExpandableContent from "../ExpandableContent";
-
 export default function ChordDiagram({ authorId }: { authorId: string }) {
   const { t } = useTranslation("common");
   const chartRef = useRef<SVGSVGElement | null>(null);
@@ -319,39 +319,21 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
 
   return (
     <div id="coautoria" className="card my-3 p-2">
-      <h3
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
+      <h3 className="header-coautoria">
         <span>
           {t("Co-authorship Network")} - {mainAuthor.name}
         </span>
 
-        <span
-          className="mt-2"
-          style={{
-            color: "#6a0dad",
-            cursor: "pointer",
-            fontSize: "16px",
-          }}
-          onClick={handleDownload}
-        >
-          ({t("Download as picture")})
-        </span>
-        <span
-          className="mt-2"
-          style={{
-            color: "#6a0dad",
-            cursor: "pointer",
-            fontSize: "16px",
-          }}
-          onClick={handleDownloadGraphML}
-        >
-          ({t("GraphML file")})
-        </span>
+        <div className="header-actions">
+          <span className="action-link" onClick={handleDownload}>
+            <Download size={18} />({t("Download as picture")})
+          </span>
+
+          <div className="graphml-action" onClick={handleDownloadGraphML}>
+            <img src="/images/graphml.svg" alt="GraphML" />
+            <span>{t("GraphML file")}</span>
+          </div>
+        </div>
       </h3>
 
       {/** @ts-ignore */}

@@ -20,7 +20,7 @@ export default async function handler(
 
     // 🔍 Busca publicações com este orientador
     const pubs = await client.search({
-      index: "r3-new-publication",
+      index: process.env.INDEX_PUBLICATION || "",
       size: 1000,
       body: {
         query: {
@@ -38,16 +38,11 @@ export default async function handler(
     const first = hits[0]._source;
     const advisorName = first?.advisor?.[0]?.name?.[0] ?? "Desconhecido";
 
-    // 🔹 Extrair orientandos (autores) e tipo de tese
     const advisees: any[] = [];
 
     hits.forEach((hit: any) => {
       const pub = hit._source;
       const thesisType = Array.isArray(pub.type) ? pub.type[0] : pub.type;
-
-      // 🔸 Filtra apenas "master thesis" e "doctoral thesis"
-      if (thesisType !== "master thesis" && thesisType !== "doctoral thesis")
-        return;
 
       if (Array.isArray(pub.author)) {
         pub.author.forEach((a: any) => {
