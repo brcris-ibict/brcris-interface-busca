@@ -36,8 +36,14 @@ export default async function handler(
     }
 
     const first = hits[0]._source;
-    const advisorName = first?.advisor?.[0]?.name?.[0] ?? "Desconhecido";
+    let advisorName = "Desconhecido";
 
+    if (first?.advisor) {
+      const adv = first.advisor.find((a: any) => a.id === advisorId);
+      if (adv) {
+        advisorName = Array.isArray(adv.name) ? adv.name[0] : adv.name;
+      }
+    }
     const advisees: any[] = [];
 
     hits.forEach((hit: any) => {

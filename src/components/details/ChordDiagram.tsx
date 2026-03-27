@@ -127,7 +127,6 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       .attr("d", arc)
       //@ts-expect-error
       .attr("fill", (d) => color(d.index))
-      .attr("stroke", "#000")
       //@ts-expect-error
       .attr("class", (d) => `arc-${nodes[d.index].id}`);
 
@@ -143,7 +142,6 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       .attr("d", ribbon)
       //@ts-expect-error
       .attr("fill", (d) => color(d.target.index))
-      .attr("stroke", "#000")
       .attr(
         "class",
         // @ts-expect-error

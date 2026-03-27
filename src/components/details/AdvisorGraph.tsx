@@ -49,12 +49,20 @@ function AdvisingGraph({
         x: width / 2,
         y: height / 2,
       },
-      ...advisees.map((a, i) => ({
-        id: (i + 2).toString(),
-        name: a.adviseeName,
-        uri: a.advisee,
-        level: a.level?.toLowerCase().includes("doctoral") ? 2 : 3,
-      })),
+      ...advisees.map((a, i) => {
+        const tipo = (a.level || "").toLowerCase();
+
+        let nivel = 3;
+        if (tipo.includes("tese")) nivel = 2;
+        if (tipo.includes("disser")) nivel = 3;
+
+        return {
+          id: (i + 2).toString(),
+          name: a.adviseeName,
+          uri: a.advisee,
+          level: nivel,
+        };
+      }),
     ];
 
     const links: Link[] = advisees.map((_, i) => ({
