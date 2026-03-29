@@ -2,7 +2,11 @@ import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
-import { getBioByLanguage, getLattesIdentifier } from "../../../utils/Utils";
+import {
+  _normalizeScientificTitle,
+  getBioByLanguage,
+  getLattesIdentifier,
+} from "../../../utils/Utils";
 import { useJournals } from "../../hooks/useJournals";
 import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
@@ -301,7 +305,10 @@ export default function PeopleDetails() {
                                             <a
                                               href={`/publications/${publication?.id}`}
                                             >
-                                              {publication?.title}
+                                              {_normalizeScientificTitle(
+                                                publication?.title,
+                                                "text",
+                                              )}
                                             </a>
 
                                             <div className="publication-meta">

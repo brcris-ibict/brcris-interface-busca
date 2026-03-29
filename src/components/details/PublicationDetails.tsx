@@ -1,7 +1,10 @@
 import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
-import { normalizeDoiList } from "../../../utils/Utils";
+import {
+  _normalizeScientificTitle,
+  normalizeDoiList,
+} from "../../../utils/Utils";
 import type { OrgUnit, Service } from "../../types/Entities";
 import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
@@ -11,36 +14,6 @@ import PopoverButton from "../PopOver";
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
-
-  type TitleFormat = "html" | "text";
-
-  function _normalizeScientificTitle(
-    input: string | string[] | undefined,
-    format: TitleFormat = "html",
-  ) {
-    if (!input) return "";
-
-    let t = Array.isArray(input) ? input[0] : input;
-
-    if (typeof t !== "string") return "";
-
-    t = t.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
-
-    t = t.replace(/<\/sup>\s*o/g, "</sup>O");
-    t = t.replace(/<\/sup>\s*c/g, "</sup>C");
-    t = t.replace(/co<sub>2<\/sub>/gi, "CO<sub>2</sub>");
-    t = t.replace(/\bamazonian\b/gi, "Amazonian");
-
-    if (format === "text") {
-      t = t
-        .replace(/<[^>]+>/g, "")
-        .replace(/18o\/16o/gi, "18O/16O")
-        .replace(/13c\/12c/gi, "13C/12C")
-        .replace(/co2/gi, "CO2");
-    }
-
-    return t;
-  }
 
   return (
     <div className="">
@@ -73,10 +46,14 @@ export default function PublicationDetails() {
                     <li>
                       <span className="sui-result__key">{t("Author")}</span>
                       <ExpandableContent
-                        items={result.author?.raw}
+                        items={[...result.author.raw].sort((a: any, b: any) =>
+                          String(a?.name?.raw ?? a?.name ?? "").localeCompare(
+                            String(b?.name?.raw ?? b?.name ?? ""),
+                          ),
+                        )}
                         initialCount={5}
                         renderItem={(item: any, idx: number) => (
-                          <div key={idx} className="author-item">
+                          <div key={idx} className="member-item">
                             <a href={`/people/${item.id}`}>{item?.name}</a>
                           </div>
                         )}
@@ -100,26 +77,59 @@ export default function PublicationDetails() {
                             ? `${t("Organization")}`
                             : `${t("Journals")}`}
                       </span>
-                      <span>
-                        {result.orgunit?.raw.map((org: OrgUnit) => (
-                          <a key={org.id} href={`/organizations/${org.id}`}>
-                            {org?.name}
-                          </a>
-                        ))}
 
-                        {result.service?.raw.map((service: Service) =>
-                          service.title?.map((title: string) => (
-                            <a key={title} href={`/serv_${service.id}`}>
-                              {title}
-                            </a>
-                          )),
+                      <span>
+                        {/* ORGUNIT */}
+                        {result.orgunit?.raw?.length > 0 && (
+                          <ExpandableContent
+                            items={result.orgunit.raw}
+                            initialCount={5}
+                            renderItem={(org: OrgUnit, idx: number) => (
+                              <div key={idx}>
+                                <a href={`/organizations/${org.id}`}>
+                                  {org?.name}
+                                </a>
+                              </div>
+                            )}
+                          />
                         )}
 
-                        {result.journal?.raw.map((journal: any) => (
-                          <a key={journal.id} href={`/journals/${journal.id}`}>
-                            {journal.title ? journal.title : journal}
-                          </a>
-                        ))}
+                        {/* SERVICE */}
+                        {result.service?.raw?.length > 0 && (
+                          <ExpandableContent
+                            items={result.service.raw}
+                            initialCount={5}
+                            renderItem={(service: Service, idx: number) => (
+                              <div key={idx}>
+                                {service.title?.map((title: string) => (
+                                  <a key={title} href={`/serv_${service.id}`}>
+                                    {_normalizeScientificTitle(title, "text")}
+                                  </a>
+                                ))}
+                              </div>
+                            )}
+                          />
+                        )}
+
+                        {/* JOURNAL */}
+                        {result.journal?.raw?.length > 0 && (
+                          <ExpandableContent
+                            items={result.journal.raw}
+                            initialCount={5}
+                            renderItem={(journal: any, idx: number) => (
+                              <div key={idx}>
+                                <a href={`/journals/${journal.id}`}>
+                                  {journal.title
+                                    ? _normalizeScientificTitle(
+                                        journal.title,
+                                        "text",
+                                      )
+                                    : journal}
+                                </a>
+                              </div>
+                            )}
+                          />
+                        )}
                       </span>
                     </li>
                   )}

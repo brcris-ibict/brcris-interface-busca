@@ -108,3 +108,48 @@ export function normalizeDoiList(
     .map((d) => d.trim())
     .filter(Boolean);
 }
+
+type TitleFormat = "html" | "text";
+
+function decodeHtmlEntities(str: string) {
+  if (!str) return "";
+
+  return str.replace(/&#(\d+);/g, (_, dec) =>
+    String.fromCharCode(parseInt(dec, 10)),
+  );
+}
+
+export function _normalizeScientificTitle(
+  input: string | string[] | undefined,
+  format: TitleFormat = "html",
+) {
+  if (!input) return "";
+
+  let t = Array.isArray(input) ? input[0] : input;
+  if (typeof t !== "string") return "";
+
+  t = decodeHtmlEntities(t);
+  t = t
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'");
+
+  t = t.replace(/<\/sup>\s*o/g, "</sup>O");
+  t = t.replace(/<\/sup>\s*c/g, "</sup>C");
+  t = t.replace(/co<sub>2<\/sub>/gi, "CO<sub>2</sub>");
+  t = t.replace(/\bamazonian\b/gi, "Amazonian");
+
+  if (format === "text") {
+    t = t
+      .replace(/<[^>]+>/g, "")
+      .replace(/18o\/16o/gi, "18O/16O")
+      .replace(/13c\/12c/gi, "13C/12C")
+      .replace(/co2/gi, "CO2")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  return t;
+}
