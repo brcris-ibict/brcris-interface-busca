@@ -113,20 +113,29 @@ export default function PersonProduction({
   const publicationsByYearAndType: Record<string, Record<string, number>> = {};
 
   publications?.forEach((pub) => {
-    const year = pub.publicationDate;
+    const rawYears = Array.isArray(pub.publicationDate)
+      ? pub.publicationDate
+      : [pub.publicationDate];
+
     const type = Array.isArray(pub.type) ? pub.type[0] : pub.type;
 
-    if (!year || !type) return;
+    if (!type) return;
 
-    if (!publicationsByYearAndType[year]) {
-      publicationsByYearAndType[year] = {};
-    }
+    rawYears.forEach((y: string | number) => {
+      if (!y) return;
 
-    if (!publicationsByYearAndType[year][type]) {
-      publicationsByYearAndType[year][type] = 0;
-    }
+      const year = String(y).trim();
 
-    publicationsByYearAndType[year][type] += 1;
+      if (!publicationsByYearAndType[year]) {
+        publicationsByYearAndType[year] = {};
+      }
+
+      if (!publicationsByYearAndType[year][type]) {
+        publicationsByYearAndType[year][type] = 0;
+      }
+
+      publicationsByYearAndType[year][type] += 1;
+    });
   });
 
   const years = Object.keys(publicationsByYearAndType).sort(
@@ -195,6 +204,24 @@ export default function PersonProduction({
       </div>
     );
   }
+
+  const publicationsByLastYear: Record<string, number> = {};
+
+  publications?.forEach((pub) => {
+    if (!pub.publicationDate) return;
+
+    const years = Array.isArray(pub.publicationDate)
+      ? pub.publicationDate.map(Number)
+      : [Number(pub.publicationDate)];
+
+    const lastYear = Math.max(...years).toString();
+
+    if (!publicationsByLastYear[lastYear]) {
+      publicationsByLastYear[lastYear] = 0;
+    }
+
+    publicationsByLastYear[lastYear] += 1;
+  });
   return (
     <div className="indicators">
       <PopoverButton className="position-absolute" />
@@ -221,12 +248,9 @@ export default function PersonProduction({
         <CSVLinkFix
           className={styles.download}
           title="Export to csv"
-          data={years.map((year) => ({
+          data={Object.keys(publicationsByLastYear).map((year) => ({
             key: year,
-            doc_count: Object.values(publicationsByYearAndType[year]).reduce(
-              (a, b) => a + b,
-              0,
-            ),
+            doc_count: publicationsByLastYear[year],
           }))}
           filename={"publications_by_year.csv"}
           headers={headersPublicationsByYear}
