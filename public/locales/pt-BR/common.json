@@ -276,5 +276,10 @@
   "Dissertation": "Dissertação",
   "Thesis": "Tese",
   "Dataset": "Conjunto de Dados",
-  "Preprint": "Preprint"
+  "Preprint": "Preprint",
+  "Publications by year": "Publicações por ano",
+  "Publications by type": "Publicações por tipo",
+  "Articles per Year": "Artigos por ano",
+  "Groups by Year": "Grupos por ano",
+  "Software by Funding Institution": "Software por instituição financiadora"
 }

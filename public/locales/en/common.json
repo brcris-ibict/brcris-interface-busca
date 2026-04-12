@@ -274,5 +274,10 @@
   "Dissertation": "Dissertation",
   "Thesis": "Thesis",
   "Dataset": "Dataset",
-  "Preprint": "Preprint"
+  "Preprint": "Preprint",
+  "Publications by year": "Publications by year",
+  "Publications by type": "Publications by type",
+  "Articles per Year": "Articles per Year",
+  "Groups by Year": "Groups by Year",
+  "Software by Funding Institution": "Software by Funding Institution"
 }

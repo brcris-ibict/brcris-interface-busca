@@ -31,9 +31,6 @@ ChartJS.register(
   ArcElement,
 );
 
-export const options = new OptionsBar("Publications by year");
-export const optionsType = new OptionsPie("Publications by type");
-
 const headersPublicationsByYear = [
   { label: "Year", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -69,7 +66,8 @@ export default function PersonProduction({
   authorId: any;
 }) {
   const { t } = useTranslation("common");
-
+  const options = new OptionsBar(t("Publications by year"));
+  const optionsType = new OptionsPie(t("Publications by type"));
   if (options.plugins?.title) {
     options.plugins.title.text = t(options.title);
   }

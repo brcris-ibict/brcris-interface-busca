@@ -40,8 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_JOURNAL || "";
 
-const optQualis = new OptionsBar("Journals by qualis");
-
 const headersQualis = [
   { label: "Qualis", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -53,6 +51,7 @@ function JornalsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
+  const optQualis = new OptionsBar(t("Journals by qualis"));
 
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =

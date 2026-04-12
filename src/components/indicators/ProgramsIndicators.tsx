@@ -40,8 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_PROGRAM || "";
 
-export const options = new OptionsBar("Program by OrgUnit");
-
 const headersOrgUnit = [
   { label: "Organization", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -53,6 +51,7 @@ function ProgramsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
+  const options = new OptionsBar(t("Program by OrgUnit"));
 
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =

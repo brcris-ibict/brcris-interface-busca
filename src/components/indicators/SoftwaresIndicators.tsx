@@ -40,9 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_SOFTWARE || "";
 
-const optPubDate = new OptionsBar("Software by release year");
-const optknowledgeAreas = new OptionsPie("Software by Funding Institution");
-
 const headersByReleaseYear = [
   { label: "Release year", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -59,7 +56,10 @@ function SoftwaresIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
-
+  const optPubDate = new OptionsBar(t("Software by release year"));
+  const optknowledgeAreas = new OptionsPie(
+    t("Software by Funding Institution"),
+  );
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
@@ -164,7 +164,7 @@ function SoftwaresIndicators({
             datasets: [
               {
                 data: releaseYearIndicators,
-                label: "Articles per Year",
+                label: t("Articles per Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,

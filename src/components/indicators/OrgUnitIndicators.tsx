@@ -40,9 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_ORGUNIT || "";
 
-const options = new OptionsBar("Organizations by country");
-const optionsState = new OptionsBar("Organizations by state");
-
 const headersOrgUnit = [
   { label: "Country", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -58,7 +55,8 @@ function OrgUnitIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
-
+  const options = new OptionsBar(t("Organizations by country"));
+  const optionsState = new OptionsBar(t("Organizations by state"));
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);

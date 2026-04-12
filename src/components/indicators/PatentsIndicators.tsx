@@ -40,11 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_PATENT || "";
 
-const optDepositDate = new OptionsBar("Patents by deposit year");
-const optPubDate = new OptionsBar("Patents by publication year");
-const optCountryCode = new OptionsPie("Patents by country code");
-const optKindCode = new OptionsPie("Patents by kind code");
-
 const headersByDepositDate = [
   { label: "Deposit year", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -70,6 +65,10 @@ function PatentsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
+  const optDepositDate = new OptionsBar(t("Patents by deposit year"));
+  const optPubDate = new OptionsBar(t("Patents by publication year"));
+  const optCountryCode = new OptionsPie(t("Patents by country code"));
+  const optKindCode = new OptionsPie(t("Patents by kind code"));
 
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
@@ -234,7 +233,7 @@ function PatentsIndicators({
             datasets: [
               {
                 data: depositeDateIndicators,
-                label: "Articles per Year",
+                label: t("Articles per Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -263,7 +262,7 @@ function PatentsIndicators({
             datasets: [
               {
                 data: publicationDateIndicators,
-                label: "Articles per Year",
+                label: t("Articles per Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,

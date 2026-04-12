@@ -40,11 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_GROUP || "";
 
-const optResearchLine = new OptionsPie("Research groups by Research line");
-const optKnowledgeArea = new OptionsPie("Research groups by knowledge area");
-const optStatus = new OptionsPie("Research groups by status");
-const optCreatYear = new OptionsBar("Research groups by creation year");
-
 const headersByCreationYear = [
   { label: "Creation year", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -69,6 +64,12 @@ function GroupsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
+  const optResearchLine = new OptionsPie(t("Research groups by Research line"));
+  const optKnowledgeArea = new OptionsPie(
+    t("Research groups by knowledge area"),
+  );
+  const optStatus = new OptionsPie(t("Research groups by status"));
+  const optCreatYear = new OptionsBar(t("Research groups by creation year"));
 
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
@@ -199,7 +200,7 @@ function GroupsIndicators({
             datasets: [
               {
                 data: creationYearIndicators,
-                label: "Groups by Year",
+                label: t("Groups by Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,

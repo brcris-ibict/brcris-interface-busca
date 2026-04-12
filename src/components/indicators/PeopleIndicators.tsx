@@ -41,8 +41,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_PERSON || "";
 
-export const optionsResearchArea = new OptionsPie("Affiliation");
-
 const headersNacionality = [
   { label: "Nacionality", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -62,6 +60,7 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
   // @ts-expect-error
   const fields = Object.keys(search_fields);
+  const optionsResearchArea = new OptionsPie(t("Affiliation"));
 
   useEffect(() => {
     const plugins = {
