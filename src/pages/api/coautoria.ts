@@ -17,10 +17,11 @@ const client = new Client({
 const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { authorId } = req.query as { authorId: string };
+
     const response = await client.search({
       index: process.env.INDEX_PUBLICATION || "",
       _source: ["id", "title", "author", "publicationDate"],
-
+      size: 10000,
       body: {
         query: {
           match: {
@@ -32,53 +33,83 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // @ts-expect-error
     const hits = response.body.hits.hits.map((h) => h._source);
-    const years = hits
+
+    if (!hits.length) return res.json(null);
+
+    // @ts-expect-error
+    const mainAuthorData = hits[0].author.find((a) => a.id === authorId);
+
+    const coAuthorCount: Record<string, { name: string; count: number }> = {};
+
+    hits.forEach((pub: any) => {
+      pub.author.forEach((a: any) => {
+        if (a.id !== authorId) {
+          if (!coAuthorCount[a.id]) {
+            coAuthorCount[a.id] = { name: a.name, count: 0 };
+          }
+          coAuthorCount[a.id].count += 1;
+        }
+      });
+    });
+
+    const coAuthors = Object.entries(coAuthorCount)
+      .filter(([_, v]) => v.count >= 2)
+      .map(([id, v]) => ({
+        id,
+        name: v.name,
+      }));
+
+    const validIds = new Set(coAuthors.map((a) => a.id));
+
+    const publications = hits.map((pub: any) => ({
+      id: pub.id,
+      title: pub.title,
+      publicationDate: pub.publicationDate,
+      authors: pub.author
+        .map((a: any) => a.id)
+        .filter((id: string) => id === authorId || validIds.has(id)),
+    }));
+
+    const years = publications
       .map((p: any) => Number(p.publicationDate))
       .filter((y: any) => !isNaN(y));
 
     const earliest_publication = years.length ? Math.min(...years) : null;
     const latest_publication = years.length ? Math.max(...years) : null;
 
-    if (!hits.length) return null;
+    const coauthorshipByYear: Record<string, number> = {};
 
-    // @ts-expect-error
-    const mainAuthorData = hits[0].author.find((a) => a.id === authorId);
+    publications.forEach((pub: any) => {
+      const year = Number(pub.publicationDate);
+      if (isNaN(year)) return;
 
-    const coAuthorsMap = new Map();
-    // @ts-expect-error
-    hits.forEach((pub) => {
-      // @ts-expect-error
-      pub.author.forEach((a) => {
-        if (a.id !== authorId) coAuthorsMap.set(a.id, a.name);
-      });
+      const hasCoauthor = pub.authors.some((id: string) => id !== authorId);
+
+      if (hasCoauthor) {
+        if (!coauthorshipByYear[year]) coauthorshipByYear[year] = 0;
+        coauthorshipByYear[year]++;
+      }
     });
-    const coAuthors = Array.from(coAuthorsMap.entries()).map(([id, name]) => ({
-      id,
-      name,
-    }));
 
-    // @ts-expect-error
-    const publications = hits.map((pub) => ({
-      id: pub.id,
-      title: pub.title,
-      publicationDate: pub.publicationDate,
+    const graphData = Object.entries(coauthorshipByYear)
+      .map(([year, count]) => ({
+        year: Number(year),
+        coauthorships: count,
+      }))
+      .sort((a, b) => a.year - b.year);
 
-      // @ts-expect-error
-      authors: pub.author.map((a) => a.id),
-    }));
-
-    const result = {
+    res.json({
       id: authorId,
       name: mainAuthorData.name,
       coAuthors,
       publications,
       number_of_authored_works: hits.length,
+      coauthors_filtered: coAuthors.length,
       earliest_publication,
       latest_publication,
-    };
-
-    res.json(result);
-  } catch (err) {
+      graphData,
+    });
+  } catch (err: any) {
     logger.error(err);
     res.status(400).json({ error: err.message });
   }
