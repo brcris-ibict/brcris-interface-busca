@@ -36,6 +36,9 @@ const config: CustomSearchDriverOptions = {
       affiliation: {
         snippet: {},
       },
+      orcid: {
+        raw: {},
+      },
     },
     disjunctiveFacets: [],
     facets: {

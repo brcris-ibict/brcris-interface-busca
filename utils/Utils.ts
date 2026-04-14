@@ -153,3 +153,39 @@ export function _normalizeScientificTitle(
 
   return t;
 }
+
+export function getNumericLattesId(value: unknown): string {
+  if (value === null || value === undefined) return "";
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const numericId = getNumericLattesId(item);
+      if (numericId) return numericId;
+    }
+    return "";
+  }
+
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+
+    if (record.raw !== undefined) {
+      return getNumericLattesId(record.raw);
+    }
+
+    if (record.id !== undefined) {
+      return getNumericLattesId(record.id);
+    }
+
+    return "";
+  }
+
+  const text = String(value);
+  const exactLattesId = text.match(/\d{16}/);
+  if (exactLattesId) return exactLattesId[0];
+
+  const numericChunk = text.match(/\d{10,}/);
+  if (numericChunk) return numericChunk[0];
+
+  const withoutPrefix = text.replace(/lattes::/gi, "").trim();
+  return /^\d+$/.test(withoutPrefix) ? withoutPrefix : "";
+}
