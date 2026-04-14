@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import type {
-  QueryDslOperator,
-  QueryDslQueryContainer,
-} from "@elastic/elasticsearch/lib/api/types";
+
 import { SearchContext, withSearch } from "@elastic/react-search-ui";
 import { Download } from "lucide-react";
 import { useRouter } from "next/router";
@@ -17,6 +14,8 @@ import { Alert } from "./Alert";
 import { formatedQuery } from "./indicators/query/Query";
 import Loader from "./Loader";
 
+type QueryDslOperator = "AND" | "OR";
+type QueryDslQueryContainer = Record<string, any>;
 type DownloadModalProps = {
   filters?: any;
   searchTerm?: any;

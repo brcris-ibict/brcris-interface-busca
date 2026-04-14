@@ -1,5 +1,4 @@
-import type { QueryDslQueryContainer } from "@elastic/elasticsearch/lib/api/types";
-
+type QueryDslQueryContainer = Record<string, any>;
 class ExportService {
   async search(
     index: string,
