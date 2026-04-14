@@ -74,6 +74,7 @@ function PatentsIndicators({
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
@@ -123,7 +124,7 @@ function PatentsIndicators({
           indicadorName: "depositDate",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "desc" },
         }),
@@ -134,7 +135,7 @@ function PatentsIndicators({
           indicadorName: "publicationDate",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "desc" },
         }),
@@ -145,7 +146,7 @@ function PatentsIndicators({
           indicadorName: "countryCode",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -155,7 +156,7 @@ function PatentsIndicators({
           indicadorName: "kindCode",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),

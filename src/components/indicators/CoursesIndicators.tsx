@@ -78,6 +78,7 @@ function CoursesIndicators({
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
@@ -98,7 +99,7 @@ function CoursesIndicators({
           indicadorName: "degree",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -108,7 +109,7 @@ function CoursesIndicators({
           indicadorName: "type",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -118,7 +119,7 @@ function CoursesIndicators({
           indicadorName: "startDate",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "asc" },
         }),
@@ -129,7 +130,7 @@ function CoursesIndicators({
           indicadorName: "endDate",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "asc" },
         }),

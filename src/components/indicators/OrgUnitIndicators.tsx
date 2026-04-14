@@ -62,6 +62,7 @@ function OrgUnitIndicators({
     useContext(IndicatorContext);
 
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
@@ -92,7 +93,7 @@ function OrgUnitIndicators({
         indicadorName: "country",
         searchTerm: resultSearchTerm,
         fields,
-        operator,
+        operator: normalizedOperator,
         filters,
       }),
     );
@@ -102,7 +103,7 @@ function OrgUnitIndicators({
         indicadorName: "state",
         searchTerm: resultSearchTerm,
         fields,
-        operator,
+        operator: normalizedOperator,
         filters,
       }),
     );

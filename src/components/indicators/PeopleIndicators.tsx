@@ -58,6 +58,7 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
     useContext(IndicatorContext);
 
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
   const optionsResearchArea = new OptionsPie(t("Affiliation"));
@@ -81,7 +82,7 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
             indicadorName: "nationality",
             searchTerm: resultSearchTerm,
             fields,
-            operator,
+            operator: normalizedOperator,
             filters,
           }),
         ),
@@ -91,7 +92,7 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
             indicadorName: "affiliation.name",
             searchTerm: resultSearchTerm,
             fields,
-            operator,
+            operator: normalizedOperator,
             filters,
           }),
         ),

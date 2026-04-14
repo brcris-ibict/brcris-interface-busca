@@ -75,6 +75,7 @@ function GroupsIndicators({
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
@@ -91,7 +92,7 @@ function GroupsIndicators({
           indicadorName: "creationYear",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "desc" },
         }),
@@ -102,7 +103,7 @@ function GroupsIndicators({
           indicadorName: "researchLine",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -112,7 +113,7 @@ function GroupsIndicators({
           indicadorName: "knowledgeArea",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -122,7 +123,7 @@ function GroupsIndicators({
           indicadorName: "status",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
