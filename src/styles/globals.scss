@@ -625,12 +625,21 @@ li .sui-result__key:after {
 .page-search .sui-results-container,
 .page-search .sui-facet,
 .sui-sorting {
+
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: .75rem;
+  
 }
-
+.page-search .sui-sorting {
+  position: relative;
+  top: -3px;
+}
+.page-search .sui-select__control {
+  width: auto !important;
+  min-width: max-content;
+}
 .page-search .sui-results-container {
   padding: 0.5rem;
 }
@@ -1333,6 +1342,10 @@ h3.popover-header a {
   width: 22px;
   height: 22px;
 }
+
+
+
+
 @media (max-width: 800px) {
   .nav .nav-item {
     justify-content: flex-start;

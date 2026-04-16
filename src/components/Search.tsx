@@ -145,6 +145,33 @@ const getResultTitle = (result: SearchResultRecord) => {
 
 export default function Search({ index }: SearchProps) {
   const { t } = useTranslation(["common", "facets"]);
+  const translateSortLabel = (label: string, t: any) => {
+    switch (label) {
+      case "Relevance":
+        return t("Relevance");
+
+      case "Nome ASC":
+        return t("Name — alphabetical order from A to Z");
+
+      case "Nome DESC":
+        return t("Name — alphabetical order from Z to A");
+
+      case "Ano ASC":
+        return t("Year (oldest → newest)");
+
+      case "Ano DESC":
+        return t("Year (newest → oldest)");
+
+      case "Title ASC":
+        return t("Title — alphabetical order from A to Z");
+
+      case "Title DESC":
+        return t("Title — alphabetical order from Z to A");
+
+      default:
+        return label;
+    }
+  };
   const router = useRouter();
   const DownloadModalTyped = DownloadModal as unknown as React.ComponentType<{
     availableFormats?: string[];
@@ -175,10 +202,20 @@ export default function Search({ index }: SearchProps) {
   }: SortingViewProps) => {
     const defaultOption = options[0];
     const placeholderOption = { value: "__default__", label: t("Sort by") };
-    const nextOptions = [placeholderOption, ...options];
-    const selected = value
-      ? (nextOptions.find((opt) => opt.value === value) ?? defaultOption)
-      : placeholderOption;
+    const nextOptions = [
+      placeholderOption,
+      ...options.map((opt) => {
+        console.log("SORT OPTION:", opt);
+
+        return {
+          ...opt,
+          label: translateSortLabel(opt.label, t),
+        };
+      }),
+    ];
+    const selected =
+      nextOptions.find((opt) => opt.value === value) ||
+      nextOptions.find((opt) => opt.value === "[]");
 
     return (
       <div className={`sui-sorting ${className ?? ""}`.trim()}>

@@ -173,6 +173,7 @@
   "(all:Computing) AND (publicationDate:2018) AND NOT (type:master thesis)": "(all:Computing) AND (publicationDate:2018) AND NOT (type:master thesis)",
   "Download": "Download",
   "Export csv": "Export csv",
+  "Export": "Export",
   "For searches involving a large number of records, the export file may not be immediately available for download. In such cases, the download link for the file will be sent via email shortly.": "For searches involving a large number of records, the export file may not be immediately available for download. In such cases, the download link for the file will be sent via email shortly.",
   "Enter your email in the field below:": "Enter your email in the field below:",
   "Export processing. The download link will be sent to the e-mail address provided when the file is ready.": "Export processing. The download link will be sent to the e-mail address provided when the file is ready.",
