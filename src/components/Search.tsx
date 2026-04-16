@@ -172,6 +172,22 @@ export default function Search({ index }: SearchProps) {
         return label;
     }
   };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const buttons = document.querySelectorAll(".sui-facet-view-more");
+
+      buttons.forEach((btn) => {
+        if (btn.textContent === "+ More") {
+          btn.textContent = t("see more");
+        }
+        if (btn.textContent === "- Less") {
+          btn.textContent = t("see less");
+        }
+      });
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
   const router = useRouter();
   const DownloadModalTyped = DownloadModal as unknown as React.ComponentType<{
     availableFormats?: string[];
@@ -349,7 +365,13 @@ export default function Search({ index }: SearchProps) {
     if (!viewModeStorageKey) return;
     window.localStorage.setItem(viewModeStorageKey, viewMode);
   }, [viewMode, viewModeStorageKey]);
-
+  const titleFieldName =
+    entityKey === "people" ||
+    entityKey === "organizations" ||
+    entityKey === "research-groups" ||
+    entityKey === "courses"
+      ? "name"
+      : "title";
   return (
     <>
       <button
@@ -403,7 +425,7 @@ export default function Search({ index }: SearchProps) {
                       <Layout
                         header={
                           <CustomSearchBox
-                            titleFieldName="title"
+                            titleFieldName={titleFieldName}
                             setSearchTerm={setSearchTerm!}
                             handleSelectIndex={handleSelectIndex}
                             indexLabel={index.label}

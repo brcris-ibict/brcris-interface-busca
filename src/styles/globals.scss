@@ -80,6 +80,7 @@ img {
 nav.navbar-expand-lg {
   padding-left: 0;
   padding-right: 0;
+  z-index: 10000;
 }
 
 main {
@@ -1342,10 +1343,10 @@ h3.popover-header a {
   width: 22px;
   height: 22px;
 }
-
-
-
-
+.page-search .sui-layout-header {
+  position: relative;
+  z-index: 1000;
+}
 @media (max-width: 800px) {
   .nav .nav-item {
     justify-content: flex-start;
@@ -1516,4 +1517,5 @@ h3.popover-header a {
   .graphml-action {
     font-size: 14px;
   }
+  
 }

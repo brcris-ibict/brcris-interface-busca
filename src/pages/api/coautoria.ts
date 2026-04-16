@@ -52,12 +52,32 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     });
 
-    const coAuthors = Object.entries(coAuthorCount)
-      .filter(([_, v]) => v.count >= 2)
+    const sortedCoAuthors = Object.entries(coAuthorCount)
       .map(([id, v]) => ({
         id,
         name: v.name,
-      }));
+        count: v.count,
+      }))
+      .sort((a, b) => b.count - a.count);
+    const priority = sortedCoAuthors.filter((a) => a.count >= 2);
+
+    let finalCoAuthors = priority;
+
+    if (priority.length < 50) {
+      const remaining = sortedCoAuthors.filter((a) => a.count === 1);
+
+      finalCoAuthors = [
+        ...priority,
+        ...remaining.slice(0, 50 - priority.length),
+      ];
+    } else {
+      finalCoAuthors = priority.slice(0, 50);
+    }
+
+    const coAuthors = finalCoAuthors.map(({ id, name }) => ({
+      id,
+      name,
+    }));
 
     const validIds = new Set(coAuthors.map((a) => a.id));
 
