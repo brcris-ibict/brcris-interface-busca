@@ -72,9 +72,11 @@ export default function App() {
 
   useEffect(() => {
     inputRef?.current?.focus();
+
+    localStorage.removeItem(indexLabel);
+
     getIndexStats(indexLabel, setDocsCount);
   }, [indexLabel]);
-
   return (
     <>
       <Head>

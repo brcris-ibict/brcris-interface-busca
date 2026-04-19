@@ -2,7 +2,7 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 "use client";
 import * as d3 from "d3";
-import { Download, Share2 } from "lucide-react";
+import { Download } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Overlay, Popover } from "react-bootstrap";
@@ -174,17 +174,19 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       .style("text-decoration", "none")
       .style("cursor", "pointer")
       .style("font-size", "0.7rem")
-      .on("click", (event, d) => {
+      .on("pointerenter", (event, d) => {
         // @ts-expect-error
         setSelectedNode(nodes[d.index]);
         setTarget(event.currentTarget as HTMLElement);
-        // @ts-expect-error
+
+        if (!chartRef.current) return;
+
         const rect = chartRef.current.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
         setPopoverPos({ x, y });
 
-        // 🔥 Highlight logic
+        // highlight
         ribbonGroup.selectAll("path").style("opacity", (r: any) =>
           // @ts-expect-error
           r.source.index === d.index || r.target.index === d.index ? 1 : 0.1,
@@ -195,6 +197,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           // @ts-expect-error
           .style("opacity", (g: any) => (g.index === d.index ? 1 : 0.2));
       })
+
       .append("title")
       .text((d) => {
         //@ts-expect-error
@@ -258,59 +261,46 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           p.authors.includes(mainAuthor.id),
       );
       popoverContent = (
-        <Rnd
-          default={{
-            x: popoverPos.x,
-            y: popoverPos.y,
-            width: 300,
-            height: "auto",
-          }}
-          bounds="window"
-        >
-          <div>
-            <Popover id="popover-coauthor">
-              <Popover.Header as="h3">
-                <a href={`/people/${selectedNode.id}`}>{selectedNode.name}</a>
-              </Popover.Header>
-              <Popover.Body>
-                <span>{` ${t("Publications with")} ${mainAuthor.name}: ${pubs.length}`}</span>
-                <ul>
-                  <ExpandableContent
-                    initialCount={5}
-                    scrollableOnExpand
-                    items={pubs?.slice()?.sort((a: any, b: any) => {
-                      const dateA = new Date(
-                        a.publicationDate?.[0] || 0,
-                      ).getTime();
-                      const dateB = new Date(
-                        b.publicationDate?.[0] || 0,
-                      ).getTime();
-                      return dateB - dateA;
-                    })}
-                    renderItem={(publication: any) => (
-                      <div key={publication.id} className="publication-item">
-                        <a href={`/publications/${publication.id}`}>
-                          {publication.title}
-                        </a>
-                        <div className="publication-meta">
-                          {publication.publicationDate?.[0] && (
-                            <span>{publication.publicationDate[0]}</span>
-                          )}
-                          {publication.type?.[0] && (
-                            <span className="type">
-                              {" "}
-                              - {publication.type[0]}
-                            </span>
-                          )}
-                        </div>
+        <div>
+          <Popover id="popover-coauthor">
+            <Popover.Header as="h3">
+              <a href={`/people/${selectedNode.id}`}>{selectedNode.name}</a>
+            </Popover.Header>
+            <Popover.Body>
+              <span>{` ${t("Publications with")} ${mainAuthor.name}: ${pubs.length}`}</span>
+              <ul>
+                <ExpandableContent
+                  initialCount={3}
+                  scrollableOnExpand
+                  items={pubs?.slice()?.sort((a: any, b: any) => {
+                    const dateA = new Date(
+                      a.publicationDate?.[0] || 0,
+                    ).getTime();
+                    const dateB = new Date(
+                      b.publicationDate?.[0] || 0,
+                    ).getTime();
+                    return dateB - dateA;
+                  })}
+                  renderItem={(publication: any) => (
+                    <div key={publication.id} className="publication-item">
+                      <a href={`/publications/${publication.id}`}>
+                        {publication.title}
+                      </a>
+                      <div className="publication-meta">
+                        {publication.publicationDate?.[0] && (
+                          <span>{publication.publicationDate[0]}</span>
+                        )}
+                        {publication.type?.[0] && (
+                          <span className="type"> - {publication.type[0]}</span>
+                        )}
                       </div>
-                    )}
-                  />
-                </ul>
-              </Popover.Body>
-            </Popover>
-          </div>
-        </Rnd>
+                    </div>
+                  )}
+                />
+              </ul>
+            </Popover.Body>
+          </Popover>
+        </div>
       );
     }
   }

@@ -223,11 +223,6 @@ function VisGraph() {
   };
 
   useEffect(() => {
-    const localIndexesStats = localStorage.getItem("indexesStats");
-    if (localIndexesStats) {
-      setIndexesStats(JSON.parse(localIndexesStats));
-      return;
-    }
     const indexesName = nodes.map((node) => node.index);
     ElasticSearchStatsService(indexesName)
       .then((res) => {
