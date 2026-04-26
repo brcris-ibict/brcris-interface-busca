@@ -1,4 +1,5 @@
 /* eslint-disable  @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable  @typescript-eslint/no-non-null-asserted-optional-chain */
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import type { OrgUnit } from "../../types/Entities";
 

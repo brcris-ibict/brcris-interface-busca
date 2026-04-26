@@ -394,12 +394,16 @@ export default function Search({ index }: SearchProps) {
             isLoading,
             setSearchTerm,
             resultSearchTerm,
+            setSort,
+            sort,
           }) => ({
             wasSearched,
             results,
             isLoading,
             setSearchTerm,
             resultSearchTerm,
+            setSort,
+            sort,
           })}
         >
           {({
@@ -408,7 +412,23 @@ export default function Search({ index }: SearchProps) {
             isLoading,
             setSearchTerm,
             resultSearchTerm,
+            setSort,
+            sort,
           }) => {
+            // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
+            useEffect(() => {
+              if (!sort || sort.length === 0) {
+                setSort?.(
+                  [
+                    {
+                      field: "publicationDate",
+                      direction: "desc",
+                    },
+                  ],
+                  "desc",
+                );
+              }
+            }, [sort, setSort]);
             return (
               <div className="App">
                 <div className="container page">

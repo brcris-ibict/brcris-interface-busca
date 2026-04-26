@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { withSearch } from "@elastic/react-search-ui";
 import type { SearchContextState } from "@elastic/search-ui";
@@ -84,6 +83,7 @@ const AdvancedSearchBox = ({
           return (
             <div
               className={`d-flex align-content-center ${styles.container}`}
+              // biome-ignore lint/suspicious/noArrayIndexKey: lista não sofre reordenação ou remoção
               key={index}
             >
               <div className={`d-flex flex-gap-0 ${styles.group}`}>

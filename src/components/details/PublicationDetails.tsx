@@ -27,16 +27,81 @@ export default function PublicationDetails() {
               <Head>
                 <title>{`${_normalizeScientificTitle(result.title?.raw ?? "", "text")} | BrCris`}</title>
               </Head>
-              <div className="d-flex justify-content-between align-items-center mb-3 position-relative">
-                <h1
-                  className="title mb-0"
-                  dangerouslySetInnerHTML={{
-                    __html: _normalizeScientificTitle(
-                      result.title?.raw ?? "",
-                      "html",
-                    ),
-                  }}
-                />
+              <div className="d-flex justify-content-between align-items-start mb-3 position-relative">
+                <div>
+                  <h1
+                    className="title mb-0"
+                    dangerouslySetInnerHTML={{
+                      __html: _normalizeScientificTitle(
+                        result.title?.raw ?? "",
+                        "html",
+                      ),
+                    }}
+                  />
+
+                  <div className="d-flex flex-wrap align-items-center gap-3 mt-2">
+                    {result.doi?.raw &&
+                      normalizeDoiList(result.doi.raw).length > 0 &&
+                      (() => {
+                        const doi = normalizeDoiList(result.doi.raw)[0];
+                        const url = `https://doi.org/${doi}`;
+
+                        return (
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="d-flex align-items-center gap-2"
+                          >
+                            <img
+                              src="/logos/DOI_logo.svg"
+                              alt="DOI"
+                              style={{ width: 20 }}
+                            />
+                            DOI
+                          </a>
+                        );
+                      })()}
+
+                    {result.resourceUrl?.raw ? (
+                      <a
+                        href={result.resourceUrl.raw}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="d-flex align-items-center gap-2"
+                      >
+                        <img
+                          src="/logos/oasisbr.ico"
+                          alt="OasisBR"
+                          style={{ width: 20 }}
+                        />
+                        OasisBR
+                      </a>
+                    ) : (
+                      result.oasisbrId?.raw?.length > 0 &&
+                      (() => {
+                        const id = result.oasisbrId.raw[0];
+                        const searchUrl = `https://oasisbr.ibict.br/vufind/Record/${id}`;
+
+                        return (
+                          <a
+                            href={searchUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="d-flex align-items-center gap-2"
+                          >
+                            <img
+                              src="/logos/oasisbr.ico"
+                              alt="OasisBR"
+                              style={{ width: 20 }}
+                            />
+                            OasisBR
+                          </a>
+                        );
+                      })()
+                    )}
+                  </div>
+                </div>
 
                 <PopoverButton />
               </div>
@@ -147,20 +212,6 @@ export default function PublicationDetails() {
                       </span>
                     </li>
                   )}
-                  {result.oasisbrId?.raw?.length > 0 && (
-                    <li>
-                      <span className="identifier-key">
-                        {t("Oasisbr identifier")}:
-                      </span>
-                      <span>
-                        <ExpandableContent
-                          items={result.oasisbrId.raw}
-                          initialCount={5}
-                          renderItem={(item: string) => <>{item}</>}
-                        />
-                      </span>
-                    </li>
-                  )}
                   <ShowAuthorItem
                     label={t("Advisor")}
                     authors={result.advisor?.raw}
@@ -179,31 +230,6 @@ export default function PublicationDetails() {
                   />
 
                   {/* <ShowItem label={t('Year 2')} value={result.year?.raw} /> */}
-                  {result.doi?.raw &&
-                    normalizeDoiList(result.doi.raw).length > 0 && (
-                      <li>
-                        <span className="identifier-key">{t("DOI")}:</span>
-                        <span>
-                          <ExpandableContent
-                            items={normalizeDoiList(result.doi.raw)}
-                            initialCount={5}
-                            renderItem={(doi: string) => {
-                              const url = `https://doi.org/${doi}`;
-                              return (
-                                <a
-                                  href={url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  {url}
-                                </a>
-                              );
-                            }}
-                          />
-                        </span>
-                      </li>
-                    )}
-
                   <ShowItem
                     label={t("OpenalexId")}
                     value={result.openalexId?.raw}
