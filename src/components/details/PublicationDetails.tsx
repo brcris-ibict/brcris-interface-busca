@@ -40,6 +40,27 @@ export default function PublicationDetails() {
                   />
 
                   <div className="d-flex flex-wrap align-items-center gap-3 mt-2">
+                    {result.oasisbrId?.raw?.length > 0 &&
+                      (() => {
+                        const id = result.oasisbrId.raw[0];
+                        const searchUrl = `https://oasisbr.ibict.br/vufind/Record/${id}`;
+
+                        return (
+                          <a
+                            href={searchUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="d-flex align-items-center gap-2"
+                          >
+                            <img
+                              src="/logos/oasisbr.ico"
+                              alt="OasisBR"
+                              style={{ width: 20 }}
+                            />
+                            OasisBR
+                          </a>
+                        );
+                      })()}
                     {result.doi?.raw &&
                       normalizeDoiList(result.doi.raw).length > 0 &&
                       (() => {
@@ -62,44 +83,6 @@ export default function PublicationDetails() {
                           </a>
                         );
                       })()}
-
-                    {result.resourceUrl?.raw ? (
-                      <a
-                        href={result.resourceUrl.raw}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="d-flex align-items-center gap-2"
-                      >
-                        <img
-                          src="/logos/oasisbr.ico"
-                          alt="OasisBR"
-                          style={{ width: 20 }}
-                        />
-                        OasisBR
-                      </a>
-                    ) : (
-                      result.oasisbrId?.raw?.length > 0 &&
-                      (() => {
-                        const id = result.oasisbrId.raw[0];
-                        const searchUrl = `https://oasisbr.ibict.br/vufind/Record/${id}`;
-
-                        return (
-                          <a
-                            href={searchUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="d-flex align-items-center gap-2"
-                          >
-                            <img
-                              src="/logos/oasisbr.ico"
-                              alt="OasisBR"
-                              style={{ width: 20 }}
-                            />
-                            OasisBR
-                          </a>
-                        );
-                      })()
-                    )}
                   </div>
                 </div>
 

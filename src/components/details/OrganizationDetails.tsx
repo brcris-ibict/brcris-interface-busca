@@ -2,6 +2,8 @@ import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
+import { getLattesIdentifier } from "../../../utils/Utils";
+import { usePersonIdentifiers } from "../../hooks/usePersonIdentifiers";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
@@ -15,7 +17,13 @@ const membersCsvHeaders = [
 export default function OrganizationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
+  const memberIds =
+    results?.flatMap((r: any) => r.member?.raw?.map((m: any) => m.id) ?? []) ??
+    [];
 
+  const { data: personData } = usePersonIdentifiers(memberIds);
+
+  const personMap = new Map((personData || []).map((p: any) => [p.id, p]));
   return (
     <div className="">
       {isLoading && <Loader />}
@@ -25,11 +33,15 @@ export default function OrganizationDetails() {
           results.length > 0 &&
           results.map((result) => {
             const membersCsvData =
-              result.member?.raw?.map((member: any) => ({
-                name: member?.name ?? "",
-                lattesId: member?.lattesId ?? "",
-                brcrisId: member?.brcrisId ?? "",
-              })) ?? [];
+              result.member?.raw?.map((member: any) => {
+                const extra = personMap.get(member.id);
+
+                return {
+                  name: member?.name ?? "",
+                  lattesId: getLattesIdentifier(extra?.lattesId),
+                  brcrisId: extra?.brcrisId ?? member?.id ?? "",
+                };
+              }) ?? [];
 
             return (
               <div key={result.id}>

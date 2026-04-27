@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
 import { formatBooleanString } from "../../../utils/Utils";
+import { usePublicationYears } from "../../hooks/usePublicationYears";
 import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
@@ -12,16 +13,45 @@ import PopoverButton from "../PopOver";
 const journalCsvHeaders = [
   { label: "Título", key: "title" },
   { label: "ID", key: "id" },
+  { label: "Ano", key: "year" },
 ];
 export default function JournalDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
 
-  const formattedPublicationsForCsv =
-    results?.[0]?.publication?.raw?.map((publication: any) => ({
-      title: publication?.title ?? "",
-      id: publication?.id ?? "",
-    })) ?? [];
+  const result = results?.[0];
+
+  const publications = result?.publication?.raw || [];
+
+  const publicationIds = publications.map((p: any) => p.id) ?? [];
+
+  const { data: yearsData } = usePublicationYears(publicationIds);
+
+  const yearMap = new Map((yearsData || []).map((y: any) => [y.id, y.year]));
+
+  const getYearById = (id: string) => yearMap.get(id) || "";
+  const sortedPublications = [...publications].sort((a, b) => {
+    const yearA = Number(getYearById(a.id)) || 0;
+    const yearB = Number(getYearById(b.id)) || 0;
+
+    return yearB - yearA;
+  });
+  const publicationsWithYear = [...publications]
+    .map((p: any) => ({
+      ...p,
+      year: yearMap.get(p.id) || "",
+    }))
+    .sort((a, b) => {
+      const yearA = Number(a.year) || 0;
+      const yearB = Number(b.year) || 0;
+
+      return yearB - yearA;
+    });
+  const formattedPublicationsForCsv = publicationsWithYear.map((p: any) => ({
+    title: p?.title ?? "",
+    id: p?.id ?? "",
+    year: p?.year ?? "",
+  }));
   return (
     <div className="">
       {isLoading && <Loader />}
@@ -116,15 +146,14 @@ export default function JournalDetails() {
                     label={t("Qualis classification")}
                     value={result.qualis?.raw}
                   />
-                  {result.publication?.raw?.length > 0 && (
+                  {publications.length > 0 && (
                     <li>
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <strong className="research-title">
-                          {t("Publications")}: (
-                          {result.publication?.raw?.length ?? 0})
+                          {t("Publications")}: ({publications.length})
                         </strong>
-
                         {/* @ts-ignore */}
+
                         <CSVLink
                           data={formattedPublicationsForCsv}
                           headers={journalCsvHeaders}
@@ -136,13 +165,19 @@ export default function JournalDetails() {
                       </div>
 
                       <ExpandableContent
-                        items={result.publication?.raw}
+                        items={sortedPublications}
                         initialCount={5}
                         renderItem={(publication: any) => (
                           <div className="publication-item">
                             <a href={`/publications/${publication?.id}`}>
                               {publication?.title}
                             </a>
+
+                            {getYearById(publication?.id) && (
+                              <div className="publication-meta">
+                                {getYearById(publication?.id)}
+                              </div>
+                            )}
                           </div>
                         )}
                       />
