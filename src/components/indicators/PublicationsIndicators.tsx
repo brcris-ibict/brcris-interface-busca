@@ -59,7 +59,6 @@ function PublicationsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
-
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);

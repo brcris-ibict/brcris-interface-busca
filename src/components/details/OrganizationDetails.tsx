@@ -4,9 +4,11 @@ import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
 import { getLattesIdentifier } from "../../../utils/Utils";
 import { usePersonIdentifiers } from "../../hooks/usePersonIdentifiers";
+import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
+import PopoverButton from "../PopOver";
 
 const membersCsvHeaders = [
   { label: "Nome", key: "name" },
@@ -48,7 +50,26 @@ export default function OrganizationDetails() {
                 <Head>
                   <title>{`${result.name?.raw} | BrCris`}</title>
                 </Head>
-                <h1 className="title">{result.name?.raw}</h1>
+                <div className="mb-3 position-relative">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h1 className="title mb-0">{result.name?.raw}</h1>
+                  </div>
+
+                  <div className="mt-2">
+                    {result.id?.raw && (
+                      <div className="d-flex align-items-center gap-2">
+                        <img
+                          className="brcris-logo"
+                          src="/logos/logo-brcris.png"
+                          alt="logo do BrCris"
+                        />
+                        <CopyLink
+                          link={`${location.origin}/organizations/${result.id.raw}`}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <div className="details-card">
                   <ul>
                     {result.member?.raw?.length > 0 && (
@@ -93,26 +114,7 @@ export default function OrganizationDetails() {
                     />
                     <ShowItem value={result.state?.raw} label={t("State")} />
                     <ShowItem value={result.city?.raw} label={t("City")} />
-                    {result.brcrisId?.raw?.length > 0 && (
-                      <li>
-                        <span className="sui-result__key">
-                          {t("BrCris identifier")}
-                        </span>
-                        <span>
-                          <ExpandableContent
-                            items={
-                              Array.isArray(result.brcrisId.raw)
-                                ? result.brcrisId.raw
-                                : [result.brcrisId.raw]
-                            }
-                            initialCount={5}
-                            renderItem={(id: string, idx: number) => (
-                              <span key={idx}>{id}</span>
-                            )}
-                          />
-                        </span>
-                      </li>
-                    )}
+
                     {result.capesId?.raw?.length > 0 && (
                       <li>
                         <span className="identifier-key">

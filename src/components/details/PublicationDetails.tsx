@@ -6,6 +6,7 @@ import {
   normalizeDoiList,
 } from "../../../utils/Utils";
 import type { OrgUnit, Service } from "../../types/Entities";
+import CopyLink from "../CopyLink";
 import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
@@ -83,6 +84,18 @@ export default function PublicationDetails() {
                           </a>
                         );
                       })()}
+                    {result.id?.raw && (
+                      <div className="d-flex align-items-center gap-2">
+                        <img
+                          className="brcris-logo"
+                          src="/logos/logo-brcris.png"
+                          alt="logo do BrCris"
+                        />
+                        <CopyLink
+                          link={`${location.origin}/publications/${result.id.raw}`}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -204,7 +217,7 @@ export default function PublicationDetails() {
                     authors={result.coadvisor?.raw}
                   />
                   <ShowItem
-                    label={t("Award sponsored by")}
+                    label={t("Affiliation")}
                     value={result.sponsorOrgUnit?.raw.map((org: any) => (
                       <a key={org.id} href={`/organizations/${org.id}`}>
                         {org.name?.[0]}

@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
 import { formatBooleanString } from "../../../utils/Utils";
 import { usePublicationYears } from "../../hooks/usePublicationYears";
+import CopyLink from "../CopyLink";
 import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
@@ -64,9 +65,26 @@ export default function JournalDetails() {
               <Head>
                 <title>{`${result.title?.raw} | BrCris`}</title>
               </Head>
-              <div className="d-flex justify-content-between align-items-center mb-3 position-relative">
-                <h1 className="title mb-0">{result.title?.raw}</h1>
-                <PopoverButton />
+              <div className="mb-3 position-relative">
+                <div className="d-flex justify-content-between align-items-center">
+                  <h1 className="title mb-0">{result.title?.raw}</h1>
+                  <PopoverButton />
+                </div>
+
+                <div className="mt-2">
+                  {result.id?.raw && (
+                    <div className="d-flex align-items-center gap-2">
+                      <img
+                        className="brcris-logo"
+                        src="/logos/logo-brcris.png"
+                        alt="logo do BrCris"
+                      />
+                      <CopyLink
+                        link={`${location.origin}/journals/${result.id.raw}`}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="details-card">
                 <ul>
@@ -200,26 +218,6 @@ export default function JournalDetails() {
                     label={t("Assessment area")}
                     value={result.assessmentArea?.raw}
                   />
-                  {result.brcrisId?.raw?.length > 0 && (
-                    <li>
-                      <span className="sui-result__key">
-                        {t("BrCris identifier")}
-                      </span>
-                      <span>
-                        <ExpandableContent
-                          items={
-                            Array.isArray(result.brcrisId.raw)
-                              ? result.brcrisId.raw
-                              : [result.brcrisId.raw]
-                          }
-                          initialCount={5}
-                          renderItem={(id: string, idx: number) => (
-                            <span key={idx}>{id}</span>
-                          )}
-                        />
-                      </span>
-                    </li>
-                  )}
                   <ShowItem
                     label={t("Keywords")}
                     value={result.keywords?.raw}

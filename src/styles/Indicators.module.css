@@ -6,6 +6,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 0.75rem;
+
 }
 
 .title {
@@ -20,6 +21,7 @@
   top: 8px;
   right: 8px;
 }
+
 
 @media (max-width: 800px) {
   .charts {
