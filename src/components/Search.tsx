@@ -417,20 +417,22 @@ export default function Search({ index }: SearchProps) {
           }) => {
             // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
             useEffect(() => {
-              if (!sort || sort.length === 0) {
-                if (entityKey === "publications") {
-                  setSort?.(
-                    [
-                      {
-                        field: "publicationDate",
-                        direction: "desc",
-                      },
-                    ],
-                    "desc",
-                  );
-                }
+              if (!wasSearched) return;
+
+              if (entityKey === "publications") {
+                setSort?.(
+                  [
+                    {
+                      field: "publicationDate",
+                      direction: "desc",
+                    },
+                  ],
+                  "desc",
+                );
+              } else {
+                setSort?.([], "asc");
               }
-            }, [sort, setSort, entityKey]);
+            }, [entityKey, wasSearched]);
             return (
               <div className="App">
                 <div className="container page">
