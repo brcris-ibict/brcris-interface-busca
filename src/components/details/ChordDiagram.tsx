@@ -302,7 +302,6 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
                   )}
                 />
               </ul>
-              eric
             </Popover.Body>
           </Popover>
         </div>

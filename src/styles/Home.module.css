@@ -600,7 +600,15 @@
   .searchLayout {
     width: 100%;
   }
-  
+    .resultsLayout {
+    flex-direction: column;
+  }
+
+  .resultsLayout :global(.indicators),
+  .resultsLayout :global(.result) {
+    flex: 0 0 100%;
+    width: 100%;
+  }
 }
 
 @media (max-width: 600px) {
