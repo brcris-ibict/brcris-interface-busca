@@ -2,11 +2,10 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 "use client";
 import * as d3 from "d3";
-import { Download } from "lucide-react";
+import { Download, Info } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Overlay, Popover } from "react-bootstrap";
-import { Rnd } from "react-rnd";
 import coautoriaService from "../../services/CoautoriaService";
 import ExpandableContent from "../ExpandableContent";
 export default function ChordDiagram({ authorId }: { authorId: string }) {
@@ -16,13 +15,8 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
   const [nodes, setNodes] = useState<any[]>([]);
   const [chords, setChords] = useState<any>(null);
 
-  // Popover state
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const [selectedNode, setSelectedNode] = useState<any>(null);
-  const [popoverPos, setPopoverPos] = useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
 
   const handleDownload = () => {
     if (!chartRef.current) return;
@@ -44,7 +38,19 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
     a.click();
     URL.revokeObjectURL(url);
   };
+  const resetGraphStyles = () => {
+    if (!chartRef.current) return;
 
+    const svg = d3.select(chartRef.current).select("svg");
+
+    svg
+      .selectAll("path")
+      .style("opacity", 1)
+      .style("stroke", null)
+      .style("stroke-width", null);
+
+    svg.selectAll("text").style("fill", "blue").style("font-weight", "normal");
+  };
   useEffect(() => {
     if (!authorId) return;
 
@@ -174,30 +180,36 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       .style("text-decoration", "none")
       .style("cursor", "pointer")
       .style("font-size", "0.7rem")
-      .on("pointerenter", (event, d) => {
-        // @ts-expect-error
-        setSelectedNode(nodes[d.index]);
-        setTarget(event.currentTarget as HTMLElement);
 
-        if (!chartRef.current) return;
+      .on("pointerenter", (event, d: any) => {
+        ribbonGroup.selectAll("path").style("opacity", 0.05);
 
-        const rect = chartRef.current.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        setPopoverPos({ x, y });
+        ribbonGroup
+          .selectAll("path")
+          .filter(
+            (r: any) =>
+              r.source.index === d.index || r.target.index === d.index,
+          )
+          .style("opacity", 1)
+          .style("stroke", "black")
+          .style("stroke-width", 2);
 
-        // highlight
-        ribbonGroup.selectAll("path").style("opacity", (r: any) =>
-          // @ts-expect-error
-          r.source.index === d.index || r.target.index === d.index ? 1 : 0.1,
-        );
+        group.selectAll("path").style("opacity", 0.2);
 
         group
           .selectAll("path")
-          // @ts-expect-error
-          .style("opacity", (g: any) => (g.index === d.index ? 1 : 0.2));
+          .filter((g: any) => g.index === d.index)
+          .style("opacity", 1);
       })
+      .on("pointerleave", () => {
+        resetGraphStyles();
+      })
+      .on("click", (event, d: any) => {
+        resetGraphStyles();
 
+        setSelectedNode(nodes[d.index]);
+        setTarget(event.currentTarget as HTMLElement);
+      })
       .append("title")
       .text((d) => {
         //@ts-expect-error
@@ -233,15 +245,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
   if (selectedNode) {
     if (selectedNode.id === mainAuthor.id) {
       popoverContent = (
-        <Rnd
-          default={{
-            x: popoverPos.x,
-            y: popoverPos.y,
-            width: 300,
-            height: "auto",
-          }}
-          bounds="window"
-        >
+        <div>
           <div>
             <Popover id="popover-main">
               <Popover.Header as="h3" className="popover-header">
@@ -252,7 +256,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
               </Popover.Body>
             </Popover>
           </div>
-        </Rnd>
+        </div>
       );
     } else {
       const pubs = mainAuthor.publications.filter(
@@ -298,6 +302,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
                   )}
                 />
               </ul>
+              eric
             </Popover.Body>
           </Popover>
         </div>
@@ -326,7 +331,22 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
 
       {/** @ts-ignore */}
       <div ref={chartRef}></div>
-
+      <div
+        className="text-muted mt-2"
+        style={{
+          fontSize: "0.85rem",
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "6px",
+        }}
+      >
+        <Info size={14} style={{ marginTop: "2px", flexShrink: 0 }} />
+        <span>
+          Para melhor visualização, o gráfico apresenta apenas os 50 principais
+          coautores. A rede completa pode ser acessada pela exportação em
+          GraphML, disponível no canto superior direito.
+        </span>
+      </div>
       {selectedNode && (
         <Overlay
           show={!!selectedNode}
@@ -337,12 +357,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           rootClose
           onHide={() => {
             setSelectedNode(null);
-
-            if (chartRef.current) {
-              const svg = d3.select(chartRef.current).select("svg");
-
-              svg.selectAll("path").style("opacity", 1);
-            }
+            resetGraphStyles();
           }}
         >
           {/** @ts-ignore */}

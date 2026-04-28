@@ -210,16 +210,24 @@ function AdvisingGraph({
       .attr("r", 12)
       .attr("fill", (d) => color(d.level));
 
+    node;
     node
+      .append("a")
+      .attr("xlink:href", (d) => `/people/${d.uri}`)
       .append("text")
       .text((d) => d.name)
       .attr("x", 18)
       .attr("y", 5)
-      .attr("font-size", 13)
-      .attr("fill", "#333")
-      .style("pointer-events", "none")
-      .style("alignment-baseline", "middle");
-
+      .attr("font-size", 14)
+      .attr("fill", "blue")
+      .style("cursor", "pointer")
+      .style("text-decoration", "none")
+      .on("mouseover", function () {
+        d3.select(this).style("text-decoration", "underline");
+      })
+      .on("mouseout", function () {
+        d3.select(this).style("text-decoration", "none");
+      });
     node.append("title").text((d) => d.name);
 
     const drag = d3
