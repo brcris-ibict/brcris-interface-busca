@@ -191,7 +191,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
               r.source.index === d.index || r.target.index === d.index,
           )
           .style("opacity", 1)
-          .style("stroke", "black")
+          .style("stroke", "#292929")
           .style("stroke-width", 2);
 
         group.selectAll("path").style("opacity", 0.2);

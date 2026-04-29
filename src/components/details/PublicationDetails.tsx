@@ -55,10 +55,10 @@ export default function PublicationDetails() {
                           >
                             <img
                               src="/logos/oasisbr.ico"
-                              alt="OasisBR"
+                              alt="Oasisbr"
                               style={{ width: 20 }}
                             />
-                            OasisBR
+                            Oasisbr
                           </a>
                         );
                       })()}
