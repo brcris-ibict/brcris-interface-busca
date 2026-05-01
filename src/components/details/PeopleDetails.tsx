@@ -18,6 +18,46 @@ import PatentsByInventor from "./PatentsByInventor";
 import PersonProduction from "./PersonProduction";
 import SoftwareTitle from "./SoftwareTitle";
 
+const formatPt = (text: any): string => {
+  if (!text) return "";
+
+  // pega string mesmo se vier array ou objeto
+  let safeText = "";
+
+  if (Array.isArray(text)) {
+    safeText = text[0];
+  } else if (typeof text === "object") {
+    safeText = text.raw || text.name || "";
+  } else {
+    safeText = String(text);
+  }
+
+  if (!safeText) return "";
+
+  const lowerWords = [
+    "de",
+    "da",
+    "do",
+    "das",
+    "dos",
+    "e",
+    "em",
+    "para",
+    "por",
+    "com",
+  ];
+
+  return safeText
+    .toLowerCase()
+    .split(" ")
+    .map((word, i) => {
+      if (i === 0 || !lowerWords.includes(word)) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }
+      return word;
+    })
+    .join(" ");
+};
 const publicationCsvHeaders = [
   { label: "Título", key: "title" },
   { label: "Revista", key: "journal" },
@@ -109,7 +149,7 @@ export default function PeopleDetails() {
                       <div className="d-flex align-items-center gap-2">
                         <img
                           className="brcris-logo"
-                          src="/logos/logo-brcris.png"
+                          src="/logos/brcris-grafo.jpeg"
                           alt="logo do BrCris"
                         />
                         <CopyLink
@@ -154,7 +194,7 @@ export default function PeopleDetails() {
                               key={orgunit.id}
                               href={`/organizations/${orgunit?.id}`}
                             >
-                              {orgunit?.name}
+                              {formatPt(orgunit.name)}{" "}
                             </a>
                           </span>
                         ))}
@@ -196,7 +236,7 @@ export default function PeopleDetails() {
                                   <span key={item.id} className="group-item">
                                     {item.id ? (
                                       <a href={`/research-groups/${item.id}`}>
-                                        {item.name}
+                                        {formatPt(item.name)}{" "}
                                       </a>
                                     ) : (
                                       item.name

@@ -404,7 +404,6 @@ li .sui-result__key {
   overflow-wrap: anywhere;
 }
 li .sui-result__value {
-  text-transform: capitalize;
   font-size: 1rem;
 }
 
@@ -1102,7 +1101,9 @@ button.rc-pagination-item-link[disabled] {
   margin-right: 2px;
   
 }
-
+.brcris-copy{
+  margin-left: -5px;
+}
 .research-title {
   display: flex;
   align-items: center;

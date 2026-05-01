@@ -117,7 +117,7 @@ function JornalsIndicators({
             datasets: [
               {
                 data: qualisIndicators,
-                label: "Articles per Year",
+                label: t("Articles per Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,

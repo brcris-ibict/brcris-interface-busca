@@ -37,7 +37,7 @@ export default function PatentDetails() {
                       <div className="d-flex align-items-center gap-2">
                         <img
                           className="brcris-logo"
-                          src="/logos/logo-brcris.png"
+                          src="/logos/brcris-grafo.jpeg"
                           alt="logo do BrCris"
                         />
                         <CopyLink

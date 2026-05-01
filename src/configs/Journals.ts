@@ -21,6 +21,7 @@ const config: CustomSearchDriverOptions = {
       publisher: {},
       researchArea: {},
       issn: {},
+      issn_l: {},
     },
 
     result_fields: {
@@ -37,6 +38,9 @@ const config: CustomSearchDriverOptions = {
         raw: {},
       },
       researchArea: {
+        raw: {},
+      },
+      issn_l: {
         raw: {},
       },
     },

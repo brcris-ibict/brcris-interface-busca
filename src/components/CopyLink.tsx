@@ -31,6 +31,7 @@ const CopyLink = ({ link }: { link: string }) => {
   return (
     <div style={{ display: "inline-block", position: "relative" }}>
       <span
+        className="brcris-copy"
         title={t("Copy BrCris ID")}
         onClick={handleCopy}
         style={{ cursor: "pointer", color: "var(--bs-link-color)" }}
