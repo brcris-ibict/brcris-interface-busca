@@ -1,42 +1,63 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useTranslation } from "next-i18next";
 import { useRef, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import ReCAPTCHA from "react-google-recaptcha";
 import { alertService } from "../services/AlertService";
-import MailService from "../services/MailService";
 import style from "../styles/ContactForm.module.css";
 import Loader from "./Loader";
 
 function ContactForm() {
   const { t } = useTranslation("common");
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [isLoading, setLoading] = useState(false);
+  const [captchaCode, setCaptchaCode] = useState("");
+  const recaptchaRef = useRef<any>(null);
+
   const options = {
     autoClose: true,
     keepAfterRouteChange: false,
   };
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [isLoading, setLoading] = useState(false);
-  const [captchaCode, setCaptchaCode] = useState("");
-  const recaptchaRef = useRef<any>(null);
+  // 🔥 DROPZONE
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      setFiles((prev) => [...prev, ...acceptedFiles]);
+    },
+  });
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     if (!captchaCode) return;
 
-    const data = { name, email, message, captcha: captchaCode };
-
     try {
       setLoading(true);
-      const response = await MailService(JSON.stringify(data));
-      setLoading(false);
+
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("message", message);
+      formData.append("captcha", captchaCode);
+
+      // 📎 múltiplos arquivos
+      files.forEach((file) => {
+        formData.append("file", file);
+      });
+
+      const response = await fetch("/api/mail", {
+        method: "POST",
+        body: formData,
+      });
 
       if (response.status === 200) {
         setName("");
         setEmail("");
         setMessage("");
+        setFiles([]);
         alertService.success(t("Mail sent success"), options);
       } else {
         alertService.error(t("Mail sent error"), options);
@@ -51,75 +72,78 @@ function ContactForm() {
   const PUBLIC_RECAPTCHA_SITE_KEY = process.env.PUBLIC_RECAPTCHA_SITE_KEY || "";
 
   return (
-    <div>
+    <div className={style.wrapper}>
       {isLoading && <Loader />}
 
-      <div className={style.contact}>
-        <form onSubmit={handleSubmit}>
-          <div className="col-sm-12">
-            <label htmlFor="contact-name" className="visually-hidden">
-              {t("Name")}
-            </label>
-            <input
-              id="contact-name"
-              className="form-control search-box"
-              type="text"
-              placeholder={t("Name")}
-              required
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-            />
-          </div>
+      <form onSubmit={handleSubmit} className={style.form}>
+        <h2 className={style.title}>Contact Support</h2>
 
-          <div className="col-sm-12 my-3">
-            <label htmlFor="contact-email" className="visually-hidden">
-              {t("E-mail")}
-            </label>
-            <input
-              id="contact-email"
-              className="form-control search-box"
-              type="email"
-              placeholder={t("E-mail")}
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </div>
+        {/* NAME */}
+        <input
+          className="form-control"
+          type="text"
+          placeholder={t("Name")}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
 
-          <div className="col-sm-12">
-            <label htmlFor="contact-message" className="visually-hidden">
-              {t("Message")}
-            </label>
-            <textarea
-              id="contact-message"
-              className="form-control search-box"
-              rows={6}
-              placeholder={t("Message")}
-              required
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-            />
-          </div>
+        {/* EMAIL */}
+        <input
+          className="form-control"
+          type="email"
+          placeholder={t("E-mail")}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
 
-          <div className="submit-btn col-sm-12 mt-2 d-flex justify-content-between align-items-center">
-            {/* @ts-ignore */}
-            <ReCAPTCHA
-              size="normal"
-              ref={recaptchaRef}
-              sitekey={PUBLIC_RECAPTCHA_SITE_KEY}
-              onChange={(value) => setCaptchaCode(value || "")}
-            />
+        {/* MESSAGE */}
+        <textarea
+          className="form-control"
+          rows={6}
+          placeholder={t("Message")}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          required
+        />
 
-            <button
-              disabled={!(captchaCode && name && email && message)}
-              className="btn btn-primary px-4 py-2"
-              type="submit"
-            >
-              {t("Submit")}
-            </button>
+        {/* 📎 DROPZONE */}
+        <div {...getRootProps()} className={style.dropzone}>
+          <input {...getInputProps()} />
+          <p>{t("Drag files here or click to upload")}</p>
+        </div>
+
+        {/* 📂 PREVIEW */}
+        {files.length > 0 && (
+          <div className={style.fileList}>
+            {files.map((file, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              <div key={index} className={style.fileItem}>
+                {file.name}
+              </div>
+            ))}
           </div>
-        </form>
-      </div>
+        )}
+
+        {/* CAPTCHA + SUBMIT */}
+        <div className={style.footer}>
+          {/* @ts-ignore */}
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={PUBLIC_RECAPTCHA_SITE_KEY}
+            onChange={(value) => setCaptchaCode(value || "")}
+          />
+
+          <button
+            disabled={!(captchaCode && name && email && message)}
+            className="btn btn-primary"
+            type="submit"
+          >
+            {t("Submit")}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

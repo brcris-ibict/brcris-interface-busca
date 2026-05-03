@@ -12,6 +12,7 @@ import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
+import ReportPopoverButton from "../ReportPopoverButton";
 import AdvisorGraph from "./AdvisorGraph";
 import ChordDiagram from "./ChordDiagram";
 import PatentsByInventor from "./PatentsByInventor";
@@ -21,7 +22,6 @@ import SoftwareTitle from "./SoftwareTitle";
 const formatPt = (text: any): string => {
   if (!text) return "";
 
-  // pega string mesmo se vier array ou objeto
   let safeText = "";
 
   if (Array.isArray(text)) {
@@ -157,6 +157,7 @@ export default function PeopleDetails() {
                         />
                       </div>
                     )}
+                    <ReportPopoverButton />
                   </div>
                   <div className="details-card">
                     <div>

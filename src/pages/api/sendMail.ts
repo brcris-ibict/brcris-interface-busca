@@ -6,12 +6,18 @@ export type BodyType = {
   subject: string;
   text: string;
   html: string;
+  attachments?: any[];
 };
 
-export async function sendMail({ recipient, subject, text, html }: BodyType) {
+export async function sendMail({
+  recipient,
+  subject,
+  text,
+  html,
+  attachments = [],
+}: BodyType) {
   try {
-    logger.info(`enviando email para: ${recipient}`);
-    logger.info(`process.env.MAIL_HOST: ${process.env.MAIL_HOST}`);
+    console.log(`enviando email para: ${recipient}`);
 
     const MAILPORT = process.env.MAIL_PORT;
     const MAILHOST = process.env.MAIL_HOST;
@@ -19,10 +25,11 @@ export async function sendMail({ recipient, subject, text, html }: BodyType) {
     const PASSWORD = process.env.MAIL_PASSWORD;
     const RECIPIENT = process.env.MAIL_RECIPIENT;
 
-    if (!MAILPORT || !MAILHOST || !MAILSENDER || !PASSWORD || !recipient) {
-      logger.error("Variáveis de ambiente faltando ou indefinidas");
-      throw new Error("Variáveis de ambiente faltando ou indefinidas");
+    if (!MAILPORT || !MAILHOST || !MAILSENDER || !PASSWORD) {
+      logger.error("Variáveis de ambiente faltando");
+      throw new Error("Variáveis de ambiente faltando");
     }
+
     const transporter = nodemailer.createTransport({
       port: Number(MAILPORT),
       host: MAILHOST,
@@ -31,25 +38,28 @@ export async function sendMail({ recipient, subject, text, html }: BodyType) {
         pass: PASSWORD,
       },
       tls: {
-        rejectUnauthorized: false, // quando resolver o problema de DNS remover esta configuração
+        rejectUnauthorized: false,
       },
       logger: true,
       debug: true,
-      // secure: true,
     });
 
     const mailData = {
-      from: MAILSENDER,
+      from: `"BrCris" <${MAILSENDER}>`,
       to: recipient || RECIPIENT,
-      subject: subject,
-      text: text,
-      html: html,
+      subject,
+      text,
+      html,
+      attachments,
     };
 
+    console.log("ENVIANDO COM ATTACHMENTS:", attachments.length);
+
     const mailResponse = await transporter.sendMail(mailData);
+
     return mailResponse;
-  } catch (err) {
+  } catch (err: any) {
     logger.error(err);
-    throw new Error(err);
+    throw new Error(err.message || "Erro ao enviar email");
   }
 }

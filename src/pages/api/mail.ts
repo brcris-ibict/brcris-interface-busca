@@ -1,5 +1,6 @@
+import { IncomingForm } from "formidable";
+import fs from "fs";
 import type { NextApiRequest, NextApiResponse } from "next";
-import logger from "../../services/Logger";
 import { googleCaptchaValidation } from "./googleCaptchaValidation";
 import { sendMail } from "./sendMail";
 
@@ -7,45 +8,113 @@ type CaptchaValidation = {
   success: boolean;
 };
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body } = req;
+  const form = new IncomingForm({
+    multiples: false,
+    keepExtensions: true,
+  });
 
-  if (
-    body.name === "" ||
-    body.email === "" ||
-    body.message === "" ||
-    body.captcha === ""
-  ) {
-    res
-      .status(400)
-      .json({ message: "os campos obrigatórios não foram preenchidos" });
-  }
-
-  // Extract the email and captcha code from the request body
-  const { captcha } = body;
-
-  try {
-    // Ping the google recaptcha verify API to verify the captcha code you received
-    const response = await googleCaptchaValidation(captcha);
-    const captchaValidation: CaptchaValidation =
-      (await response.json()) as CaptchaValidation;
-    if (captchaValidation.success) {
-      const recipient = process.env.MAIL_RECIPIENT || "";
-      const { name, email, message } = body;
-      const subject = `Message from ${name}`;
-      const text = `${message} | Sent from: ${email}`;
-      const html = `<div>${message}</div> <p>Sent from: ${email}</p>`;
-      await sendMail({ recipient, subject, text, html });
-      return res.status(200).send("OK");
+  form.parse(req, async (err, fields: any, files: any) => {
+    if (err) {
+      console.error("FORM ERROR:", err);
+      return res.status(500).json({ message: "Erro ao processar upload" });
     }
 
-    return res.status(422).json({
-      message: "Unproccesable request, Invalid captcha code",
-    });
-  } catch (error) {
-    logger.error(error);
-    return res.status(422).json({ message: "Something went wrong" });
-  }
+    try {
+      const name = Array.isArray(fields.name) ? fields.name[0] : fields.name;
+      const email = Array.isArray(fields.email)
+        ? fields.email[0]
+        : fields.email;
+      const message = Array.isArray(fields.message)
+        ? fields.message[0]
+        : fields.message;
+      const captcha = Array.isArray(fields.captcha)
+        ? fields.captcha[0]
+        : fields.captcha;
+
+      if (!name || !email || !message || !captcha) {
+        return res.status(400).json({
+          message: "Campos obrigatórios não preenchidos",
+        });
+      }
+
+      const response = await googleCaptchaValidation(captcha);
+      const captchaValidation = (await response.json()) as CaptchaValidation;
+
+      if (!captchaValidation.success) {
+        return res.status(422).json({
+          message: "Captcha inválido",
+        });
+      }
+
+      const recipient = process.env.MAIL_RECIPIENT;
+      if (!recipient) throw new Error("MAIL_RECIPIENT não definido");
+
+      const subject = `Message from ${name}`;
+      const text = `${message} | Sent from: ${email}`;
+
+      const attachments: any[] = [];
+      let imageHtml = "";
+
+      if (files.file) {
+        const fileList = Array.isArray(files.file) ? files.file : [files.file];
+
+        fileList.forEach((file: any, index: number) => {
+          const fileBuffer = fs.readFileSync(file.filepath);
+
+          const cid = `img${index}@brcris`;
+
+          attachments.push({
+            filename: file.originalFilename || `image-${index}`,
+            content: fileBuffer,
+            contentType: file.mimetype,
+            cid,
+          });
+
+          imageHtml += `
+      <br/>
+      <img src="cid:${cid}" style="max-width:400px;border-radius:8px;" />
+    `;
+        });
+      }
+      const html = `
+        <div style="font-family: Arial, sans-serif;">
+          <p>${message}</p>
+          <p><strong>Sent from:</strong> ${email}</p>
+          ${imageHtml}
+        </div>
+      `;
+      console.log("FILES RECEBIDOS:", files);
+      console.log("ENVIANDO EMAIL...");
+      console.log("TEM ANEXO:", attachments.length > 0);
+
+      await sendMail({
+        recipient,
+        subject,
+        text,
+        html,
+        attachments,
+      });
+
+      console.log("EMAIL ENVIADO COM SUCESSO");
+
+      return res.status(200).json({
+        message: "Email enviado com sucesso",
+      });
+    } catch (error) {
+      console.error("MAIL ERROR:", error);
+      return res.status(500).json({
+        message: "Erro ao enviar email",
+        error: String(error),
+      });
+    }
+  });
 };
 
 export default proxy;
