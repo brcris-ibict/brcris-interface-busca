@@ -108,13 +108,11 @@ function ContactForm() {
           required
         />
 
-        {/* 📎 DROPZONE */}
         <div {...getRootProps()} className={style.dropzone}>
           <input {...getInputProps()} />
           <p>{t("Drag files here or click to upload")}</p>
         </div>
 
-        {/* 📂 PREVIEW */}
         {files.length > 0 && (
           <div className={style.fileList}>
             {files.map((file, index) => (
@@ -126,7 +124,6 @@ function ContactForm() {
           </div>
         )}
 
-        {/* CAPTCHA + SUBMIT */}
         <div className={style.footer}>
           {/* @ts-ignore */}
           <ReCAPTCHA
