@@ -6,11 +6,12 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Edge, Node, Options } from "vis";
 import "vis-network/styles/vis-network.css";
 import { replaceSpacesWithHyphens } from "../../utils/Utils";
 import indexes from "../configs/Indexes";
+import { useTheme } from "../contexts/ThemeContext";
 import ElasticSearchStatsService from "../services/ElasticSearchStatsService";
 
 // @ts-expect-error
@@ -175,11 +176,10 @@ const edges: Edge = [
   { from: 9, to: 6, id: 20 },
 ];
 
-const options: Options = {
+const baseOptions: Options = {
   width: "100%",
   height: "100%",
   edges: {
-    color: "#210d41",
     smooth: {
       enabled: true,
       type: "continuous",
@@ -211,6 +211,17 @@ function VisGraph() {
   const [graph, setGraph] = useState({ nodes, edges });
   const [indexesStats, setIndexesStats] = useState<IndexStat[]>([]);
   const { t } = useTranslation("common");
+  const { resolvedTheme } = useTheme();
+  const options = useMemo<Options>(
+    () => ({
+      ...baseOptions,
+      edges: {
+        ...baseOptions.edges,
+        color: resolvedTheme === "dark" ? "#5ee6fb" : "#210d41",
+      },
+    }),
+    [resolvedTheme],
+  );
   const numberFormat = new Intl.NumberFormat("pt-BR");
 
   const events = {

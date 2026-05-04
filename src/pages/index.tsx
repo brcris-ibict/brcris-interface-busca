@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/a11y/noAutofocus: <explanation> */
+
 import { Search } from "lucide-react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
@@ -10,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { replaceSpacesWithHyphens } from "../../utils/Utils";
 import AllIndexVisNetwork from "../components/AllIndexVisNetwork";
 import indexes from "../configs/Indexes";
+import { useTheme } from "../contexts/ThemeContext";
 import { getIndexStats } from "../services/ElasticSearchStatsService";
 import styles from "../styles/Home.module.css";
 
@@ -24,6 +26,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
 export default function App() {
   const router = useRouter();
   const { t } = useTranslation(["common"]);
+  const { resolvedTheme } = useTheme();
 
   const partners = [
     {
@@ -44,7 +47,10 @@ export default function App() {
     },
     {
       url: "https://portal.fiocruz.br/",
-      path: "/logos/fiocruz.png",
+      path:
+        resolvedTheme === "dark"
+          ? "/logos/logo-fiocruz-pb.png"
+          : "/logos/fiocruz.png",
       description: "Logo da Fiocruz",
     },
     {

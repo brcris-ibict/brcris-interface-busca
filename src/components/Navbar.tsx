@@ -12,7 +12,11 @@ function Navbar() {
   const { t } = useTranslation("navbar");
 
   const { asPath } = router;
-  const { cycleThemePreference, themePreference } = useTheme();
+  const { cycleThemePreference, resolvedTheme, themePreference } = useTheme();
+  const ibictLogoSrc =
+    resolvedTheme === "dark"
+      ? "/logos/logo-ibict-pb.png"
+      : "/logos/logo-ibict.png";
 
   const themeIcon =
     themePreference === "dark" ? (
@@ -38,7 +42,7 @@ function Navbar() {
             <picture className="navbar-logo">
               <img
                 className="img-fluid ibict"
-                src="/logos/logo-ibict.png"
+                src={ibictLogoSrc}
                 alt="logo do ibict"
               />
             </picture>
