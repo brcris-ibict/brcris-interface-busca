@@ -365,19 +365,6 @@ export default function Search({ index }: SearchProps) {
       : "title";
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setIsFluid(!isFluid)}
-        style={{
-          border: "1px solid var(--border-color)",
-          background: "var(--bg-card)",
-          color: "var(--text-color)",
-          float: "right",
-        }}
-        aria-label="Toggle container width"
-      >
-        {isFluid ? <Minimize2 /> : <Maximize2 size={20} />}
-      </button>
       <div className={`${isFluid ? "container-fluid" : "container"}`}>
         <reactSearchUi.WithSearch
           mapContextToProps={({
@@ -432,7 +419,19 @@ export default function Search({ index }: SearchProps) {
                     <h1>{t(index.label)}</h1>
                   </div>
                 </div>
-                <div className={styles.content}>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setIsFluid(!isFluid)}
+                    style={{
+                      border: "1px solid var(--border-color)",
+                      background: "#fff",
+                      float: "right",
+                    }}
+                    aria-label="Toggle container width"
+                  >
+                    {isFluid ? <Minimize2 /> : <Maximize2 size={20} />}
+                  </button>
                   <div className={styles.searchLayout}>
                     {isLoading ? <Loader /> : ""}
                     <DisplayFieldsProvider

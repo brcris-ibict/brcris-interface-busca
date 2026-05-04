@@ -7,7 +7,7 @@
   --text-secondary-color: #555555;
   --tabs-color: #0399b6;
   --bs-link-color: #0399b6;
-  --bs-link-hover-color: #8540f5;
+  --bs-link-hover-color: #0ea5b7;
   --border-color: #e5e7eb;
   --border-dark-color: #bbbbbb;
   --bg: #fafafa;
@@ -42,9 +42,9 @@
   --table-header-bg: #f8f9fa;
   --table-row-hover-bg: #f9fafb;
   --border-soft: #eaeaea;
-  --select-arrow-color: #5700a3;
-  --contact-accent: #960080;
-  --border-strong: #290043;
+  --select-arrow-color: #0399b6;
+  --contact-accent: #0399b6;
+  --border-strong: #0284a0;
   --accent-warning: #f9943b;
   --border-radius: 0.75rem;
 }
@@ -92,8 +92,8 @@
   --table-row-hover-bg: #1b2331;
   --border-soft: #374151;
   --select-arrow-color: #d1b3ff;
-  --contact-accent: #d946ef;
-  --border-strong: #b37dff;
+  --contact-accent: #0284a0;
+  --border-strong: #0284a0;
   --accent-warning: #ffb86b;
 }
 
@@ -279,16 +279,20 @@ main {
 }
 
 .search-button {
-  padding: 8px;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   justify-content: center;
   border-radius: 24px;
 }
 
 .search-button:disabled {
   opacity: 0.85;
+}
+
+.page-search .sui-facet-view-more {
+  color: var(--bs-link-color);
 }
 
 .btn-primary {

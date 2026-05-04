@@ -217,7 +217,7 @@ function VisGraph() {
       ...baseOptions,
       edges: {
         ...baseOptions.edges,
-        color: resolvedTheme === "dark" ? "#5ee6fb" : "#210d41",
+        color: resolvedTheme === "dark" ? "#5ee6fb" : "#0284a0",
       },
     }),
     [resolvedTheme],
