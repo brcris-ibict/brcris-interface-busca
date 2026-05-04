@@ -87,7 +87,7 @@ function ContactForm() {
         <h2 className={style.title}>{t("Report inconsistency")}</h2>
 
         <input
-          className="form-control"
+          className="form-control mb-3"
           type="url"
           placeholder="URL"
           value={url}
@@ -96,7 +96,7 @@ function ContactForm() {
         />
 
         <input
-          className="form-control"
+          className="form-control mb-3"
           type="text"
           placeholder={t("Name")}
           value={name}
@@ -105,7 +105,7 @@ function ContactForm() {
         />
 
         <input
-          className="form-control"
+          className="form-control mb-3"
           type="email"
           placeholder={t("E-mail")}
           value={email}
@@ -114,7 +114,7 @@ function ContactForm() {
         />
 
         <textarea
-          className="form-control"
+          className="form-control mb-3"
           rows={6}
           placeholder="Descrição do erro"
           value={description}
