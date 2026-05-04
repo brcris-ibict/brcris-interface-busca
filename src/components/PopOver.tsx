@@ -15,11 +15,7 @@ export default function PopoverButton({ className = "" }: PopoverButtonProps) {
       <Popover.Body>
         {t("Data Source Description")}{" "}
         <p>
-          <a
-            href="http://codich1.ibict.br:8086/data-source-info"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a href="/data-sources" target="_blank" rel="noreferrer">
             {t("click here")}
           </a>
           .

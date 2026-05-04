@@ -724,49 +724,28 @@ export default function Search({ index }: SearchProps) {
                           >
                             {containsResults(wasSearched, results) && (
                               <div className={styles.toolbarWrap}>
+                                <div
+                                  className={`${switchStyles["br-switch"]} ${styles.filtersToggleLeft}`}
+                                  role="presentation"
+                                >
+                                  <input
+                                    id="switch-filters"
+                                    type="checkbox"
+                                    name="switch-filters"
+                                    checked={showFilters}
+                                    role="switch"
+                                    aria-checked={showFilters}
+                                    onChange={(event) =>
+                                      setShowFilters(event.target.checked)
+                                    }
+                                  />
+                                  <label htmlFor="switch-filters">
+                                    {t("Filters")}
+                                  </label>
+                                </div>
                                 <div className={styles.toolbar}>
                                   {
                                     <>
-                                      <div
-                                        className={`${switchStyles["br-switch"]} ${styles.filtersToggleLeft}`}
-                                        role="presentation"
-                                      >
-                                        <input
-                                          id="switch-filters"
-                                          type="checkbox"
-                                          name="switch-filters"
-                                          checked={showFilters}
-                                          role="switch"
-                                          aria-checked={showFilters}
-                                          onChange={(event) =>
-                                            setShowFilters(event.target.checked)
-                                          }
-                                        />
-                                        <label htmlFor="switch-filters">
-                                          {t("Filters")}
-                                        </label>
-                                      </div>
-                                      <div
-                                        className={`${switchStyles["br-switch"]} ${styles.indicatorsToggle}`}
-                                        role="presentation"
-                                      >
-                                        <input
-                                          id="switch-indicators"
-                                          type="checkbox"
-                                          name="switch-indicators"
-                                          checked={showIndicators}
-                                          role="switch"
-                                          aria-checked={showIndicators}
-                                          onChange={(event) =>
-                                            setShowIndicators(
-                                              event.target.checked,
-                                            )
-                                          }
-                                        />
-                                        <label htmlFor="switch-indicators">
-                                          {t("Panel")}
-                                        </label>
-                                      </div>
                                       {displayFieldsConfig && (
                                         <button
                                           type="button"
@@ -834,6 +813,25 @@ export default function Search({ index }: SearchProps) {
                                       </div>
                                     </>
                                   }
+                                </div>
+                                <div
+                                  className={`${switchStyles["br-switch"]} ${styles.indicatorsToggle}`}
+                                  role="presentation"
+                                >
+                                  <input
+                                    id="switch-indicators"
+                                    type="checkbox"
+                                    name="switch-indicators"
+                                    checked={showIndicators}
+                                    role="switch"
+                                    aria-checked={showIndicators}
+                                    onChange={(event) =>
+                                      setShowIndicators(event.target.checked)
+                                    }
+                                  />
+                                  <label htmlFor="switch-indicators">
+                                    {t("Panel")}
+                                  </label>
                                 </div>
                               </div>
                             )}

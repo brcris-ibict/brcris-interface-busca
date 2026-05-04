@@ -1127,6 +1127,7 @@ button.rc-pagination-item-link[disabled] {
   border: none;
   top: -2.5rem;
   right: 0;
+  display: none;
 }
 .report-popover-btn {
   background: transparent;
@@ -1188,7 +1189,7 @@ button.rc-pagination-item-link[disabled] {
 }
 
 .page-search .sui-layout-main-header__inner {
-  width: 74%;
+  /* width: 74%; */
 }
 
 .author-header {
