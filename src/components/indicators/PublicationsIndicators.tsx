@@ -59,19 +59,25 @@ function PublicationsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
-
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
     // tradução
+    if (!options.plugins) options.plugins = {};
+    if (!options.plugins.title)
+      options.plugins.title = { display: true, text: "" };
     options.plugins.title.text = t(options.title);
+
+    if (!optionsType.plugins) optionsType.plugins = {};
+    if (!optionsType.plugins.title)
+      optionsType.plugins.title = { display: true, text: "" };
     optionsType.plugins.title.text = t(optionsType.title);
-    console.log("resultSearchTerm", resultSearchTerm, isLoading);
     if (!resultSearchTerm) return;
     try {
       const pdQuery = JSON.stringify(
@@ -80,7 +86,7 @@ function PublicationsIndicators({
           indicadorName: "publicationDate",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "desc" },
         }),
@@ -91,7 +97,7 @@ function PublicationsIndicators({
           indicadorName: "type",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       );
@@ -120,7 +126,7 @@ function PublicationsIndicators({
 
   return (
     <div className="indicators" hidden={isEmpty()}>
-      <PopoverButton />
+      <PopoverButton className="position-absolute" />
       <div className={styles.chart}>
         {/* @ts-ignore */}
         <CSVLink
@@ -133,8 +139,6 @@ function PublicationsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={options}
           width="500"
           data={{
@@ -142,7 +146,7 @@ function PublicationsIndicators({
             datasets: [
               {
                 data: yearIndicators,
-                label: "Articles per Year",
+                label: t("Articles per Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -164,8 +168,6 @@ function PublicationsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optionsType}
           width="500"
           data={{

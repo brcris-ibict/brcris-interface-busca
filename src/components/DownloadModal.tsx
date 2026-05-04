@@ -1,8 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import type {
-  QueryDslOperator,
-  QueryDslQueryContainer,
-} from "@elastic/elasticsearch/lib/api/types";
 import { SearchContext, withSearch } from "@elastic/react-search-ui";
 import { Download } from "lucide-react";
 import { useRouter } from "next/router";
@@ -17,11 +13,15 @@ import { Alert } from "./Alert";
 import { formatedQuery } from "./indicators/query/Query";
 import Loader from "./Loader";
 
+type QueryDslOperator = "AND" | "OR";
+type QueryDslQueryContainer = Record<string, any>;
+
 type DownloadModalProps = {
   filters?: any;
   searchTerm?: any;
   totalResults: number;
   typeArq?: string;
+  availableFormats?: string[];
 };
 
 const alertOptions = {
@@ -34,6 +34,7 @@ const DownloadModal = ({
   searchTerm,
   totalResults,
   typeArq,
+  availableFormats,
 }: DownloadModalProps) => {
   const { t } = useTranslation("common");
   const router = useRouter();
@@ -45,6 +46,8 @@ const DownloadModal = ({
   const [formSent, setFormSent] = useState(false);
   const [email, setEmail] = useState("");
   const [captcha, setCaptcha] = useState("");
+  const formats = availableFormats ?? (typeArq ? [typeArq] : ["csv"]);
+  const [selectedFormat, setSelectedFormat] = useState(formats[0]);
   const recaptchaRef = useRef(null);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -55,37 +58,35 @@ const DownloadModal = ({
   // @ts-expect-error
   const resultFields = Object.keys(result_fields);
 
-  const title = typeArq === undefined ? "csv" : typeArq;
+  const hasMultipleFormats = formats.length > 1;
+  const buttonLabel = hasMultipleFormats
+    ? t("Export") || "Export"
+    : t(formats[0]);
+  const isSmallExport = totalResults <= 1000;
 
   async function handleDownload() {
-    handleShow();
-    setFormSent(false);
-    if (totalResults <= 1000) {
-      try {
-        setLoading(true);
-        if (typeArq === undefined) {
-          typeArq = "csv";
-        }
-        const query: QueryDslQueryContainer = formatedQuery(
-          searchTerm,
-          fields,
-          operator as QueryDslOperator,
-          filters,
-        );
-        const response = await new ExportService().search(
-          index,
-          query,
-          resultFields,
-          totalResults,
-          getIndexName(),
-          typeArq,
-        );
-        const { file } = await response.json();
-        const nextDownloadLink = getDownloadLink(file);
-        setDownloadLink(nextDownloadLink);
-      } finally {
-        setLoading(false);
-      }
+    try {
+      setLoading(true);
+      const formatToUse = selectedFormat || "csv";
+      const query: QueryDslQueryContainer = formatedQuery(
+        searchTerm,
+        fields,
+        operator as QueryDslOperator,
+        filters,
+      );
+      const response = await new ExportService().search(
+        index,
+        query,
+        resultFields,
+        totalResults,
+        getIndexName(),
+        formatToUse,
+      );
+      const { file } = await response.json();
+      const nextDownloadLink = getDownloadLink(file);
+      setDownloadLink(nextDownloadLink);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -103,9 +104,7 @@ const DownloadModal = ({
         operator as QueryDslOperator,
         filters,
       );
-      if (typeArq === undefined) {
-        typeArq = "csv";
-      }
+      const formatToUse = selectedFormat || "csv";
 
       const response = await new ExportService().search(
         index,
@@ -113,7 +112,7 @@ const DownloadModal = ({
         resultFields,
         totalResults,
         getIndexName(),
-        typeArq,
+        formatToUse,
         email,
         captcha,
       );
@@ -162,12 +161,16 @@ const DownloadModal = ({
     <>
       <button
         type="button"
-        title={t(`Exportar ${title}`) || `Exportar ${title}`}
+        title={buttonLabel}
         className="btn-header btn btn-outline-secondary d-flex align-items-center flex-gap-8"
-        onClick={handleDownload}
+        onClick={() => {
+          setDownloadLink("");
+          setFormSent(false);
+          handleShow();
+        }}
       >
         <Download />
-        {t(`${title}`)}
+        {buttonLabel}
       </button>
       {isLoading ? <Loader /> : ""}
 
@@ -177,12 +180,41 @@ const DownloadModal = ({
         </Modal.Header>
         <Modal.Body>
           <Alert />
+          <div className="mb-3">
+            <label className="form-label" htmlFor="export-format">
+              {t("Format")}
+            </label>
+            <select
+              id="export-format"
+              className="form-select"
+              value={selectedFormat}
+              onChange={(event) => setSelectedFormat(event.target.value)}
+            >
+              {formats.map((format) => (
+                <option key={format} value={format}>
+                  {format.toUpperCase()}
+                </option>
+              ))}
+            </select>
+          </div>
           {downloadLink && (
             <a href={downloadLink} target="_blank" rel="noreferrer">
               {t("Download file")}
             </a>
           )}
-          {totalResults > 1000 && !formSent && (
+          {isSmallExport && (
+            <div className="d-flex justify-content-end">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleDownload}
+                disabled={isLoading}
+              >
+                {t("Generate") || "Generate"}
+              </button>
+            </div>
+          )}
+          {!isSmallExport && !formSent && (
             <div>
               <p>
                 {t(

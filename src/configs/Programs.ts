@@ -18,6 +18,7 @@ const config: CustomSearchDriverOptions = {
       name: {},
       "orgUnit.name_text": {},
     },
+
     result_fields: {
       name: {
         snippet: {
@@ -39,9 +40,11 @@ const config: CustomSearchDriverOptions = {
   },
   autocompleteQuery: {
     results: {
+      // @ts-expect-error Search UI aceita index em runtime
+      index: indexName,
       resultsPerPage: 5,
       search_fields: {
-        name_suggest: {
+        name: {
           weight: 3,
         },
       },
@@ -54,22 +57,18 @@ const config: CustomSearchDriverOptions = {
         },
       },
     },
-    suggestions: {
-      types: {
-        results: { fields: ["name_completion"] },
-      },
-      size: 4,
-    },
   },
 };
 
 const sortOptions: SortOptionsType[] = [
   {
     name: "Relevance",
+    label: "Relevance",
     value: [],
   },
   {
     name: "Nome ASC",
+    label: "Nome ASC",
     value: [
       {
         field: "name",
@@ -79,6 +78,7 @@ const sortOptions: SortOptionsType[] = [
   },
   {
     name: "Nome DESC",
+    label: "Nome DESC",
     value: [
       {
         field: "name",

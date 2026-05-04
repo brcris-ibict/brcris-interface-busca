@@ -51,15 +51,35 @@ const config: CustomSearchDriverOptions = {
       "leaderResearcher.name": { type: "value" },
     },
   },
+  autocompleteQuery: {
+    results: {
+      // @ts-expect-error search-ui aceita index em runtime
+      index: indexName,
+      resultsPerPage: 5,
+      search_fields: {
+        name_text: {
+          weight: 3,
+        },
+      },
+      result_fields: {
+        id: { raw: {} },
+        name: {
+          snippet: { size: 100, fallback: true },
+        },
+      },
+    },
+  },
 };
 
 const sortOptions: SortOptionsType[] = [
   {
     name: "Relevance",
+    label: "Relevance",
     value: [],
   },
   {
     name: "Nome ASC",
+    label: "Nome ASC",
     value: [
       {
         field: "name",
@@ -69,6 +89,7 @@ const sortOptions: SortOptionsType[] = [
   },
   {
     name: "Nome DESC",
+    label: "Nome DESC",
     value: [
       {
         field: "name",

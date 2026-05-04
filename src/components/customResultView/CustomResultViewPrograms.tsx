@@ -5,11 +5,11 @@ const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/programs/${result.id.raw}`}>
-        <h3
+        <h2
           dangerouslySetInnerHTML={{
             __html: result.name?.snippet || result.name?.raw,
           }}
-        ></h3>
+        ></h2>
         <div className="result-metadata">
           {result.orgUnit?.raw.map((org: OrgUnit) => (
             <span key={org.id}>{org.name!}</span>

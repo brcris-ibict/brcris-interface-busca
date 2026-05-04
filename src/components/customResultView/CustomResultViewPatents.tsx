@@ -7,11 +7,11 @@ const CustomResultViewPatents = ({ result, onClickLink }: ResultViewProps) => {
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/patents/${result.id.raw}`}>
-        <h3
+        <h2
           dangerouslySetInnerHTML={{
-            __html: result.espacenetTitle.snippet || result.espacenetTitle.raw,
+            __html: result.title.snippet || result.title.raw,
           }}
-        ></h3>
+        ></h2>
         <div className="result-metadata">
           {result.inventor?.raw && (
             <span>

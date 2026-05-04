@@ -14,7 +14,7 @@ import { getIndexStats } from "../services/ElasticSearchStatsService";
 import styles from "../styles/Home.module.css";
 
 type Props = {};
-// or getServerSideProps: GetServerSideProps<Props> = async ({ locale })
+
 export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
   props: {
     ...(await serverSideTranslations(locale ?? "en", ["common", "navbar"])),
@@ -22,7 +22,6 @@ export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
 });
 
 export default function App() {
-  // const [config, setConfig] = useState(configDefault)
   const router = useRouter();
   const { t } = useTranslation(["common"]);
 
@@ -31,7 +30,6 @@ export default function App() {
       url: "https://www.gov.br/ibict/pt-br",
       path: "/logos/logo-ibict.png",
       description: "Logo do IBICT",
-      // class: 'hilight',
     },
     {
       url: "http://www.finep.gov.br/",
@@ -41,14 +39,13 @@ export default function App() {
     {
       url: "https://www.fap.df.gov.br/",
       path: "/logos/fapdf.png",
-      description: "Logo do fapdf",
+      description: "Logo do FAPDF",
       class: "minus",
     },
     {
       url: "https://portal.fiocruz.br/",
       path: "/logos/fiocruz.png",
       description: "Logo da Fiocruz",
-      // class: 'hilight',
     },
     {
       url: "https://www.gov.br/cnpq/pt-br",
@@ -58,16 +55,16 @@ export default function App() {
     {
       url: "https://www.fundep.ufmg.br/",
       path: "/logos/fundep.png",
-      description: " Logo do FUNDEP",
+      description: "Logo do FUNDEP",
       class: "minus",
     },
     {
       url: "https://www.lareferencia.info/pt/",
       path: "/logos/lareferencia.png",
       description: "Logo do LA Referencia",
-      // class: 'hilight',
     },
   ];
+
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [term, setTerm] = useState("");
   const [docsCount, setDocsCount] = useState("");
@@ -75,9 +72,11 @@ export default function App() {
 
   useEffect(() => {
     inputRef?.current?.focus();
+
+    localStorage.removeItem(indexLabel);
+
     getIndexStats(indexLabel, setDocsCount);
   }, [indexLabel]);
-
   return (
     <>
       <Head>
@@ -91,6 +90,7 @@ export default function App() {
           }
         />
       </Head>
+
       <div className={`container ${styles.home}`}>
         <div className="search-card">
           <h1>
@@ -99,16 +99,22 @@ export default function App() {
             )}{" "}
             (BrCris)
           </h1>
+
           <form
             className="form-search"
-            action={`/${router.locale}/${replaceSpacesWithHyphens(indexLabel.toLowerCase())}`}
+            action={`/${router.locale}/${replaceSpacesWithHyphens(
+              indexLabel.toLowerCase(),
+            )}`}
           >
             <div className="form-group">
               <div className="custom-select">
+                <label htmlFor="index-select" className="visually-hidden">
+                  {t("Select an entity")}
+                </label>
+
                 <select
                   id="index-select"
                   onChange={(e) => setIndexLabel(e.target.value)}
-                  title={t("Select an entity") || ""}
                 >
                   {indexes.map((index) => (
                     <option key={index.label} value={index.label}>
@@ -117,27 +123,27 @@ export default function App() {
                   ))}
                 </select>
               </div>
+
+              <label htmlFor="home-search" className="visually-hidden">
+                {t("Search")}
+              </label>
+
               <input
+                id="home-search"
                 ref={inputRef}
                 name="q"
                 autoFocus
-                title={`${t("Enter at least 3 characters and search among")} ${t(
-                  "numberFormat",
-                  {
-                    value: docsCount,
-                  },
-                )} ${t(indexLabel)}`}
                 type="search"
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
-                placeholder={`${t("Enter at least 3 characters and search among")} ${t(
-                  "numberFormat",
-                  {
-                    value: docsCount,
-                  },
-                )} ${t(indexLabel)}`}
+                placeholder={`${t(
+                  "Enter at least 3 characters and search among",
+                )} ${t("numberFormat", {
+                  value: docsCount,
+                })} ${t(indexLabel)}`}
               />
             </div>
+
             <button
               type="submit"
               disabled={term?.trim().length < 3}
@@ -149,29 +155,35 @@ export default function App() {
           </form>
         </div>
       </div>
+
       <section className={`container ${styles.informations}`}>
         <section className={styles.about}>
           <div className={styles.graph}>
             <AllIndexVisNetwork />
           </div>
+
           <div className={styles.info}>
             <h1>{t("BrCris")}</h1>
+
             <p className="card-text text-left">
               {t(
                 "The Brazilian Scientific Research Information Ecosystem, BrCris, is an aggregator platform that allows retrieving, certifying and visualizing data and information related to the various actors who work in scientific research in the Brazilian context.",
               )}
             </p>
+
             <div className="text-right">
-              <Link href="/about">{t("Learn more about BrCris")}</Link>
+              <Link href="/about">{t("Learn more")}</Link>
             </div>
           </div>
         </section>
+
         <section id="partners" className="container-fluid">
           <h2 className="text-center">{t("BrCris Partners")}</h2>
+
           <div className="partners">
-            {partners.map((partner) => (
-              // @ts-expect-error
-              <div key={partner.id} className={partner.class}>
+            {partners.map((partner, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              <div key={index} className={partner.class}>
                 <a href={partner.url} target="_blank" rel="noreferrer">
                   <picture>
                     <img src={partner.path} alt={partner.description} />

@@ -5,11 +5,11 @@ const CustomResultViewGroups = ({ result, onClickLink }: ResultViewProps) => {
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/research-groups/${result.id.raw}`}>
-        <h3
+        <h2
           dangerouslySetInnerHTML={{
             __html: result.name?.snippet || result.name.raw,
           }}
-        ></h3>
+        ></h2>
         <div className="result-metadata">
           {result.leaderResearcher?.raw && (
             <span>

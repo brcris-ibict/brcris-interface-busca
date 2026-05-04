@@ -5,11 +5,11 @@ const CustomResultViewJournals = ({ result, onClickLink }: ResultViewProps) => {
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/journals/${result.id.raw}`}>
-        <h3
+        <h2
           dangerouslySetInnerHTML={{
             __html: result.title.snippet || result.title.raw,
           }}
-        ></h3>
+        ></h2>
         <div className="result-metadata">
           {result.publisher?.raw.map((publisher: Publisher) => (
             <span key={publisher.id}>{publisher.name!}</span>

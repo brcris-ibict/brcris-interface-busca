@@ -158,23 +158,6 @@ const nodes: IndexNode[] = [
       size: 14,
     },
   },
-  {
-  id: 9,
-  index: process.env.INDEX_COURSE || "",
-  indexLabel:
-    indexes.find((i) => i.name === process.env.INDEX_COURSE)?.label || "",
-  label: "",
-  title: "100",
-  widthConstraint: 95,
-  level: 9,
-  shape: "circle",
-  color: "#4CAF50", 
-  font: {
-    color: "#fff",
-    size: 14,
-  },
-},
-
 ];
 
 const edges: Edge = [
@@ -189,8 +172,7 @@ const edges: Edge = [
   { from: 2, to: 6, id: 17 },
   { from: 1, to: 4, id: 18 },
   { from: 9, to: 2, id: 19 },
-{ from: 9, to: 6, id: 20 },
-
+  { from: 9, to: 6, id: 20 },
 ];
 
 const options: Options = {
@@ -241,11 +223,6 @@ function VisGraph() {
   };
 
   useEffect(() => {
-    const localIndexesStats = localStorage.getItem("indexesStats");
-    if (localIndexesStats) {
-      setIndexesStats(JSON.parse(localIndexesStats));
-      return;
-    }
     const indexesName = nodes.map((node) => node.index);
     ElasticSearchStatsService(indexesName)
       .then((res) => {

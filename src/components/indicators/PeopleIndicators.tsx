@@ -41,8 +41,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_PERSON || "";
 
-export const optionsResearchArea = new OptionsPie("Affiliation");
-
 const headersNacionality = [
   { label: "Nacionality", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -60,11 +58,22 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
     useContext(IndicatorContext);
 
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
+  const optionsResearchArea = new OptionsPie(t("Affiliation"));
 
   useEffect(() => {
-    optionsResearchArea.plugins.title.text = t(optionsResearchArea.title);
+    const plugins = {
+      ...optionsResearchArea.plugins,
+      title: {
+        display: true,
+        text: t(optionsResearchArea.title),
+        ...(optionsResearchArea.plugins?.title ?? {}),
+      },
+    };
+
+    optionsResearchArea.plugins = plugins;
     try {
       const queries = [
         JSON.stringify(
@@ -73,7 +82,7 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
             indicadorName: "nationality",
             searchTerm: resultSearchTerm,
             fields,
-            operator,
+            operator: normalizedOperator,
             filters,
           }),
         ),
@@ -83,11 +92,12 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
             indicadorName: "affiliation.name",
             searchTerm: resultSearchTerm,
             fields,
-            operator,
+            operator: normalizedOperator,
             filters,
           }),
         ),
       ];
+
       indicatorProxy.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
@@ -126,8 +136,6 @@ function PeopleIndicators({ filters, resultSearchTerm }: IndicatorsProps) {
           <Download />
         </CSVLink>
         <Pie
-          /**
-        // @ts-expect-error */
           options={optionsResearchArea}
           data={{
             labels: researchAreaLabels,

@@ -40,11 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_GROUP || "";
 
-const optResearchLine = new OptionsPie("Research groups by Research line");
-const optKnowledgeArea = new OptionsPie("Research groups by knowledge area");
-const optStatus = new OptionsPie("Research groups by status");
-const optCreatYear = new OptionsBar("Research groups by creation year");
-
 const headersByCreationYear = [
   { label: "Creation year", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -69,20 +64,27 @@ function GroupsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
+  const optResearchLine = new OptionsPie(t("Research groups by Research line"));
+  const optKnowledgeArea = new OptionsPie(
+    t("Research groups by knowledge area"),
+  );
+  const optStatus = new OptionsPie(t("Research groups by status"));
+  const optCreatYear = new OptionsBar(t("Research groups by creation year"));
 
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
     // tradução
+    if (!optCreatYear.plugins) optCreatYear.plugins = {};
+    if (!optCreatYear.plugins.title)
+      optCreatYear.plugins.title = { display: true, text: "" };
     optCreatYear.plugins.title.text = t(optCreatYear.title);
-    optStatus.plugins.title.text = t(optStatus.title);
-    optResearchLine.plugins.title.text = t(optResearchLine.title);
-    optKnowledgeArea.plugins.title.text = t(optKnowledgeArea.title);
     const queries = [
       JSON.stringify(
         getAggregateQuery({
@@ -90,7 +92,7 @@ function GroupsIndicators({
           indicadorName: "creationYear",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "desc" },
         }),
@@ -101,7 +103,7 @@ function GroupsIndicators({
           indicadorName: "researchLine",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -111,7 +113,7 @@ function GroupsIndicators({
           indicadorName: "knowledgeArea",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -121,7 +123,7 @@ function GroupsIndicators({
           indicadorName: "status",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -192,8 +194,6 @@ function GroupsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optCreatYear}
           width="500"
           data={{
@@ -201,7 +201,7 @@ function GroupsIndicators({
             datasets: [
               {
                 data: creationYearIndicators,
-                label: "Groups by Year",
+                label: t("Groups by Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -223,8 +223,6 @@ function GroupsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optResearchLine}
           width="500"
           data={{
@@ -254,8 +252,6 @@ function GroupsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optKnowledgeArea}
           width="500"
           data={{
@@ -285,8 +281,6 @@ function GroupsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optStatus}
           width="500"
           data={{

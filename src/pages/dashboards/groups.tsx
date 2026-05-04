@@ -26,7 +26,7 @@ export default function PublicationsDashboard() {
             <div className="page-title">
               <h1>{t("Research groups  dashboard")}</h1>
             </div>
-            <Iframe url="https://dashboardbrcris.ibict.br/app/dashboards#/view/b02a36c0-d49b-11ee-b32d-5d35d4a2b6e1?embed=true&amp;_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))" />
+            <Iframe url="https://dashboardbrcris.ibict.br/app/dashboards#/view/3455be0c-860a-4c77-80de-36f0c77edec0?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))" />{" "}
           </div>
         </div>
       </div>

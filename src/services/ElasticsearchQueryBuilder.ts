@@ -37,8 +37,7 @@ class ElasticsearchQueryBuilder {
       searchTerm = `(all:${searchTerm})`;
     }
     const input = untranslatedFieldsNames(searchTerm);
-    console.log("input", input);
-    console.log("allFields", allFields);
+
     const items = input.split(")");
     items.pop();
     for (let index = 0; index < items.length; index++) {
@@ -68,7 +67,6 @@ class ElasticsearchQueryBuilder {
     if (this.queryBase.bool?.should?.length > 0) {
       this.queryBase.bool.minimum_should_match = 1;
     }
-    console.log("this.queryBase", this.queryBase);
     return this.queryBase;
   }
 

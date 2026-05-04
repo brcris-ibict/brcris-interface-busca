@@ -8,22 +8,35 @@ const CopyLink = ({ link }: { link: string }) => {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(link);
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(link);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = link;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
   };
-
   return (
     <div style={{ display: "inline-block", position: "relative" }}>
       <span
+        className="brcris-copy"
         title={t("Copy BrCris ID")}
         onClick={handleCopy}
         style={{ cursor: "pointer", color: "var(--bs-link-color)" }}
       >
-        <Copy />
+        <span>BrCris ID</span> <Copy />
       </span>
       <span
         style={{

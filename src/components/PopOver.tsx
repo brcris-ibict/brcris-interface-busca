@@ -2,7 +2,11 @@ import { Info } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 
-export default function PopoverButton() {
+type PopoverButtonProps = {
+  className?: string;
+};
+
+export default function PopoverButton({ className = "" }: PopoverButtonProps) {
   const { t } = useTranslation("common");
 
   const popover = (
@@ -28,7 +32,7 @@ export default function PopoverButton() {
     <OverlayTrigger trigger="focus" placement="bottom" overlay={popover}>
       <button
         type="button"
-        className="custom-popover-btn"
+        className={`${className} custom-popover-btn`}
         aria-label={t("Where do these data come from?")}
         title={t("Where do these data come from?")}
       >

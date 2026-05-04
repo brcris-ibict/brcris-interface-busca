@@ -40,8 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_PROGRAM || "";
 
-export const options = new OptionsBar("Program by OrgUnit");
-
 const headersOrgUnit = [
   { label: "Organization", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -53,18 +51,27 @@ function ProgramsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
+  const options = new OptionsBar(t("Program by OrgUnit"));
 
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
-
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
-    // tradução
-    options.plugins.title.text = t(options.title);
+    // Garantir que plugins e plugins.title existam antes de usar
+    options.plugins = {
+      ...options.plugins,
+      title: {
+        display: true,
+        text: t(options.title),
+        ...(options.plugins?.title ?? {}),
+      },
+    };
+
     const queries = [
       JSON.stringify(
         getAggregateQuery({
@@ -72,17 +79,18 @@ function ProgramsIndicators({
           indicadorName: "orgunit.acronym",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
     ];
+
     if (isLoading) {
       indicatorProxyService.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
     }
-  }, [filters, resultSearchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading, t, fields]);
 
   const orgUnitIndicators: IndicatorType[] = indicators ? indicators[0] : [];
   const orgUnitLabels =
@@ -102,8 +110,6 @@ function ProgramsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={options}
           width="500"
           data={{

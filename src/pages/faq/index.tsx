@@ -46,13 +46,13 @@ export default function FaqPage() {
   return (
     <>
       <Head>
-        <title>{t("FAQ BrCris")}</title>
+        <title>{t("Frequently Asked Questions")}</title>
       </Head>
 
       <header>
         <div className="container py-3 d-flex align-items-center justify-content-between flex-wrap">
-          <div className="flex-grow-1 text-center">
-            <h1 className="h3 m-0">{t("FAQ BrCris")}</h1>
+          <div className="flex-grow-1 text-center" id="top">
+            <h1 className="h3 m-0">{t("Frequently Asked Questions")}</h1>
           </div>
           <div>
             <button
@@ -363,7 +363,7 @@ export default function FaqPage() {
                 data-bs-target="#q14"
               >
                 {t(
-                  "I need support for a BrCris-related project. Is it possible?",
+                  "I need support for a project related to BrCris. Is it possible?",
                 )}
               </button>
             </h3>
@@ -432,7 +432,7 @@ export default function FaqPage() {
         </div>
 
         <p className="text-end mt-5">
-          <a href="#topo" className="btn btn-link">
+          <a href="#top" className="btn btn-link">
             {t("Back to top")}
           </a>
         </p>

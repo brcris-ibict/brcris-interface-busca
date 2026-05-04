@@ -40,11 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_PATENT || "";
 
-const optDepositDate = new OptionsBar("Patents by deposit year");
-const optPubDate = new OptionsBar("Patents by publication year");
-const optCountryCode = new OptionsPie("Patents by country code");
-const optKindCode = new OptionsPie("Patents by kind code");
-
 const headersByDepositDate = [
   { label: "Deposit year", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -70,21 +65,58 @@ function PatentsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
+  const optDepositDate = new OptionsBar(t("Patents by deposit year"));
+  const optPubDate = new OptionsBar(t("Patents by publication year"));
+  const optCountryCode = new OptionsPie(t("Patents by country code"));
+  const optKindCode = new OptionsPie(t("Patents by kind code"));
 
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
-    // tradução
-    optDepositDate.plugins.title.text = t(optDepositDate.title);
-    optPubDate.plugins.title.text = t(optPubDate.title);
-    optCountryCode.plugins.title.text = t(optCountryCode.title);
-    optKindCode.plugins.title.text = t(optKindCode.title);
+    // Garantindo que plugins e title existam
+    optDepositDate.plugins = {
+      ...optDepositDate.plugins,
+      title: {
+        display: true,
+        text: t(optDepositDate.title),
+        ...(optDepositDate.plugins?.title ?? {}),
+      },
+    };
 
+    optPubDate.plugins = {
+      ...optPubDate.plugins,
+      title: {
+        display: true,
+        text: t(optPubDate.title),
+        ...(optPubDate.plugins?.title ?? {}),
+      },
+    };
+
+    optCountryCode.plugins = {
+      ...optCountryCode.plugins,
+      title: {
+        display: true,
+        text: t(optCountryCode.title),
+        ...(optCountryCode.plugins?.title ?? {}),
+      },
+    };
+
+    optKindCode.plugins = {
+      ...optKindCode.plugins,
+      title: {
+        display: true,
+        text: t(optKindCode.title),
+        ...(optKindCode.plugins?.title ?? {}),
+      },
+    };
+
+    // Preparando queries
     const queries = [
       JSON.stringify(
         getAggregateQuery({
@@ -92,7 +124,7 @@ function PatentsIndicators({
           indicadorName: "depositDate",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "desc" },
         }),
@@ -103,7 +135,7 @@ function PatentsIndicators({
           indicadorName: "publicationDate",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "desc" },
         }),
@@ -114,7 +146,7 @@ function PatentsIndicators({
           indicadorName: "countryCode",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -124,17 +156,18 @@ function PatentsIndicators({
           indicadorName: "kindCode",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
     ];
+
     if (isLoading) {
       indicatorProxyService.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
     }
-  }, [filters, resultSearchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading, t, fields]);
 
   // deposite date
   const depositeDateIndicators: IndicatorType[] = indicators
@@ -194,8 +227,6 @@ function PatentsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optDepositDate}
           width="500"
           data={{
@@ -203,7 +234,7 @@ function PatentsIndicators({
             datasets: [
               {
                 data: depositeDateIndicators,
-                label: "Articles per Year",
+                label: t("Articles per Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -225,8 +256,6 @@ function PatentsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optPubDate}
           width="500"
           data={{
@@ -234,7 +263,7 @@ function PatentsIndicators({
             datasets: [
               {
                 data: publicationDateIndicators,
-                label: "Articles per Year",
+                label: t("Articles per Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -256,8 +285,6 @@ function PatentsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optCountryCode}
           width="500"
           data={{
@@ -287,8 +314,6 @@ function PatentsIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optKindCode}
           width="500"
           data={{

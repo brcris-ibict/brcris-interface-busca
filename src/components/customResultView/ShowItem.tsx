@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 type ShowItemProps = {
   label: string;
   value: string | string[];
@@ -6,9 +5,12 @@ type ShowItemProps = {
 };
 
 const ShowItem = ({ label, value, urlLink }: ShowItemProps) => {
-  return value === undefined || value === null || value === "" ? null : (
+  if (!value || value === "") return null;
+
+  return (
     <li>
       <span className="sui-result__key">{label}</span>
+
       <span className="sui-result__value">
         {typeof value === "string" ? (
           urlLink ? (
@@ -17,9 +19,10 @@ const ShowItem = ({ label, value, urlLink }: ShowItemProps) => {
             value
           )
         ) : (
-          value?.map((v: string, index: number) => (
-            <span key={index}>
-              {urlLink ? <a href={urlLink}>{value}</a> : v}
+          value.map((v: string, i: number) => (
+            <span key={v}>
+              {urlLink ? <a href={urlLink}>{v}</a> : v}
+              {i < value.length - 1 && ", "}
             </span>
           ))
         )}

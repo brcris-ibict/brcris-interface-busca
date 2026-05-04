@@ -2,13 +2,12 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 "use client";
 import * as d3 from "d3";
+import { Download, Info } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Overlay, Popover } from "react-bootstrap";
-import { Rnd } from "react-rnd";
 import coautoriaService from "../../services/CoautoriaService";
 import ExpandableContent from "../ExpandableContent";
-
 export default function ChordDiagram({ authorId }: { authorId: string }) {
   const { t } = useTranslation("common");
   const chartRef = useRef<SVGSVGElement | null>(null);
@@ -16,28 +15,71 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
   const [nodes, setNodes] = useState<any[]>([]);
   const [chords, setChords] = useState<any>(null);
 
-  // Popover state
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const [selectedNode, setSelectedNode] = useState<any>(null);
-  const [popoverPos, setPopoverPos] = useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
 
+  const handleDownload = () => {
+    if (!chartRef.current) return;
+
+    const svg = chartRef.current.querySelector("svg");
+    if (!svg) return;
+
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+
+    const blob = new Blob([svgString], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${mainAuthor?.name?.replace(/\s+/g, "_")}_coauthorship_network.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const resetGraphStyles = () => {
+    if (!chartRef.current) return;
+
+    const svg = d3.select(chartRef.current).select("svg");
+
+    svg
+      .selectAll("path")
+      .style("opacity", 1)
+      .style("stroke", null)
+      .style("stroke-width", null);
+
+    svg.selectAll("text").style("fill", "blue").style("font-weight", "normal");
+  };
   useEffect(() => {
     if (!authorId) return;
 
     coautoriaService
       .get(authorId)
       .then((data) => {
-        setMainAuthor(data);
+        const normalizedName = Array.isArray(data.name)
+          ? data.name[0]
+          : typeof data.name === "object"
+            ? data.name?.raw
+            : data.name;
 
-        const newNodes = [{ id: data.id, name: data.name }, ...data.coAuthors];
+        const normalizedAuthor = {
+          ...data,
+          name: normalizedName,
+        };
+
+        setMainAuthor(normalizedAuthor);
+
+        const newNodes = [
+          { id: normalizedAuthor.id, name: normalizedAuthor.name },
+          ...normalizedAuthor.coAuthors,
+        ];
+
         const nodeIndex = new Map(newNodes.map((a, i) => [a.id, i]));
         const n = newNodes.length;
         const newMatrix = Array.from({ length: n }, () => Array(n).fill(0));
 
-        data.publications.forEach((pub: any) => {
+        normalizedAuthor.publications.forEach((pub: any) => {
           for (let i = 0; i < pub.authors.length; i++) {
             for (let j = i + 1; j < pub.authors.length; j++) {
               const idx1 = nodeIndex.get(pub.authors[i]);
@@ -51,10 +93,9 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
         });
 
         const chord = d3.chord().padAngle(0.05).sortSubgroups(d3.descending);
-        const newChords = chord(newMatrix);
 
         setNodes(newNodes);
-        setChords(newChords);
+        setChords(chord(newMatrix));
       })
       .catch((err) => console.error("Erro ao carregar dados:", err));
   }, [authorId]);
@@ -72,7 +113,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
     d3.select(chartRef.current).selectAll("*").remove();
-    const margin = 200; // margem extra p/ labels
+    const margin = 200;
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -92,7 +133,6 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       .attr("d", arc)
       //@ts-expect-error
       .attr("fill", (d) => color(d.index))
-      .attr("stroke", "#000")
       //@ts-expect-error
       .attr("class", (d) => `arc-${nodes[d.index].id}`);
 
@@ -108,7 +148,6 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       .attr("d", ribbon)
       //@ts-expect-error
       .attr("fill", (d) => color(d.target.index))
-      .attr("stroke", "#000")
       .attr(
         "class",
         // @ts-expect-error
@@ -138,28 +177,38 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
       //@ts-expect-error
       .text((d) => nodes[d.index].name)
       .style("fill", "blue")
-      .style("text-decoration", "underline")
+      .style("text-decoration", "none")
       .style("cursor", "pointer")
-      .on("click", (event, d) => {
-        // @ts-expect-error
-        setSelectedNode(nodes[d.index]);
-        setTarget(event.currentTarget as HTMLElement);
-        // @ts-expect-error
-        const rect = chartRef.current.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        setPopoverPos({ x, y });
+      .style("font-size", "0.7rem")
 
-        // 🔥 Highlight logic
-        ribbonGroup.selectAll("path").style("opacity", (r: any) =>
-          // @ts-expect-error
-          r.source.index === d.index || r.target.index === d.index ? 1 : 0.1,
-        );
+      .on("pointerenter", (event, d: any) => {
+        ribbonGroup.selectAll("path").style("opacity", 0.05);
+
+        ribbonGroup
+          .selectAll("path")
+          .filter(
+            (r: any) =>
+              r.source.index === d.index || r.target.index === d.index,
+          )
+          .style("opacity", 1)
+          .style("stroke", "#292929")
+          .style("stroke-width", 2);
+
+        group.selectAll("path").style("opacity", 0.2);
 
         group
           .selectAll("path")
-          // @ts-expect-error
-          .style("opacity", (g: any) => (g.index === d.index ? 1 : 0.2));
+          .filter((g: any) => g.index === d.index)
+          .style("opacity", 1);
+      })
+      .on("pointerleave", () => {
+        resetGraphStyles();
+      })
+      .on("click", (event, d: any) => {
+        resetGraphStyles();
+
+        setSelectedNode(nodes[d.index]);
+        setTarget(event.currentTarget as HTMLElement);
       })
       .append("title")
       .text((d) => {
@@ -180,24 +229,23 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
   }, [chords, nodes]);
 
   if (!mainAuthor) {
-    return <p>Loading co-authorship data...</p>;
+    return null;
   }
-
-  // ...
-
+  const handleDownloadGraphML = async () => {
+    const url = `/api/autor-xml?authorId=${authorId}`;
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${mainAuthor?.name?.replace(/\s+/g, "_")}_network.graphml`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
   let popoverContent = null;
   if (selectedNode) {
     if (selectedNode.id === mainAuthor.id) {
       popoverContent = (
-        <Rnd
-          default={{
-            x: popoverPos.x,
-            y: popoverPos.y,
-            width: 300,
-            height: "auto",
-          }}
-          bounds="window"
-        >
+        <div>
           <div>
             <Popover id="popover-main">
               <Popover.Header as="h3" className="popover-header">
@@ -208,7 +256,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
               </Popover.Body>
             </Popover>
           </div>
-        </Rnd>
+        </div>
       );
     } else {
       const pubs = mainAuthor.publications.filter(
@@ -217,71 +265,87 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           p.authors.includes(mainAuthor.id),
       );
       popoverContent = (
-        <Rnd
-          default={{
-            x: popoverPos.x,
-            y: popoverPos.y,
-            width: 300,
-            height: "auto",
-          }}
-          bounds="window"
-        >
-          <div>
-            <Popover id="popover-coauthor">
-              <Popover.Header as="h3">
-                <a href={`/people/${selectedNode.id}`}>{selectedNode.name}</a>
-              </Popover.Header>
-              <Popover.Body>
-                <span>{` ${t("Publications with")} ${mainAuthor.name}: ${pubs.length}`}</span>
-                <ul>
-                  <ExpandableContent
-                    initialCount={5}
-                    scrollableOnExpand
-                    items={pubs?.slice()?.sort((a: any, b: any) => {
-                      const dateA = new Date(
-                        a.publicationDate?.[0] || 0,
-                      ).getTime();
-                      const dateB = new Date(
-                        b.publicationDate?.[0] || 0,
-                      ).getTime();
-                      return dateB - dateA;
-                    })}
-                    renderItem={(publication: any) => (
-                      <div key={publication.id} className="publication-item">
-                        <a href={`/publications/${publication.id}`}>
-                          {publication.title}
-                        </a>
-                        <div className="publication-meta">
-                          {publication.publicationDate?.[0] && (
-                            <span>{publication.publicationDate[0]}</span>
-                          )}
-                          {publication.type?.[0] && (
-                            <span className="type">
-                              {" "}
-                              - {publication.type[0]}
-                            </span>
-                          )}
-                        </div>
+        <div>
+          <Popover id="popover-coauthor">
+            <Popover.Header as="h3">
+              <a href={`/people/${selectedNode.id}`}>{selectedNode.name}</a>
+            </Popover.Header>
+            <Popover.Body>
+              <span>{` ${t("Publications with")} ${mainAuthor.name}: ${pubs.length}`}</span>
+              <ul>
+                <ExpandableContent
+                  initialCount={3}
+                  scrollableOnExpand
+                  items={pubs?.slice()?.sort((a: any, b: any) => {
+                    const dateA = new Date(
+                      a.publicationDate?.[0] || 0,
+                    ).getTime();
+                    const dateB = new Date(
+                      b.publicationDate?.[0] || 0,
+                    ).getTime();
+                    return dateB - dateA;
+                  })}
+                  renderItem={(publication: any) => (
+                    <div key={publication.id} className="publication-item">
+                      <a href={`/publications/${publication.id}`}>
+                        {publication.title}
+                      </a>
+                      <div className="publication-meta">
+                        {publication.publicationDate?.[0] && (
+                          <span>{publication.publicationDate[0]}</span>
+                        )}
+                        {publication.type?.[0] && (
+                          <span className="type"> - {publication.type[0]}</span>
+                        )}
                       </div>
-                    )}
-                  />
-                </ul>
-              </Popover.Body>
-            </Popover>
-          </div>
-        </Rnd>
+                    </div>
+                  )}
+                />
+              </ul>
+            </Popover.Body>
+          </Popover>
+        </div>
       );
     }
   }
 
   return (
     <div id="coautoria" className="card my-3 p-2">
-      <h3>
-        {t("Co-authorship Network")} - {mainAuthor.name}
+      <h3 className="header-coautoria">
+        <span>
+          {t("Co-authorship Network")} - {mainAuthor.name}
+        </span>
+
+        <div className="header-actions">
+          <span className="action-link" onClick={handleDownload}>
+            <Download size={18} />({t("Download as picture")})
+          </span>
+
+          <div className="graphml-action" onClick={handleDownloadGraphML}>
+            <img src="/images/graphml.svg" alt="GraphML" />
+            <span>{t("GraphML file")}</span>
+          </div>
+        </div>
       </h3>
+
       {/** @ts-ignore */}
       <div ref={chartRef}></div>
-
+      <div
+        className="text-muted mt-2"
+        style={{
+          fontSize: "0.85rem",
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "6px",
+        }}
+      >
+        <Info size={14} style={{ marginTop: "2px", flexShrink: 0 }} />
+        <span>
+          Para melhor visualização, o gráfico apresenta apenas os 50 principais
+          coautores. A rede completa pode ser acessada pela exportação em
+          GraphML, disponível no canto superior direito.
+        </span>
+      </div>
       {selectedNode && (
         <Overlay
           show={!!selectedNode}
@@ -292,13 +356,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           rootClose
           onHide={() => {
             setSelectedNode(null);
-
-            // 🔄 Reset highlight quando popover fecha
-            if (chartRef.current) {
-              const svg = d3.select(chartRef.current).select("svg");
-
-              svg.selectAll("path").style("opacity", 1); // restaura todos
-            }
+            resetGraphStyles();
           }}
         >
           {/** @ts-ignore */}

@@ -21,6 +21,7 @@ const config: CustomSearchDriverOptions = {
       publisher: {},
       researchArea: {},
       issn: {},
+      issn_l: {},
     },
 
     result_fields: {
@@ -39,6 +40,9 @@ const config: CustomSearchDriverOptions = {
       researchArea: {
         raw: {},
       },
+      issn_l: {
+        raw: {},
+      },
     },
     disjunctiveFacets: [],
 
@@ -50,6 +54,8 @@ const config: CustomSearchDriverOptions = {
   },
   autocompleteQuery: {
     results: {
+      // @ts-expect-error Search UI aceita index em runtime
+      index: indexName,
       resultsPerPage: 5,
       search_fields: {
         title_suggest: {
@@ -77,10 +83,12 @@ const config: CustomSearchDriverOptions = {
 const sortOptions: SortOptionsType[] = [
   {
     name: "Relevance",
+    label: "Relevance",
     value: [],
   },
   {
     name: "Title ASC",
+    label: "Title ASC",
     value: [
       {
         field: "title",
@@ -90,6 +98,7 @@ const sortOptions: SortOptionsType[] = [
   },
   {
     name: "Title DESC",
+    label: "Title DESC",
     value: [
       {
         field: "title",

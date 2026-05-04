@@ -8,11 +8,11 @@ const CustomResultViewPublications = ({
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/publications/${result.id.raw}`}>
-        <h3
+        <h2
           dangerouslySetInnerHTML={{
             __html: result.title?.snippet || result.title.raw,
           }}
-        ></h3>
+        ></h2>
         <div className="result-metadata">
           {result.author?.raw && (
             <span>

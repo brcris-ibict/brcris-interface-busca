@@ -21,14 +21,14 @@ const config: CustomSearchDriverOptions = {
       countryCode: {},
     },
     search_fields: {
-      espacenetTitle_text: {},
+      title_text: {},
       "inventor.name_text": {},
     },
     result_fields: {
       id: {
         raw: {},
       },
-      espacenetTitle: {
+      title: {
         snippet: {
           size: 100,
           fallback: true,
@@ -58,7 +58,7 @@ const config: CustomSearchDriverOptions = {
       "publicationDate",
       "depositDate",
       "inventor",
-      "espacenetTitle",
+      "title",
       "inventor.name",
     ],
     facets: {
@@ -70,14 +70,16 @@ const config: CustomSearchDriverOptions = {
   },
   autocompleteQuery: {
     results: {
+      // @ts-expect-error Search UI aceita index em runtime
+      index: indexName,
       resultsPerPage: 5,
       search_fields: {
-        espacenetTitle_suggest: {
+        title_suggest: {
           weight: 3,
         },
       },
       result_fields: {
-        espacenetTitle: {
+        title: {
           snippet: {
             size: 100,
             fallback: true,
@@ -87,7 +89,7 @@ const config: CustomSearchDriverOptions = {
     },
     suggestions: {
       types: {
-        results: { fields: ["espacenetTitle_completion"] },
+        results: { fields: ["title_completion"] },
       },
       size: 5,
     },
@@ -97,10 +99,12 @@ const config: CustomSearchDriverOptions = {
 const sortOptions: SortOptionsType[] = [
   {
     name: "Relevance",
+    label: "Relevance",
     value: [],
   },
   {
     name: "Nome ASC",
+    label: "Nome ASC",
     value: [
       {
         field: "name",
@@ -110,6 +114,7 @@ const sortOptions: SortOptionsType[] = [
   },
   {
     name: "Nome DESC",
+    label: "Nome DESC",
     value: [
       {
         field: "name",

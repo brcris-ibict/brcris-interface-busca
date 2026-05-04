@@ -8,8 +8,8 @@ type OperatorSelectProps = {
 export default function OperatorSelect({ config }: OperatorSelectProps) {
   return (
     <div className="d-flex mt-2 align-items-center">
-      <label htmlFor="operator">
-        <h6 className="card-title text-h6 me-2">Research Operator: </h6>
+      <label htmlFor="operator" className="card-title text-h6 me-2">
+        Research Operator:
       </label>
       <select
         id="operator"

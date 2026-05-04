@@ -12,7 +12,6 @@ export function getIndexStats(
     if (index) {
       proxy(index?.name)
         .then((res) => {
-          console.log("buscando remoto");
           const count = res["docs.count"];
           localStorage.setItem(indexLabel, count);
           setDocsCount(count);

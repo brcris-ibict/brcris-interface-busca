@@ -1,12 +1,11 @@
 /** biome-ignore-all lint/suspicious/useIterableCallbackReturn: <explanation> */
-import type {
-  QueryDslOperator,
-  QueryDslQueryContainer,
-} from "@elastic/elasticsearch/lib/api/types";
+
 import type { Filter, FilterValue } from "@elastic/search-ui";
 import ElasticsearchQueryBuilder from "../../../services/ElasticsearchQueryBuilder";
 import { untranslatedFieldsNames } from "../../SearchSanitization";
 
+type QueryDslOperator = "AND" | "OR";
+type QueryDslQueryContainer = Record<string, any>;
 type QueryProps = {
   size: number;
   indicadorName: string;

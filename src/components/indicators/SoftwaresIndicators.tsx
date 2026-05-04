@@ -40,9 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_SOFTWARE || "";
 
-const optPubDate = new OptionsBar("Software by release year");
-const optknowledgeAreas = new OptionsPie("Software by Funding Institution");
-
 const headersByReleaseYear = [
   { label: "Release year", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -59,18 +56,37 @@ function SoftwaresIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
-
+  const optPubDate = new OptionsBar(t("Software by release year"));
+  const optknowledgeAreas = new OptionsPie(
+    t("Software by Funding Institution"),
+  );
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
-    // tradução
-    optPubDate.plugins.title.text = t(optPubDate.title);
-    optknowledgeAreas.plugins.title.text = t(optknowledgeAreas.title);
+    // Garantir que plugins e title existam antes de usar
+    optPubDate.plugins = {
+      ...optPubDate.plugins,
+      title: {
+        display: true,
+        text: t(optPubDate.title),
+        ...(optPubDate.plugins?.title ?? {}),
+      },
+    };
+
+    optknowledgeAreas.plugins = {
+      ...optknowledgeAreas.plugins,
+      title: {
+        display: true,
+        text: t(optknowledgeAreas.title),
+        ...(optknowledgeAreas.plugins?.title ?? {}),
+      },
+    };
 
     const queries = [
       JSON.stringify(
@@ -79,7 +95,7 @@ function SoftwaresIndicators({
           indicadorName: "releaseYear",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
           order: { _key: "desc" },
         }),
@@ -90,17 +106,18 @@ function SoftwaresIndicators({
           indicadorName: "fundingInstitution",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
     ];
+
     if (isLoading) {
       indicatorProxyService.search(queries, INDEX_NAME).then((data) => {
         setIndicatorsData(data);
       });
     }
-  }, [filters, resultSearchTerm, isLoading]);
+  }, [filters, resultSearchTerm, isLoading, t, fields]);
 
   //  release date
   const releaseYearIndicators: IndicatorType[] = indicators
@@ -141,8 +158,6 @@ function SoftwaresIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optPubDate}
           width="500"
           data={{
@@ -150,7 +165,7 @@ function SoftwaresIndicators({
             datasets: [
               {
                 data: releaseYearIndicators,
-                label: "Articles per Year",
+                label: t("Articles per Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
@@ -172,8 +187,6 @@ function SoftwaresIndicators({
           <Download />
         </CSVLink>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optknowledgeAreas}
           width="500"
           data={{

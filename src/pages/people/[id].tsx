@@ -92,6 +92,15 @@ export default function PublicationDetailsPage() {
         citationName: {
           raw: {},
         },
+        creatorOf: {
+          raw: {},
+        },
+        inventorOf: {
+          raw: {},
+        },
+        brcrisId: {
+          raw: {},
+        },
       },
     },
   };

@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import {
   ArcElement,
@@ -11,14 +10,12 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { Download, Users } from "lucide-react";
+import { Download, GraduationCap, Users } from "lucide-react";
 import { useTranslation } from "next-i18next";
+import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import { CSVLink } from "react-csv";
-import {
-  CHART_BACKGROUD_COLORS,
-  CHART_BORDER_COLORS,
-} from "../../../utils/Utils";
+import { fetchAuthorData } from "../../services/authorHelpers";
 import styles from "../../styles/Indicators.module.css";
 import type { IndicatorType } from "../../types/Entities";
 import { OptionsBar, OptionsPie } from "../indicators/options/ChartsOptions";
@@ -33,8 +30,6 @@ ChartJS.register(
   Legend,
   ArcElement,
 );
-export const options = new OptionsBar("Publicatons by year");
-export const optionsType = new OptionsPie("Publicatons by type");
 
 const headersPublicationsByYear = [
   { label: "Year", key: "key" },
@@ -45,21 +40,18 @@ const headersType = [
   { label: "Type", key: "key" },
   { label: "Quantity", key: "doc_count" },
 ];
-
 function aggregateByField(items: any[], field: string): IndicatorType[] {
   return Object.values(
     items.reduce((acc: any, item: any) => {
-      // pega o valor do campo
       const rawKey = item[field];
-
-      // normaliza: se for array, pega o primeiro valor
       const key = Array.isArray(rawKey) ? rawKey[0] : rawKey;
 
-      if (!key) return acc; // ignora valores nulos ou undefined
+      if (!key) return acc;
 
       if (!acc[key]) {
         acc[key] = { key, doc_count: 0 };
       }
+
       acc[key].doc_count += 1;
       return acc;
     }, {}),
@@ -68,95 +60,233 @@ function aggregateByField(items: any[], field: string): IndicatorType[] {
 
 export default function PersonProduction({
   publications,
+  authorId,
 }: {
-  publications: any[];
+  publications?: any[];
+  authorId: any;
 }) {
   const { t } = useTranslation("common");
-  options.plugins.title.text = t(options.title);
-  optionsType.plugins.title.text = t(optionsType.title);
+  const options = new OptionsBar(t("Publications by year"));
+  const optionsType = new OptionsPie(t("Publications by type"));
+  if (options.plugins?.title) {
+    options.plugins.title.text = t(options.title);
+  }
 
-  const yearIndicators: IndicatorType[] = aggregateByField(
-    publications,
-    "publicationDate",
+  if (optionsType.plugins?.title) {
+    optionsType.plugins.title.text = t(optionsType.title);
+  }
+
+  const TYPE_COLORS: Record<string, string> = {
+    Artigo: "#D9D2FF",
+    "Artigo de Conferência": "#FFD6E7",
+    "Capítulo de Livro": "#CFE7FF",
+    Livro: "#D7F5E3",
+    Dissertação: "#FFF0C2",
+    Tese: "#FFE3C8",
+    "Conjunto de Dados": "#CFF5F6",
+    Preprint: "#E3E7F0",
+  };
+
+  const TYPE_BORDER_COLORS: Record<string, string> = {
+    Artigo: "#B8A9FF",
+    "Artigo de Conferência": "#FF9FC5",
+    "Capítulo de Livro": "#9FD0FF",
+    Livro: "#9FE3C5",
+    Dissertação: "#FFD976",
+    Tese: "#FFC49C",
+    "Conjunto de Dados": "#8EE3E6",
+    Preprint: "#B5C0D6",
+  };
+
+  const publicationTypeMap: Record<string, string> = {
+    Artigo: t("Journal article"),
+    "Artigo de Conferência": t("Conference paper"),
+    "Capítulo de Livro": t("Book chapter"),
+    Livro: t("Book"),
+    Dissertação: t("Dissertation"),
+    Tese: t("Thesis"),
+    "Conjunto de Dados": t("Dataset"),
+    Preprint: t("Preprint"),
+  };
+  const publicationsByYearAndType: Record<string, Record<string, number>> = {};
+
+  publications?.forEach((pub) => {
+    const rawYears = Array.isArray(pub.publicationDate)
+      ? pub.publicationDate
+      : [pub.publicationDate];
+
+    const type = Array.isArray(pub.type) ? pub.type[0] : pub.type;
+
+    if (!type) return;
+
+    rawYears.forEach((y: string | number) => {
+      if (!y) return;
+
+      const year = String(y).trim();
+
+      if (!publicationsByYearAndType[year]) {
+        publicationsByYearAndType[year] = {};
+      }
+
+      if (!publicationsByYearAndType[year][type]) {
+        publicationsByYearAndType[year][type] = 0;
+      }
+
+      publicationsByYearAndType[year][type] += 1;
+    });
+  });
+
+  const years = Object.keys(publicationsByYearAndType).sort(
+    (a, b) => Number(a) - Number(b),
   );
-  const yearLabels =
-    yearIndicators != null ? yearIndicators.map((d) => d.key) : [];
+
+  const allTypes = Array.from(
+    new Set(
+      publications?.map((p) => (Array.isArray(p.type) ? p.type[0] : p.type)),
+    ),
+  );
+
+  const datasets = allTypes.map((type) => ({
+    label: publicationTypeMap[type] || type,
+    data: years.map((year) => publicationsByYearAndType[year]?.[type] || 0),
+    backgroundColor: TYPE_COLORS[type] || "#d9d9d9",
+    borderColor: TYPE_BORDER_COLORS[type] || "#999999",
+    borderWidth: 1,
+  }));
+
   const typeIndicators: IndicatorType[] = aggregateByField(
-    publications,
+    publications
+      ?.filter((p) => p.type)
+      .map((p) => ({
+        ...p,
+        type: Array.isArray(p.type) ? p.type[0] : p.type,
+      })) || [],
     "type",
   );
-  const typeLabels =
-    typeIndicators != null ? typeIndicators.map((d) => d.key) : [];
-  const typeDoc_count =
-    typeIndicators != null ? typeIndicators.map((d) => d.doc_count) : [];
 
-  yearIndicators &&
-    yearIndicators.sort((a, b) => Number(a.key) - Number(b.key));
+  const typeLabels = typeIndicators.map((d) => d.key);
+  const translatedTypeLabels = typeLabels.map(
+    (type) => publicationTypeMap[type] || type,
+  );
+  const typeDoc_count = typeIndicators.map((d) => d.doc_count);
+  const CSVLinkFix = CSVLink as any;
+  // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
+  const [authorData, setAuthorData] = useState<{
+    coauthors: any[];
+    hasCoauthors: boolean;
+    advisees: any[];
+    hasAdvisees: boolean;
+  }>({
+    coauthors: [],
+    hasCoauthors: false,
+    advisees: [],
+    hasAdvisees: false,
+  });
 
+  useEffect(() => {
+    fetchAuthorData(authorId).then(setAuthorData);
+  }, [authorId]);
+  const hasPublications = (publications ?? []).length > 0;
+  const hasNetworks = authorData.hasCoauthors || authorData.hasAdvisees;
+  if (!hasPublications) {
+    return (
+      <div className="indicators">
+        <PopoverButton className="position-absolute" />
+      </div>
+    );
+  }
+  if (!hasNetworks) {
+    return (
+      <div className="indicators">
+        <PopoverButton className="position-absolute" />
+      </div>
+    );
+  }
+
+  const publicationsByLastYear: Record<string, number> = {};
+
+  publications?.forEach((pub) => {
+    if (!pub.publicationDate) return;
+
+    const years = Array.isArray(pub.publicationDate)
+      ? pub.publicationDate.map(Number)
+      : [Number(pub.publicationDate)];
+
+    const lastYear = Math.max(...years).toString();
+
+    if (!publicationsByLastYear[lastYear]) {
+      publicationsByLastYear[lastYear] = 0;
+    }
+
+    publicationsByLastYear[lastYear] += 1;
+  });
   return (
     <div className="indicators">
-      <PopoverButton />
-      <h3>{t("Publication statistics")}</h3>
-      <div className="card p-2 mb-3">
-        <a href="#coautoria">
-          <Users /> {t("Co-authorship Network")}
-        </a>
-      </div>
+      <PopoverButton className="position-absolute" />
+
+      <h3 className="title-indicators">
+        {t("Publication and advising indicators")}
+      </h3>
+      {authorData.hasCoauthors && (
+        <div className="card p-2 mb-3">
+          <a href="#coautoria">
+            <Users /> {t("Co-authorship Network")}
+          </a>
+        </div>
+      )}
+      {authorData.hasAdvisees && (
+        <div className="card p-2 mb-3">
+          <a href="#orientacoes">
+            <GraduationCap /> {t("Advising Network")}
+          </a>
+        </div>
+      )}
+
       <div className={styles.chart}>
-        {/* @ts-ignore */}
-        <CSVLink
+        <CSVLinkFix
           className={styles.download}
           title="Export to csv"
-          data={yearIndicators ? yearIndicators : []}
-          filename={"arquivo.csv"}
+          data={Object.keys(publicationsByLastYear).map((year) => ({
+            key: year,
+            doc_count: publicationsByLastYear[year],
+          }))}
+          filename={"publications_by_year.csv"}
           headers={headersPublicationsByYear}
         >
           <Download />
-        </CSVLink>
+        </CSVLinkFix>
         <Bar
-          /**
-      // @ts-expect-error */
           options={options}
-          width="500"
           data={{
-            labels: yearLabels,
-            datasets: [
-              {
-                data: yearIndicators,
-                label: "Articles per Year",
-                backgroundColor: CHART_BACKGROUD_COLORS,
-                borderColor: CHART_BORDER_COLORS,
-                borderWidth: 1,
-              },
-            ],
+            labels: years,
+            datasets: datasets,
           }}
         />
       </div>
 
       <div className={styles.chart}>
-        {/* @ts-ignore */}
-        <CSVLink
+        <CSVLinkFix
           className={styles.download}
           title={t("Export to csv") || ""}
-          data={typeIndicators ? typeIndicators : []}
-          filename={"arquivo.csv"}
+          data={typeIndicators}
+          filename={"publications_by_type.csv"}
           headers={headersType}
         >
           <Download />
-        </CSVLink>
+        </CSVLinkFix>
         <Pie
-          /**
-      // @ts-expect-error */
           options={optionsType}
-          width="500"
           data={{
-            labels: typeLabels,
+            labels: translatedTypeLabels,
             datasets: [
               {
                 data: typeDoc_count,
-                label: "# of Votes",
-                backgroundColor: CHART_BACKGROUD_COLORS,
-                borderColor: CHART_BORDER_COLORS,
+                backgroundColor: typeLabels.map(
+                  (type) => TYPE_COLORS[type] || "#d9d9d9",
+                ),
+                borderColor: typeLabels.map(
+                  (type) => TYPE_BORDER_COLORS[type] || "#999999",
+                ),
                 borderWidth: 1,
               },
             ],

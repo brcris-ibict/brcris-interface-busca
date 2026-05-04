@@ -7,13 +7,13 @@ const CustomResultViewOrganizations = ({
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/organizations/${result.id.raw}`}>
-        <h3
+        <h2
           dangerouslySetInnerHTML={{
             __html:
               (result.name.snippet || result.name.raw) +
               (result.acronym?.raw ? ` (${result.acronym?.raw})` : ""),
           }}
-        ></h3>
+        ></h2>
         <div className="result-metadata">
           {result.city?.raw && <span>{result.city?.raw}</span>}
           {result.state?.raw && <span>{result.state?.raw}</span>}

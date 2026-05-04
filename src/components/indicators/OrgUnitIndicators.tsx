@@ -40,9 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_ORGUNIT || "";
 
-const options = new OptionsBar("Organizations by country");
-const optionsState = new OptionsBar("Organizations by state");
-
 const headersOrgUnit = [
   { label: "Country", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -58,27 +55,45 @@ function OrgUnitIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
-
+  const options = new OptionsBar(t("Organizations by country"));
+  const optionsState = new OptionsBar(t("Organizations by state"));
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
 
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
     // tradução
-    options.plugins.title.text = t(options.title);
-    optionsState.plugins.title.text = t(optionsState.title);
+    const plugins = {
+      ...options.plugins,
+      title: {
+        display: true,
+        text: t(options.title),
+        ...(options.plugins?.title ?? {}),
+      },
+    };
+    options.plugins = plugins;
 
+    const pluginsState = {
+      ...optionsState.plugins,
+      title: {
+        display: true,
+        text: t(optionsState.title),
+        ...(optionsState.plugins?.title ?? {}),
+      },
+    };
+    optionsState.plugins = pluginsState;
     const countryQuery = JSON.stringify(
       getAggregateQuery({
         size: 10,
         indicadorName: "country",
         searchTerm: resultSearchTerm,
         fields,
-        operator,
+        operator: normalizedOperator,
         filters,
       }),
     );
@@ -88,7 +103,7 @@ function OrgUnitIndicators({
         indicadorName: "state",
         searchTerm: resultSearchTerm,
         fields,
-        operator,
+        operator: normalizedOperator,
         filters,
       }),
     );
@@ -123,8 +138,6 @@ function OrgUnitIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={options}
           width="500"
           data={{
@@ -154,8 +167,6 @@ function OrgUnitIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optionsState}
           width="500"
           data={{

@@ -13,6 +13,7 @@
   "program.name": "Programa",
   "conference.name": "Conferência",
   "inventor.name": "Inventor",
+  "affiliation.name": "Ordenar por Afiliação",
   "depositDate": "Ano de depóstito",
   "kindCode": "Tipo",
   "countryCode": "Código do país",

@@ -40,8 +40,6 @@ ChartJS.register(
 );
 const INDEX_NAME = process.env.INDEX_JOURNAL || "";
 
-const optQualis = new OptionsBar("Journals by qualis");
-
 const headersQualis = [
   { label: "Qualis", key: "key" },
   { label: "Quantity", key: "doc_count" },
@@ -53,17 +51,27 @@ function JornalsIndicators({
   isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
+  const optQualis = new OptionsBar(t("Journals by qualis"));
 
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+  const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
   // @ts-expect-error
   const fields = Object.keys(search_fields);
 
   useEffect(() => {
     // tradução
-    optQualis.plugins.title.text = t(optQualis.title);
+    const plugins = {
+      ...optQualis.plugins,
+      title: {
+        display: true,
+        text: t(optQualis.title),
+        ...(optQualis.plugins?.title ?? {}),
+      },
+    };
+    optQualis.plugins = plugins;
     const queries = [
       JSON.stringify(
         getAggregateQuery({
@@ -71,7 +79,7 @@ function JornalsIndicators({
           indicadorName: "qualis",
           searchTerm: resultSearchTerm,
           fields,
-          operator,
+          operator: normalizedOperator,
           filters,
         }),
       ),
@@ -102,8 +110,6 @@ function JornalsIndicators({
           <Download />
         </CSVLink>
         <Bar
-          /**
-      // @ts-expect-error */
           options={optQualis}
           width="500"
           data={{
@@ -111,7 +117,7 @@ function JornalsIndicators({
             datasets: [
               {
                 data: qualisIndicators,
-                label: "Articles per Year",
+                label: t("Articles per Year"),
                 backgroundColor: CHART_BACKGROUD_COLORS,
                 borderColor: CHART_BORDER_COLORS,
                 borderWidth: 1,
