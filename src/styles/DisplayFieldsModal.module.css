@@ -32,7 +32,7 @@
 }
 
 .selectedItem {
-  background: #e6eefc;
+  background: var(--surface-accent);
   color: var(--text-color);
 }
 
@@ -48,23 +48,23 @@
 }
 
 .availableItem {
-  background: #f3f4f6;
+  background: var(--bg-muted);
   color: var(--text-color);
 }
 
 .iconRemove {
-  color: #e11d48;
+  color: var(--danger-color);
   font-weight: 700;
 }
 
 .iconLock {
-  color: #64748b;
+  color: var(--icon-muted);
   font-size: 0.95rem;
   line-height: 1;
 }
 
 .iconAdd {
-  color: #16a34a;
+  color: var(--success-color);
   font-weight: 700;
 }
 

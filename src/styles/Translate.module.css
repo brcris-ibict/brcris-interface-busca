@@ -16,12 +16,13 @@
 
 .translateBtn.active {
   right: 0;
-  background: #ffffff;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
 }
 
 .translateBtn div:first-child {
   width: 34px;
-  background: #fff;
+  background: var(--bg-card);
   padding: 4px;
   border-radius: 4px 0 0 4px;
 }
@@ -30,8 +31,8 @@
   transition: all ease-in-out 0.2s;
   content: attr(data-tooltip);
   position: absolute;
-  background-color: var(--dark-color);
-  color: white;
+  background-color: var(--tooltip-bg);
+  color: var(--text-on-dark);
   border-radius: 4px;
   transform: translate(-165px, -4px) scale(0.9);
   padding: 8px;

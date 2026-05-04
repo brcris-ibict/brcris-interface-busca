@@ -43,7 +43,7 @@
 }
 
 .br-switch input + label:before {
-  background: #fff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 100em;
   content: "";
@@ -57,7 +57,7 @@
 }
 
 .br-switch input + label:after {
-  background-color: #ccc;
+  background-color: var(--control-knob-bg);
   border-radius: 50%;
   content: "";
   height: 22px;

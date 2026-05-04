@@ -9,5 +9,16 @@
   "Dashboards": "Dashboards",
   "Tools": "Tools",
   "Vision": "Vision",
-  "Data Sources": "Data Sources"
+  "Data Sources": "Data Sources",
+  "Faq": "FAQ",
+  "Theme": "Theme",
+  "System": "System",
+  "Light": "Light",
+  "Dark": "Dark",
+  "Theme mode": "Theme mode",
+  "Theme mode: system": "Theme mode: system",
+  "Theme mode: light": "Theme mode: light",
+  "Theme mode: dark": "Theme mode: dark",
+  "Switch to dark mode": "Switch to dark mode",
+  "Switch to light mode": "Switch to light mode"
 }

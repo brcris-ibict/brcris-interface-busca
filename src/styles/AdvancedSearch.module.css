@@ -17,7 +17,7 @@
 }
 
 .group {
-  border: 1px solid #ccc;
+  border: 1px solid var(--control-border-subtle);
   padding: 0;
   width: 100%;
   margin-right: 8px;
@@ -47,7 +47,7 @@ input.firstInput {
 }
 
 .group select {
-  border-left: 1px solid #ccc;
+  border-left: 1px solid var(--control-border-subtle);
   border-radius: 0 24px 24px 0;
   padding: 4px 8px !important;
   min-width: 12em;
@@ -63,19 +63,19 @@ input.firstInput {
 
 .op {
   border: 0 !important;
-  border-right: 1px solid #ccc !important;
+  border-right: 1px solid var(--control-border-subtle) !important;
   min-width: 7em !important;
   border-radius: 24px 0 0 24px !important;
 }
 
 .group select.op:focus {
-  border-right: 1px solid #ccc !important;
+  border-right: 1px solid var(--control-border-subtle) !important;
 }
 
 .help {
   align-items: center;
   justify-content: center;
-  color: var(--link-color);
+  color: var(--bs-link-color);
   width: 24px;
   height: 24px;
   display: flex;

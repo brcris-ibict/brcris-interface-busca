@@ -9,5 +9,16 @@
   "Dashboards": "Painéis de Indicadores",
   "Tools": "Ferramentas",
   "Vision": "Visão",
-  "Data Sources": "Fontes de Dados"
+  "Data Sources": "Fontes de Dados",
+  "Faq": "FAQ",
+  "Theme": "Tema",
+  "System": "Sistema",
+  "Light": "Claro",
+  "Dark": "Escuro",
+  "Theme mode": "Modo de tema",
+  "Theme mode: system": "Modo de tema: sistema",
+  "Theme mode: light": "Modo de tema: claro",
+  "Theme mode: dark": "Modo de tema: escuro",
+  "Switch to dark mode": "Ativar modo escuro",
+  "Switch to light mode": "Ativar modo claro"
 }

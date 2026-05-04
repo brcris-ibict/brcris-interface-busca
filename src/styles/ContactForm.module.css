@@ -1,5 +1,5 @@
 .contact {
-  color: var(--dark-color);
+  color: var(--text-color);
 }
 .contactUs {
   display: flex;
@@ -7,7 +7,7 @@
 }
 
 .contactUs h5 {
-  border-bottom: 2px solid #960080;
+  border-bottom: 2px solid var(--contact-accent);
   padding-bottom: 0.5rem;
 }
 
@@ -19,10 +19,11 @@
 .form {
   width: 100%;
   max-width: 700px;
-  background: #fff;
+  background: var(--bg-card);
+  color: var(--text-color);
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px var(--shadow-color);
 }
 
 .title {
@@ -31,7 +32,9 @@
 }
 
 .dropzone {
-  border: 2px dashed #ccc;
+  border: 2px dashed var(--control-border-subtle);
+  background: var(--bg-card);
+  color: var(--text-color);
   padding: 25px;
   text-align: center;
   border-radius: 8px;
@@ -41,7 +44,7 @@
 }
 
 .dropzone:hover {
-  border-color: #007bff;
+  border-color: var(--brand-accent);
 }
 
 .fileList {

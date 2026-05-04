@@ -370,7 +370,8 @@ export default function Search({ index }: SearchProps) {
         onClick={() => setIsFluid(!isFluid)}
         style={{
           border: "1px solid var(--border-color)",
-          background: "#fff",
+          background: "var(--bg-card)",
+          color: "var(--text-color)",
           float: "right",
         }}
         aria-label="Toggle container width"

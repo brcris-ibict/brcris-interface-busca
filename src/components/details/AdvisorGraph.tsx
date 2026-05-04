@@ -104,7 +104,7 @@ function AdvisingGraph({
       .attr("viewBox", [0, 0, width, height])
       .attr(
         "style",
-        "width:100%; height:auto; background:white; font-family:sans-serif; display:block; margin:auto;",
+        "width:100%; height:auto; background:var(--bg-card); color:var(--text-color); font-family:sans-serif; display:block; margin:auto;",
       );
 
     svg.selectAll("*").remove();
@@ -117,7 +117,7 @@ function AdvisingGraph({
       .append("text")
       .attr("x", -50)
       .attr("y", 5)
-      .attr("fill", "#1f2937")
+      .attr("fill", "var(--text-color)")
       .attr("font-size", 20)
       .attr("font-weight", "600")
       .attr("text-anchor", "start")
