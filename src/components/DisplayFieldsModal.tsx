@@ -40,7 +40,7 @@ const DisplayFieldsModal = ({
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title>{t("Personalize display")}</Modal.Title>
+        <Modal.Title>{t("Customize view")}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className={styles.columns}>

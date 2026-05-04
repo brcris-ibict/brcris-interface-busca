@@ -57,7 +57,7 @@ function Footer() {
               height="24"
               rx="4"
               fill="white"
-              fill-opacity="0"
+              fillOpacity="0"
             ></rect>
             <path
               d="M6 6L11 13L6.5 18H8.2L11.8 14.2L14.8 18H18L12.9 11L17 6H15.3L12 9.6L9.3 6H6Z"
@@ -102,7 +102,7 @@ function Footer() {
               height="24"
               rx="4"
               fill="white"
-              fill-opacity="0"
+              fillOpacity="0"
             ></rect>
 
             <path

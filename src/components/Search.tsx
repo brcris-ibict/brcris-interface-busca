@@ -783,7 +783,7 @@ export default function Search({ index }: SearchProps) {
                                           }
                                         >
                                           <Eye size={16} />
-                                          {t("Personalize display")}
+                                          {t("Customize view")}
                                         </button>
                                       )}
                                       {/** biome-ignore lint/a11y/useSemanticElements: <explanation> */}
