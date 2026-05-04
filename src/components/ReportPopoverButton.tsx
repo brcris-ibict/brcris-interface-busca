@@ -44,7 +44,7 @@ export default function ReportPopoverButton({
           <Popover.Body>
             <p>{t("Found an error or outdated information on this page?")}</p>
 
-            <a href="/contact" className="report-popover-link">
+            <a href="/report" className="report-popover-link">
               {t("Submit correction")}
             </a>
           </Popover.Body>
