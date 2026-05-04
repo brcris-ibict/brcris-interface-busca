@@ -1526,7 +1526,7 @@ h3.popover-header a {
 }
 .page-search .sui-layout-header {
   position: relative;
-  z-index: 1000;
+  z-index: 99;
 }
 @media (max-width: 800px) {
   .nav .nav-item {
@@ -1588,7 +1588,7 @@ h3.popover-header a {
   }
 
   .page-search .sui-layout-sidebar {
-    width: 100%;
+    width: 50%;
     padding: 16px;
   }
 
@@ -1696,5 +1696,12 @@ h3.popover-header a {
   .action-link,
   .graphml-action {
     font-size: 14px;
+  }
+
+  .toggled {
+    display: block !important;
+    z-index: 999 !important;
+    background-color: var(--bg);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
   }
 }

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+/** biome-ignore-all lint/correctness/useHookAtTopLevel: ok */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: explanation */
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: explanation */
 
@@ -295,6 +296,7 @@ export default function Search({ index }: SearchProps) {
   const [displayFields, setDisplayFields] = useState<string[]>(
     mergeWithFixedFields(getDefaultDisplayFields(entityKey)),
   );
+  const [toggled, setToggled] = useState(false);
 
   const selectedTableColumns = useMemo(() => {
     if (!displayFieldsConfig) return [];
@@ -394,7 +396,6 @@ export default function Search({ index }: SearchProps) {
             setSort,
             sort,
           }) => {
-            // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
             useEffect(() => {
               if (!wasSearched) return;
 
@@ -489,16 +490,26 @@ export default function Search({ index }: SearchProps) {
                                           : styles.indicatorsHidden
                                       }`}
                                     >
-                                      <div
-                                        className={`sui-layout-sidebar ${
-                                          showFilters
-                                            ? ""
-                                            : styles.filtersHidden
-                                        }`}
+                                      <button
+                                        type="button"
+                                        hidden
+                                        className="sui-layout-sidebar-toggle"
+                                        onClick={() => setToggled(true)}
                                       >
-                                        {/* <div className="filters">
-                                          <span className="sui-sorting__label">{t('Filters')}</span>
-                                        </div> */}
+                                        {t("Filters")}
+                                      </button>
+                                      <div
+                                        className={`sui-layout-sidebar ${showFilters ? "" : styles.filtersHidden} ${toggled ? "toggled" : ""}`}
+                                      >
+                                        <button
+                                          hidden
+                                          type="button"
+                                          className="sui-layout-sidebar-toggle"
+                                          onClick={() => setToggled(false)}
+                                        >
+                                          {t("Close filters")}
+                                        </button>
+
                                         {Object.keys(
                                           index.config.searchQuery.facets!,
                                         ).map((facet, i) => (
