@@ -26,7 +26,7 @@ export default function OrganizationsDashboard() {
             <div className="page-title">
               <h1>{t("Organizations dashboard")}</h1>
             </div>
-            <Iframe url="https://dashboardbrcris.ibict.br/app/dashboards#/view/9d0006cc-d845-4dc1-bdd4-0f6dfb34e0be?embed=true&amp;_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))" />
+            <Iframe url="https://dashboardbrcris.ibict.br/app/dashboards#/view/ab5c4fb7-532f-46d2-b051-67ed6e4c2542?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))" />
           </div>
         </div>
       </div>
