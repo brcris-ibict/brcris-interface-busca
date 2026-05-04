@@ -2,16 +2,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: explanation */
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: explanation */
 
-import {
-  ErrorBoundary,
-  Facet,
-  Paging,
-  PagingInfo,
-  Results,
-  ResultsPerPage,
-  Sorting,
-  WithSearch,
-} from "@elastic/react-search-ui";
+import * as reactSearchUi from "@elastic/react-search-ui";
 import { Layout } from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import { Eye, List, Maximize2, Minimize2, Table2 } from "lucide-react";
@@ -387,7 +378,7 @@ export default function Search({ index }: SearchProps) {
         {isFluid ? <Minimize2 /> : <Maximize2 size={20} />}
       </button>
       <div className={`${isFluid ? "container-fluid" : "container"}`}>
-        <WithSearch
+        <reactSearchUi.WithSearch
           mapContextToProps={({
             wasSearched,
             results,
@@ -464,7 +455,7 @@ export default function Search({ index }: SearchProps) {
                           />
                         }
                         bodyContent={
-                          <ErrorBoundary
+                          <reactSearchUi.ErrorBoundary
                             className={styles.searchError}
                             view={({ className, error }) => (
                               <>
@@ -511,7 +502,7 @@ export default function Search({ index }: SearchProps) {
                                         {Object.keys(
                                           index.config.searchQuery.facets!,
                                         ).map((facet, i) => (
-                                          <Facet
+                                          <reactSearchUi.Facet
                                             className={`facet-${facet}`}
                                             key={i}
                                             field={facet}
@@ -523,12 +514,12 @@ export default function Search({ index }: SearchProps) {
                                       </div>
                                       <div className="result">
                                         <div className={styles.resultsInfo}>
-                                          <PagingInfo
+                                          <reactSearchUi.PagingInfo
                                             view={CustomViewPagingInfo}
                                           />
                                         </div>
                                         {viewMode === "list" ? (
-                                          <Results
+                                          <reactSearchUi.Results
                                             resultView={index.customView}
                                           />
                                         ) : (
@@ -718,17 +709,19 @@ export default function Search({ index }: SearchProps) {
                                             </table>
                                           </div>
                                         )}
-                                        <Paging />
+                                        <reactSearchUi.Paging />
                                       </div>
                                       {showIndicators && <index.indicators />}
                                     </div>
                                   )}
                               </>
                             )}
-                          ></ErrorBoundary>
+                          ></reactSearchUi.ErrorBoundary>
                         }
                         bodyHeader={
-                          <ErrorBoundary className={styles.searchErrorHidden}>
+                          <reactSearchUi.ErrorBoundary
+                            className={styles.searchErrorHidden}
+                          >
                             {containsResults(wasSearched, results) && (
                               <div className={styles.toolbarWrap}>
                                 <div className={styles.toolbar}>
@@ -822,7 +815,7 @@ export default function Search({ index }: SearchProps) {
                                       <div
                                         className={`${styles.toolbarControl} ${styles.toolbarControlShow}`}
                                       >
-                                        <ResultsPerPage
+                                        <reactSearchUi.ResultsPerPage
                                           options={[10, 20, 50]}
                                           view={ResultsPerPageSelectView}
                                         />
@@ -833,7 +826,7 @@ export default function Search({ index }: SearchProps) {
                                         />
                                       </div>{" "}
                                       <div className={styles.toolbarControl}>
-                                        <Sorting
+                                        <reactSearchUi.Sorting
                                           label=""
                                           sortOptions={index.sortOptions}
                                           view={SortingSelectView}
@@ -844,7 +837,7 @@ export default function Search({ index }: SearchProps) {
                                 </div>
                               </div>
                             )}
-                          </ErrorBoundary>
+                          </reactSearchUi.ErrorBoundary>
                         }
                         // bodyFooter={}
                       />
@@ -854,7 +847,7 @@ export default function Search({ index }: SearchProps) {
               </div>
             );
           }}
-        </WithSearch>
+        </reactSearchUi.WithSearch>
       </div>
       {displayFieldsConfig && (
         <DisplayFieldsModal

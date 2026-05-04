@@ -155,9 +155,9 @@ export default function PeopleDetails() {
                         <CopyLink
                           link={`${location.origin}/people/${result.id.raw}`}
                         />
-                        <ReportPopoverButton />
                       </div>
                     )}
+                    <ReportPopoverButton />
                   </div>
                   <div className="details-card">
                     <div>

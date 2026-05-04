@@ -28,7 +28,7 @@ export default function ReportPopoverButton({
         aria-label={t("Report inconsistency")}
         title={t("Report inconsistency")}
       >
-        <AlertTriangle size={18} />
+        <AlertTriangle size={20} />
       </button>
 
       <Overlay
