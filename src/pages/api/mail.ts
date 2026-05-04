@@ -27,18 +27,19 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try {
+      const url = Array.isArray(fields.url) ? fields.url[0] : fields.url;
       const name = Array.isArray(fields.name) ? fields.name[0] : fields.name;
       const email = Array.isArray(fields.email)
         ? fields.email[0]
         : fields.email;
-      const message = Array.isArray(fields.message)
-        ? fields.message[0]
-        : fields.message;
+      const description = Array.isArray(fields.description)
+        ? fields.description[0]
+        : fields.description;
       const captcha = Array.isArray(fields.captcha)
         ? fields.captcha[0]
         : fields.captcha;
 
-      if (!name || !email || !message || !captcha) {
+      if (!url || !name || !email || !description || !captcha) {
         return res.status(400).json({
           message: "Campos obrigatórios não preenchidos",
         });
@@ -56,8 +57,14 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       const recipient = process.env.MAIL_RECIPIENT;
       if (!recipient) throw new Error("MAIL_RECIPIENT não definido");
 
-      const subject = `Message from ${name}`;
-      const text = `${message} | Sent from: ${email}`;
+      const subject = `Erro reportado por ${name}`;
+
+      const text = `
+URL: ${url}
+Nome: ${name}
+Email: ${email}
+Descrição: ${description}
+      `;
 
       const attachments: any[] = [];
       let imageHtml = "";
@@ -67,7 +74,6 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
 
         fileList.forEach((file: any, index: number) => {
           const fileBuffer = fs.readFileSync(file.filepath);
-
           const cid = `img${index}@brcris`;
 
           attachments.push({
@@ -78,18 +84,27 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
           });
 
           imageHtml += `
-      <br/>
-      <img src="cid:${cid}" style="max-width:400px;border-radius:8px;" />
-    `;
+            <br/>
+            <img src="cid:${cid}" style="max-width:400px;border-radius:8px;" />
+          `;
         });
       }
+
       const html = `
         <div style="font-family: Arial, sans-serif;">
-          <p>${message}</p>
-          <p><strong>Sent from:</strong> ${email}</p>
+          <h3>Erro reportado</h3>
+
+          <p><strong>URL:</strong> ${url}</p>
+          <p><strong>Nome:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+
+          <p><strong>Descrição:</strong></p>
+          <p>${description}</p>
+
           ${imageHtml}
         </div>
       `;
+
       console.log("FILES RECEBIDOS:", files);
       console.log("ENVIANDO EMAIL...");
       console.log("TEM ANEXO:", attachments.length > 0);

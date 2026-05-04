@@ -10,9 +10,10 @@ import Loader from "./Loader";
 function ContactForm() {
   const { t } = useTranslation("common");
 
+  const [url, setUrl] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [description, setDescription] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [captchaCode, setCaptchaCode] = useState("");
@@ -23,7 +24,6 @@ function ContactForm() {
     keepAfterRouteChange: false,
   };
 
-  // 🔥 DROPZONE
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
       setFiles((prev) => [...prev, ...acceptedFiles]);
@@ -32,18 +32,24 @@ function ContactForm() {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
+
     if (!captchaCode) return;
+
+    if (!url.startsWith("http")) {
+      alertService.error("Informe uma URL válida", options);
+      return;
+    }
 
     try {
       setLoading(true);
 
       const formData = new FormData();
+      formData.append("url", url);
       formData.append("name", name);
       formData.append("email", email);
-      formData.append("message", message);
+      formData.append("description", description);
       formData.append("captcha", captchaCode);
 
-      // 📎 múltiplos arquivos
       files.forEach((file) => {
         formData.append("file", file);
       });
@@ -54,10 +60,12 @@ function ContactForm() {
       });
 
       if (response.status === 200) {
+        setUrl("");
         setName("");
         setEmail("");
-        setMessage("");
+        setDescription("");
         setFiles([]);
+
         alertService.success(t("Mail sent success"), options);
       } else {
         alertService.error(t("Mail sent error"), options);
@@ -76,9 +84,17 @@ function ContactForm() {
       {isLoading && <Loader />}
 
       <form onSubmit={handleSubmit} className={style.form}>
-        <h2 className={style.title}>Contact Support</h2>
+        <h2 className={style.title}>{t("Report inconsistency")}</h2>
 
-        {/* NAME */}
+        <input
+          className="form-control"
+          type="url"
+          placeholder="URL"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          required
+        />
+
         <input
           className="form-control"
           type="text"
@@ -88,7 +104,6 @@ function ContactForm() {
           required
         />
 
-        {/* EMAIL */}
         <input
           className="form-control"
           type="email"
@@ -98,13 +113,12 @@ function ContactForm() {
           required
         />
 
-        {/* MESSAGE */}
         <textarea
           className="form-control"
           rows={6}
-          placeholder={t("Message")}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Descrição do erro"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           required
         />
 
@@ -133,7 +147,7 @@ function ContactForm() {
           />
 
           <button
-            disabled={!(captchaCode && name && email && message)}
+            disabled={!(captchaCode && url && name && email && description)}
             className="btn btn-primary"
             type="submit"
           >
