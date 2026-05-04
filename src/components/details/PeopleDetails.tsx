@@ -91,8 +91,22 @@ export default function PeopleDetails() {
     "Conjunto de Dados": t("Dataset"),
     Preprint: t("Preprint"),
   };
+
+  const title = results?.[0]?.name?.raw || t("Person");
+
+  const rawDescription = results?.[0]?.bio?.raw?.[0] || "";
+  const stripHtml = (html: string) => html.replace(/<[^>]+>/g, "");
+  const clean = stripHtml(rawDescription);
+  const description =
+    clean.length > 150
+      ? `${clean.slice(0, 150).replace(/\s+\S*$/, "")}...`
+      : clean;
   return (
     <>
+      <Head>
+        <title>{title} | BrCris</title>
+        <meta name="description" content={description} />
+      </Head>
       {isLoading && <Loader />}
       <ErrorBoundary>
         {wasSearched &&
