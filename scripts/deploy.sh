@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+echo "export NODE_OPTIONS=--dns-result-order=ipv4first"
+export NODE_OPTIONS=--dns-result-order=ipv4first
 echo "Node version"
 node -v
 echo "Running yarn install"
