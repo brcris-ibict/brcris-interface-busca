@@ -7,6 +7,7 @@ import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
+import ReportPopoverButton from "../ReportPopoverButton";
 
 export default function CourseDetails() {
   const { wasSearched, isLoading, results } = useSearch();
@@ -41,6 +42,7 @@ export default function CourseDetails() {
                       <CopyLink
                         link={`${location.origin}/courses/${result.id.raw}`}
                       />
+                      <ReportPopoverButton />
                     </div>
                   )}
                 </div>

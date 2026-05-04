@@ -7,6 +7,7 @@ import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
+import ReportPopoverButton from "../ReportPopoverButton";
 
 export default function GroupDetails() {
   const { wasSearched, isLoading, results } = useSearch();
@@ -40,6 +41,7 @@ export default function GroupDetails() {
                       <CopyLink
                         link={`${location.origin}/research-groups/${result.id.raw}`}
                       />
+                      <ReportPopoverButton />
                     </div>
                   )}
                 </div>

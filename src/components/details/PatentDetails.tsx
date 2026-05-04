@@ -7,6 +7,7 @@ import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
+import ReportPopoverButton from "../ReportPopoverButton";
 
 export default function PatentDetails() {
   const { wasSearched, isLoading, results } = useSearch();
@@ -43,6 +44,7 @@ export default function PatentDetails() {
                         <CopyLink
                           link={`${location.origin}/patents/${result.id.raw}`}
                         />
+                        <ReportPopoverButton />
                       </div>
                     )}
                   </div>

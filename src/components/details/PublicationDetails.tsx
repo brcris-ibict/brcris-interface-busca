@@ -12,6 +12,7 @@ import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
 import PopoverButton from "../PopOver";
+import ReportPopoverButton from "../ReportPopoverButton";
 export default function PublicationDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
@@ -94,6 +95,7 @@ export default function PublicationDetails() {
                         <CopyLink
                           link={`${location.origin}/publications/${result.id.raw}`}
                         />
+                        <ReportPopoverButton />
                       </div>
                     )}
                   </div>

@@ -9,6 +9,7 @@ import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
 import PopoverButton from "../PopOver";
+import ReportPopoverButton from "../ReportPopoverButton";
 
 const membersCsvHeaders = [
   { label: "Nome", key: "name" },
@@ -66,6 +67,7 @@ export default function OrganizationDetails() {
                         <CopyLink
                           link={`${location.origin}/organizations/${result.id.raw}`}
                         />
+                        <ReportPopoverButton />
                       </div>
                     )}
                   </div>

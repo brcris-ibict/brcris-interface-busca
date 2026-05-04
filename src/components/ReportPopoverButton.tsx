@@ -25,8 +25,8 @@ export default function ReportPopoverButton({
         type="button"
         onClick={handleClick}
         className={`${className} report-popover-btn`}
-        aria-label={t("Report a problem")}
-        title={t("Report a problem")}
+        aria-label={t("Report inconsistency")}
+        title={t("Report inconsistency")}
       >
         <AlertTriangle size={18} />
       </button>
@@ -38,17 +38,15 @@ export default function ReportPopoverButton({
         rootClose
         onHide={() => setShow(false)}
       >
-        <Popover id="popover-report" className="report-popover">
-          <Popover.Header as="h3" className="report-popover-header">
-            {t("Report a problem")}
-          </Popover.Header>
-          <Popover.Body className="report-popover-body">
-            {t("Found an issue?")}
-            <p>
-              <a href="/contact" className="report-popover-link">
-                {t("Click here to report")}
-              </a>
-            </p>
+        <Popover id="popover-report">
+          <Popover.Header as="h3">{t("Report inconsistency")}</Popover.Header>
+
+          <Popover.Body>
+            <p>{t("Found an error or outdated information on this page?")}</p>
+
+            <a href="/contact" className="report-popover-link">
+              {t("Submit correction")}
+            </a>
           </Popover.Body>
         </Popover>
       </Overlay>

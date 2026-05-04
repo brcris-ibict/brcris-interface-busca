@@ -10,6 +10,7 @@ import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
 import PopoverButton from "../PopOver";
+import ReportPopoverButton from "../ReportPopoverButton";
 
 const journalCsvHeaders = [
   { label: "Título", key: "title" },
@@ -82,6 +83,7 @@ export default function JournalDetails() {
                       <CopyLink
                         link={`${location.origin}/journals/${result.id.raw}`}
                       />
+                      <ReportPopoverButton />
                     </div>
                   )}
                 </div>
