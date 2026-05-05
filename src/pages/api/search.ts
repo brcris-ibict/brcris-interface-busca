@@ -23,6 +23,7 @@ function builConnector(index: string) {
           searchTerm,
           Object.keys(searchFields),
         ) as estypes.QueryDslQueryContainer;
+        console.log("fullQuery", JSON.stringify(fullQuery));
         requestBody.query = fullQuery;
       }
 
