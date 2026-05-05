@@ -16,7 +16,7 @@ import PopoverButton from "../PopOver";
 import ReportPopoverButton from "../ReportPopoverButton";
 export default function PublicationDetails() {
   const { t } = useTranslation("common");
-  const { isLoading, results, error } = useSearch();
+  const { isLoading, results } = useSearch();
   const result = results?.[0];
 
   const citationTitle = _normalizeScientificTitle(
