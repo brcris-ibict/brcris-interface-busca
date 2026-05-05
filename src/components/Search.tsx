@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+/** biome-ignore-all lint/a11y/useSemanticElements: <explanation> */
 /** biome-ignore-all lint/correctness/useHookAtTopLevel: ok */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: explanation */
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: explanation */
@@ -11,7 +12,6 @@ import { Eye, List, Maximize2, Minimize2, Table2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Select from "react-select";
 import {
   containsResults,
   getNumericLattesId,
@@ -30,115 +30,23 @@ import { DisplayFieldsProvider } from "./customResultView/DisplayFieldsContext";
 import DisplayFieldsModal from "./DisplayFieldsModal";
 import DownloadModal from "./DownloadModal";
 import Loader from "./Loader";
+import ResultsPerPageSelectView from "./search/ResultsPerPageSelectView";
+import SortingSelectView from "./search/SortingSelectView";
+import type { ViewMode } from "./search/types";
+import {
+  getFieldTextValue,
+  getResultTitle,
+  type SearchResultRecord,
+  stringifyValue,
+} from "./search/utils";
 
 export type SearchProps = {
   index: Index;
 };
 
-type SortingOption = {
-  value: string;
-  label: string;
-};
-
-type SortingViewProps = {
-  className?: string;
-  onChange: (sortData?: any) => void;
-  options: SortingOption[];
-  value: string;
-};
-
-type ResultsPerPageViewProps = {
-  className?: string;
-  onChange: (value: number) => void;
-  options: number[];
-  value: number;
-};
-
-type ViewMode = "list" | "table";
-
-type SearchFieldValue = {
-  raw?: unknown;
-  snippet?: string;
-};
-
-type SearchResultRecord = Record<string, SearchFieldValue | undefined>;
-
-const sortingSelectStyles = {
-  option: () => ({}),
-  control: () => ({}),
-  dropdownIndicator: () => ({}),
-  indicatorSeparator: () => ({}),
-  menuPortal: (base: Record<string, unknown>) => ({
-    ...base,
-    zIndex: 9999,
-  }),
-  menu: (base: Record<string, unknown>) => ({
-    ...base,
-    zIndex: 9999,
-  }),
-};
-
-const stripHtmlTags = (value: string) => value.replace(/<[^>]+>/g, "").trim();
-
-const stringifyValue = (value: unknown): string => {
-  if (value === null || value === undefined) return "";
-  if (typeof value === "string") return value;
-  if (typeof value === "number" || typeof value === "boolean") {
-    return String(value);
-  }
-  if (Array.isArray(value)) {
-    return value
-      .map((item) => stringifyValue(item))
-      .filter(Boolean)
-      .join(", ");
-  }
-  if (typeof value === "object") {
-    const record = value as Record<string, unknown>;
-    const preferredKeys = ["name", "title", "label", "acronym"];
-
-    for (const key of preferredKeys) {
-      const preferredText = stringifyValue(record[key]);
-      if (preferredText) return preferredText;
-    }
-
-    const nestedRaw = (record as { raw?: unknown }).raw;
-    if (nestedRaw !== undefined) return stringifyValue(nestedRaw);
-
-    const idValue = record.id;
-    if (typeof idValue === "string" || typeof idValue === "number") {
-      return String(idValue);
-    }
-  }
-  return "";
-};
-
-const getFieldTextValue = (result: SearchResultRecord, key: string) => {
-  const fieldValue = result[key];
-  if (!fieldValue) return "-";
-
-  if (typeof fieldValue.snippet === "string" && fieldValue.snippet.trim()) {
-    const snippetText = stripHtmlTags(fieldValue.snippet);
-    if (snippetText) return snippetText;
-  }
-
-  const rawText = stringifyValue(fieldValue.raw);
-  return rawText || "-";
-};
-
-const getResultTitle = (result: SearchResultRecord) => {
-  const preferredKeys = ["title", "name", "acronym", "id"];
-  for (const key of preferredKeys) {
-    const value = getFieldTextValue(result, key);
-    if (value && value !== "-") {
-      return value;
-    }
-  }
-  return "-";
-};
-
 export default function Search({ index }: SearchProps) {
   const { t } = useTranslation(["common", "facets"]);
-  const translateSortLabel = (label: string, t: any) => {
+  const translateSortLabel = (label: string) => {
     switch (label) {
       case "Relevance":
         return t("Relevance");
@@ -166,7 +74,6 @@ export default function Search({ index }: SearchProps) {
     }
   };
   useEffect(() => {
-    console.log("MOUNTED");
     const interval = setInterval(() => {
       const buttons = document.querySelectorAll(".sui-facet-view-more");
 
@@ -203,82 +110,6 @@ export default function Search({ index }: SearchProps) {
       Array.from(new Set([...fixedDisplayFields, ...fields])),
     [fixedDisplayFields],
   );
-
-  const SortingSelectView = ({
-    className,
-    onChange,
-    options,
-    value,
-  }: SortingViewProps) => {
-    const defaultOption = options[0];
-    const placeholderOption = { value: "__default__", label: t("Sort by") };
-    const nextOptions = [
-      placeholderOption,
-      ...options.map((opt) => {
-        console.log("SORT OPTION:", opt);
-
-        return {
-          ...opt,
-          label: translateSortLabel(opt.label, t),
-        };
-      }),
-    ];
-    const selected =
-      nextOptions.find((opt) => opt.value === value) ||
-      nextOptions.find((opt) => opt.value === "[]");
-
-    return (
-      <div className={`sui-sorting ${className ?? ""}`.trim()}>
-        <Select
-          className="sui-select"
-          classNamePrefix="sui-select"
-          value={selected}
-          onChange={(option) => {
-            if (!option) return;
-            if (option.value === "__default__") {
-              onChange(defaultOption?.value);
-              return;
-            }
-            onChange(option.value);
-          }}
-          options={nextOptions}
-          isSearchable={false}
-          styles={sortingSelectStyles}
-          placeholder={t("Sort by")}
-          menuPortalTarget={
-            typeof window !== "undefined" ? document.body : undefined
-          }
-        />
-      </div>
-    );
-  };
-
-  const ResultsPerPageSelectView = ({
-    className,
-    onChange,
-    options,
-    value,
-  }: ResultsPerPageViewProps) => {
-    return (
-      <div
-        className={`${styles.resultsPerPageControl} ${className ?? ""}`.trim()}
-      >
-        <span className={styles.resultsPerPageLabel}>{t("Show")}</span>
-        <select
-          className={styles.resultsPerPageSelect}
-          value={String(value)}
-          onChange={(event) => onChange(Number(event.target.value))}
-          aria-label={t("Show")}
-        >
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </div>
-    );
-  };
 
   const handleSelectIndex = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -376,8 +207,6 @@ export default function Search({ index }: SearchProps) {
     isLoading,
     setSearchTerm,
     resultSearchTerm,
-    setSort,
-    sort,
     error,
   } = useSearch();
 
@@ -396,7 +225,7 @@ export default function Search({ index }: SearchProps) {
               onClick={() => setIsFluid(!isFluid)}
               style={{
                 border: "1px solid var(--border-color)",
-                background: "#fff",
+                background: "transparent",
                 float: "right",
               }}
               aria-label="Toggle container width"
@@ -451,7 +280,7 @@ export default function Search({ index }: SearchProps) {
                           <div className={styles.toolbar}>
                             {
                               <>
-                                {displayFieldsConfig && (
+                                {/*{displayFieldsConfig && (
                                   <button
                                     type="button"
                                     className={styles.displayButton}
@@ -460,8 +289,7 @@ export default function Search({ index }: SearchProps) {
                                     <Eye size={16} />
                                     {t("Customize view")}
                                   </button>
-                                )}
-                                {/** biome-ignore lint/a11y/useSemanticElements: <explanation> */}
+                                )}*/}
                                 <div
                                   className={styles.viewModeToggle}
                                   role="group"
@@ -499,7 +327,15 @@ export default function Search({ index }: SearchProps) {
                                 >
                                   <reactSearchUi.ResultsPerPage
                                     options={[10, 20, 50]}
-                                    view={ResultsPerPageSelectView}
+                                    view={(props) => (
+                                      <ResultsPerPageSelectView
+                                        className={props.className}
+                                        onChange={props.onChange}
+                                        options={props.options ?? [10, 20, 50]}
+                                        value={props.value ?? 10}
+                                        showLabel={t("Show")}
+                                      />
+                                    )}
                                   />
                                 </div>
                                 <div className={styles.toolbarControl}>
@@ -511,7 +347,13 @@ export default function Search({ index }: SearchProps) {
                                   <reactSearchUi.Sorting
                                     label=""
                                     sortOptions={index.sortOptions}
-                                    view={SortingSelectView}
+                                    view={(props) => (
+                                      <SortingSelectView
+                                        {...props}
+                                        translateSortLabel={translateSortLabel}
+                                        placeholder={t("Sort by")}
+                                      />
+                                    )}
                                   />
                                 </div>
                               </>
@@ -543,9 +385,7 @@ export default function Search({ index }: SearchProps) {
                   bodyContent={
                     <>
                       {error && (
-                        <p className={`sui-search-error ${className}`}>
-                          {t(error.trim())}
-                        </p>
+                        <p className="sui-search-error">{t(error.trim())}</p>
                       )}
                       {!error &&
                         wasSearched &&
@@ -624,28 +464,34 @@ export default function Search({ index }: SearchProps) {
                                       >
                                         {primaryColumnLabel}
                                       </th>
-                                      {selectedTableColumns.map((field) => (
-                                        <th
-                                          key={field.key}
-                                          className={
-                                            entityKey === "people" &&
-                                            field.key === "memberOf"
-                                              ? styles.peopleGroupsColumn
-                                              : entityKey ===
-                                                    "research-groups" &&
-                                                  field.key ===
-                                                    "leaderResearcher"
-                                                ? styles.researchGroupsLeaderColumn
+                                      {selectedTableColumns.map(
+                                        (field: {
+                                          key: string;
+                                          label: string;
+                                        }) => (
+                                          <th
+                                            key={field.key}
+                                            className={
+                                              entityKey === "people" &&
+                                              field.key === "memberOf"
+                                                ? styles.peopleGroupsColumn
                                                 : entityKey ===
                                                       "research-groups" &&
-                                                    field.key === "researchLine"
-                                                  ? styles.researchGroupsLineColumn
-                                                  : undefined
-                                          }
-                                        >
-                                          {t(field.label)}
-                                        </th>
-                                      ))}
+                                                    field.key ===
+                                                      "leaderResearcher"
+                                                  ? styles.researchGroupsLeaderColumn
+                                                  : entityKey ===
+                                                        "research-groups" &&
+                                                      field.key ===
+                                                        "researchLine"
+                                                    ? styles.researchGroupsLineColumn
+                                                    : undefined
+                                            }
+                                          >
+                                            {t(field.label)}
+                                          </th>
+                                        ),
+                                      )}
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -684,69 +530,75 @@ export default function Search({ index }: SearchProps) {
                                               getResultTitle(result)
                                             )}
                                           </td>
-                                          {selectedTableColumns.map((field) => (
-                                            <td
-                                              key={`${field.key}-${idx}`}
-                                              className={
-                                                entityKey === "people" &&
-                                                field.key === "memberOf"
-                                                  ? styles.peopleGroupsColumn
-                                                  : entityKey ===
-                                                        "research-groups" &&
-                                                      field.key ===
-                                                        "leaderResearcher"
-                                                    ? styles.researchGroupsLeaderColumn
+                                          {selectedTableColumns.map(
+                                            (field: {
+                                              key: string;
+                                              label: string;
+                                            }) => (
+                                              <td
+                                                key={`${field.key}-${idx}`}
+                                                className={
+                                                  entityKey === "people" &&
+                                                  field.key === "memberOf"
+                                                    ? styles.peopleGroupsColumn
                                                     : entityKey ===
                                                           "research-groups" &&
                                                         field.key ===
-                                                          "researchLine"
-                                                      ? styles.researchGroupsLineColumn
-                                                      : undefined
-                                              }
-                                            >
-                                              {(() => {
-                                                const fieldTextValue =
-                                                  getFieldTextValue(
-                                                    result,
-                                                    field.key,
-                                                  );
-                                                const sanitizedLattesId =
-                                                  entityKey === "people" &&
-                                                  field.key === "lattesId"
-                                                    ? getNumericLattesId(
-                                                        fieldTextValue,
-                                                      )
-                                                    : "";
+                                                          "leaderResearcher"
+                                                      ? styles.researchGroupsLeaderColumn
+                                                      : entityKey ===
+                                                            "research-groups" &&
+                                                          field.key ===
+                                                            "researchLine"
+                                                        ? styles.researchGroupsLineColumn
+                                                        : undefined
+                                                }
+                                              >
+                                                {(() => {
+                                                  const fieldTextValue =
+                                                    getFieldTextValue(
+                                                      result,
+                                                      field.key,
+                                                    );
+                                                  const sanitizedLattesId =
+                                                    entityKey === "people" &&
+                                                    field.key === "lattesId"
+                                                      ? getNumericLattesId(
+                                                          fieldTextValue,
+                                                        )
+                                                      : "";
 
-                                                return entityKey === "people" &&
-                                                  field.key === "orcid" &&
-                                                  fieldTextValue !== "-" ? (
-                                                  <a
-                                                    href={`https://orcid.org/${fieldTextValue}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                  >
-                                                    {fieldTextValue}
-                                                  </a>
-                                                ) : entityKey === "people" &&
-                                                  field.key === "lattesId" &&
-                                                  sanitizedLattesId ? (
-                                                  <a
-                                                    href={`http://lattes.cnpq.br/${sanitizedLattesId}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                  >
-                                                    {sanitizedLattesId}
-                                                  </a>
-                                                ) : entityKey === "people" &&
-                                                  field.key === "lattesId" ? (
-                                                  "-"
-                                                ) : (
-                                                  fieldTextValue
-                                                );
-                                              })()}
-                                            </td>
-                                          ))}
+                                                  return entityKey ===
+                                                    "people" &&
+                                                    field.key === "orcid" &&
+                                                    fieldTextValue !== "-" ? (
+                                                    <a
+                                                      href={`https://orcid.org/${fieldTextValue}`}
+                                                      target="_blank"
+                                                      rel="noopener noreferrer"
+                                                    >
+                                                      {fieldTextValue}
+                                                    </a>
+                                                  ) : entityKey === "people" &&
+                                                    field.key === "lattesId" &&
+                                                    sanitizedLattesId ? (
+                                                    <a
+                                                      href={`http://lattes.cnpq.br/${sanitizedLattesId}`}
+                                                      target="_blank"
+                                                      rel="noopener noreferrer"
+                                                    >
+                                                      {sanitizedLattesId}
+                                                    </a>
+                                                  ) : entityKey === "people" &&
+                                                    field.key === "lattesId" ? (
+                                                    "-"
+                                                  ) : (
+                                                    fieldTextValue
+                                                  );
+                                                })()}
+                                              </td>
+                                            ),
+                                          )}
                                         </tr>
                                       );
                                     })}
