@@ -51,7 +51,7 @@
 
 :root[data-theme="dark"] {
   --primary-color: #0399b6;
-  --secondary-color: #9ca3af;
+  --secondary-color: #3a8899;
   --text-color: #e5e7eb;
   --text-secondary-color: #a1a1aa;
   --tabs-color: #0399b6;
@@ -415,7 +415,6 @@ a {
   position: fixed;
   width: 100%;
   z-index: 99;
-  background-color: var(--bg-card);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -1528,7 +1527,21 @@ h3.popover-header a {
   position: relative;
   z-index: 99;
 }
+
+.navbar {
+  min-height: 90px;
+  height: auto;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  align-items: baseline;
+  padding-top: 8px !important;
+  background-color: var(--bg);
+}
+
 @media (max-width: 800px) {
+  .navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
   .nav .nav-item {
     justify-content: flex-start;
   }
@@ -1539,15 +1552,6 @@ h3.popover-header a {
 
   .sui-result__value {
     word-break: normal;
-  }
-
-  .navbar {
-    min-height: 90px;
-    height: auto;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    align-items: baseline;
-    padding-top: 8px !important;
   }
 
   .nav .nav-item {

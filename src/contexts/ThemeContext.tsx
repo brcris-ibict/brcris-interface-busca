@@ -10,7 +10,7 @@ import {
 
 export const THEME_STORAGE_KEY = "brcris-theme";
 
-type ThemePreference = "light" | "dark" | "system";
+type ThemePreference = "light" | "dark";
 type ResolvedTheme = "light" | "dark";
 
 type ThemeContextValue = {
@@ -24,7 +24,7 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 function isThemePreference(value: string | null): value is ThemePreference {
-  return value === "light" || value === "dark" || value === "system";
+  return value === "light" || value === "dark";
 }
 
 function getSystemTheme(): ResolvedTheme {
@@ -37,8 +37,8 @@ function getSystemTheme(): ResolvedTheme {
     : "light";
 }
 
-function resolveTheme(themePreference: ThemePreference): ResolvedTheme {
-  return themePreference === "system" ? getSystemTheme() : themePreference;
+function resolveTheme(themePreference: ThemePreference | null): ResolvedTheme {
+  return themePreference ?? getSystemTheme();
 }
 
 function applyTheme(resolvedTheme: ResolvedTheme) {
@@ -48,7 +48,7 @@ function applyTheme(resolvedTheme: ResolvedTheme) {
 
 export function ThemeProvider({ children }: PropsWithChildren) {
   const [themePreference, setThemePreferenceState] =
-    useState<ThemePreference>("system");
+    useState<ThemePreference>("light");
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
 
   useEffect(() => {
@@ -59,10 +59,10 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
     const nextThemePreference = isThemePreference(storedTheme)
       ? storedTheme
-      : "system";
+      : null;
 
-    setThemePreferenceState(nextThemePreference);
     const nextResolvedTheme = resolveTheme(nextThemePreference);
+    setThemePreferenceState(nextResolvedTheme);
     setResolvedTheme(nextResolvedTheme);
     applyTheme(nextResolvedTheme);
   }, []);
@@ -83,8 +83,12 @@ export function ThemeProvider({ children }: PropsWithChildren) {
     updateTheme();
 
     const handleChange = () => {
-      if (themePreference === "system") {
-        updateTheme();
+      const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+      if (!isThemePreference(storedTheme)) {
+        const nextResolvedTheme = getSystemTheme();
+        setThemePreferenceState(nextResolvedTheme);
+        setResolvedTheme(nextResolvedTheme);
+        applyTheme(nextResolvedTheme);
       }
     };
 
@@ -107,19 +111,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   }, [resolvedTheme, setThemePreference]);
 
   const cycleThemePreference = useCallback(() => {
-    setThemePreference(
-      ((currentTheme) => {
-        if (currentTheme === "light") {
-          return "dark";
-        }
-
-        if (currentTheme === "dark") {
-          return "system";
-        }
-
-        return "light";
-      })(themePreference),
-    );
+    setThemePreference(themePreference === "light" ? "dark" : "light");
   }, [themePreference, setThemePreference]);
 
   const value = useMemo(

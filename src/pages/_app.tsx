@@ -20,11 +20,13 @@ const roboto = Roboto({
 
 const themeInitScript = `(function () {
   try {
-    var storedTheme = window.localStorage.getItem("${THEME_STORAGE_KEY}") || "system";
+    var storedTheme = window.localStorage.getItem("${THEME_STORAGE_KEY}");
     var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var resolvedTheme = storedTheme === "system"
-      ? (prefersDark ? "dark" : "light")
-      : (storedTheme === "dark" ? "dark" : "light");
+    var resolvedTheme = storedTheme === "dark"
+      ? "dark"
+      : storedTheme === "light"
+        ? "light"
+        : (prefersDark ? "dark" : "light");
     document.documentElement.dataset.theme = resolvedTheme;
     document.documentElement.style.colorScheme = resolvedTheme;
   } catch (error) {

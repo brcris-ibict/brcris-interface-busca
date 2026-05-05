@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/a11y/useValidAnchor: explanation */
-import { Laptop, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
@@ -19,13 +19,7 @@ function Navbar() {
       : "/logos/logo-ibict.png";
 
   const themeIcon =
-    themePreference === "dark" ? (
-      <Moon size={18} />
-    ) : themePreference === "light" ? (
-      <Sun size={18} />
-    ) : (
-      <Laptop size={18} />
-    );
+    themePreference === "dark" ? <Moon size={18} /> : <Sun size={18} />;
 
   const changeTo = (lang: string) => lang;
 
@@ -151,13 +145,7 @@ function Navbar() {
                 {themeIcon}
                 <span>{t("Theme")}</span>
                 <span className="theme-toggle-value">
-                  {t(
-                    themePreference === "system"
-                      ? "System"
-                      : themePreference === "dark"
-                        ? "Dark"
-                        : "Light",
-                  )}
+                  {t(themePreference === "dark" ? "Dark" : "Light")}
                 </span>
               </button>
             </li>
