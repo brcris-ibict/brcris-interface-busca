@@ -46,33 +46,36 @@ export type SearchProps = {
 
 export default function Search({ index }: SearchProps) {
   const { t } = useTranslation(["common", "facets"]);
-  const translateSortLabel = (label: string) => {
-    switch (label) {
-      case "Relevance":
-        return t("Relevance");
+  const translateSortLabel = useCallback(
+    (label: string) => {
+      switch (label) {
+        case "Relevance":
+          return t("Relevance");
 
-      case "Nome ASC":
-        return t("Name — alphabetical order from A to Z");
+        case "Nome ASC":
+          return t("Name — alphabetical order from A to Z");
 
-      case "Nome DESC":
-        return t("Name — alphabetical order from Z to A");
+        case "Nome DESC":
+          return t("Name — alphabetical order from Z to A");
 
-      case "Ano ASC":
-        return t("Year (oldest → newest)");
+        case "Ano ASC":
+          return t("Year (oldest → newest)");
 
-      case "Ano DESC":
-        return t("Year (newest → oldest)");
+        case "Ano DESC":
+          return t("Year (newest → oldest)");
 
-      case "Title ASC":
-        return t("Title — alphabetical order from A to Z");
+        case "Title ASC":
+          return t("Title — alphabetical order from A to Z");
 
-      case "Title DESC":
-        return t("Title — alphabetical order from Z to A");
+        case "Title DESC":
+          return t("Title — alphabetical order from Z to A");
 
-      default:
-        return label;
-    }
-  };
+        default:
+          return label;
+      }
+    },
+    [t],
+  );
   useEffect(() => {
     const interval = setInterval(() => {
       const buttons = document.querySelectorAll(".sui-facet-view-more");
@@ -113,12 +116,11 @@ export default function Search({ index }: SearchProps) {
 
   const handleSelectIndex = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const params = new URLSearchParams(window.location.search);
       router.push(
-        `/${replaceSpacesWithHyphens(event.target.value.toLowerCase())}?${params.toString()}`,
+        `/${replaceSpacesWithHyphens(event.target.value.toLowerCase())}`,
       );
     },
-    [],
+    [router],
   );
 
   const [isFluid, setIsFluid] = useState(false);
@@ -201,6 +203,38 @@ export default function Search({ index }: SearchProps) {
       : "title";
 
   const IndicatorsComponent = useRef(index.indicators).current;
+  const renderResultsPerPageView = useCallback(
+    (props: {
+      className?: string;
+      onChange: (resultsPerPage: number) => void;
+      options?: number[];
+      value?: number;
+    }) => (
+      <ResultsPerPageSelectView
+        className={props.className}
+        onChange={props.onChange}
+        options={props.options ?? [10, 20, 50]}
+        value={props.value ?? 10}
+        showLabel={t("Show")}
+      />
+    ),
+    [t],
+  );
+  const renderSortingView = useCallback(
+    (props: {
+      className?: string;
+      onChange: (sortData?: any) => void;
+      options: { value: string; label: string }[];
+      value: string;
+    }) => (
+      <SortingSelectView
+        {...props}
+        translateSortLabel={translateSortLabel}
+        placeholder={t("Sort by")}
+      />
+    ),
+    [t, translateSortLabel],
+  );
   const {
     wasSearched,
     results,
@@ -208,7 +242,13 @@ export default function Search({ index }: SearchProps) {
     setSearchTerm,
     resultSearchTerm,
     error,
+    filters,
   } = useSearch();
+
+  const shouldHideEmptySearchError =
+    error?.trim() === "Search term or filters are required" &&
+    !resultSearchTerm &&
+    (!filters || filters.length === 0);
 
   return (
     <>
@@ -327,15 +367,7 @@ export default function Search({ index }: SearchProps) {
                                 >
                                   <reactSearchUi.ResultsPerPage
                                     options={[10, 20, 50]}
-                                    view={(props) => (
-                                      <ResultsPerPageSelectView
-                                        className={props.className}
-                                        onChange={props.onChange}
-                                        options={props.options ?? [10, 20, 50]}
-                                        value={props.value ?? 10}
-                                        showLabel={t("Show")}
-                                      />
-                                    )}
+                                    view={renderResultsPerPageView}
                                   />
                                 </div>
                                 <div className={styles.toolbarControl}>
@@ -347,13 +379,7 @@ export default function Search({ index }: SearchProps) {
                                   <reactSearchUi.Sorting
                                     label=""
                                     sortOptions={index.sortOptions}
-                                    view={(props) => (
-                                      <SortingSelectView
-                                        {...props}
-                                        translateSortLabel={translateSortLabel}
-                                        placeholder={t("Sort by")}
-                                      />
-                                    )}
+                                    view={renderSortingView}
                                   />
                                 </div>
                               </>
@@ -384,7 +410,7 @@ export default function Search({ index }: SearchProps) {
                   }
                   bodyContent={
                     <>
-                      {error && (
+                      {error && !shouldHideEmptySearchError && (
                         <p className="sui-search-error">{t(error.trim())}</p>
                       )}
                       {!error &&
