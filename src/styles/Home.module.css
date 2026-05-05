@@ -290,6 +290,15 @@
   flex: 0 0 25%;
 }
 
+.indicatorsPanel {
+  flex: 0 0 25%;
+  min-width: 200px;
+}
+
+.indicatorsPanel :global(.indicators) {
+  width: 100%;
+}
+
 .filtersCollapsed :global(.result) {
   width: 75%;
 }
@@ -606,9 +615,11 @@
   }
 
   .resultsLayout :global(.indicators),
-  .resultsLayout :global(.result) {
+  .resultsLayout :global(.result),
+  .indicatorsPanel {
     flex: 0 0 100%;
     width: 100%;
+    min-width: 0;
   }
   
   .toolbarWrap {

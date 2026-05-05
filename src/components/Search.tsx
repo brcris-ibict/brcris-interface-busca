@@ -634,7 +634,11 @@ export default function Search({ index }: SearchProps) {
                             )}
                             <reactSearchUi.Paging />
                           </div>
-                          {showIndicators && <IndicatorsComponent />}
+                          {showIndicators && (
+                            <div className={styles.indicatorsPanel}>
+                              <IndicatorsComponent />
+                            </div>
+                          )}
                         </div>
                       )}
                     </>
