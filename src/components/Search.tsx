@@ -6,10 +6,11 @@
 import * as reactSearchUi from "@elastic/react-search-ui";
 import { Layout } from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
+import { useSearch } from "@elastic/react-search-ui";
 import { Eye, List, Maximize2, Minimize2, Table2 } from "lucide-react";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Select from "react-select";
 import {
   containsResults,
@@ -165,6 +166,7 @@ export default function Search({ index }: SearchProps) {
     }
   };
   useEffect(() => {
+    console.log("MOUNTED");
     const interval = setInterval(() => {
       const buttons = document.querySelectorAll(".sui-facet-view-more");
 
@@ -358,6 +360,7 @@ export default function Search({ index }: SearchProps) {
     if (!viewModeStorageKey) return;
     window.localStorage.setItem(viewModeStorageKey, viewMode);
   }, [viewMode, viewModeStorageKey]);
+
   const titleFieldName =
     entityKey === "people" ||
     entityKey === "organizations" ||
@@ -365,498 +368,404 @@ export default function Search({ index }: SearchProps) {
     entityKey === "courses"
       ? "name"
       : "title";
+
+  const IndicatorsComponent = useRef(index.indicators).current;
+  const {
+    wasSearched,
+    results,
+    isLoading,
+    setSearchTerm,
+    resultSearchTerm,
+    setSort,
+    sort,
+    error,
+  } = useSearch();
+
   return (
     <>
       <div className={`${isFluid ? "container-fluid" : "container"}`}>
-        <reactSearchUi.WithSearch
-          mapContextToProps={({
-            wasSearched,
-            results,
-            isLoading,
-            setSearchTerm,
-            resultSearchTerm,
-            setSort,
-            sort,
-          }) => ({
-            wasSearched,
-            results,
-            isLoading,
-            setSearchTerm,
-            resultSearchTerm,
-            setSort,
-            sort,
-          })}
-        >
-          {({
-            wasSearched,
-            results,
-            isLoading,
-            setSearchTerm,
-            resultSearchTerm,
-            setSort,
-            sort,
-          }) => {
-            useEffect(() => {
-              if (!wasSearched) return;
-
-              if (entityKey === "publications") {
-                setSort?.(
-                  [
-                    {
-                      field: "publicationDate",
-                      direction: "desc",
-                    },
-                  ],
-                  "desc",
-                );
-              } else {
-                setSort?.([], "asc");
-              }
-            }, [entityKey, wasSearched]);
-            return (
-              <div className="App">
-                <div className="container page">
-                  <div className="page-title">
-                    <h1>{t(index.label)}</h1>
-                  </div>
-                </div>
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => setIsFluid(!isFluid)}
-                    style={{
-                      border: "1px solid var(--border-color)",
-                      background: "#fff",
-                      float: "right",
-                    }}
-                    aria-label="Toggle container width"
-                  >
-                    {isFluid ? <Minimize2 /> : <Maximize2 size={20} />}
-                  </button>
-                  <div className={styles.searchLayout}>
-                    {isLoading ? <Loader /> : ""}
-                    <DisplayFieldsProvider
-                      value={{ selectedFields: displayFields }}
+        <div className="App">
+          <div className="container page">
+            <div className="page-title">
+              <h1>{t(index.label)}</h1>
+            </div>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={() => setIsFluid(!isFluid)}
+              style={{
+                border: "1px solid var(--border-color)",
+                background: "#fff",
+                float: "right",
+              }}
+              aria-label="Toggle container width"
+            >
+              {isFluid ? <Minimize2 /> : <Maximize2 size={20} />}
+            </button>
+            <div className={styles.searchLayout}>
+              {isLoading ? <Loader /> : ""}
+              <DisplayFieldsProvider value={{ selectedFields: displayFields }}>
+                <Layout
+                  header={
+                    <CustomSearchBox
+                      titleFieldName={titleFieldName}
+                      setSearchTerm={setSearchTerm!}
+                      handleSelectIndex={handleSelectIndex}
+                      indexLabel={index.label}
+                      fieldNames={Object.keys(
+                        index.config.searchQuery.search_fields as object,
+                      ).concat(
+                        Object.keys(
+                          index.config.searchQuery.advanced_fields ||
+                            ([] as object),
+                        ),
+                      )}
+                    />
+                  }
+                  bodyHeader={
+                    <reactSearchUi.ErrorBoundary
+                      className={styles.searchErrorHidden}
                     >
-                      <Layout
-                        header={
-                          <CustomSearchBox
-                            titleFieldName={titleFieldName}
-                            setSearchTerm={setSearchTerm!}
-                            handleSelectIndex={handleSelectIndex}
-                            indexLabel={index.label}
-                            fieldNames={Object.keys(
-                              index.config.searchQuery.search_fields as object,
-                            ).concat(
-                              Object.keys(
-                                index.config.searchQuery.advanced_fields ||
-                                  ([] as object),
+                      {containsResults(wasSearched, results) && (
+                        <div className={styles.toolbarWrap}>
+                          <div
+                            className={`${switchStyles["br-switch"]} ${styles.filtersToggleLeft}`}
+                            role="presentation"
+                          >
+                            <input
+                              id="switch-filters"
+                              type="checkbox"
+                              name="switch-filters"
+                              checked={showFilters}
+                              role="switch"
+                              aria-checked={showFilters}
+                              onChange={(event) =>
+                                setShowFilters(event.target.checked)
+                              }
+                            />
+                            <label htmlFor="switch-filters">
+                              {t("Filters")}
+                            </label>
+                          </div>
+                          <div className={styles.toolbar}>
+                            {
+                              <>
+                                {displayFieldsConfig && (
+                                  <button
+                                    type="button"
+                                    className={styles.displayButton}
+                                    onClick={() => setShowDisplayModal(true)}
+                                  >
+                                    <Eye size={16} />
+                                    {t("Customize view")}
+                                  </button>
+                                )}
+                                {/** biome-ignore lint/a11y/useSemanticElements: <explanation> */}
+                                <div
+                                  className={styles.viewModeToggle}
+                                  role="group"
+                                  aria-label={t("Select result view")}
+                                >
+                                  <button
+                                    type="button"
+                                    className={`${styles.viewModeButton} ${
+                                      viewMode === "list"
+                                        ? styles.viewModeActive
+                                        : ""
+                                    }`}
+                                    onClick={() => setViewMode("list")}
+                                    aria-label={t("List view")}
+                                    title={t("List view")}
+                                  >
+                                    <List size={16} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={`${styles.viewModeButton} ${
+                                      viewMode === "table"
+                                        ? styles.viewModeActive
+                                        : ""
+                                    }`}
+                                    onClick={() => setViewMode("table")}
+                                    aria-label={t("Table view")}
+                                    title={t("Table view")}
+                                  >
+                                    <Table2 size={16} />
+                                  </button>
+                                </div>
+                                <div
+                                  className={`${styles.toolbarControl} ${styles.toolbarControlShow}`}
+                                >
+                                  <reactSearchUi.ResultsPerPage
+                                    options={[10, 20, 50]}
+                                    view={ResultsPerPageSelectView}
+                                  />
+                                </div>
+                                <div className={styles.toolbarControl}>
+                                  <DownloadModalTyped
+                                    availableFormats={["csv", "ris"]}
+                                  />
+                                </div>{" "}
+                                <div className={styles.toolbarControl}>
+                                  <reactSearchUi.Sorting
+                                    label=""
+                                    sortOptions={index.sortOptions}
+                                    view={SortingSelectView}
+                                  />
+                                </div>
+                              </>
+                            }
+                          </div>
+                          <div
+                            className={`${switchStyles["br-switch"]} ${styles.indicatorsToggle}`}
+                            role="presentation"
+                          >
+                            <input
+                              id="switch-indicators"
+                              type="checkbox"
+                              name="switch-indicators"
+                              checked={showIndicators}
+                              role="switch"
+                              aria-checked={showIndicators}
+                              onChange={(event) =>
+                                setShowIndicators(event.target.checked)
+                              }
+                            />
+                            <label htmlFor="switch-indicators">
+                              {t("Panel")}
+                            </label>
+                          </div>
+                        </div>
+                      )}
+                    </reactSearchUi.ErrorBoundary>
+                  }
+                  bodyContent={
+                    <>
+                      {error && (
+                        <p className={`sui-search-error ${className}`}>
+                          {t(error.trim())}
+                        </p>
+                      )}
+                      {!error &&
+                        wasSearched &&
+                        results?.length === 0 &&
+                        resultSearchTerm && (
+                          <strong>
+                            {t("No documents were found for your search")}
+                          </strong>
+                        )}
+                      {!error && containsResults(wasSearched, results) && (
+                        <div
+                          className={`${styles.resultsLayout} ${
+                            showFilters ? "" : styles.filtersCollapsed
+                          } ${showIndicators ? "" : styles.indicatorsHidden}`}
+                        >
+                          <button
+                            type="button"
+                            hidden
+                            className="sui-layout-sidebar-toggle"
+                            onClick={() => setToggled(true)}
+                          >
+                            {t("Filters")}
+                          </button>
+                          <div
+                            className={`sui-layout-sidebar ${showFilters ? "" : styles.filtersHidden} ${toggled ? "toggled" : ""}`}
+                          >
+                            <button
+                              hidden
+                              type="button"
+                              className="sui-layout-sidebar-toggle"
+                              onClick={() => setToggled(false)}
+                            >
+                              {t("Close filters")}
+                            </button>
+
+                            {Object.keys(index.config.searchQuery.facets!).map(
+                              (facet, i) => (
+                                <reactSearchUi.Facet
+                                  className={`facet-${facet}`}
+                                  key={i}
+                                  field={facet}
+                                  label={t(facet.toLowerCase(), {
+                                    ns: "facets",
+                                  })}
+                                />
                               ),
                             )}
-                          />
-                        }
-                        bodyContent={
-                          <reactSearchUi.ErrorBoundary
-                            className={styles.searchError}
-                            view={({ className, error }) => (
-                              <>
-                                {error && (
-                                  <p
-                                    className={`sui-search-error ${className}`}
-                                  >
-                                    {t(error.trim())}
-                                  </p>
-                                )}
-                                {!error &&
-                                  wasSearched &&
-                                  results?.length === 0 &&
-                                  resultSearchTerm && (
-                                    <strong>
-                                      {t(
-                                        "No documents were found for your search",
-                                      )}
-                                    </strong>
-                                  )}
-                                {!error &&
-                                  containsResults(wasSearched, results) && (
-                                    <div
-                                      className={`${styles.resultsLayout} ${
-                                        showFilters
-                                          ? ""
-                                          : styles.filtersCollapsed
-                                      } ${
-                                        showIndicators
-                                          ? ""
-                                          : styles.indicatorsHidden
-                                      }`}
-                                    >
-                                      <button
-                                        type="button"
-                                        hidden
-                                        className="sui-layout-sidebar-toggle"
-                                        onClick={() => setToggled(true)}
+                          </div>
+                          <div className="result">
+                            <div className={styles.resultsInfo}>
+                              <reactSearchUi.PagingInfo
+                                view={CustomViewPagingInfo}
+                              />
+                            </div>
+                            {viewMode === "list" ? (
+                              <reactSearchUi.Results
+                                resultView={index.customView}
+                              />
+                            ) : (
+                              <div className={styles.tableWrap}>
+                                <table className={styles.resultsTable}>
+                                  <thead>
+                                    <tr>
+                                      <th
+                                        className={
+                                          entityKey === "people"
+                                            ? styles.peopleNameColumn
+                                            : entityKey === "organizations"
+                                              ? styles.organizationsNameColumn
+                                              : entityKey === "research-groups"
+                                                ? styles.researchGroupsNameColumn
+                                                : entityKey === "journals"
+                                                  ? styles.journalsTitleColumn
+                                                  : undefined
+                                        }
                                       >
-                                        {t("Filters")}
-                                      </button>
-                                      <div
-                                        className={`sui-layout-sidebar ${showFilters ? "" : styles.filtersHidden} ${toggled ? "toggled" : ""}`}
-                                      >
-                                        <button
-                                          hidden
-                                          type="button"
-                                          className="sui-layout-sidebar-toggle"
-                                          onClick={() => setToggled(false)}
-                                        >
-                                          {t("Close filters")}
-                                        </button>
-
-                                        {Object.keys(
-                                          index.config.searchQuery.facets!,
-                                        ).map((facet, i) => (
-                                          <reactSearchUi.Facet
-                                            className={`facet-${facet}`}
-                                            key={i}
-                                            field={facet}
-                                            label={t(facet.toLowerCase(), {
-                                              ns: "facets",
-                                            })}
-                                          />
-                                        ))}
-                                      </div>
-                                      <div className="result">
-                                        <div className={styles.resultsInfo}>
-                                          <reactSearchUi.PagingInfo
-                                            view={CustomViewPagingInfo}
-                                          />
-                                        </div>
-                                        {viewMode === "list" ? (
-                                          <reactSearchUi.Results
-                                            resultView={index.customView}
-                                          />
-                                        ) : (
-                                          <div className={styles.tableWrap}>
-                                            <table
-                                              className={styles.resultsTable}
-                                            >
-                                              <thead>
-                                                <tr>
-                                                  <th
-                                                    className={
-                                                      entityKey === "people"
-                                                        ? styles.peopleNameColumn
-                                                        : entityKey ===
-                                                            "organizations"
-                                                          ? styles.organizationsNameColumn
-                                                          : entityKey ===
-                                                              "research-groups"
-                                                            ? styles.researchGroupsNameColumn
-                                                            : entityKey ===
-                                                                "journals"
-                                                              ? styles.journalsTitleColumn
-                                                              : undefined
-                                                    }
-                                                  >
-                                                    {primaryColumnLabel}
-                                                  </th>
-                                                  {selectedTableColumns.map(
-                                                    (field) => (
-                                                      <th
-                                                        key={field.key}
-                                                        className={
-                                                          entityKey ===
-                                                            "people" &&
-                                                          field.key ===
-                                                            "memberOf"
-                                                            ? styles.peopleGroupsColumn
-                                                            : entityKey ===
-                                                                  "research-groups" &&
-                                                                field.key ===
-                                                                  "leaderResearcher"
-                                                              ? styles.researchGroupsLeaderColumn
-                                                              : entityKey ===
-                                                                    "research-groups" &&
-                                                                  field.key ===
-                                                                    "researchLine"
-                                                                ? styles.researchGroupsLineColumn
-                                                                : undefined
-                                                        }
-                                                      >
-                                                        {t(field.label)}
-                                                      </th>
-                                                    ),
-                                                  )}
-                                                </tr>
-                                              </thead>
-                                              <tbody>
-                                                {results?.map(
-                                                  (rawResult, idx) => {
-                                                    const result =
-                                                      rawResult as SearchResultRecord;
-                                                    const idValue =
-                                                      stringifyValue(
-                                                        result.id?.raw,
-                                                      );
-                                                    const href = idValue
-                                                      ? `/${entityKey}/${idValue}`
-                                                      : undefined;
-                                                    return (
-                                                      <tr
-                                                        key={`${idValue || "result"}-${idx}`}
-                                                      >
-                                                        <td
-                                                          className={
-                                                            entityKey ===
-                                                            "people"
-                                                              ? styles.peopleNameColumn
-                                                              : entityKey ===
-                                                                  "organizations"
-                                                                ? styles.organizationsNameColumn
-                                                                : entityKey ===
-                                                                    "research-groups"
-                                                                  ? styles.researchGroupsNameColumn
-                                                                  : entityKey ===
-                                                                      "journals"
-                                                                    ? styles.journalsTitleColumn
-                                                                    : undefined
-                                                          }
-                                                        >
-                                                          {href ? (
-                                                            <a href={href}>
-                                                              {getResultTitle(
-                                                                result,
-                                                              )}
-                                                            </a>
-                                                          ) : (
-                                                            getResultTitle(
-                                                              result,
-                                                            )
-                                                          )}
-                                                        </td>
-                                                        {selectedTableColumns.map(
-                                                          (field) => (
-                                                            <td
-                                                              key={`${field.key}-${idx}`}
-                                                              className={
-                                                                entityKey ===
-                                                                  "people" &&
-                                                                field.key ===
-                                                                  "memberOf"
-                                                                  ? styles.peopleGroupsColumn
-                                                                  : entityKey ===
-                                                                        "research-groups" &&
-                                                                      field.key ===
-                                                                        "leaderResearcher"
-                                                                    ? styles.researchGroupsLeaderColumn
-                                                                    : entityKey ===
-                                                                          "research-groups" &&
-                                                                        field.key ===
-                                                                          "researchLine"
-                                                                      ? styles.researchGroupsLineColumn
-                                                                      : undefined
-                                                              }
-                                                            >
-                                                              {(() => {
-                                                                const fieldTextValue =
-                                                                  getFieldTextValue(
-                                                                    result,
-                                                                    field.key,
-                                                                  );
-                                                                const sanitizedLattesId =
-                                                                  entityKey ===
-                                                                    "people" &&
-                                                                  field.key ===
-                                                                    "lattesId"
-                                                                    ? getNumericLattesId(
-                                                                        fieldTextValue,
-                                                                      )
-                                                                    : "";
-
-                                                                return entityKey ===
-                                                                  "people" &&
-                                                                  field.key ===
-                                                                    "orcid" &&
-                                                                  fieldTextValue !==
-                                                                    "-" ? (
-                                                                  <a
-                                                                    href={`https://orcid.org/${fieldTextValue}`}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                  >
-                                                                    {
-                                                                      fieldTextValue
-                                                                    }
-                                                                  </a>
-                                                                ) : entityKey ===
-                                                                    "people" &&
-                                                                  field.key ===
-                                                                    "lattesId" &&
-                                                                  sanitizedLattesId ? (
-                                                                  <a
-                                                                    href={`http://lattes.cnpq.br/${sanitizedLattesId}`}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                  >
-                                                                    {
-                                                                      sanitizedLattesId
-                                                                    }
-                                                                  </a>
-                                                                ) : entityKey ===
-                                                                    "people" &&
-                                                                  field.key ===
-                                                                    "lattesId" ? (
-                                                                  "-"
-                                                                ) : (
-                                                                  fieldTextValue
-                                                                );
-                                                              })()}
-                                                            </td>
-                                                          ),
-                                                        )}
-                                                      </tr>
-                                                    );
-                                                  },
-                                                )}
-                                              </tbody>
-                                            </table>
-                                          </div>
-                                        )}
-                                        <reactSearchUi.Paging />
-                                      </div>
-                                      {showIndicators && <index.indicators />}
-                                    </div>
-                                  )}
-                              </>
-                            )}
-                          ></reactSearchUi.ErrorBoundary>
-                        }
-                        bodyHeader={
-                          <reactSearchUi.ErrorBoundary
-                            className={styles.searchErrorHidden}
-                          >
-                            {containsResults(wasSearched, results) && (
-                              <div className={styles.toolbarWrap}>
-                                <div
-                                  className={`${switchStyles["br-switch"]} ${styles.filtersToggleLeft}`}
-                                  role="presentation"
-                                >
-                                  <input
-                                    id="switch-filters"
-                                    type="checkbox"
-                                    name="switch-filters"
-                                    checked={showFilters}
-                                    role="switch"
-                                    aria-checked={showFilters}
-                                    onChange={(event) =>
-                                      setShowFilters(event.target.checked)
-                                    }
-                                  />
-                                  <label htmlFor="switch-filters">
-                                    {t("Filters")}
-                                  </label>
-                                </div>
-                                <div className={styles.toolbar}>
-                                  {
-                                    <>
-                                      {displayFieldsConfig && (
-                                        <button
-                                          type="button"
-                                          className={styles.displayButton}
-                                          onClick={() =>
-                                            setShowDisplayModal(true)
+                                        {primaryColumnLabel}
+                                      </th>
+                                      {selectedTableColumns.map((field) => (
+                                        <th
+                                          key={field.key}
+                                          className={
+                                            entityKey === "people" &&
+                                            field.key === "memberOf"
+                                              ? styles.peopleGroupsColumn
+                                              : entityKey ===
+                                                    "research-groups" &&
+                                                  field.key ===
+                                                    "leaderResearcher"
+                                                ? styles.researchGroupsLeaderColumn
+                                                : entityKey ===
+                                                      "research-groups" &&
+                                                    field.key === "researchLine"
+                                                  ? styles.researchGroupsLineColumn
+                                                  : undefined
                                           }
                                         >
-                                          <Eye size={16} />
-                                          {t("Customize view")}
-                                        </button>
-                                      )}
-                                      {/** biome-ignore lint/a11y/useSemanticElements: <explanation> */}
-                                      <div
-                                        className={styles.viewModeToggle}
-                                        role="group"
-                                        aria-label={t("Select result view")}
-                                      >
-                                        <button
-                                          type="button"
-                                          className={`${styles.viewModeButton} ${
-                                            viewMode === "list"
-                                              ? styles.viewModeActive
-                                              : ""
-                                          }`}
-                                          onClick={() => setViewMode("list")}
-                                          aria-label={t("List view")}
-                                          title={t("List view")}
+                                          {t(field.label)}
+                                        </th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {results?.map((rawResult, idx) => {
+                                      const result =
+                                        rawResult as SearchResultRecord;
+                                      const idValue = stringifyValue(
+                                        result.id?.raw,
+                                      );
+                                      const href = idValue
+                                        ? `/${entityKey}/${idValue}`
+                                        : undefined;
+                                      return (
+                                        <tr
+                                          key={`${idValue || "result"}-${idx}`}
                                         >
-                                          <List size={16} />
-                                        </button>
-                                        <button
-                                          type="button"
-                                          className={`${styles.viewModeButton} ${
-                                            viewMode === "table"
-                                              ? styles.viewModeActive
-                                              : ""
-                                          }`}
-                                          onClick={() => setViewMode("table")}
-                                          aria-label={t("Table view")}
-                                          title={t("Table view")}
-                                        >
-                                          <Table2 size={16} />
-                                        </button>
-                                      </div>
-                                      <div
-                                        className={`${styles.toolbarControl} ${styles.toolbarControlShow}`}
-                                      >
-                                        <reactSearchUi.ResultsPerPage
-                                          options={[10, 20, 50]}
-                                          view={ResultsPerPageSelectView}
-                                        />
-                                      </div>
-                                      <div className={styles.toolbarControl}>
-                                        <DownloadModalTyped
-                                          availableFormats={["csv", "ris"]}
-                                        />
-                                      </div>{" "}
-                                      <div className={styles.toolbarControl}>
-                                        <reactSearchUi.Sorting
-                                          label=""
-                                          sortOptions={index.sortOptions}
-                                          view={SortingSelectView}
-                                        />
-                                      </div>
-                                    </>
-                                  }
-                                </div>
-                                <div
-                                  className={`${switchStyles["br-switch"]} ${styles.indicatorsToggle}`}
-                                  role="presentation"
-                                >
-                                  <input
-                                    id="switch-indicators"
-                                    type="checkbox"
-                                    name="switch-indicators"
-                                    checked={showIndicators}
-                                    role="switch"
-                                    aria-checked={showIndicators}
-                                    onChange={(event) =>
-                                      setShowIndicators(event.target.checked)
-                                    }
-                                  />
-                                  <label htmlFor="switch-indicators">
-                                    {t("Panel")}
-                                  </label>
-                                </div>
+                                          <td
+                                            className={
+                                              entityKey === "people"
+                                                ? styles.peopleNameColumn
+                                                : entityKey === "organizations"
+                                                  ? styles.organizationsNameColumn
+                                                  : entityKey ===
+                                                      "research-groups"
+                                                    ? styles.researchGroupsNameColumn
+                                                    : entityKey === "journals"
+                                                      ? styles.journalsTitleColumn
+                                                      : undefined
+                                            }
+                                          >
+                                            {href ? (
+                                              <a href={href}>
+                                                {getResultTitle(result)}
+                                              </a>
+                                            ) : (
+                                              getResultTitle(result)
+                                            )}
+                                          </td>
+                                          {selectedTableColumns.map((field) => (
+                                            <td
+                                              key={`${field.key}-${idx}`}
+                                              className={
+                                                entityKey === "people" &&
+                                                field.key === "memberOf"
+                                                  ? styles.peopleGroupsColumn
+                                                  : entityKey ===
+                                                        "research-groups" &&
+                                                      field.key ===
+                                                        "leaderResearcher"
+                                                    ? styles.researchGroupsLeaderColumn
+                                                    : entityKey ===
+                                                          "research-groups" &&
+                                                        field.key ===
+                                                          "researchLine"
+                                                      ? styles.researchGroupsLineColumn
+                                                      : undefined
+                                              }
+                                            >
+                                              {(() => {
+                                                const fieldTextValue =
+                                                  getFieldTextValue(
+                                                    result,
+                                                    field.key,
+                                                  );
+                                                const sanitizedLattesId =
+                                                  entityKey === "people" &&
+                                                  field.key === "lattesId"
+                                                    ? getNumericLattesId(
+                                                        fieldTextValue,
+                                                      )
+                                                    : "";
+
+                                                return entityKey === "people" &&
+                                                  field.key === "orcid" &&
+                                                  fieldTextValue !== "-" ? (
+                                                  <a
+                                                    href={`https://orcid.org/${fieldTextValue}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                  >
+                                                    {fieldTextValue}
+                                                  </a>
+                                                ) : entityKey === "people" &&
+                                                  field.key === "lattesId" &&
+                                                  sanitizedLattesId ? (
+                                                  <a
+                                                    href={`http://lattes.cnpq.br/${sanitizedLattesId}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                  >
+                                                    {sanitizedLattesId}
+                                                  </a>
+                                                ) : entityKey === "people" &&
+                                                  field.key === "lattesId" ? (
+                                                  "-"
+                                                ) : (
+                                                  fieldTextValue
+                                                );
+                                              })()}
+                                            </td>
+                                          ))}
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
                               </div>
                             )}
-                          </reactSearchUi.ErrorBoundary>
-                        }
-                        // bodyFooter={}
-                      />
-                    </DisplayFieldsProvider>
-                  </div>
-                </div>
-              </div>
-            );
-          }}
-        </reactSearchUi.WithSearch>
+                            <reactSearchUi.Paging />
+                          </div>
+                          {showIndicators && <IndicatorsComponent />}
+                        </div>
+                      )}
+                    </>
+                  }
+                />
+              </DisplayFieldsProvider>
+            </div>
+          </div>
+        </div>
       </div>
       {displayFieldsConfig && (
         <DisplayFieldsModal

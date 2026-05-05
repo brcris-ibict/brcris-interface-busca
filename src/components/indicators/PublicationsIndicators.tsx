@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: ok */
 import { SearchContext, withSearch } from "@elastic/react-search-ui";
 import {
   ArcElement,
@@ -14,7 +12,7 @@ import {
 } from "chart.js";
 import { Download } from "lucide-react";
 import { useTranslation } from "next-i18next";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import { CSVLink } from "react-csv";
 import {
@@ -39,9 +37,8 @@ ChartJS.register(
   Legend,
   ArcElement,
 );
+
 const INDEX_NAME = process.env.INDEX_PUBLICATION || "";
-export const options = new OptionsBar("Publicatons by year");
-export const optionsType = new OptionsPie("Publicatons by type");
 
 const headersPublicationsByYear = [
   { label: "Year", key: "key" },
@@ -56,29 +53,56 @@ const headersType = [
 function PublicationsIndicators({
   filters,
   resultSearchTerm,
-  isLoading,
 }: IndicatorsProps) {
   const { t } = useTranslation("common");
   const { driver } = useContext(SearchContext);
   const { indicators, setIndicatorsData, isEmpty } =
     useContext(IndicatorContext);
+
   const { search_fields, operator } = driver.searchQuery as CustomSearchQuery;
+
   const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
-  // @ts-expect-error
-  const fields = Object.keys(search_fields);
+
+  // stable fields
+  const fields = useMemo(() => Object.keys(search_fields), [search_fields]);
+
+  // stable query key
+  const queryKey = useMemo(
+    () =>
+      JSON.stringify({
+        filters,
+        resultSearchTerm,
+      }),
+    [filters, resultSearchTerm],
+  );
+
+  const prevQueryRef = useRef<string | null>(null);
+
+  // stable chart options (with translation)
+  const barOptions = useMemo(() => {
+    const opt = new OptionsBar("Publicatons by year");
+    if (!opt.plugins) opt.plugins = {};
+    if (!opt.plugins.title) opt.plugins.title = { display: true, text: "" };
+    opt.plugins.title.text = t(opt.title);
+    return opt;
+  }, [t]);
+
+  const pieOptions = useMemo(() => {
+    const opt = new OptionsPie("Publicatons by type");
+    if (!opt.plugins) opt.plugins = {};
+    if (!opt.plugins.title) opt.plugins.title = { display: true, text: "" };
+    opt.plugins.title.text = t(opt.title);
+    return opt;
+  }, [t]);
 
   useEffect(() => {
-    // tradução
-    if (!options.plugins) options.plugins = {};
-    if (!options.plugins.title)
-      options.plugins.title = { display: true, text: "" };
-    options.plugins.title.text = t(options.title);
-
-    if (!optionsType.plugins) optionsType.plugins = {};
-    if (!optionsType.plugins.title)
-      optionsType.plugins.title = { display: true, text: "" };
-    optionsType.plugins.title.text = t(optionsType.title);
     if (!resultSearchTerm) return;
+
+    if (prevQueryRef.current === queryKey) return;
+    prevQueryRef.current = queryKey;
+
+    let cancelled = false;
+
     try {
       const pdQuery = JSON.stringify(
         getAggregateQuery({
@@ -91,6 +115,7 @@ function PublicationsIndicators({
           order: { _key: "desc" },
         }),
       );
+
       const typeQuery = JSON.stringify(
         getAggregateQuery({
           size: 10,
@@ -101,94 +126,127 @@ function PublicationsIndicators({
           filters,
         }),
       );
+
       indicatorProxyService
         .search([pdQuery, typeQuery], INDEX_NAME)
         .then((data) => {
-          setIndicatorsData(data);
+          if (!cancelled) {
+            setIndicatorsData(data);
+          }
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setIndicatorsData([]);
+          }
         });
     } catch (err) {
       console.error(err);
-      setIndicatorsData([]);
+      if (!cancelled) setIndicatorsData([]);
     }
-  }, [filters, resultSearchTerm, isLoading]);
 
-  const yearIndicators: IndicatorType[] = indicators ? indicators[0] : [];
-  const yearLabels =
-    yearIndicators != null ? yearIndicators.map((d) => d.key) : [];
-  const typeIndicators: IndicatorType[] = indicators ? indicators[1] : [];
-  const typeLabels =
-    typeIndicators != null ? typeIndicators.map((d) => d.key) : [];
-  const typeDoc_count =
-    typeIndicators != null ? typeIndicators.map((d) => d.doc_count) : [];
+    return () => {
+      cancelled = true;
+    };
+  }, [queryKey, fields, normalizedOperator, resultSearchTerm, filters]);
 
-  yearIndicators &&
-    yearIndicators.sort((a, b) => Number(a.key) - Number(b.key));
+  // ----------- DATA PROCESSING -----------
+
+  const yearIndicators: IndicatorType[] = indicators?.[0] ?? [];
+  const typeIndicators: IndicatorType[] = indicators?.[1] ?? [];
+
+  const sortedYearIndicators = useMemo(() => {
+    return [...yearIndicators].sort((a, b) => Number(a.key) - Number(b.key));
+  }, [yearIndicators]);
+
+  const yearLabels = useMemo(
+    () => sortedYearIndicators.map((d) => d.key),
+    [sortedYearIndicators],
+  );
+
+  const typeLabels = useMemo(
+    () => typeIndicators.map((d) => d.key),
+    [typeIndicators],
+  );
+
+  const typeDocCount = useMemo(
+    () => typeIndicators.map((d) => d.doc_count),
+    [typeIndicators],
+  );
+
+  // ----------- CHART DATA (MEMOIZED) -----------
+
+  const barData = useMemo(
+    () => ({
+      labels: yearLabels,
+      datasets: [
+        {
+          data: sortedYearIndicators.map((d) => d.doc_count),
+          label: t("Articles per Year"),
+          backgroundColor: CHART_BACKGROUD_COLORS,
+          borderColor: CHART_BORDER_COLORS,
+          borderWidth: 1,
+        },
+      ],
+    }),
+    [yearLabels, sortedYearIndicators, t],
+  );
+
+  const pieData = useMemo(
+    () => ({
+      labels: typeLabels,
+      datasets: [
+        {
+          data: typeDocCount,
+          label: t("Types"),
+          backgroundColor: CHART_BACKGROUD_COLORS,
+          borderColor: CHART_BORDER_COLORS,
+          borderWidth: 1,
+        },
+      ],
+    }),
+    [typeLabels, typeDocCount, t],
+  );
+
+  // ----------- RENDER -----------
+
+  if (isEmpty()) return null;
 
   return (
-    <div className="indicators" hidden={isEmpty()}>
+    <div className="indicators">
       <PopoverButton className="position-absolute" />
+
       <div className={styles.chart}>
-        {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
           title="Export to csv"
-          data={yearIndicators ? yearIndicators : []}
-          filename={"arquivo.csv"}
+          data={sortedYearIndicators}
+          filename="publications-by-year.csv"
           headers={headersPublicationsByYear}
         >
           <Download />
         </CSVLink>
-        <Bar
-          options={options}
-          width="500"
-          data={{
-            labels: yearLabels,
-            datasets: [
-              {
-                data: yearIndicators,
-                label: t("Articles per Year"),
-                backgroundColor: CHART_BACKGROUD_COLORS,
-                borderColor: CHART_BORDER_COLORS,
-                borderWidth: 1,
-              },
-            ],
-          }}
-        />
+
+        <Bar options={barOptions} data={barData} />
       </div>
 
       <div className={styles.chart}>
-        {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
           title={t("Export to csv") || ""}
-          data={typeIndicators ? typeIndicators : []}
-          filename={"arquivo.csv"}
+          data={typeIndicators}
+          filename="publications-by-type.csv"
           headers={headersType}
         >
           <Download />
         </CSVLink>
-        <Pie
-          options={optionsType}
-          width="500"
-          data={{
-            labels: typeLabels,
-            datasets: [
-              {
-                data: typeDoc_count,
-                label: "# of Votes",
-                backgroundColor: CHART_BACKGROUD_COLORS,
-                borderColor: CHART_BORDER_COLORS,
-                borderWidth: 1,
-              },
-            ],
-          }}
-        />
+
+        <Pie options={pieOptions} data={pieData} />
       </div>
     </div>
   );
 }
-export default withSearch(({ filters, resultSearchTerm, isLoading }) => ({
+
+export default withSearch(({ filters, resultSearchTerm }) => ({
   filters,
   resultSearchTerm,
-  isLoading,
 }))(PublicationsIndicators);

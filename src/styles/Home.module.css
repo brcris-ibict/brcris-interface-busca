@@ -174,8 +174,8 @@
 
 .searchLayout {
   display: flex;
-  flex-direction: column;
   width: 100%;
+  gap: 16px;
   padding: 0 16px;
 }
 
