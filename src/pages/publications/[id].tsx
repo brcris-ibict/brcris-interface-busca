@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+/** biome-ignore-all lint/style/noNonNullAssertion:ok */
 
 import { SearchProvider } from "@elastic/react-search-ui";
 import type { RequestState, SearchDriverOptions } from "@elastic/search-ui";
