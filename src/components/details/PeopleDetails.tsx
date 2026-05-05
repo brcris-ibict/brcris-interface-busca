@@ -74,6 +74,17 @@ export default function PeopleDetails() {
     return <NotFound />;
   }
 
+  const publicationOrder = [
+    "Artigo",
+    "Livro",
+    "Capítulo de Livro",
+    "Artigo de Conferência",
+    "Preprint",
+    "Conjunto de Dados",
+    "Dissertação",
+    "Tese",
+  ];
+
   return (
     <>
       <Head>
@@ -262,65 +273,65 @@ export default function PeopleDetails() {
                         {},
                       );
 
-                      return Object.entries(publicationsByType).map(
-                        ([type, pubs]: any) => {
-                          const sortedPubs = pubs
-                            .slice()
-                            .sort((a: any, b: any) => {
-                              const dateA = new Date(
-                                a.publicationDate?.[0] || 0,
-                              ).getTime();
-                              const dateB = new Date(
-                                b.publicationDate?.[0] || 0,
-                              ).getTime();
-                              return dateB - dateA;
-                            });
+                      return publicationOrder.map((type) => {
+                        const pubs = publicationsByType[type];
+                        if (!pubs) return null;
+                        const sortedPubs = pubs
+                          .slice()
+                          .sort((a: any, b: any) => {
+                            const dateA = new Date(
+                              a.publicationDate?.[0] || 0,
+                            ).getTime();
+                            const dateB = new Date(
+                              b.publicationDate?.[0] || 0,
+                            ).getTime();
+                            return dateB - dateA;
+                          });
 
-                          return (
-                            <div key={type} className="publication-section">
-                              <div className="publication-header">
-                                <div className="publication-title">
-                                  <span className="publication-dot"></span>
-                                  {publicationTypeMap[type] || type}
-                                </div>
-
-                                <div className="publication-count">
-                                  {sortedPubs.length}
-                                </div>
+                        return (
+                          <div key={type} className="publication-section">
+                            <div className="publication-header">
+                              <div className="publication-title">
+                                <span className="publication-dot"></span>
+                                {publicationTypeMap[type] || type}
                               </div>
 
-                              <div className="publication-group">
-                                <ExpandableContent
-                                  items={sortedPubs}
-                                  initialCount={5}
-                                  renderItem={(publication: any) => (
-                                    <div className="publication-item">
-                                      <a
-                                        href={`/publications/${publication?.id}`}
-                                      >
-                                        {_normalizeScientificTitle(
-                                          publication?.title,
-                                          "text",
-                                        )}
-                                      </a>
-
-                                      <div className="publication-meta">
-                                        {[
-                                          journalsMap[publication?.id],
-                                          publication.publicationDate?.[0],
-                                          publication.type?.[0],
-                                        ]
-                                          .filter(Boolean)
-                                          .join(" - ")}
-                                      </div>
-                                    </div>
-                                  )}
-                                />
+                              <div className="publication-count">
+                                {sortedPubs.length}
                               </div>
                             </div>
-                          );
-                        },
-                      );
+
+                            <div className="publication-group">
+                              <ExpandableContent
+                                items={sortedPubs}
+                                initialCount={5}
+                                renderItem={(publication: any) => (
+                                  <div className="publication-item">
+                                    <a
+                                      href={`/publications/${publication?.id}`}
+                                    >
+                                      {_normalizeScientificTitle(
+                                        publication?.title,
+                                        "text",
+                                      )}
+                                    </a>
+
+                                    <div className="publication-meta">
+                                      {[
+                                        journalsMap[publication?.id],
+                                        publication.publicationDate?.[0],
+                                        publication.type?.[0],
+                                      ]
+                                        .filter(Boolean)
+                                        .join(" - ")}
+                                    </div>
+                                  </div>
+                                )}
+                              />
+                            </div>
+                          </div>
+                        );
+                      });
                     })()}
                   </li>
                 )}
