@@ -36,7 +36,7 @@
   "leader.name_text": "Leader",
   "applicationsector": "Application sector",
   "countrycode": "Country code",
-  "acronym_text": "Acronym",
+  "acronym": "Acronym",
   "Select": "Select",
   "Search": "Search"
 }

@@ -49,7 +49,7 @@ export default function OragnizationDetailsPage() {
       index: indexName,
       search_fields: {
         name_text: { weight: 3 },
-        acronym_text: {},
+        acronym: {},
         country: {},
         state: {},
         city: {},
