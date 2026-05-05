@@ -10,7 +10,21 @@ import ReportPopoverButton from "../ReportPopoverButton";
 export default function SoftwareDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
+  const formatValue = (value: any) => {
+    if (!value) return "-";
 
+    if (Array.isArray(value)) {
+      const filtered = value.filter((v) => v && v !== "----");
+      return filtered.length > 0 ? filtered.join(", ") : "-";
+    }
+
+    if (typeof value === "string") {
+      const clean = value.replace(/-+/g, "").trim();
+      return clean ? value : "-";
+    }
+
+    return value;
+  };
   return (
     <div className="">
       {isLoading && <Loader />}
@@ -80,7 +94,7 @@ export default function SoftwareDetails() {
                   <ShowItem label={t("Kind")} value={result.kind?.raw} />
                   <ShowItem
                     label={t("Deposit date")}
-                    value={result.depositDate?.raw}
+                    value={formatDate(result.depositDate?.raw)}
                   />
                   <ShowItem
                     label={t("Activity sector")}
@@ -112,7 +126,7 @@ export default function SoftwareDetails() {
                   />
                   <ShowItem
                     label={t("FundingInstitution")}
-                    value={result.fundingInstitution?.raw}
+                    value={formatValue(result.fundingInstitution?.raw)}
                   />
                   <ShowItem
                     label={t("RegistrationInstitution")}
