@@ -1,4 +1,4 @@
-// @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url("https://fonts.cdnfonts.com/css/rawline");
 
 :root {
   --primary-color: #0284a0;
@@ -105,13 +105,9 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: "Roboto", sans-serif !important;
+  font-family: "rawline", helvetica, arial, sans-serif;
   color: var(--text-color);
   background-color: var(--bg);
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
 }
 
 h1,
@@ -120,10 +116,7 @@ h3,
 h4,
 h5,
 h6,
-p,
-span {
-  font-family: "Roboto", sans-serif !important;
-}
+
 
 h1,
 h2,

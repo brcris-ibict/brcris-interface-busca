@@ -10,14 +10,6 @@ import Layout from "../components/layouts/Layout";
 import { THEME_STORAGE_KEY, ThemeProvider } from "../contexts/ThemeContext";
 import "../styles/globals.scss";
 
-import { Roboto } from "next/font/google";
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "700", "900"],
-  style: ["normal", "italic"],
-});
-
 const themeInitScript = `(function () {
   try {
     var storedTheme = window.localStorage.getItem("${THEME_STORAGE_KEY}");
@@ -51,7 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       {/* <Barra /> */}
       <ThemeProvider>
         <Analytics />
-        <Layout fontFamily={roboto.className}>
+        <Layout>
           <Component {...pageProps} />
         </Layout>
       </ThemeProvider>
