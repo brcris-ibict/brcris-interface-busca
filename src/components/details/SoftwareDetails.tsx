@@ -33,7 +33,7 @@ export default function SoftwareDetails() {
                     <div className="d-flex align-items-center gap-2">
                       <img
                         className="brcris-logo"
-                        src="/logos/brcris-grafo.jpeg"
+                        src="/logos/brcris-grafo.svg"
                         alt="logo do BrCris"
                       />
                       <CopyLink

@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
 import {
   _normalizeScientificTitle,
+  formatPt,
   getBioByLanguage,
   getLattesIdentifier,
 } from "../../../utils/Utils";
@@ -20,45 +21,6 @@ import PatentsByInventor from "./PatentsByInventor";
 import PersonProduction from "./PersonProduction";
 import SoftwareTitle from "./SoftwareTitle";
 
-const formatPt = (text: any): string => {
-  if (!text) return "";
-
-  let safeText = "";
-
-  if (Array.isArray(text)) {
-    safeText = text[0];
-  } else if (typeof text === "object") {
-    safeText = text.raw || text.name || "";
-  } else {
-    safeText = String(text);
-  }
-
-  if (!safeText) return "";
-
-  const lowerWords = [
-    "de",
-    "da",
-    "do",
-    "das",
-    "dos",
-    "e",
-    "em",
-    "para",
-    "por",
-    "com",
-  ];
-
-  return safeText
-    .toLowerCase()
-    .split(" ")
-    .map((word, i) => {
-      if (i === 0 || !lowerWords.includes(word)) {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      }
-      return word;
-    })
-    .join(" ");
-};
 const publicationCsvHeaders = [
   { label: "Título", key: "title" },
   { label: "Revista", key: "journal" },
@@ -166,7 +128,7 @@ export default function PeopleDetails() {
                 <div className="d-flex align-items-center gap-2">
                   <img
                     className="brcris-logo"
-                    src="/logos/brcris-grafo.jpeg"
+                    src="/logos/brcris-grafo.svg"
                     alt="logo do BrCris"
                   />
                   <CopyLink

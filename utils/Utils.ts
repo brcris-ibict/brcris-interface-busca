@@ -189,3 +189,44 @@ export function getNumericLattesId(value: unknown): string {
   const withoutPrefix = text.replace(/lattes::/gi, "").trim();
   return /^\d+$/.test(withoutPrefix) ? withoutPrefix : "";
 }
+
+export function formatPt(text: any): string {
+  if (!text) return "";
+
+  let safeText = "";
+
+  if (Array.isArray(text)) {
+    safeText = text[0];
+  } else if (typeof text === "object") {
+    safeText = text.raw || text.name || "";
+  } else {
+    safeText = String(text);
+  }
+
+  if (!safeText) return "";
+
+  const lowerWords = [
+    "de",
+    "da",
+    "do",
+    "das",
+    "dos",
+    "e",
+    "em",
+    "para",
+    "por",
+    "com",
+    "os,",
+  ];
+
+  return safeText
+    .toLowerCase()
+    .split(" ")
+    .map((word, i) => {
+      if (i === 0 || !lowerWords.includes(word)) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }
+      return word;
+    })
+    .join(" ");
+}
