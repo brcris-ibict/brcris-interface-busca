@@ -39,6 +39,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           id="theme-init"
           dangerouslySetInnerHTML={{ __html: themeInitScript }}
         />
+        <meta
+          name="google-site-verification"
+          content="O4MlrfmxB744id4GdcKmv79sPQNLIjWzEB_VV9o1byw"
+        />
       </Head>
       {/* <Barra /> */}
       <ThemeProvider>
