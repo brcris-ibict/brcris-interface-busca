@@ -376,6 +376,7 @@ export default function Search({ index }: SearchProps) {
                                   />
                                 </div>{" "}
                                 <div className={styles.toolbarControl}>
+                                  inde
                                   <reactSearchUi.Sorting
                                     label=""
                                     sortOptions={index.sortOptions}

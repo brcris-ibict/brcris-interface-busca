@@ -30,8 +30,14 @@ const BasicSearchBox = ({
   }, [indexLabel]);
 
   useEffect(() => {
-    setInputValue("");
-  }, [indexLabel]);
+    const queryValue = router.query.q;
+    const normalizedQuery = Array.isArray(queryValue)
+      ? (queryValue[0] ?? "")
+      : (queryValue ?? "");
+
+    setInputValue(normalizedQuery);
+    setSearchTerm(normalizedQuery);
+  }, [indexLabel, router.query.q, setSearchTerm]);
 
   const placeholder = `${t("Enter at least 3 characters and search among")} ${t(
     "numberFormat",
