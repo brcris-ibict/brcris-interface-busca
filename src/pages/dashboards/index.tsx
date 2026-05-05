@@ -1,4 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+
+import {
+  BookOpenText,
+  FileCode,
+  GraduationCap,
+  LibraryBig,
+  Lightbulb,
+  Newspaper,
+  School,
+  UserPen,
+  Users,
+} from "lucide-react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -29,13 +41,7 @@ export default function Dashboards() {
             <div className="card text-center p-2">
               <Link href="/dashboards/publications">
                 <h2>{t("Publications")}</h2>
-                <picture className="d-flex justify-content-center">
-                  <img
-                    className="img-fluid"
-                    src="/images/dashboards/publications.png"
-                    alt="ícone de publications"
-                  />
-                </picture>
+                <Newspaper width={128} height={128} />
                 <div className="card-body">
                   <p className="card-text">
                     {t(
@@ -48,13 +54,7 @@ export default function Dashboards() {
             <div className="card text-center p-2">
               <Link href="/dashboards/theses">
                 <h2>{t("Theses and Dissertations")}</h2>
-                <picture className="d-flex justify-content-center">
-                  <img
-                    className="img-fluid"
-                    src="/images/dashboards/tese.png"
-                    alt="ícone de teses"
-                  />
-                </picture>
+                <BookOpenText width={128} height={128} />
                 <div className="card-body">
                   <p className="card-text">
                     {t(
@@ -67,13 +67,7 @@ export default function Dashboards() {
             <div className="card text-center p-2">
               <Link href="/dashboards/people">
                 <h2>{t("People")}</h2>
-                <picture className="d-flex justify-content-center">
-                  <img
-                    className="img-fluid"
-                    src="/images/dashboards/people.png"
-                    alt="ícone de pessoas"
-                  />
-                </picture>
+                <UserPen width={128} height={128} />
                 <div className="card-body">
                   <p className="card-text">
                     {t(
@@ -86,13 +80,7 @@ export default function Dashboards() {
             <div className="card text-center p-2">
               <Link href="/dashboards/journals">
                 <h2>{t("Journals")}</h2>
-                <picture className="d-flex justify-content-center">
-                  <img
-                    className="img-fluid"
-                    src="/images/dashboards/journals.png"
-                    alt="ícone de revistas"
-                  />
-                </picture>
+                <LibraryBig width={128} height={128} />
                 <div className="card-body">
                   <p className="card-text">
                     {t(
@@ -105,13 +93,7 @@ export default function Dashboards() {
             <div className="card text-center p-2">
               <Link href="/dashboards/patents">
                 <h2>{t("Patents")}</h2>
-                <picture className="d-flex justify-content-center">
-                  <img
-                    className="img-fluid"
-                    src="/images/dashboards/patents.png"
-                    alt="ícone de patentes"
-                  />
-                </picture>
+                <Lightbulb width={128} height={128} />
                 <div className="card-body">
                   <p className="card-text">
                     {t(
@@ -124,13 +106,7 @@ export default function Dashboards() {
             <div className="card text-center p-2">
               <Link href="/dashboards/groups">
                 <h2>{t("Research Groups")}</h2>
-                <picture className="d-flex justify-content-center">
-                  <img
-                    className="img-fluid"
-                    src="/images/dashboards/groups.png"
-                    alt="ícone de grupos de pesquisa"
-                  />
-                </picture>
+                <Users width={128} height={128} />
                 <div className="card-body">
                   <p className="card-text">
                     {t("Teams made up of researchers and students")}
@@ -141,13 +117,7 @@ export default function Dashboards() {
             <div className="card text-center p-2">
               <Link href="/dashboards/programs">
                 <h2>{t("Software")}</h2>
-                <picture className="d-flex justify-content-center">
-                  <img
-                    className="img-fluid"
-                    src="/images/dashboards/softwares.png"
-                    alt="ícone de software"
-                  />
-                </picture>
+                <FileCode width={128} height={128} />
                 <div className="card-body">
                   <p className="card-text">
                     {t(
@@ -160,13 +130,7 @@ export default function Dashboards() {
             <div className="card text-center p-2">
               <Link href="/dashboards/institutions">
                 <h2>{t("Organizations")}</h2>
-                <picture className="d-flex justify-content-center">
-                  <img
-                    className="img-fluid"
-                    src="/images/dashboards/organizations.png"
-                    alt="ícone de organizations"
-                  />
-                </picture>
+                <School width={128} height={128} />
                 <div className="card-body">
                   <p className="card-text">
                     {t("Academic and/or research organizations")}
@@ -177,13 +141,7 @@ export default function Dashboards() {
             <div className="card text-center p-2">
               <Link href="/dashboards/programs">
                 <h2>{t("Programs")}</h2>
-                <picture className="d-flex justify-content-center">
-                  <img
-                    className="img-fluid"
-                    src="/images/dashboards/programs.png"
-                    alt="ícone de programas de pós-graduação"
-                  />
-                </picture>
+                <GraduationCap width={128} height={128} />
                 <div className="card-body">
                   <p className="card-text">
                     {t("Active postgraduate programs evaluated by CAPES")}

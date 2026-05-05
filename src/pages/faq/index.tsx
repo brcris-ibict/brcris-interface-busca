@@ -52,7 +52,7 @@ export default function FaqPage() {
       <header>
         <div className="container py-3 d-flex align-items-center justify-content-between flex-wrap">
           <div className="flex-grow-1 text-center" id="top">
-            <h1 className="h3 m-0">{t("Frequently Asked Questions")}</h1>
+            <h1 className="m-0">{t("Frequently Asked Questions")}</h1>
           </div>
           <div>
             <button
