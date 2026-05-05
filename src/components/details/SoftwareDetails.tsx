@@ -1,12 +1,12 @@
 import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { formatDate } from "../../../utils/Utils";
 import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
 import ReportPopoverButton from "../ReportPopoverButton";
-
 export default function SoftwareDetails() {
   const { wasSearched, isLoading, results } = useSearch();
   const { t } = useTranslation("common");
@@ -88,7 +88,7 @@ export default function SoftwareDetails() {
                   />
                   <ShowItem
                     label={t("Knowledge areas")}
-                    value={result.knowledgeAreas?.raw}
+                    value={formatDate(result.knowledgeAreas?.raw)}
                   />
                   <ShowItem
                     label={t("Keywords")}
@@ -108,7 +108,7 @@ export default function SoftwareDetails() {
                   />
                   <ShowItem
                     label={t("ConcessionDate")}
-                    value={result.concessionDate?.raw}
+                    value={formatDate(result.concessionDate?.raw)}
                   />
                   <ShowItem
                     label={t("FundingInstitution")}

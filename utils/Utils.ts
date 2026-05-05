@@ -230,3 +230,51 @@ export function formatPt(text: any): string {
     })
     .join(" ");
 }
+
+export function formatDate(value: string | string[] | undefined) {
+  if (!value) return "-";
+
+  const raw = Array.isArray(value) ? value.join(",") : value;
+
+  return raw
+    .split(",")
+    .map((item) => {
+      const clean = item.trim();
+
+      // formato 8 dígitos (ddMMyyyy)
+      if (/^\d{8}$/.test(clean)) {
+        const day = clean.slice(0, 2);
+        const month = clean.slice(2, 4);
+        const year = clean.slice(4, 8);
+        return `${day}/${month}/${year}`;
+      }
+
+      // formato 7 dígitos (dMMyyyy ou ddMyyyy)
+      if (/^\d{7}$/.test(clean)) {
+        const year = clean.slice(-4);
+        const rest = clean.slice(0, -4);
+
+        let day = "";
+        let month = "";
+
+        if (rest.length === 3) {
+          day = rest[0];
+          month = rest.slice(1);
+        } else {
+          day = rest.slice(0, 2);
+          month = rest.slice(2);
+        }
+
+        return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
+      }
+
+      // fallback ISO
+      const date = new Date(clean);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString("pt-BR");
+      }
+
+      return clean;
+    })
+    .join(", ");
+}
