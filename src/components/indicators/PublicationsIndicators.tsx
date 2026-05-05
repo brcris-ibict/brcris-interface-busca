@@ -64,7 +64,10 @@ function PublicationsIndicators({
   const normalizedOperator = operator?.toUpperCase() === "OR" ? "OR" : "AND";
 
   // stable fields
-  const fields = useMemo(() => Object.keys(search_fields), [search_fields]);
+  const fields = useMemo(
+    () => Object.keys(search_fields ?? {}),
+    [search_fields],
+  );
 
   // stable query key
   const queryKey = useMemo(

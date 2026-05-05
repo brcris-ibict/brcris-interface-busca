@@ -25,9 +25,15 @@ jobs:
       url: 'http://codich1.ibict.br:8086/'
 
     steps:
-      - uses: actions/checkout@v4
-      - run: |
-          sh scripts/deploy.sh
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run deploy
+        run: sh scripts/deploy.sh
 
   homol:
     runs-on: [self-hosted, Linux, x64, runner-homol]
@@ -37,9 +43,15 @@ jobs:
     env:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
     steps:
-      - uses: actions/checkout@v4
-      - run: |
-          sh scripts/deploy.sh
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run deploy
+        run: sh scripts/deploy.sh
 
   prod:
     runs-on: [self-hosted, Linux, x64, runner-pacova]
@@ -48,6 +60,12 @@ jobs:
       url: 'https://brcris.ibict.br'
 
     steps:
-      - uses: actions/checkout@v4
-      - run: |
-          sh scripts/deploy.sh
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run deploy
+        run: sh scripts/deploy.sh

@@ -22,9 +22,12 @@ jobs:
     env:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: |
-          sh scripts/deploy.sh
+          node-version: 24
+
+      - name: Run deploy
+        run: sh scripts/deploy.sh
