@@ -103,7 +103,7 @@ export default function GroupDetails() {
                   />
                   {result.member?.raw?.length > 0 && (
                     <li>
-                      <span className="sui-result__key">{t("Has member")}</span>
+                      <span className="sui-result__key">{t("Member")}</span>
                       <ExpandableContent
                         items={result.member?.raw}
                         initialCount={5}
@@ -117,7 +117,7 @@ export default function GroupDetails() {
                   )}
                   {result.leaderResearcher?.raw?.length > 0 && (
                     <li>
-                      <span className="sui-result__key">{t("Has leader")}</span>
+                      <span className="sui-result__key">{t("Leader")}</span>
                       <span className="sui-result__value">
                         {result.leaderResearcher.raw.map((leader: any) => (
                           <a key={leader.id} href={`/people/${leader.id}`}>

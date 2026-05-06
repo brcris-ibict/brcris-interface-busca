@@ -68,7 +68,7 @@ export default function OrganizationDetails() {
           {result.member?.raw?.length > 0 && (
             <li>
               <div className="d-flex justify-content-between align-items-center">
-                <span className="sui-result__key">{t("Has member")}</span>
+                <span className="sui-result__key">{t("Member")}</span>
                 {/* @ts-ignore */}
 
                 <CSVLink
