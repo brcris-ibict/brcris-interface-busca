@@ -4,9 +4,9 @@ import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
 import {
   _normalizeScientificTitle,
-  formatPt,
   getBioByLanguage,
   getLattesIdentifier,
+  normalizeText,
 } from "../../../utils/Utils";
 import { useJournals } from "../../hooks/useJournals";
 import NotFound from "../../pages/404";
@@ -185,7 +185,7 @@ export default function PeopleDetails() {
                         key={orgunit.id}
                         href={`/organizations/${orgunit?.id}`}
                       >
-                        {formatPt(orgunit.name)}{" "}
+                        {normalizeText(orgunit.name)}{" "}
                       </a>
                     </span>
                   ))}
@@ -223,7 +223,7 @@ export default function PeopleDetails() {
                             <span key={item.id} className="group-item">
                               {item.id ? (
                                 <a href={`/research-groups/${item.id}`}>
-                                  {formatPt(item.name)}{" "}
+                                  {normalizeText(item.name)}{" "}
                                 </a>
                               ) : (
                                 item.name

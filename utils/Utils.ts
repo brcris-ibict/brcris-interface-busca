@@ -190,45 +190,41 @@ export function getNumericLattesId(value: unknown): string {
   return /^\d+$/.test(withoutPrefix) ? withoutPrefix : "";
 }
 
-export function formatPt(text: any): string {
+const LOWER_WORDS = new Set([
+  "de",
+  "da",
+  "do",
+  "das",
+  "dos",
+  "e",
+  "em",
+  "para",
+  "por",
+  "com",
+  "os",
+]);
+
+export function normalizeText(text: any): string {
   if (!text) return "";
 
-  let safeText = "";
-
-  if (Array.isArray(text)) {
-    safeText = text[0];
-  } else if (typeof text === "object") {
-    safeText = text.raw || text.name || "";
-  } else {
-    safeText = String(text);
-  }
+  // Extração rápida do valor
+  const safeText = String(
+    Array.isArray(text)
+      ? text[0]
+      : typeof text === "object"
+        ? text.raw || text.name || ""
+        : text,
+  );
 
   if (!safeText) return "";
 
-  const lowerWords = [
-    "de",
-    "da",
-    "do",
-    "das",
-    "dos",
-    "e",
-    "em",
-    "para",
-    "por",
-    "com",
-    "os,",
-  ];
-
-  return safeText
-    .toLowerCase()
-    .split(" ")
-    .map((word, i) => {
-      if (i === 0 || !lowerWords.includes(word)) {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      }
-      return word;
-    })
-    .join(" ");
+  return safeText.toLowerCase().replace(/\b\w+/g, (word, index) => {
+    // Capitaliza se for a primeira palavra ou se não estiver na lista de exceções
+    if (index === 0 || !LOWER_WORDS.has(word)) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+    return word;
+  });
 }
 
 export function formatDate(value: string | string[] | undefined) {

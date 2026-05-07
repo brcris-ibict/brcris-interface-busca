@@ -1,14 +1,18 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
-import { formatPt } from "../../../utils/Utils";
+import { useMemo } from "react";
+import { normalizeText } from "../../../utils/Utils";
 import type { Author, OrgUnit } from "../../types/Entities";
 
 const CustomResultViewGroups = ({ result, onClickLink }: ResultViewProps) => {
+  const name = result.name?.snippet || result.name.raw;
+  const normalizedName = useMemo(() => normalizeText(name), [name]);
+
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/research-groups/${result.id.raw}`}>
         <h2
           dangerouslySetInnerHTML={{
-            __html: formatPt(result.name?.snippet) || formatPt(result.name.raw),
+            __html: normalizedName,
           }}
         ></h2>
         <div className="result-metadata">
@@ -16,17 +20,19 @@ const CustomResultViewGroups = ({ result, onClickLink }: ResultViewProps) => {
             <span>
               {result.leaderResearcher?.raw?.map((leaderResearcher: Author) => (
                 <span key={leaderResearcher.id}>
-                  {formatPt(leaderResearcher.name)}
+                  {normalizeText(leaderResearcher.name)}
                 </span>
               ))}
             </span>
           )}
           {result.leaderOrgUnit?.raw.map((leaderOrgUnit: OrgUnit) => (
-            <span key={leaderOrgUnit.id}>{formatPt(leaderOrgUnit.name)}</span>
+            <span key={leaderOrgUnit.id}>
+              {normalizeText(leaderOrgUnit.name)}
+            </span>
           ))}
           {result.researchLine?.raw && (
             <span className="limit-text-1-line ">
-              {formatPt(result.researchLine?.raw)}
+              {normalizeText(result.researchLine?.raw)}
             </span>
           )}
         </div>
