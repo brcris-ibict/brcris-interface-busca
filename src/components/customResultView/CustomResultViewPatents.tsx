@@ -1,5 +1,6 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { useTranslation } from "next-i18next";
+import { normalizeText } from "../../../utils/Utils";
 import type { Author } from "../../types/Entities";
 
 const CustomResultViewPatents = ({ result, onClickLink }: ResultViewProps) => {
@@ -9,7 +10,7 @@ const CustomResultViewPatents = ({ result, onClickLink }: ResultViewProps) => {
       <a onClick={onClickLink} href={`/patents/${result.id.raw}`}>
         <h2
           dangerouslySetInnerHTML={{
-            __html: result.title.snippet || result.title.raw,
+            __html: normalizeText(result.title.snippet || result.title.raw),
           }}
         ></h2>
         <div className="result-metadata">

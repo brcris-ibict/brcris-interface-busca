@@ -1,4 +1,5 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import { normalizeText } from "../../../utils/Utils";
 
 const CustomResultViewOrganizations = ({
   result,
@@ -10,14 +11,16 @@ const CustomResultViewOrganizations = ({
         <h2
           dangerouslySetInnerHTML={{
             __html:
-              (result.name.snippet || result.name.raw) +
+              normalizeText(result.name.snippet || result.name.raw) +
               (result.acronym?.raw ? ` (${result.acronym?.raw})` : ""),
           }}
         ></h2>
         <div className="result-metadata">
-          {result.city?.raw && <span>{result.city?.raw}</span>}
-          {result.state?.raw && <span>{result.state?.raw}</span>}
-          {result.country?.raw && <span>{result.country?.raw}</span>}
+          {result.city?.raw && <span>{normalizeText(result.city?.raw)}</span>}
+          {result.state?.raw && <span>{normalizeText(result.state?.raw)}</span>}
+          {result.country?.raw && (
+            <span>{normalizeText(result.country?.raw)}</span>
+          )}
         </div>
       </a>
     </li>
