@@ -10,7 +10,7 @@ import {
 
 export const THEME_STORAGE_KEY = "brcris-theme";
 
-type ThemePreference = "light" | "dark";
+type ThemePreference = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
 
 type ThemeContextValue = {
@@ -24,7 +24,7 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 function isThemePreference(value: string | null): value is ThemePreference {
-  return value === "light" || value === "dark";
+  return value === "light" || value === "dark" || value === "system";
 }
 
 function getSystemTheme(): ResolvedTheme {
@@ -38,7 +38,11 @@ function getSystemTheme(): ResolvedTheme {
 }
 
 function resolveTheme(themePreference: ThemePreference | null): ResolvedTheme {
-  return themePreference ?? getSystemTheme();
+  if (!themePreference || themePreference === "system") {
+    return getSystemTheme();
+  }
+
+  return themePreference;
 }
 
 function applyTheme(resolvedTheme: ResolvedTheme) {
@@ -48,7 +52,7 @@ function applyTheme(resolvedTheme: ResolvedTheme) {
 
 export function ThemeProvider({ children }: PropsWithChildren) {
   const [themePreference, setThemePreferenceState] =
-    useState<ThemePreference>("light");
+    useState<ThemePreference>("system");
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
 
   useEffect(() => {
@@ -62,7 +66,7 @@ export function ThemeProvider({ children }: PropsWithChildren) {
       : null;
 
     const nextResolvedTheme = resolveTheme(nextThemePreference);
-    setThemePreferenceState(nextResolvedTheme);
+    setThemePreferenceState(nextThemePreference ?? "system");
     setResolvedTheme(nextResolvedTheme);
     applyTheme(nextResolvedTheme);
   }, []);
@@ -84,9 +88,11 @@ export function ThemeProvider({ children }: PropsWithChildren) {
 
     const handleChange = () => {
       const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-      if (!isThemePreference(storedTheme)) {
+      if (!isThemePreference(storedTheme) || storedTheme === "system") {
         const nextResolvedTheme = getSystemTheme();
-        setThemePreferenceState(nextResolvedTheme);
+        if (storedTheme === "system") {
+          setThemePreferenceState("system");
+        }
         setResolvedTheme(nextResolvedTheme);
         applyTheme(nextResolvedTheme);
       }
@@ -111,7 +117,13 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   }, [resolvedTheme, setThemePreference]);
 
   const cycleThemePreference = useCallback(() => {
-    setThemePreference(themePreference === "light" ? "dark" : "light");
+    setThemePreference(
+      themePreference === "light"
+        ? "dark"
+        : themePreference === "dark"
+          ? "system"
+          : "light",
+    );
   }, [themePreference, setThemePreference]);
 
   const value = useMemo(

@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/a11y/useValidAnchor: explanation */
-import { Moon, Sun } from "lucide-react";
+import { Laptop, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
@@ -12,14 +12,20 @@ function Navbar() {
   const { t } = useTranslation("navbar");
 
   const { asPath } = router;
-  const { cycleThemePreference, resolvedTheme, themePreference } = useTheme();
+  const { resolvedTheme, setThemePreference, themePreference } = useTheme();
   const ibictLogoSrc =
     resolvedTheme === "dark"
       ? "/logos/logo-ibict-pb.png"
       : "/logos/logo-ibict.png";
 
   const themeIcon =
-    themePreference === "dark" ? <Moon size={18} /> : <Sun size={18} />;
+    themePreference === "dark" ? (
+      <Moon size={18} />
+    ) : themePreference === "light" ? (
+      <Sun size={18} />
+    ) : (
+      <Laptop size={18} />
+    );
 
   const changeTo = (lang: string) => lang;
 
@@ -68,47 +74,47 @@ function Navbar() {
           <div className="navbar-nav me-auto mb-2 mb-lg-0"></div>
 
           <ul className="navbar-nav nav nav-tabs">
-            <li className="nav-item me-5" role="presentation">
+            <li className="nav-item me-2" role="presentation">
               <Link href="/" className="nav-link">
                 {t("Home")}
               </Link>
             </li>
 
-            <li className="nav-item me-5" role="presentation">
+            <li className="nav-item me-2" role="presentation">
               <Link href="/dashboards" className="nav-link">
                 {t("Dashboards")}
               </Link>
             </li>
 
-            <li className="nav-item me-5" role="presentation">
+            <li className="nav-item me-2" role="presentation">
               <Link href="/team" className="nav-link">
                 {t("Team")}
               </Link>
             </li>
-            <li className="nav-item me-5" role="presentation">
+            <li className="nav-item me-2" role="presentation">
               <Link href="/about" className="nav-link">
                 {t("About")}
               </Link>
             </li>
-            <li className="nav-item me-5" role="presentation">
+            <li className="nav-item me-2" role="presentation">
               <Link href="/contact" className="nav-link">
                 {t("Contact")}
               </Link>
             </li>
-            <li className="nav-item me-5" role="presentation">
+            <li className="nav-item me-2" role="presentation">
               <Link href="/faq" className="nav-link">
                 {t("Faq")}
               </Link>
             </li>
-            <li className="nav-item me-5" role="presentation">
+            <li className="nav-item me-2" role="presentation">
               <Link href="/data-sources" className="nav-link">
                 {t("Data Sources")}
               </Link>
             </li>
-            <li className="nav-item me-5" role="presentation">
+            <li className="nav-item me-2" role="presentation">
               <div className={dropdownStyle.dropdown}>
                 <div className={dropdownStyle.flexCenter}>
-                  <a href="#" className="nav-link">
+                  <a href="#" className="nav-link d-flex align-items-center">
                     {t(router.locale || "en")}
                     <svg
                       height="20"
@@ -127,27 +133,68 @@ function Navbar() {
                 </div>
                 <div className={dropdownStyle.dropdownContent}>
                   {LANGUAGES?.map((lang) => (
-                    <Link href={asPath} locale={changeTo(lang)} key={lang}>
+                    <Link
+                      href={asPath}
+                      locale={changeTo(lang)}
+                      key={lang}
+                      className={
+                        router.locale === lang
+                          ? `${dropdownStyle.languageLink} ${dropdownStyle.activeItem}`
+                          : dropdownStyle.languageLink
+                      }
+                    >
                       {t(lang)}
                     </Link>
                   ))}
                 </div>
               </div>
             </li>
-            <li className="nav-item me-5" role="presentation">
-              <button
-                type="button"
-                className="nav-link theme-toggle-button"
-                onClick={cycleThemePreference}
-                aria-label={t(`Theme mode: ${themePreference}`)}
-                title={t("Theme mode")}
-              >
-                {themeIcon}
-                <span>{t("Theme")}</span>
-                <span className="theme-toggle-value">
-                  {t(themePreference === "dark" ? "Dark" : "Light")}
-                </span>
-              </button>
+            <li className="nav-item me-2" role="presentation">
+              <div className={dropdownStyle.dropdown}>
+                <div className={dropdownStyle.flexCenter}>
+                  <button
+                    type="button"
+                    className="nav-link theme-toggle-button"
+                    aria-label={t(`Theme mode: ${themePreference}`)}
+                    title={t("Theme mode")}
+                  >
+                    {themeIcon}
+                    <span>{t("Theme")}</span>
+                    <span className="theme-toggle-value">
+                      {t(
+                        themePreference === "system"
+                          ? "System"
+                          : themePreference === "dark"
+                            ? "Dark"
+                            : "Light",
+                      )}
+                    </span>
+                  </button>
+                </div>
+                <div className={dropdownStyle.dropdownContent}>
+                  <button
+                    type="button"
+                    className={`d-flex align-items-center ${dropdownStyle.dropdownAction} ${themePreference === "system" ? dropdownStyle.activeItem : ""}`.trim()}
+                    onClick={() => setThemePreference("system")}
+                  >
+                    <Laptop size={18} /> {t("System")}
+                  </button>
+                  <button
+                    type="button"
+                    className={`d-flex align-items-center ${dropdownStyle.dropdownAction} ${themePreference === "light" ? dropdownStyle.activeItem : ""}`.trim()}
+                    onClick={() => setThemePreference("light")}
+                  >
+                    <Sun size={18} /> {t("Light")}
+                  </button>
+                  <button
+                    type="button"
+                    className={`d-flex align-items-center ${dropdownStyle.dropdownAction} ${themePreference === "dark" ? dropdownStyle.activeItem : ""}`.trim()}
+                    onClick={() => setThemePreference("dark")}
+                  >
+                    <Moon size={18} /> {t("Dark")}
+                  </button>
+                </div>
+              </div>
             </li>
           </ul>
         </div>

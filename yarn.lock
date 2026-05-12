@@ -3517,7 +3517,7 @@ hasown@^2.0.2:
 
 help-me@^5.0.0:
   version "5.0.0"
-  resolved "https://registry.npmjs.org/help-me/-/help-me-5.0.0.tgz"
+  resolved "https://registry.npmjs.org/help-me/-/help-me-2.0.0.tgz"
   integrity sha512-7xgomUX6ADmcYzFik0HzAxh/73YlKR9bmFzf51CZwR+b6YtzU2m0u49hQCqV6SvlqIqsaxovfwdvbnsw3b/zpg==
 
 history@^4.9.0:
@@ -5773,7 +5773,7 @@ validate-npm-package-license@^3.0.4:
 
 validate-npm-package-name@^5.0.0:
   version "5.0.1"
-  resolved "https://registry.yarnpkg.com/validate-npm-package-name/-/validate-npm-package-name-5.0.1.tgz#a316573e9b49f3ccd90dbb6eb52b3f06c6d604e8"
+  resolved "https://registry.yarnpkg.com/validate-npm-package-name/-/validate-npm-package-name-2.0.1.tgz#a316573e9b49f3ccd90dbb6eb52b3f06c6d604e8"
   integrity sha512-OljLrQ9SQdOUqTaQxqL5dEfZWrXExyyWsozYlAWFawPVNuD83igl7uJD2RTkNMbniIYgt8l81eCJGIdQF7avLQ==
 
 value-equal@^1.0.1:
