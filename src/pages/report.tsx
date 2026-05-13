@@ -19,7 +19,7 @@ export default function Report() {
   return (
     <>
       <Head>
-        <title>{`BrCris - ${t("Contact")}`}</title>
+        <title>{`BrCris - ${t("Report")}`}</title>
       </Head>
       <div className="page-search">
         <div className="App">
