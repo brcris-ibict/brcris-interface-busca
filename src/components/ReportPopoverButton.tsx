@@ -11,6 +11,7 @@ export default function ReportPopoverButton({
   className = "",
 }: ReportPopoverButtonProps) {
   const { t } = useTranslation("common");
+
   const [show, setShow] = useState(false);
   const [target, setTarget] = useState<EventTarget | null>(null);
 
@@ -18,6 +19,8 @@ export default function ReportPopoverButton({
     setShow(!show);
     setTarget(event.target);
   };
+
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
   return (
     <>
@@ -44,7 +47,10 @@ export default function ReportPopoverButton({
           <Popover.Body>
             <p>{t("Found an error or outdated information on this page?")}</p>
 
-            <a href="/report" className="report-popover-link">
+            <a
+              href={`/report?url=${encodeURIComponent(currentUrl)}`}
+              className="report-popover-link"
+            >
               {t("Submit correction")}
             </a>
           </Popover.Body>

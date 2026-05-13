@@ -1,14 +1,21 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+
+import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import ReCAPTCHA from "react-google-recaptcha";
+
 import { alertService } from "../services/AlertService";
+
 import style from "../styles/ContactForm.module.css";
+
 import Loader from "./Loader";
 
 function ContactForm() {
   const { t } = useTranslation("common");
+
+  const router = useRouter();
 
   const [url, setUrl] = useState("");
   const [name, setName] = useState("");
@@ -17,12 +24,23 @@ function ContactForm() {
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [captchaCode, setCaptchaCode] = useState("");
+
   const recaptchaRef = useRef<any>(null);
 
   const options = {
     autoClose: true,
     keepAfterRouteChange: false,
   };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const queryUrl = router.query.url;
+
+    if (typeof queryUrl === "string") {
+      setUrl(queryUrl);
+    }
+  }, [router.isReady, router.query.url]);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -44,6 +62,7 @@ function ContactForm() {
       setLoading(true);
 
       const formData = new FormData();
+
       formData.append("url", url);
       formData.append("name", name);
       formData.append("email", email);
@@ -72,7 +91,9 @@ function ContactForm() {
       }
     } finally {
       setCaptchaCode("");
+
       recaptchaRef.current?.reset();
+
       setLoading(false);
     }
   };
@@ -91,7 +112,7 @@ function ContactForm() {
           type="url"
           placeholder="URL"
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          readOnly
           required
         />
 
@@ -116,7 +137,7 @@ function ContactForm() {
         <textarea
           className="form-control mb-3"
           rows={6}
-          placeholder="Descrição do erro"
+          placeholder={t("Description")}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
@@ -124,14 +145,14 @@ function ContactForm() {
 
         <div {...getRootProps()} className={style.dropzone}>
           <input {...getInputProps()} />
+
           <p>{t("Drag files here or click to upload")}</p>
         </div>
 
         {files.length > 0 && (
           <div className={style.fileList}>
             {files.map((file, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-              <div key={index} className={style.fileItem}>
+              <div key={`${file.name}-${index}`} className={style.fileItem}>
                 {file.name}
               </div>
             ))}
