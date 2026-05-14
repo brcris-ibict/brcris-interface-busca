@@ -1,6 +1,8 @@
 {
   "language": "Language",
   "author.name": "Author",
+  "creator.name": "Creator",
+  "fundinginstitution": "Funding Institution",
   "keyword": "Keyword",
   "journal.title": "Journal",
   "type": "Type",
