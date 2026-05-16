@@ -7,6 +7,7 @@ import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
 import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
+import DataUpdateModal from "../DataUpdateModal";
 import ExpandableContent from "../ExpandableContent";
 import Loader from "../Loader";
 import ReportPopoverButton from "../ReportPopoverButton";
@@ -39,19 +40,25 @@ export default function CourseDetails() {
         </div>
 
         <div className="mt-2">
-          {courseId && (
-            <div className="d-flex align-items-center gap-2">
-              <img
-                className="brcris-logo"
-                src="/logos/brcris-grafo.svg"
-                alt="logo do BrCris"
-              />
+          <div className="d-flex align-items-center justify-content-between w-100">
+            {courseId && (
+              <div className="d-flex align-items-center gap-2">
+                <img
+                  className="brcris-logo"
+                  src="/logos/brcris-grafo.svg"
+                  alt="logo do BrCris"
+                />
 
-              <CopyLink link={`${location.origin}/courses/${courseId}`} />
+                <CopyLink link={`${location.origin}/courses/${courseId}`} />
 
-              <ReportPopoverButton />
-            </div>
-          )}
+                <ReportPopoverButton />
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="d-flex align-items-center gap-2">
+          <DataUpdateModal />
+          <ReportPopoverButton />
         </div>
       </div>
 

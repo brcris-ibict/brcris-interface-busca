@@ -291,5 +291,12 @@
   "Found an error or outdated information on this page?": "Encontrou um erro ou informações desatualizadas nesta página?",
   "Submit correction": "Enviar correção",
   "Report": "Reportar",
-  "Panel": "Painel"
+  "Panel": "Painel",
+  "DataUpdate": "Atualização de dados",
+  "Update": "Atualização",
+  "Data from this page": "Dados desta página",
+  "Last load in BrCris": "Última carga no BrCris",
+  "This page gathers information collected from different sources. Data coverage may vary depending on the origin.": "Esta página reúne informações coletadas de diferentes fontes. A cobertura dos dados pode variar conforme a origem.",
+  "See sources and collection dates": "Ver fontes e datas de coleta",
+  "april of 2026": "abril de 2026"
 }

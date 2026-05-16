@@ -1,0 +1,201 @@
+.updateTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 46px;
+  padding: 0 14px;
+  background: var(--bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.updateTrigger:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-dark-color);
+}
+
+.updateTriggerContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.updateTriggerContent svg {
+  flex-shrink: 0;
+  color: var(--contact-accent);
+}
+
+.updateTriggerText {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.updateTriggerText strong {
+  color: var(--contact-accent);
+  font-weight: 700;
+}
+
+.updateTriggerChevron {
+  flex-shrink: 0;
+  color: var(--contact-accent);
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--overlay-bg);
+}
+
+.modalContent {
+  width: 520px;
+  max-width: calc(100vw - 32px);
+  background: var(--bg-card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 22px 70px var(--shadow-color);
+  animation: modalFade 0.2s ease;
+}
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* HEADER */
+.modalHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 22px 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modalTitleWrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.modalIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface-accent);
+  color: var(--contact-accent);
+  flex-shrink: 0;
+}
+
+.modalTitle {
+  margin: 0;
+  color: var(--primary-color);
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+
+.modalSubtitle {
+  margin-top: 2px;
+  color: var(--text-secondary-color);
+  font-size: 0.86rem;
+}
+
+/* CLOSE */
+.modalClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-muted);
+  color: var(--icon-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.modalClose:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-dark-color);
+}
+
+/* BODY */
+.modalBody {
+  padding: 18px 22px 22px;
+}
+
+.modalBody p {
+  margin-top: 0;
+  margin-bottom: 14px;
+  color: var(--text-color);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+/* META */
+.modalMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 18px;
+  padding: 12px 14px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-color);
+  font-size: 0.92rem;
+}
+
+.modalMeta svg {
+  color: var(--contact-accent);
+  flex-shrink: 0;
+}
+
+.modalMeta strong {
+  color: var(--primary-color);
+}
+
+.modalButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 7px;
+  background: var(--primary-color);
+  color: var(--text-on-dark);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.modalButton:hover {
+  background: var(--secondary-color);
+}

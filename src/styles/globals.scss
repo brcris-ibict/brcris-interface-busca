@@ -1530,7 +1530,21 @@ h3.popover-header a {
   background-color: var(--bg);
 }
 
+.actions-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.actions-wrap > * {
+  flex: 1 1 160px;
+  min-width: 140px;
+}
+
 @media (max-width: 800px) {
+  
   .navbar {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }

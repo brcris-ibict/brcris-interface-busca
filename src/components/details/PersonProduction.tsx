@@ -18,6 +18,7 @@ import { CSVLink } from "react-csv";
 import { fetchAuthorData } from "../../services/authorHelpers";
 import styles from "../../styles/Indicators.module.css";
 import type { IndicatorType } from "../../types/Entities";
+import DataUpdateModal from "../DataUpdateModal";
 import { OptionsBar, OptionsPie } from "../indicators/options/ChartsOptions";
 import PopoverButton from "../PopOver";
 
@@ -227,6 +228,9 @@ export default function PersonProduction({
       <h3 className="title-indicators">
         {t("Publication and advising indicators")}
       </h3>
+      <div className=" mb-3">
+        <DataUpdateModal width="100%" />
+      </div>
       {authorData.hasCoauthors && (
         <div className="card p-2 mb-3">
           <a href="#coautoria">

@@ -288,5 +288,12 @@
   "Found an error or outdated information on this page?": "Found an error or outdated information on this page?",
   "Submit correction": "Submit correction",
   "Report": "Report",
-  "Panel": "Panel"
+  "Panel": "Panel",
+  "DataUpdate": "Data update",
+  "Update": "Update",
+  "Data from this page": "Data from this page",
+  "Last load in BrCris": "Last load in BrCris",
+  "This page gathers information collected from different sources. Data coverage may vary depending on the origin.": "This page gathers information collected from different sources. Data coverage may vary depending on the origin.",
+  "See sources and collection dates": "See sources and collection dates",
+  "april of 2026": "april of 2026"
 }
