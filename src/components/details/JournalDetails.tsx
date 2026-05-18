@@ -20,7 +20,7 @@ const journalCsvHeaders = [
   { label: "Ano", key: "year" },
 ];
 export default function JournalDetails() {
-  const { isLoading, results } = useSearch();
+  const { isLoading, results, wasSearched } = useSearch();
   const { t } = useTranslation("common");
 
   const result = results?.[0];
@@ -56,11 +56,12 @@ export default function JournalDetails() {
     id: p?.id ?? "",
     year: p?.year ?? "",
   }));
-  if (isLoading) {
+
+  if (isLoading || !wasSearched) {
     return <Loader />;
   }
 
-  if (!isLoading && !result) {
+  if (wasSearched && results.length === 0) {
     return <NotFound />;
   }
   return (

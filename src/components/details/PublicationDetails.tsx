@@ -18,7 +18,7 @@ import ReportPopoverButton from "../ReportPopoverButton";
 
 export default function PublicationDetails() {
   const { t } = useTranslation("common");
-  const { isLoading, results } = useSearch();
+  const { isLoading, results, wasSearched } = useSearch();
   const result = results?.[0];
 
   const citationTitle = _normalizeScientificTitle(
@@ -71,11 +71,11 @@ export default function PublicationDetails() {
     return doiList.length > 0 ? `https://doi.org/${doiList[0]}` : "";
   })();
 
-  if (isLoading) {
+  if (isLoading || !wasSearched) {
     return <Loader />;
   }
 
-  if (!isLoading && !result) {
+  if (wasSearched && results.length === 0) {
     return <NotFound />;
   }
 
@@ -104,7 +104,7 @@ export default function PublicationDetails() {
       </Head>
       <div key={result.id}>
         <div className="d-flex justify-content-between align-items-start mb-3 position-relative">
-          <div>
+          <div className="w-100">
             <h1
               className="title mb-0"
               dangerouslySetInnerHTML={{
@@ -115,7 +115,7 @@ export default function PublicationDetails() {
               }}
             />
 
-            <div className="d-flex flex-wrap align-items-center gap-3 mt-2">
+            <div className="d-flex align-items-center justify-content-between gap-3 mt-2">
               {result.oasisbrId?.raw?.length > 0 &&
                 (() => {
                   const id = result.oasisbrId.raw[0];
@@ -160,18 +160,20 @@ export default function PublicationDetails() {
                   );
                 })()}
               {result.id?.raw && (
-                <div className="d-flex align-items-center justify-content-between w-100">
+                <div className="d-flex align-items-center justify-content-between flex-grow-1">
                   <div className="d-flex align-items-center gap-2">
                     <img
                       className="brcris-logo"
                       src="/logos/brcris-grafo.svg"
                       alt="logo do BrCris"
                     />
+
                     <CopyLink
                       link={`${location.origin}/publications/${result.id.raw}`}
                     />
                   </div>
-                  <div className="actions-row d-flex align-items-center gap-2">
+
+                  <div className="d-flex align-items-center gap-2">
                     <DataUpdateModal />
                     <ReportPopoverButton />
                   </div>

@@ -11,7 +11,7 @@ import Loader from "../Loader";
 import ReportPopoverButton from "../ReportPopoverButton";
 
 export default function SoftwareDetails() {
-  const { isLoading, results } = useSearch();
+  const { isLoading, results, wasSearched } = useSearch();
   const { t } = useTranslation("common");
 
   const result = results?.[0];
@@ -34,11 +34,11 @@ export default function SoftwareDetails() {
     return value;
   };
 
-  if (isLoading) {
+  if (isLoading || !wasSearched) {
     return <Loader />;
   }
 
-  if (!result) {
+  if (wasSearched && results.length === 0) {
     return <NotFound />;
   }
 

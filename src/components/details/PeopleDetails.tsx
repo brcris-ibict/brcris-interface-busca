@@ -29,7 +29,7 @@ const publicationCsvHeaders = [
   { label: "ID", key: "id" },
 ];
 export default function PeopleDetails() {
-  const { isLoading, results } = useSearch();
+  const { isLoading, results, wasSearched } = useSearch();
   const journalsMap = useJournals(results);
   const { t } = useTranslation("common");
   const { i18n } = useTranslation();
@@ -66,14 +66,13 @@ export default function PeopleDetails() {
       ? `${clean.slice(0, 150).replace(/\s+\S*$/, "")}...`
       : clean;
 
-  if (isLoading) {
+  if (isLoading || !wasSearched) {
     return <Loader />;
   }
 
-  if (!isLoading && !result) {
+  if (wasSearched && results.length === 0) {
     return <NotFound />;
   }
-
   const publicationOrder = [
     "Artigo",
     "Livro",

@@ -1,11 +1,10 @@
-import { ErrorBoundary, useSearch } from "@elastic/react-search-ui";
+import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
 import { getLattesIdentifier } from "../../../utils/Utils";
 import { usePersonIdentifiers } from "../../hooks/usePersonIdentifiers";
 import NotFound from "../../pages/404";
-import DataSourceInfo from "../../pages/data-sources";
 import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
 import DataUpdateModal from "../DataUpdateModal";
@@ -20,7 +19,7 @@ const membersCsvHeaders = [
 ];
 
 export default function OrganizationDetails() {
-  const { isLoading, results } = useSearch();
+  const { isLoading, results, wasSearched } = useSearch();
   const { t } = useTranslation("common");
   const result = results?.[0];
 
@@ -37,8 +36,13 @@ export default function OrganizationDetails() {
       brcrisId: extra?.brcrisId ?? member?.id ?? "",
     };
   });
-  if (isLoading) return <Loader />;
-  if (!result) return <NotFound />;
+  if (isLoading || !wasSearched) {
+    return <Loader />;
+  }
+
+  if (wasSearched && results.length === 0) {
+    return <NotFound />;
+  }
   return (
     <div key={result.id}>
       <Head>
