@@ -38,7 +38,7 @@ export default function ProgramDetails() {
         </div>
 
         <div className="mt-2">
-          <div className="d-flex align-items-center justify-content-between w-100">
+          <div className="d-flex justify-content-between w-100 flex-column flex-md-row gap-2 align-items-md-center">
             {programId && (
               <div className="d-flex align-items-center gap-2">
                 <img
@@ -50,6 +50,7 @@ export default function ProgramDetails() {
                 <CopyLink link={`${location.origin}/programs/${programId}`} />
               </div>
             )}
+
             <div className="d-flex align-items-center gap-2">
               <DataUpdateModal />
               <ReportPopoverButton />

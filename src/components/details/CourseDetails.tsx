@@ -40,7 +40,7 @@ export default function CourseDetails() {
         </div>
 
         <div className="mt-2">
-          <div className="d-flex align-items-center justify-content-between w-100">
+          <div className="d-flex justify-content-between w-100 flex-column flex-md-row gap-2 align-items-md-center">
             {courseId && (
               <div className="d-flex align-items-center gap-2">
                 <img
@@ -50,18 +50,16 @@ export default function CourseDetails() {
                 />
 
                 <CopyLink link={`${location.origin}/courses/${courseId}`} />
-
-                <ReportPopoverButton />
               </div>
             )}
+
+            <div className="d-flex align-items-center gap-2">
+              <DataUpdateModal />
+              <ReportPopoverButton />
+            </div>
           </div>
         </div>
-        <div className="d-flex align-items-center gap-2">
-          <DataUpdateModal />
-          <ReportPopoverButton />
-        </div>
       </div>
-
       <div className="details-card">
         <ul>
           <ShowItem label={t("Degree")} value={result.degree?.raw} />

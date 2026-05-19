@@ -77,17 +77,19 @@ export default function JournalDetails() {
 
         <div className="mt-2">
           {result.id?.raw && (
-            <div className="d-flex align-items-center justify-content-between w-100>">
+            <div className="teste d-flex justify-content-between w-100 flex-column flex-md-row gap-2 align-items-md-center">
               <div className="d-flex align-items-center gap-2">
                 <img
                   className="brcris-logo"
                   src="/logos/brcris-grafo.svg"
                   alt="logo do BrCris"
                 />
+
                 <CopyLink
                   link={`${location.origin}/journals/${result.id.raw}`}
                 />
               </div>
+
               <div className="d-flex align-items-center gap-2">
                 <DataUpdateModal />
                 <ReportPopoverButton />

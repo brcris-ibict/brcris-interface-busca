@@ -115,53 +115,55 @@ export default function PublicationDetails() {
               }}
             />
 
-            <div className="d-flex align-items-center justify-content-between gap-3 mt-2">
-              {result.oasisbrId?.raw?.length > 0 &&
-                (() => {
-                  const id = result.oasisbrId.raw[0];
-                  const searchUrl = `https://oasisbr.ibict.br/vufind/Record/${id}`;
+            <div className="d-flex align-items-center justify-content-between w-100 flex-wrap gap-3 mt-2">
+              <div className="d-flex align-items-center gap-3 flex-wrap">
+                {result.oasisbrId?.raw?.length > 0 &&
+                  (() => {
+                    const id = result.oasisbrId.raw[0];
+                    const searchUrl = `https://oasisbr.ibict.br/vufind/Record/${id}`;
 
-                  return (
-                    <a
-                      href={searchUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="d-flex align-items-center gap-2"
-                    >
-                      <img
-                        src="/logos/oasisbr.ico"
-                        alt="Oasisbr"
-                        style={{ width: 20 }}
-                      />
-                      Oasisbr
-                    </a>
-                  );
-                })()}
-              {result.doi?.raw &&
-                normalizeDoiList(result.doi.raw).length > 0 &&
-                (() => {
-                  const doi = normalizeDoiList(result.doi.raw)[0];
-                  const url = `https://doi.org/${doi}`;
+                    return (
+                      <a
+                        href={searchUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="d-flex align-items-center gap-2 flex-shrink-0"
+                      >
+                        <img
+                          src="/logos/oasisbr.ico"
+                          alt="Oasisbr"
+                          style={{ width: 20 }}
+                        />
+                        Oasisbr
+                      </a>
+                    );
+                  })()}
 
-                  return (
-                    <a
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="d-flex align-items-center gap-2"
-                    >
-                      <img
-                        src="/logos/DOI_logo.svg"
-                        alt="DOI"
-                        style={{ width: 20 }}
-                      />
-                      DOI
-                    </a>
-                  );
-                })()}
-              {result.id?.raw && (
-                <div className="d-flex align-items-center justify-content-between flex-grow-1">
-                  <div className="d-flex align-items-center gap-2">
+                {result.doi?.raw &&
+                  normalizeDoiList(result.doi.raw).length > 0 &&
+                  (() => {
+                    const doi = normalizeDoiList(result.doi.raw)[0];
+                    const url = `https://doi.org/${doi}`;
+
+                    return (
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="d-flex align-items-center gap-2 flex-shrink-0"
+                      >
+                        <img
+                          src="/logos/DOI_logo.svg"
+                          alt="DOI"
+                          style={{ width: 20 }}
+                        />
+                        DOI
+                      </a>
+                    );
+                  })()}
+
+                {result.id?.raw && (
+                  <div className="d-flex align-items-center gap-2 flex-shrink-0">
                     <img
                       className="brcris-logo"
                       src="/logos/brcris-grafo.svg"
@@ -172,13 +174,13 @@ export default function PublicationDetails() {
                       link={`${location.origin}/publications/${result.id.raw}`}
                     />
                   </div>
+                )}
+              </div>
 
-                  <div className="d-flex align-items-center gap-2">
-                    <DataUpdateModal />
-                    <ReportPopoverButton />
-                  </div>
-                </div>
-              )}
+              <div className="d-flex align-items-center justify-content-md-end justify-content-between w-100 w-md-auto gap-2 flex-shrink-0">
+                <DataUpdateModal />
+                <ReportPopoverButton />
+              </div>
             </div>
           </div>
 

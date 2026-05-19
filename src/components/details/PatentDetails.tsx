@@ -39,7 +39,7 @@ export default function PatentDetails() {
         </div>
 
         <div className="mt-2">
-          <div className="d-flex align-items-center justify-content-between w-100">
+          <div className="d-flex justify-content-between w-100 flex-column flex-md-row gap-2 align-items-md-center">
             {patentId && (
               <div className="d-flex align-items-center gap-2">
                 <img
@@ -51,6 +51,7 @@ export default function PatentDetails() {
                 <CopyLink link={`${location.origin}/patents/${patentId}`} />
               </div>
             )}
+
             <div className="d-flex align-items-center gap-2">
               <DataUpdateModal />
               <ReportPopoverButton />
