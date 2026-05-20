@@ -116,7 +116,7 @@ export default function PublicationDetails() {
             />
 
             <div className="d-flex align-items-center justify-content-between w-100 flex-wrap gap-3 mt-2">
-              <div className="d-flex align-items-center gap-3 flex-wrap">
+              <div className="d-flex align-items-center flex-wrap gap-3 mt-2 w-100">
                 {result.oasisbrId?.raw?.length > 0 &&
                   (() => {
                     const id = result.oasisbrId.raw[0];
@@ -175,11 +175,11 @@ export default function PublicationDetails() {
                     />
                   </div>
                 )}
-              </div>
 
-              <div className="d-flex align-items-center justify-content-md-end justify-content-between w-100 w-md-auto gap-2 flex-shrink-0">
-                <DataUpdateModal />
-                <ReportPopoverButton />
+                <div className="d-flex justify-content-between justify-content-md-end align-items-center gap-2 ms-md-auto flex-grow-1 flex-md-grow-0">
+                  <DataUpdateModal />
+                  <ReportPopoverButton />
+                </div>
               </div>
             </div>
           </div>
