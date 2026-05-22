@@ -10,6 +10,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useRef, useState } from "react";
 import { replaceSpacesWithHyphens } from "../../utils/Utils";
 import AllIndexVisNetwork from "../components/AllIndexVisNetwork";
+import DataUpdateModal from "../components/DataUpdateModal";
 import indexes from "../configs/Indexes";
 import { useTheme } from "../contexts/ThemeContext";
 import { getIndexStats } from "../services/ElasticSearchStatsService";
@@ -177,8 +178,18 @@ export default function App() {
               )}
             </p>
 
-            <div className="text-right">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "16px",
+                flexWrap: "wrap",
+                gap: "12px",
+              }}
+            >
               <Link href="/about">{t("Learn more")}</Link>
+              <DataUpdateModal />
             </div>
           </div>
         </section>
