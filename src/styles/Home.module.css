@@ -254,6 +254,9 @@
 .viewModeToggle {
   display: inline-flex;
   flex: 0 0 auto;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;

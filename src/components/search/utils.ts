@@ -3,6 +3,53 @@ type SearchFieldValue = {
   snippet?: string;
 };
 
+type TableStyles = {
+  peopleNameColumn?: string;
+  organizationsNameColumn?: string;
+  researchGroupsNameColumn?: string;
+  journalsTitleColumn?: string;
+  peopleGroupsColumn?: string;
+  researchGroupsLeaderColumn?: string;
+  researchGroupsLineColumn?: string;
+};
+
+export const isNameBasedEntity = (entityKey: string) =>
+  entityKey === "people" ||
+  entityKey === "organizations" ||
+  entityKey === "research-groups" ||
+  entityKey === "courses";
+
+export const getTitleFieldName = (entityKey: string) =>
+  isNameBasedEntity(entityKey) ? "name" : "title";
+
+export const getPrimaryColumnClassName = (
+  entityKey: string,
+  styles: TableStyles,
+) => {
+  if (entityKey === "people") return styles.peopleNameColumn;
+  if (entityKey === "organizations") return styles.organizationsNameColumn;
+  if (entityKey === "research-groups") return styles.researchGroupsNameColumn;
+  if (entityKey === "journals") return styles.journalsTitleColumn;
+  return undefined;
+};
+
+export const getFieldColumnClassName = (
+  entityKey: string,
+  fieldKey: string,
+  styles: TableStyles,
+) => {
+  if (entityKey === "people" && fieldKey === "memberOf") {
+    return styles.peopleGroupsColumn;
+  }
+  if (entityKey === "research-groups" && fieldKey === "leaderResearcher") {
+    return styles.researchGroupsLeaderColumn;
+  }
+  if (entityKey === "research-groups" && fieldKey === "researchLine") {
+    return styles.researchGroupsLineColumn;
+  }
+  return undefined;
+};
+
 export type SearchResultRecord = Record<string, SearchFieldValue | undefined>;
 
 const stripHtmlTags = (value: string) => value.replace(/<[^>]+>/g, "").trim();
