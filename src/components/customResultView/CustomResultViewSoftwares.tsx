@@ -1,11 +1,14 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { normalizeText } from "../../../utils/Utils";
 import type { Author } from "../../types/Entities";
+import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
 const CustomResultViewSoftwares = ({
   result,
   onClickLink,
 }: ResultViewProps) => {
+  const isVisible = useDisplayFieldVisibility();
+
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/software/${result.id.raw}`}>
@@ -15,19 +18,21 @@ const CustomResultViewSoftwares = ({
           }}
         ></h2>
         <div className="result-metadata">
-          {result.creator?.raw && (
+          {isVisible("creator") && result.creator?.raw && (
             <span>
               {result.creator?.raw?.map((creator: Author) => (
                 <span key={creator.id}>{normalizeText(creator.name)}</span>
               ))}
             </span>
           )}
-          {result.description?.raw && (
+          {isVisible("description") && result.description?.raw && (
             <span className="limit-text-1-line">
               {normalizeText(result.description?.raw)}
             </span>
           )}
-          {result.releaseYear?.raw && <span>{result.releaseYear?.raw}</span>}
+          {isVisible("releaseYear") && result.releaseYear?.raw && (
+            <span>{result.releaseYear?.raw}</span>
+          )}
         </div>
       </a>
     </li>

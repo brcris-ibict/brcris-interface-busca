@@ -2,9 +2,12 @@ import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { useTranslation } from "next-i18next";
 import { normalizeText } from "../../../utils/Utils";
 import type { Author } from "../../types/Entities";
+import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
 const CustomResultViewPatents = ({ result, onClickLink }: ResultViewProps) => {
   const { t } = useTranslation("common");
+  const isVisible = useDisplayFieldVisibility();
+
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/patents/${result.id.raw}`}>
@@ -14,19 +17,23 @@ const CustomResultViewPatents = ({ result, onClickLink }: ResultViewProps) => {
           }}
         ></h2>
         <div className="result-metadata">
-          {result.inventor?.raw && (
+          {isVisible("inventor") && result.inventor?.raw && (
             <span>
               {result.inventor?.raw?.map((inventor: Author) => (
                 <span key={inventor.id}>{inventor.name}</span>
               ))}
             </span>
           )}
-          {result.kindCode?.raw && <span>{result.kindCode?.raw}</span>}
-          {result.countryCode?.raw && <span>{result.countryCode?.raw}</span>}
-          {result.depositDate?.raw && (
+          {isVisible("kindCode") && result.kindCode?.raw && (
+            <span>{result.kindCode?.raw}</span>
+          )}
+          {isVisible("countryCode") && result.countryCode?.raw && (
+            <span>{result.countryCode?.raw}</span>
+          )}
+          {isVisible("depositDate") && result.depositDate?.raw && (
             <span>{`${t("Deposit")} ${result.depositDate?.raw}`}</span>
           )}
-          {result.publicationDate?.raw && (
+          {isVisible("publicationDate") && result.publicationDate?.raw && (
             <span>{`${t("Publication")} ${result.publicationDate?.raw}`}</span>
           )}
         </div>

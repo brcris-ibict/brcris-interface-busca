@@ -184,6 +184,8 @@ export default function Search({ index }: SearchProps) {
                           sortOptions={index.sortOptions}
                           renderResultsPerPageView={renderResultsPerPageView}
                           renderSortingView={renderSortingView}
+                          showCustomizeView={!!displayFieldsConfig}
+                          onCustomizeClick={() => setShowDisplayModal(true)}
                         />
                       )}
                     </reactSearchUi.ErrorBoundary>

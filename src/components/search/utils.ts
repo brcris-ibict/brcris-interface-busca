@@ -1,3 +1,5 @@
+import { getLattesIdentifier, getNumericLattesId } from "../../../utils/Utils";
+
 type SearchFieldValue = {
   raw?: unknown;
   snippet?: string;
@@ -108,4 +110,30 @@ export const getResultTitle = (result: SearchResultRecord) => {
     }
   }
   return "-";
+};
+
+export const hasFieldValue = (result: SearchResultRecord, key: string) => {
+  const value = getFieldTextValue(result, key);
+  return value !== "" && value !== "-";
+};
+
+export const formatResearchAreaLabel = (
+  name: string | string[] | undefined,
+) => {
+  if (!name) return "";
+  if (Array.isArray(name)) {
+    return name.filter(Boolean).join(", ");
+  }
+  return String(name);
+};
+
+export const getLattesIdFromRecord = (result: SearchResultRecord): string => {
+  const raw = result.lattesId?.raw;
+  if (raw === null || raw === undefined) return "";
+  if (Array.isArray(raw)) {
+    const identifier = getLattesIdentifier(raw as string[]);
+    if (identifier) return getNumericLattesId(identifier);
+    return getNumericLattesId(raw);
+  }
+  return getNumericLattesId(raw);
 };

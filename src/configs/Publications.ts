@@ -28,12 +28,14 @@ const config: CustomSearchDriverOptions = {
     result_fields: {
       author: {
         snippet: {},
+        raw: {},
       },
       publicationDate: {
         snippet: {
           size: 100,
           fallback: true,
         },
+        raw: {},
       },
       title: {
         snippet: {},

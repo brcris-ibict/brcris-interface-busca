@@ -1,8 +1,10 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { useTranslation } from "next-i18next";
+import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
 const CustomResultViewCourses = ({ result, onClickLink }: ResultViewProps) => {
   const { t } = useTranslation("common");
+  const isVisible = useDisplayFieldVisibility();
 
   return (
     <li className="sui-result">
@@ -14,43 +16,47 @@ const CustomResultViewCourses = ({ result, onClickLink }: ResultViewProps) => {
         ></h3>
 
         <div className="result-metadata">
-          {result.degree?.raw && (
+          {isVisible("degree") && result.degree?.raw && (
             <span>{`${t("Degree")}: ${result.degree.raw}`}</span>
           )}
 
-          {result.type?.raw && (
+          {isVisible("type") && result.type?.raw && (
             <span>{`${t("Type")}: ${result.type.raw}`}</span>
           )}
 
-          {result.startDate?.raw && (
+          {isVisible("startDate") && result.startDate?.raw && (
             <span>{`${t("Start")}: ${result.startDate.raw}`}</span>
           )}
 
-          {result.endDate?.raw && (
+          {isVisible("endDate") && result.endDate?.raw && (
             <span>{`${t("End")}: ${result.endDate.raw}`}</span>
           )}
 
-          {result.program?.raw && result.program.raw.length > 0 && (
-            <span>
-              {t("Program")}
-              {result.program.raw
-                .map((p: { name: string }) => p.name)
-                .join(", ")}
-            </span>
-          )}
-
-          {result.orgUnit?.raw && result.orgUnit.raw.length > 0 && (
-            <div className="sui-result__item">
-              <span className="sui-result__key">
-                {t("Organizational Unit")}:
-              </span>{" "}
-              <span className="sui-result__value">
-                {result.orgUnit.raw
-                  .map((o: { name: string }) => o.name)
+          {isVisible("program") &&
+            result.program?.raw &&
+            result.program.raw.length > 0 && (
+              <span>
+                {t("Program")}
+                {result.program.raw
+                  .map((p: { name: string }) => p.name)
                   .join(", ")}
               </span>
-            </div>
-          )}
+            )}
+
+          {isVisible("orgUnit") &&
+            result.orgUnit?.raw &&
+            result.orgUnit.raw.length > 0 && (
+              <div className="sui-result__item">
+                <span className="sui-result__key">
+                  {t("Organizational Unit")}:
+                </span>{" "}
+                <span className="sui-result__value">
+                  {result.orgUnit.raw
+                    .map((o: { name: string }) => o.name)
+                    .join(", ")}
+                </span>
+              </div>
+            )}
         </div>
       </a>
     </li>

@@ -1,5 +1,8 @@
-import { getNumericLattesId } from "../../../utils/Utils";
-import { getFieldTextValue, type SearchResultRecord } from "./utils";
+import {
+  getFieldTextValue,
+  getLattesIdFromRecord,
+  type SearchResultRecord,
+} from "./utils";
 
 type SearchTableCellProps = {
   entityKey: string;
@@ -15,8 +18,9 @@ export default function SearchTableCell({
   const fieldTextValue = getFieldTextValue(result, fieldKey);
   const sanitizedLattesId =
     entityKey === "people" && fieldKey === "lattesId"
-      ? getNumericLattesId(fieldTextValue)
+      ? getLattesIdFromRecord(result)
       : "";
+  const orcidId = typeof result.orcid?.raw === "string" ? result.orcid.raw : "";
 
   if (
     entityKey === "people" &&
@@ -25,11 +29,11 @@ export default function SearchTableCell({
   ) {
     return (
       <a
-        href={`https://orcid.org/${fieldTextValue}`}
+        href={`https://orcid.org/${orcidId || fieldTextValue}`}
         target="_blank"
         rel="noopener noreferrer"
       >
-        {fieldTextValue}
+        {orcidId || fieldTextValue}
       </a>
     );
   }

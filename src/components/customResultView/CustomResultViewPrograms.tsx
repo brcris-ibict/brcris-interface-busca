@@ -1,8 +1,12 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { normalizeText } from "../../../utils/Utils";
 import type { OrgUnit, ResearchArea } from "../../types/Entities";
+import { formatResearchAreaLabel } from "../search/utils";
+import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
-const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
+const CustomResultViewPrograms = ({ result, onClickLink }: ResultViewProps) => {
+  const isVisible = useDisplayFieldVisibility();
+
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/programs/${result.id.raw}`}>
@@ -12,18 +16,20 @@ const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
           }}
         ></h2>
         <div className="result-metadata">
-          {result.orgUnit?.raw.map((org: OrgUnit) => (
-            <span key={org.id}>{org.name!}</span>
-          ))}
-          {result.researchArea?.raw.map((researchArea: ResearchArea) =>
-            researchArea.name?.map((name: string) => (
-              <span key={name}>{name}</span>
-            )),
-          )}
+          {isVisible("orgUnit") &&
+            result.orgUnit?.raw?.map((org: OrgUnit) => (
+              <span key={org.id}>{normalizeText(org.name ?? "")}</span>
+            ))}
+          {isVisible("researchArea") &&
+            result.researchArea?.raw?.map((researchArea: ResearchArea) => {
+              const label = formatResearchAreaLabel(researchArea.name);
+              if (!label) return null;
+              return <span key={researchArea.id}>{normalizeText(label)}</span>;
+            })}
         </div>
       </a>
     </li>
   );
 };
 
-export default CustomResultViewPeople;
+export default CustomResultViewPrograms;

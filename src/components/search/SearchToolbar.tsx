@@ -1,5 +1,5 @@
 import * as reactSearchUi from "@elastic/react-search-ui";
-import { List, Table2 } from "lucide-react";
+import { Eye, List, Table2 } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import styles from "../../styles/Home.module.css";
 import switchStyles from "../../styles/Switch.module.css";
@@ -27,6 +27,8 @@ type SearchToolbarProps = {
     options: { value: string; label: string }[];
     value: string;
   }) => React.ReactElement;
+  showCustomizeView?: boolean;
+  onCustomizeClick?: () => void;
 };
 
 export default function SearchToolbar({
@@ -39,6 +41,8 @@ export default function SearchToolbar({
   sortOptions,
   renderResultsPerPageView,
   renderSortingView,
+  showCustomizeView,
+  onCustomizeClick,
 }: SearchToolbarProps) {
   const { t } = useTranslation("common");
   const DownloadModalTyped = DownloadModal as unknown as React.ComponentType<{
@@ -63,6 +67,16 @@ export default function SearchToolbar({
         <label htmlFor="switch-filters">{t("Filters")}</label>
       </div>
       <div className={styles.toolbar}>
+        {showCustomizeView && onCustomizeClick && (
+          <button
+            type="button"
+            className={styles.displayButton}
+            onClick={onCustomizeClick}
+          >
+            <Eye size={16} />
+            {t("Customize view")}
+          </button>
+        )}
         <fieldset
           className={styles.viewModeToggle}
           aria-label={t("Select result view")}

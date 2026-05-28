@@ -35,8 +35,15 @@ const config: CustomSearchDriverOptions = {
       },
       affiliation: {
         snippet: {},
+        raw: {},
       },
       orcid: {
+        raw: {},
+      },
+      lattesId: {
+        raw: {},
+      },
+      memberOf: {
         raw: {},
       },
     },

@@ -43,14 +43,11 @@ const config: CustomSearchDriverOptions = {
       countryCode: {
         raw: {},
       },
-      lattesTitle: {
-        raw: [],
-      },
       publicationDate: {
-        raw: [],
+        raw: {},
       },
       inventor: {
-        raw: [],
+        raw: {},
       },
     },
     disjunctiveFacets: [

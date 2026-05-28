@@ -17,9 +17,13 @@ const config: CustomSearchDriverOptions = {
     search_fields: {
       name: {},
       "orgUnit.name_text": {},
+      researchArea: {},
     },
 
     result_fields: {
+      id: {
+        raw: {},
+      },
       name: {
         snippet: {
           size: 100,
@@ -27,7 +31,7 @@ const config: CustomSearchDriverOptions = {
         },
       },
       orgUnit: {
-        raw: [],
+        raw: {},
       },
       researchArea: {
         raw: {},

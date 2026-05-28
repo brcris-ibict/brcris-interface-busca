@@ -1,10 +1,13 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { normalizeText } from "../../../utils/Utils";
+import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
 const CustomResultViewOrganizations = ({
   result,
   onClickLink,
 }: ResultViewProps) => {
+  const isVisible = useDisplayFieldVisibility();
+
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/organizations/${result.id.raw}`}>
@@ -16,9 +19,13 @@ const CustomResultViewOrganizations = ({
           }}
         ></h2>
         <div className="result-metadata">
-          {result.city?.raw && <span>{normalizeText(result.city?.raw)}</span>}
-          {result.state?.raw && <span>{normalizeText(result.state?.raw)}</span>}
-          {result.country?.raw && (
+          {isVisible("city") && result.city?.raw && (
+            <span>{normalizeText(result.city?.raw)}</span>
+          )}
+          {isVisible("state") && result.state?.raw && (
+            <span>{normalizeText(result.state?.raw)}</span>
+          )}
+          {isVisible("country") && result.country?.raw && (
             <span>{normalizeText(result.country?.raw)}</span>
           )}
         </div>

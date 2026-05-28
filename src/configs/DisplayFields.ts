@@ -58,7 +58,8 @@ export const DISPLAY_FIELDS_BY_ENTITY: Record<string, DisplayField[]> = {
   "research-groups": [
     { key: "name", label: "Name", default: true, fixed: true },
     { key: "leaderResearcher", label: "Leader", default: true },
-    { key: "leaderOrgUnit", label: "Organization", default: true },
+    { key: "orgUnit", label: "Organization", default: true },
+    { key: "leaderOrgUnit", label: "Leader organization", default: false },
     { key: "researchLine", label: "Research line", default: true },
   ],
   software: [

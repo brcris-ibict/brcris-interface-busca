@@ -38,8 +38,8 @@ const config: CustomSearchDriverOptions = {
       type: { raw: {} },
       startDate: { raw: {} },
       endDate: { raw: {} },
-      program: { raw: [] },
-      orgUnit: { raw: [] },
+      program: { raw: {} },
+      orgUnit: { raw: {} },
     },
     disjunctiveFacets: [
       "degree",

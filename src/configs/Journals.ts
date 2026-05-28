@@ -43,6 +43,12 @@ const config: CustomSearchDriverOptions = {
       issn_l: {
         raw: {},
       },
+      countryCode: {
+        raw: {},
+      },
+      isOA: {
+        raw: {},
+      },
     },
     disjunctiveFacets: [],
 

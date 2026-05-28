@@ -1,7 +1,10 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import type { Publisher, ResearchArea } from "../../types/Entities";
+import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
 const CustomResultViewJournals = ({ result, onClickLink }: ResultViewProps) => {
+  const isVisible = useDisplayFieldVisibility();
+
   return (
     <li className="sui-result">
       <a onClick={onClickLink} href={`/journals/${result.id.raw}`}>
@@ -11,12 +14,27 @@ const CustomResultViewJournals = ({ result, onClickLink }: ResultViewProps) => {
           }}
         ></h2>
         <div className="result-metadata">
-          {result.publisher?.raw.map((publisher: Publisher) => (
-            <span key={publisher.id}>{publisher.name!}</span>
-          ))}
-          {result.researchArea?.raw.map((researchArea: ResearchArea) => (
-            <span key={researchArea.id}>{researchArea.name!}</span>
-          ))}
+          {isVisible("publisher") &&
+            result.publisher?.raw?.map((publisher: Publisher) => (
+              <span key={publisher.id}>{publisher.name ?? ""}</span>
+            ))}
+          {isVisible("researchArea") &&
+            result.researchArea?.raw?.map((researchArea: ResearchArea) => {
+              const names = Array.isArray(researchArea.name)
+                ? researchArea.name.join(", ")
+                : String(researchArea.name ?? "");
+              if (!names) return null;
+              return <span key={researchArea.id}>{names}</span>;
+            })}
+          {isVisible("issn_l") && result.issn_l?.raw && (
+            <span>{result.issn_l.raw}</span>
+          )}
+          {isVisible("countryCode") && result.countryCode?.raw && (
+            <span>{result.countryCode.raw}</span>
+          )}
+          {isVisible("isOA") && result.isOA?.raw !== undefined && (
+            <span>{String(result.isOA.raw)}</span>
+          )}
         </div>
       </a>
     </li>
