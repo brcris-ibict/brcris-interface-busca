@@ -191,6 +191,10 @@ export function getNumericLattesId(value: unknown): string {
 }
 
 const LOWER_WORDS = new Set([
+  "a",
+  "as",
+  "o",
+  "os",
   "de",
   "da",
   "do",
@@ -201,13 +205,12 @@ const LOWER_WORDS = new Set([
   "para",
   "por",
   "com",
-  "os",
+  "tem",
 ]);
 
 export function normalizeText(text: any): string {
   if (!text) return "";
 
-  // Extração rápida do valor
   const safeText = String(
     Array.isArray(text)
       ? text[0]
@@ -218,11 +221,11 @@ export function normalizeText(text: any): string {
 
   if (!safeText) return "";
 
-  return safeText.toLowerCase().replace(/\b\w+/g, (word, index) => {
-    // Capitaliza se for a primeira palavra ou se não estiver na lista de exceções
-    if (index === 0 || !LOWER_WORDS.has(word)) {
+  return safeText.toLowerCase().replace(/\p{L}+/gu, (word, offset) => {
+    if (offset === 0 || !LOWER_WORDS.has(word)) {
       return word.charAt(0).toUpperCase() + word.slice(1);
     }
+
     return word;
   });
 }
