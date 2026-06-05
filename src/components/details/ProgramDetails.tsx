@@ -89,24 +89,6 @@ export default function ProgramDetails() {
             value={result.evaluationArea?.raw}
           />
 
-          {result.brcrisId?.raw?.length > 0 && (
-            <li>
-              <span className="sui-result__key">{t("BrCris identifier")}</span>
-
-              <ExpandableContent
-                items={
-                  Array.isArray(result.brcrisId.raw)
-                    ? result.brcrisId.raw
-                    : [result.brcrisId.raw]
-                }
-                initialCount={5}
-                renderItem={(id: string, idx: number) => (
-                  <span key={idx}>{id}</span>
-                )}
-              />
-            </li>
-          )}
-
           {result.capesId?.raw?.length > 0 && (
             <li>
               <span className="identifier-key">{t("Capes identifier")}:</span>

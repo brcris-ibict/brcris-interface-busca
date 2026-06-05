@@ -3,6 +3,8 @@
 import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { CSVLink } from "react-csv";
+import { usePublicationYears } from "../../hooks/usePublicationYears";
 import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
 import CopyLink from "../CopyLink";
@@ -17,6 +19,71 @@ export default function CourseDetails() {
   const { t } = useTranslation("common");
 
   const result = results?.[0];
+  const publicationIds =
+    result?.publication?.raw
+      ?.map((publication: any) => publication?.id)
+      .filter(Boolean) || [];
+  const { data: publicationMetadata = [] } =
+    usePublicationYears(publicationIds);
+  const publicationMetadataMap = new Map(
+    publicationMetadata.map((item: any) => [item.id, item]),
+  );
+
+  const publicationCsvHeaders = [
+    { label: "ID", key: "id" },
+    { label: "Título", key: "title" },
+    { label: "Ano", key: "year" },
+    { label: "Autor", key: "author" },
+  ];
+
+  const formatPublicationAuthors = (publication: any) => {
+    const metadata = publicationMetadataMap.get(publication?.id) || {};
+    if (Array.isArray(metadata.authors) && metadata.authors.length > 0) {
+      return metadata.authors.join("; ");
+    }
+
+    const rawAuthors = publication?.author?.raw;
+    if (!Array.isArray(rawAuthors)) return "";
+
+    return rawAuthors
+      .map((author: any) =>
+        typeof author?.name === "string"
+          ? author.name
+          : typeof author?.name?.raw === "string"
+            ? author.name.raw
+            : "",
+      )
+      .filter(Boolean)
+      .join("; ");
+  };
+
+  const sortedPublications =
+    result?.publication?.raw?.slice().sort((a: any, b: any) => {
+      const aMetadata = publicationMetadataMap.get(a?.id) || {};
+      const bMetadata = publicationMetadataMap.get(b?.id) || {};
+      const aYear = Number(aMetadata.year || a?.publicationDate?.[0] || 0);
+      const bYear = Number(bMetadata.year || b?.publicationDate?.[0] || 0);
+
+      return bYear - aYear;
+    }) || [];
+
+  const formattedPublicationsForCsv = sortedPublications.map(
+    (publication: any) => {
+      const rawPublicationDate = publication?.publicationDate;
+      const fallbackYear = Array.isArray(rawPublicationDate)
+        ? rawPublicationDate[0]
+        : rawPublicationDate || "";
+      const year =
+        publicationMetadataMap.get(publication?.id)?.year || fallbackYear || "";
+
+      return {
+        id: publication?.id ?? "",
+        title: publication?.title ?? "",
+        year,
+        author: formatPublicationAuthors(publication),
+      };
+    },
+  );
 
   if (isLoading || !wasSearched) {
     return <Loader />;
@@ -112,38 +179,48 @@ export default function CourseDetails() {
             </li>
           )}
 
-          {result.publication?.raw?.length > 0 && (
+          {sortedPublications.length > 0 && (
             <li>
-              <span className="sui-result__key">{t("Publications")}</span>
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <span className="sui-result__key">{t("Publications")}</span>
+                <CSVLink
+                  data={formattedPublicationsForCsv}
+                  headers={publicationCsvHeaders}
+                  filename={`publicacoes-${result.name?.raw ?? "curso"}.csv`}
+                  className="btn btn-primary btn-sm"
+                >
+                  ⬇ {t("Export csv")}
+                </CSVLink>
+              </div>
 
               <ExpandableContent
-                items={result.publication.raw}
+                items={sortedPublications}
                 initialCount={5}
-                renderItem={(publication: any) => (
-                  <div key={publication?.id} className="publication-item">
-                    <a href={`/publications/${publication?.id}`}>
-                      {publication?.title}
-                    </a>
-                  </div>
-                )}
-              />
-            </li>
-          )}
+                renderItem={(publication: any) => {
+                  const metadata =
+                    publicationMetadataMap.get(publication?.id) || {};
+                  const rawPublicationDate = publication?.publicationDate;
+                  const fallbackYear = Array.isArray(rawPublicationDate)
+                    ? rawPublicationDate[0]
+                    : rawPublicationDate || "";
+                  const year = metadata.year || fallbackYear || "";
+                  const authors =
+                    metadata.authors?.join(", ") ||
+                    (Array.isArray(publication?.author?.raw)
+                      ? publication.author.raw.join(", ")
+                      : "");
 
-          {result.brcrisId?.raw?.length > 0 && (
-            <li>
-              <span className="sui-result__key">{t("BrCris identifier")}</span>
-
-              <ExpandableContent
-                items={
-                  Array.isArray(result.brcrisId.raw)
-                    ? result.brcrisId.raw
-                    : [result.brcrisId.raw]
-                }
-                initialCount={5}
-                renderItem={(id: string, idx: number) => (
-                  <span key={idx}>{id}</span>
-                )}
+                  return (
+                    <div key={publication?.id} className="publication-item">
+                      <a href={`/publications/${publication?.id}`}>
+                        {publication?.title}
+                      </a>
+                      <div className="publication-meta">
+                        {[year, authors].filter(Boolean).join(" - ")}
+                      </div>
+                    </div>
+                  );
+                }}
               />
             </li>
           )}

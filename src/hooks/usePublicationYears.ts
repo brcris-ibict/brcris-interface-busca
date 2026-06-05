@@ -3,13 +3,15 @@ import { useEffect, useState } from "react";
 type PublicationYear = {
   id: string;
   year: string | null;
+  authors?: string[];
+  advisors?: string[];
 };
 
 export function usePublicationYears(ids: string[]) {
   const [data, setData] = useState<PublicationYear[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies: dependency is derived from ids array values
   useEffect(() => {
     if (!ids || ids.length === 0) return;
 

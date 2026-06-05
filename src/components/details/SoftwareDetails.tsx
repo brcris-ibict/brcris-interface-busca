@@ -34,6 +34,44 @@ export default function SoftwareDetails() {
     return value;
   };
 
+  const getEarliestYear = (value: any) => {
+    if (!value) return "-";
+    const values = Array.isArray(value) ? value : [value];
+    const yearStrings = values
+      .map((item) => String(item).trim())
+      .filter(Boolean)
+      .map((text) => {
+        const match = text.match(/\d{4}/);
+        return match ? match[0] : text;
+      });
+
+    const numericYears = yearStrings
+      .map((year) => Number(year))
+      .filter((year) => !Number.isNaN(year));
+
+    return numericYears.length > 0
+      ? String(Math.min(...numericYears))
+      : (yearStrings[0] ?? "-");
+  };
+
+  const getEarliestDate = (value: any) => {
+    if (!value) return "-";
+    const values = Array.isArray(value) ? value : [value];
+    const candidates = values
+      .map((item) => String(item).trim())
+      .filter(Boolean);
+
+    const parsedDates = candidates
+      .map((raw) => ({ raw, time: new Date(raw).getTime() }))
+      .filter((item) => !Number.isNaN(item.time));
+
+    if (parsedDates.length > 0) {
+      return formatDate(parsedDates.sort((a, b) => a.time - b.time)[0].raw);
+    }
+
+    return formatDate(candidates[0]);
+  };
+
   if (isLoading || !wasSearched) {
     return <Loader />;
   }
@@ -97,7 +135,10 @@ export default function SoftwareDetails() {
             </li>
           )}
 
-          <ShowItem label={t("Release year")} value={result.releaseYear?.raw} />
+          <ShowItem
+            label={t("Release year")}
+            value={getEarliestYear(result.releaseYear?.raw)}
+          />
 
           <ShowItem
             label={t("Registration country")}
@@ -110,7 +151,7 @@ export default function SoftwareDetails() {
 
           <ShowItem
             label={t("Deposit date")}
-            value={formatDate(result.depositDate?.raw)}
+            value={getEarliestDate(result.depositDate?.raw)}
           />
 
           <ShowItem

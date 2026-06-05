@@ -70,7 +70,7 @@ function Navbar() {
             <span className="navbar-toggler-icon"></span>
           </button>
         </div>
-        <div className="collapse navbar-collapse" id="navbarNav">
+        <div className="collapse navbar-collapse ms-md-4" id="navbarNav">
           <div className="navbar-nav me-auto mb-2 mb-lg-0"></div>
 
           <ul className="navbar-nav nav nav-tabs">

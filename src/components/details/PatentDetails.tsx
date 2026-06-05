@@ -135,20 +135,6 @@ export default function PatentDetails() {
               />
             </li>
           )}
-
-          {result.brcrisId?.raw?.length > 0 && (
-            <li>
-              <span className="sui-result__key">{t("BrCris identifier")}</span>
-
-              <ExpandableContent
-                items={result.brcrisId.raw}
-                initialCount={5}
-                renderItem={(id: string, idx: number) => (
-                  <span key={idx}>{id}</span>
-                )}
-              />
-            </li>
-          )}
         </ul>
       </div>
     </div>

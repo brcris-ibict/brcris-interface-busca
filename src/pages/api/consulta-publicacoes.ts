@@ -20,7 +20,7 @@ export default async function handler(
     const response = await client.search({
       index: process.env.INDEX_PUBLICATION || "",
       size: 1000,
-      _source: ["id", "publicationDate"],
+      _source: ["id", "publicationDate", "author", "advisor"],
       body: {
         query: {
           terms: {
@@ -31,12 +31,34 @@ export default async function handler(
     });
 
     const hits = response.body.hits?.hits ?? [];
-    console.log("EXEMPLO DOC:", hits[0]?._source);
+    const normalizeName = (person: any) => {
+      if (!person) return "";
+      if (typeof person === "string") return person;
+      if (typeof person.name === "string") return person.name;
+      if (typeof person.name?.raw === "string") return person.name.raw;
+      if (Array.isArray(person.name) && person.name.length > 0) {
+        return typeof person.name[0] === "string"
+          ? person.name[0]
+          : typeof person.name[0]?.raw === "string"
+            ? person.name[0].raw
+            : "";
+      }
+      return "";
+    };
+
+    const normalizePeople = (people: any) => {
+      if (!people) return [];
+      if (Array.isArray(people)) {
+        return people.map(normalizeName).filter((name) => !!name);
+      }
+      const name = normalizeName(people);
+      return name ? [name] : [];
+    };
+
     const result = hits.map((hit: any) => {
       const pub = hit._source;
 
       const rawDate = pub?.publicationDate;
-
       let year: string | null = null;
 
       if (Array.isArray(rawDate) && rawDate.length > 0) {
@@ -48,9 +70,12 @@ export default async function handler(
       } else if (typeof rawDate === "string" && rawDate.length >= 4) {
         year = rawDate.slice(0, 4);
       }
+
       return {
         id: pub.id,
         year,
+        authors: normalizePeople(pub.author),
+        advisors: normalizePeople(pub.advisor),
       };
     });
 
