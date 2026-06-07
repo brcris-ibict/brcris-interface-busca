@@ -1103,6 +1103,21 @@ li .sui-result__key:after {
   border-radius: 4px;
 }
 
+.team-member picture {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.team-member picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
 .team-member h2 {
   font-size: 1rem;
   color: var(--primary-color);
