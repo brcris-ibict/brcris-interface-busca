@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { alertService } from "../services/AlertService";
 import MailService from "../services/MailService";
-import style from "../styles/ContactForm.module.css";
+import style from "../styles/Form.module.css";
 import Loader from "./Loader";
 
 function ContactForm() {
@@ -29,9 +29,10 @@ function ContactForm() {
       return;
     }
     const data = {
+      type: "contact",
       name,
       email,
-      message,
+      description: message,
       captcha: captchaCode,
     };
 

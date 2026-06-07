@@ -8,11 +8,11 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 import { alertService } from "../services/AlertService";
 
-import style from "../styles/ContactForm.module.css";
+import style from "../styles/Form.module.css";
 
 import Loader from "./Loader";
 
-function ContactForm() {
+function ReportForm() {
   const { t } = useTranslation("common");
 
   const router = useRouter();
@@ -22,6 +22,7 @@ function ContactForm() {
   const [email, setEmail] = useState("");
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [captchaCode, setCaptchaCode] = useState("");
 
@@ -42,9 +43,36 @@ function ContactForm() {
     }
   }, [router.isReady, router.query.url]);
 
+  useEffect(() => {
+    const urls = files.map((file) => URL.createObjectURL(file));
+    setPreviews(urls);
+
+    return () => {
+      urls.forEach((url) => {
+        URL.revokeObjectURL(url);
+      });
+    };
+  }, [files]);
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, idx) => idx !== index));
+  };
+
+  const handleKeyDown = (e: any) => {
+    // Prevent paste shortcut (Ctrl/Cmd+V) opening file chooser when user
+    // doesn't want paste functionality in this form.
+    if ((e.ctrlKey || e.metaKey) && String(e.key).toLowerCase() === "v") {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: (acceptedFiles) => {
       setFiles((prev) => [...prev, ...acceptedFiles]);
+    },
+    accept: {
+      "image/*": [],
     },
   });
 
@@ -63,6 +91,7 @@ function ContactForm() {
 
       const formData = new FormData();
 
+      formData.append("type", "report");
       formData.append("url", url);
       formData.append("name", name);
       formData.append("email", email);
@@ -104,7 +133,11 @@ function ContactForm() {
     <div className={style.wrapper}>
       {isLoading && <Loader />}
 
-      <form onSubmit={handleSubmit} className={style.form}>
+      <form
+        onSubmit={handleSubmit}
+        className={style.form}
+        onKeyDown={handleKeyDown}
+      >
         <h2 className={style.title}>{t("Report inconsistency")}</h2>
 
         <input
@@ -151,11 +184,34 @@ function ContactForm() {
 
         {files.length > 0 && (
           <div className={style.fileList}>
-            {files.map((file, index) => (
-              <div key={`${file.name}-${index}`} className={style.fileItem}>
-                {file.name}
-              </div>
-            ))}
+            <div className={style.previewGrid}>
+              {files.map((file, index) => (
+                <div
+                  key={`${file.name}-${index}`}
+                  className={style.previewItem}
+                >
+                  {previews[index] ? (
+                    <img
+                      className={style.previewImage}
+                      src={previews[index]}
+                      alt={file.name}
+                    />
+                  ) : (
+                    <div className={style.previewPlaceholder}>{file.name}</div>
+                  )}
+                  <div className={style.previewMeta}>
+                    <span>{file.name}</span>
+                    <button
+                      type="button"
+                      className={style.removeButton}
+                      onClick={() => removeFile(index)}
+                    >
+                      Remover
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -180,4 +236,4 @@ function ContactForm() {
   );
 }
 
-export default ContactForm;
+export default ReportForm;
