@@ -15,7 +15,7 @@ const config: CustomSearchDriverOptions = {
     index: indexName,
     operator: "OR",
     search_fields: {
-      name: {},
+      name_text: {},
       "orgUnit.name_text": {},
       researchArea: {},
     },
@@ -48,7 +48,7 @@ const config: CustomSearchDriverOptions = {
       index: indexName,
       resultsPerPage: 5,
       search_fields: {
-        name: {
+        name_text: {
           weight: 3,
         },
       },

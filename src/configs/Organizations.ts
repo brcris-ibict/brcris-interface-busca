@@ -18,7 +18,7 @@ const config: CustomSearchDriverOptions = {
       name_text: {
         weight: 3,
       },
-      acronym: {},
+      acronym_text: {},
       country: {},
       state: {},
       city: {},
