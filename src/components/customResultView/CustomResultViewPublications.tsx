@@ -1,5 +1,5 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
-import { normalizeText } from "../../../utils/Utils";
+import { formatPublicationYear, normalizeText } from "../../../utils/Utils";
 import type { Author, Conference, OrgUnit } from "../../types/Entities";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
@@ -43,7 +43,7 @@ const CustomResultViewPublications = ({
               <span key={org.id}>{normalizeText(org.name!)}</span>
             ))}
           {isVisible("publicationDate") && result.publicationDate?.raw && (
-            <span>{result.publicationDate?.raw}</span>
+            <span>{formatPublicationYear(result.publicationDate.raw)}</span>
           )}
           {isVisible("type") && result.type?.raw && (
             <span>{normalizeText(String(result.type.raw))}</span>

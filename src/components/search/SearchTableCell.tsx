@@ -1,3 +1,4 @@
+import { formatPublicationYear } from "../../../utils/Utils";
 import {
   getFieldTextValue,
   getLattesIdFromRecord,
@@ -52,6 +53,13 @@ export default function SearchTableCell({
 
   if (entityKey === "people" && fieldKey === "lattesId") {
     return "-";
+  }
+
+  if (entityKey === "publications" && fieldKey === "publicationDate") {
+    const raw = result.publicationDate?.raw;
+    if (raw === null || raw === undefined) return "-";
+    const formatted = formatPublicationYear(raw);
+    return formatted || "-";
   }
 
   return fieldTextValue;

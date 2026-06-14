@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import {
   _normalizeScientificTitle,
+  formatPublicationYear,
   normalizeDoiList,
 } from "../../../utils/Utils";
 import NotFound from "../../pages/404";
@@ -41,7 +42,7 @@ export default function PublicationDetails() {
     const value = Array.isArray(rawDate) ? rawDate[0] : rawDate;
     if (!value) return "";
 
-    const normalizedValue = String(value).trim();
+    const normalizedValue = formatPublicationYear(value);
     if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedValue)) {
       return normalizedValue.replace(/-/g, "/");
     }
@@ -206,7 +207,10 @@ export default function PublicationDetails() {
                 />
               </li>
             )}
-            <ShowItem label={t("Year")} value={result.publicationDate?.raw} />
+            <ShowItem
+              label={t("Year")}
+              value={formatPublicationYear(result.publicationDate?.raw)}
+            />
             <ShowItem label={t("Type")} value={result.type?.raw} />
             {result.orgunit === undefined &&
             result.service === undefined &&

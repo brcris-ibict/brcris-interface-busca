@@ -230,6 +230,64 @@ export function normalizeText(text: any): string {
   });
 }
 
+export function formatPublicationYear(value: unknown): string {
+  if (value === null || value === undefined) return "";
+
+  const MIN_YEAR = 1600;
+  const MAX_YEAR = 2100;
+  const isValidYear = (year: number) => year >= MIN_YEAR && year <= MAX_YEAR;
+
+  const extractYears = (token: string): number[] => {
+    const clean = token.trim();
+    if (!clean) return [];
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(clean)) {
+      const year = Number(clean.slice(0, 4));
+      return isValidYear(year) ? [year] : [];
+    }
+
+    if (/^\d{4}$/.test(clean)) {
+      const year = Number(clean);
+      return isValidYear(year) ? [year] : [];
+    }
+
+    if (/^\d+$/.test(clean) && clean.length >= 8 && clean.length % 4 === 0) {
+      const chunks: number[] = [];
+      for (let i = 0; i < clean.length; i += 4) {
+        const year = Number(clean.slice(i, i + 4));
+        if (isValidYear(year)) chunks.push(year);
+      }
+      if (chunks.length >= 2) return chunks;
+    }
+
+    return [];
+  };
+
+  const items = Array.isArray(value) ? value : [value];
+  const years: number[] = [];
+
+  for (const item of items) {
+    const clean = String(item).trim();
+    if (!clean) continue;
+
+    if (clean.includes(",")) {
+      for (const part of clean.split(",")) {
+        years.push(...extractYears(part));
+      }
+      continue;
+    }
+
+    years.push(...extractYears(clean));
+  }
+
+  if (years.length > 0) {
+    return String(Math.max(...years));
+  }
+
+  const fallback = String(Array.isArray(value) ? value[0] : value).trim();
+  return fallback;
+}
+
 export function formatDate(value: string | string[] | undefined) {
   if (!value) return "-";
 
