@@ -4,19 +4,25 @@ import en from "../../public/locales/en/advanced.json";
 import ptBr from "../../public/locales/pt-BR/advanced.json";
 
 export function findPropertyByValue(value: string) {
+  const matches: string[] = [];
+
   for (const property in ptBr) {
     //@ts-expect-error
     if (ptBr[property] === value) {
-      return property;
+      matches.push(property);
     }
   }
   for (const property in en) {
     //@ts-expect-error
-    if (en[property] === value) {
-      return property;
+    if (en[property] === value && !matches.includes(property)) {
+      matches.push(property);
     }
   }
-  return value;
+
+  if (matches.length === 0) return value;
+  if (matches.length === 1) return matches[0];
+
+  return matches.find((property) => property.endsWith("_text")) ?? matches[0];
 }
 
 export function untranslatedFieldsNames(fullQuery: string) {
