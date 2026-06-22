@@ -3,6 +3,8 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import {
   _normalizeScientificTitle,
+  formatFirstPublicationValue,
+  formatPublicationType,
   formatPublicationYear,
   normalizeDoiList,
 } from "../../../utils/Utils";
@@ -71,6 +73,8 @@ export default function PublicationDetails() {
     const doiList = normalizeDoiList(result.doi.raw);
     return doiList.length > 0 ? `https://doi.org/${doiList[0]}` : "";
   })();
+
+  const publicationType = formatPublicationType(result?.type?.raw);
 
   if (isLoading || !wasSearched) {
     return <Loader />;
@@ -211,16 +215,16 @@ export default function PublicationDetails() {
               label={t("Year")}
               value={formatPublicationYear(result.publicationDate?.raw)}
             />
-            <ShowItem label={t("Type")} value={result.type?.raw} />
+            <ShowItem label={t("Type")} value={publicationType} />
             {result.orgunit === undefined &&
             result.service === undefined &&
             result.journal === undefined ? null : (
               <li>
                 <span className="sui-result__key">
-                  {result.type?.raw === "doctoral thesis" ||
-                  result.type?.raw === "master thesis"
+                  {publicationType === "doctoral thesis" ||
+                  publicationType === "master thesis"
                     ? `${t("Organization")}`
-                    : result.type?.raw === "conference proceedings"
+                    : publicationType === "conference proceedings"
                       ? `${t("Organization")}`
                       : `${t("Journals")}`}
                 </span>
@@ -363,13 +367,28 @@ export default function PublicationDetails() {
                 </span>
               </li>
             )}
-            <ShowItem label={t("Series")} value={result.series?.raw} />
-            <ShowItem label={t("Edition")} value={result.edition?.raw} />
-            <ShowItem label={t("Volume")} value={result.volume?.raw} />
-            <ShowItem label={t("Issue")} value={result.issue?.raw} />
+            <ShowItem
+              label={t("Series")}
+              value={formatFirstPublicationValue(result.series?.raw)}
+            />
+            <ShowItem
+              label={t("Edition")}
+              value={formatFirstPublicationValue(result.edition?.raw)}
+            />
+            <ShowItem
+              label={t("Volume")}
+              value={formatFirstPublicationValue(result.volume?.raw)}
+            />
+            <ShowItem
+              label={t("Issue")}
+              value={formatFirstPublicationValue(result.issue?.raw)}
+            />
             <ShowItem label={t("Start Page")} value={result.startPage?.raw} />
             <ShowItem label={t("End Page")} value={result.endPage?.raw} />
-            <ShowItem label={t("Has Language")} value={result.language?.raw} />
+            <ShowItem
+              label={t("Has Language")}
+              value={formatFirstPublicationValue(result.language?.raw)}
+            />
           </ul>
         </div>
       </div>

@@ -1,4 +1,8 @@
-import { formatPublicationYear } from "../../../utils/Utils";
+import {
+  formatFirstPublicationValue,
+  formatPublicationType,
+  formatPublicationYear,
+} from "../../../utils/Utils";
 import {
   getFieldTextValue,
   getLattesIdFromRecord,
@@ -59,6 +63,27 @@ export default function SearchTableCell({
     const raw = result.publicationDate?.raw;
     if (raw === null || raw === undefined) return "-";
     const formatted = formatPublicationYear(raw);
+    return formatted || "-";
+  }
+
+  if (entityKey === "publications" && fieldKey === "type") {
+    const raw = result.type?.raw;
+    if (raw === null || raw === undefined) return "-";
+    const formatted = formatPublicationType(raw);
+    return formatted || "-";
+  }
+
+  if (
+    entityKey === "publications" &&
+    (fieldKey === "edition" ||
+      fieldKey === "volume" ||
+      fieldKey === "issue" ||
+      fieldKey === "language" ||
+      fieldKey === "series")
+  ) {
+    const raw = result[fieldKey]?.raw;
+    if (raw === null || raw === undefined) return "-";
+    const formatted = formatFirstPublicationValue(raw);
     return formatted || "-";
   }
 

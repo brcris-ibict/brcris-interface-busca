@@ -2,8 +2,13 @@
 import type { estypes } from "@elastic/elasticsearch";
 import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 import type { NextApiRequest, NextApiResponse } from "next";
+import {
+  excludePublicationsWithMultipleTypes,
+  isPublicationIndex,
+} from "../../lib/publicationSearchQuery";
 import ElasticsearchQueryBuilder from "../../services/ElasticsearchQueryBuilder";
 import logger from "../../services/Logger";
+import type { CustomSearchQuery } from "../../types/Entities";
 
 // https://docs.elastic.co/search-ui/api/connectors/elasticsearch#customise-the-elasticsearch-request-body
 function builConnector(index: string) {
@@ -27,6 +32,12 @@ function builConnector(index: string) {
         requestBody.query = fullQuery;
       }
 
+      if (isPublicationIndex(index)) {
+        requestBody.query = excludePublicationsWithMultipleTypes(
+          requestBody.query,
+        );
+      }
+
       return requestBody;
     },
   );
@@ -38,7 +49,8 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    const { requestState, queryConfig } = req.body;
+    const { requestState, queryConfig: rawQueryConfig } = req.body;
+    const queryConfig = rawQueryConfig as CustomSearchQuery;
 
     if (
       !requestState.searchTerm &&
@@ -55,6 +67,7 @@ export default async function handler(
     res.json(response);
   } catch (err) {
     logger.error("ERROR::", err);
-    res.status(400).json({ error: err.message });
+    const message = err instanceof Error ? err.message : "Unknown error";
+    res.status(400).json({ error: message });
   }
 }

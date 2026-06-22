@@ -288,6 +288,46 @@ export function formatPublicationYear(value: unknown): string {
   return fallback;
 }
 
+export function getPublicationTypes(type: unknown): string[] {
+  if (type == null || type === "") {
+    return [];
+  }
+  const values = Array.isArray(type) ? type : [type];
+  return [
+    ...new Set(values.map((item) => String(item).trim()).filter(Boolean)),
+  ];
+}
+
+export function hasMultiplePublicationTypes(type: unknown): boolean {
+  return getPublicationTypes(type).length > 1;
+}
+
+export function formatPublicationType(type: unknown): string {
+  return getPublicationTypes(type)[0] ?? "";
+}
+
+export function formatFirstPublicationValue(value: unknown): string {
+  if (value === null || value === undefined) return "";
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const text = String(item ?? "").trim();
+      if (text) return text;
+    }
+    return "";
+  }
+
+  const text = String(value).trim();
+  if (!text) return "";
+
+  if (text.includes(",")) {
+    const first = text.split(",")[0]?.trim();
+    if (first) return first;
+  }
+
+  return text;
+}
+
 export function formatDate(value: string | string[] | undefined) {
   if (!value) return "-";
 
