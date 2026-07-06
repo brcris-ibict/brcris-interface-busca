@@ -32,9 +32,11 @@ export default function App() {
   const partners = [
     {
       url: "https://www.gov.br/ibict/pt-br",
-      path: "/logos/logo-periodo-defeso-transparente.svg",
+      path:
+        resolvedTheme === "dark"
+          ? "/logos/logo-ibict-pb.png"
+          : "/logos/logo-ibict.png",
       description: "Logo do IBICT",
-      class: "ibict-partner",
     },
     {
       url: "http://www.finep.gov.br/",

@@ -114,15 +114,15 @@ function Footer() {
       </div>
       <div className="footer">
         <a
-          href="https://www.gov.br/mcti/pt-br"
+          href="https://www.gov.br/ibict/pt-br"
           target="_blank"
           rel="noopener noreferrer"
         >
           <picture>
             <img
-              src="/logos/mcti-negativo.png"
-              className="logo-rodape"
-              alt="imagem com logo do ibict, minc e gov.br"
+              src="/logos/logo-periodo-defeso-transparente.svg"
+              className="logo-rodape logo-periodo-defeso"
+              alt="Logo do IBICT - período de defeso"
             />
           </picture>
         </a>

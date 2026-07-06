@@ -326,13 +326,6 @@ main {
 
 .navbar-logo .ibict {
   height: 50px;
-  width: auto;
-  max-width: 200px;
-}
-
-:root[data-theme="dark"] .navbar-logo .ibict,
-:root[data-theme="dark"] .partners div.ibict-partner img {
-  filter: brightness(0) invert(1);
 }
 
 a {
@@ -643,16 +636,6 @@ li .sui-result__key:after {
 
 .partners div.minus {
   width: 5%;
-}
-
-.partners div.ibict-partner {
-  width: 14%;
-  min-width: 140px;
-}
-
-.partners div.ibict-partner img {
-  width: 100%;
-  height: auto;
 }
 
 .navbar .nav-tabs {
@@ -1423,6 +1406,14 @@ h3.popover-header a {
 .logo-rodape {
   max-height: 100px;
   margin: 20px 0;
+}
+
+.logo-rodape.logo-periodo-defeso {
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+  max-width: min(100%, 520px);
+  width: 100%;
+  height: auto;
 }
 
 .title-indicators {

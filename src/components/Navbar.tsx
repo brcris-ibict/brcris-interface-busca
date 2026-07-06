@@ -12,8 +12,11 @@ function Navbar() {
   const { t } = useTranslation("navbar");
 
   const { asPath } = router;
-  const { setThemePreference, themePreference } = useTheme();
-  const ibictLogoSrc = "/logos/logo-periodo-defeso-transparente.svg";
+  const { resolvedTheme, setThemePreference, themePreference } = useTheme();
+  const ibictLogoSrc =
+    resolvedTheme === "dark"
+      ? "/logos/logo-ibict-pb.png"
+      : "/logos/logo-ibict.png";
 
   const themeIcon =
     themePreference === "dark" ? (
