@@ -24,7 +24,7 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
           <DatabaseBackup size={20} strokeWidth={1.8} />
 
           <span className={styles.updateTriggerText}>
-            <strong>{t("Update")}:</strong> {"04/2026"}
+            <strong>{t("Update")}:</strong> {"07/2026"}
           </span>
         </span>
 
@@ -53,7 +53,7 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
                   </h2>
 
                   <p className={styles.modalSubtitle}>
-                    {t("Update")}: {"04/2026"}
+                    {t("Update")}: {"07/2026"}
                   </p>
                 </div>
               </div>
@@ -79,7 +79,7 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
 
                 <span>
                   <strong>{t("Last load in BrCris")}:</strong>{" "}
-                  {t("april of 2026")}
+                  {t("july of 2026")}
                 </span>
               </div>
 

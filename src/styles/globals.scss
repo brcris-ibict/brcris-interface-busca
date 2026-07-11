@@ -455,6 +455,8 @@ a.nav-link {
   align-items: center;
   justify-content: center;
   min-height: 50vh;
+  width: 100%;
+  overflow: hidden;
 }
 
 .btn-picti {
@@ -1414,6 +1416,9 @@ h3.popover-header a {
   max-width: min(100%, 520px);
   width: 100%;
   height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .title-indicators {
@@ -1602,8 +1607,11 @@ h3.popover-header a {
   }
 
   .graph {
-    height: 50vh;
+    height: 340px;
+    min-height: 340px;
     width: 100%;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .sui-search-error {
@@ -1647,6 +1655,12 @@ h3.popover-header a {
 
   .partners div {
     width: 20%;
+  }
+
+  .logo-rodape.logo-periodo-defeso {
+    max-width: 92%;
+    max-height: 72px;
+    margin: 16px auto;
   }
 
   .search-card {

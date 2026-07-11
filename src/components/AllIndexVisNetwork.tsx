@@ -6,7 +6,7 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useEffect, useMemo, useState } from "react";
+import { type ComponentType, useEffect, useMemo, useState } from "react";
 import type { Edge, Node, Options } from "vis";
 import "vis-network/styles/vis-network.css";
 import { replaceSpacesWithHyphens } from "../../utils/Utils";
@@ -219,6 +219,13 @@ function VisGraph() {
         ...baseOptions.edges,
         color: resolvedTheme === "dark" ? "#5ee6fb" : "#0284a0",
       },
+      physics: {
+        enabled: true,
+        stabilization: {
+          enabled: true,
+          iterations: 120,
+        },
+      },
     }),
     [resolvedTheme],
   );
@@ -266,11 +273,35 @@ function VisGraph() {
     setGraph({ ...graph, nodes: newNodes });
   }, [t, indexesStats]);
 
+  // react-graph-vis via dynamic() não expõe tipagem de props
+  const GraphComponent = Graph as unknown as ComponentType<{
+    graph: typeof graph;
+    options: Options;
+    events: typeof events;
+    getNetwork?: (network: {
+      fit: (opts?: object) => void;
+      once: (event: string, callback: () => void) => void;
+    }) => void;
+  }>;
+
   return (
     <div className="graph">
-      {/**
-             // @ts-ignore */}
-      <Graph graph={graph} options={options} events={events} />
+      <GraphComponent
+        graph={graph}
+        options={options}
+        events={events}
+        getNetwork={(network) => {
+          const fitGraph = () => {
+            network.fit({
+              animation: false,
+              padding: 28,
+            });
+          };
+
+          fitGraph();
+          network.once("stabilized", fitGraph);
+        }}
+      />
     </div>
   );
 }
