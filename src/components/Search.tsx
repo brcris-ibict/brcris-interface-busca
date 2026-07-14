@@ -218,6 +218,7 @@ export default function Search({ index }: SearchProps) {
                           primaryColumnLabel={primaryColumnLabel}
                           customView={index.customView}
                           IndicatorsComponent={IndicatorsComponent}
+                          showExcludeLibraries={entityKey === "organizations"}
                         />
                       )}
                     </>

@@ -24,7 +24,6 @@ const config: CustomSearchDriverOptions = {
       },
       "leaderResearcher.name_text": {},
       "leaderOrgUnit.name_text": {},
-      "orgUnit.name_text": {},
     },
     result_fields: {
       id: {
@@ -40,9 +39,6 @@ const config: CustomSearchDriverOptions = {
         raw: {},
       },
       leaderOrgUnit: {
-        raw: {},
-      },
-      orgUnit: {
         raw: {},
       },
       researchLine: {

@@ -23,6 +23,7 @@ type SearchResultsBodyProps = {
   primaryColumnLabel: string;
   customView: ComponentType<ResultViewProps>;
   IndicatorsComponent: ComponentType<unknown>;
+  showExcludeLibraries?: boolean;
 };
 
 export default function SearchResultsBody({
@@ -39,6 +40,7 @@ export default function SearchResultsBody({
   primaryColumnLabel,
   customView,
   IndicatorsComponent,
+  showExcludeLibraries = false,
 }: SearchResultsBodyProps) {
   return (
     <div
@@ -52,6 +54,7 @@ export default function SearchResultsBody({
         toggled={toggled}
         onOpen={onToggledOpen}
         onClose={onToggledClose}
+        showExcludeLibraries={showExcludeLibraries}
       />
       <div className="result">
         <div className={styles.resultsInfo}>

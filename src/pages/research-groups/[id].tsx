@@ -51,9 +51,9 @@ export default function GroupDetailsPage() {
         name_text: {
           weight: 3,
         },
-        "leader.name_text": {},
+        "leaderResearcher.name_text": {},
         "member.name_text": {},
-        "orgunit.name_text": {},
+        "leaderOrgUnit.name_text": {},
       },
       result_fields: {
         name: {
@@ -75,15 +75,12 @@ export default function GroupDetailsPage() {
           raw: {},
         },
         keywords: {
-          raw: [],
+          raw: {},
         },
         url: {
           raw: {},
         },
         status: {
-          raw: {},
-        },
-        leader: {
           raw: {},
         },
         partner: {
@@ -92,7 +89,7 @@ export default function GroupDetailsPage() {
         member: {
           raw: {},
         },
-        orgunit: {
+        leaderOrgUnit: {
           raw: {},
         },
         software: {

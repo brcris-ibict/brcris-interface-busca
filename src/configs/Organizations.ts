@@ -36,6 +36,9 @@ const config: CustomSearchDriverOptions = {
       acronym: {
         raw: {},
       },
+      type: {
+        raw: {},
+      },
       country: {
         raw: {},
       },
@@ -47,6 +50,7 @@ const config: CustomSearchDriverOptions = {
       },
     },
     facets: {
+      type: { type: "value" },
       country: { type: "value" },
       state: { type: "value", size: 27 },
       city: { type: "value" },

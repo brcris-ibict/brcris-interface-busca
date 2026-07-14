@@ -3,6 +3,12 @@ import type { estypes } from "@elastic/elasticsearch";
 import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 import type { NextApiRequest, NextApiResponse } from "next";
 import {
+  excludeOrgLibraries,
+  isOrgUnitIndex,
+  shouldExcludeOrgLibraries,
+  stripExcludeLibrariesFilter,
+} from "../../lib/orgunitSearchQuery";
+import {
   excludePublicationsWithMultipleTypes,
   isPublicationIndex,
 } from "../../lib/publicationSearchQuery";
@@ -36,6 +42,13 @@ function builConnector(index: string) {
         requestBody.query = excludePublicationsWithMultipleTypes(
           requestBody.query,
         );
+      }
+
+      if (isOrgUnitIndex(index)) {
+        requestBody.query = stripExcludeLibrariesFilter(requestBody.query);
+        if (shouldExcludeOrgLibraries(requestState.filters)) {
+          requestBody.query = excludeOrgLibraries(requestBody.query);
+        }
       }
 
       return requestBody;

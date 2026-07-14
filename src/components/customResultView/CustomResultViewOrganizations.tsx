@@ -19,6 +19,9 @@ const CustomResultViewOrganizations = ({
           }}
         ></h2>
         <div className="result-metadata">
+          {isVisible("type") && result.type?.raw && (
+            <span>{normalizeText(result.type?.raw)}</span>
+          )}
           {isVisible("city") && result.city?.raw && (
             <span>{normalizeText(result.city?.raw)}</span>
           )}

@@ -21,6 +21,11 @@ import {
   CHART_BACKGROUD_COLORS,
   CHART_BORDER_COLORS,
 } from "../../../utils/Utils";
+import {
+  EXCLUDE_LIBRARIES_FILTER_FIELD,
+  excludeOrgLibraries,
+  shouldExcludeOrgLibraries,
+} from "../../lib/orgunitSearchQuery";
 import indicatorProxyService from "../../services/IndicatorProxyService";
 import styles from "../../styles/Indicators.module.css";
 import type { CustomSearchQuery, IndicatorType } from "../../types/Entities";
@@ -87,26 +92,37 @@ function OrgUnitIndicators({
       },
     };
     optionsState.plugins = pluginsState;
-    const countryQuery = JSON.stringify(
-      getAggregateQuery({
-        size: 10,
-        indicadorName: "country",
-        searchTerm: resultSearchTerm,
-        fields,
-        operator: normalizedOperator,
-        filters,
-      }),
-    );
-    const stateQuery = JSON.stringify(
-      getAggregateQuery({
-        size: 10,
-        indicadorName: "state",
-        searchTerm: resultSearchTerm,
-        fields,
-        operator: normalizedOperator,
-        filters,
-      }),
-    );
+
+    const indicatorFilters =
+      filters?.filter(
+        (filter: { field: string }) =>
+          filter.field !== EXCLUDE_LIBRARIES_FILTER_FIELD,
+      ) ?? [];
+
+    const countryQueryObj = getAggregateQuery({
+      size: 10,
+      indicadorName: "country",
+      searchTerm: resultSearchTerm,
+      fields,
+      operator: normalizedOperator,
+      filters: indicatorFilters,
+    });
+    const stateQueryObj = getAggregateQuery({
+      size: 10,
+      indicadorName: "state",
+      searchTerm: resultSearchTerm,
+      fields,
+      operator: normalizedOperator,
+      filters: indicatorFilters,
+    });
+
+    if (shouldExcludeOrgLibraries(filters)) {
+      countryQueryObj.query = excludeOrgLibraries(countryQueryObj.query);
+      stateQueryObj.query = excludeOrgLibraries(stateQueryObj.query);
+    }
+
+    const countryQuery = JSON.stringify(countryQueryObj);
+    const stateQuery = JSON.stringify(stateQueryObj);
     if (isLoading) {
       indicatorProxyService
         .search([countryQuery, stateQuery], INDEX_NAME)

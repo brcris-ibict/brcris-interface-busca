@@ -38,6 +38,7 @@ export const DISPLAY_FIELDS_BY_ENTITY: Record<string, DisplayField[]> = {
   ],
   organizations: [
     { key: "name", label: "Name", default: true, fixed: true },
+    { key: "type", label: "Type", default: false },
     { key: "city", label: "City", default: true },
     { key: "state", label: "State", default: true },
     { key: "country", label: "Country", default: true },
@@ -58,8 +59,7 @@ export const DISPLAY_FIELDS_BY_ENTITY: Record<string, DisplayField[]> = {
   "research-groups": [
     { key: "name", label: "Name", default: true, fixed: true },
     { key: "leaderResearcher", label: "Leader", default: true },
-    { key: "orgUnit", label: "Organization", default: true },
-    { key: "leaderOrgUnit", label: "Leader organization", default: false },
+    { key: "leaderOrgUnit", label: "Organization", default: true },
     { key: "researchLine", label: "Research line", default: true },
   ],
   software: [

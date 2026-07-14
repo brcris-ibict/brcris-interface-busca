@@ -1,6 +1,7 @@
 import * as reactSearchUi from "@elastic/react-search-ui";
 import { useTranslation } from "next-i18next";
 import styles from "../../styles/Home.module.css";
+import OrgTypeFacetView from "./OrgTypeFacetView";
 import RangeFacetNewestFirstView from "./RangeFacetNewestFirstView";
 
 const RANGE_FACETS_NEWEST_FIRST = new Set(["publicationDate"]);
@@ -11,6 +12,7 @@ type SearchFacetsSidebarProps = {
   toggled: boolean;
   onOpen: () => void;
   onClose: () => void;
+  showExcludeLibraries?: boolean;
 };
 
 export default function SearchFacetsSidebar({
@@ -19,6 +21,7 @@ export default function SearchFacetsSidebar({
   toggled,
   onOpen,
   onClose,
+  showExcludeLibraries = false,
 }: SearchFacetsSidebarProps) {
   const { t } = useTranslation(["common", "facets"]);
 
@@ -50,9 +53,11 @@ export default function SearchFacetsSidebar({
             field={facet}
             label={t(facet.toLowerCase(), { ns: "facets" })}
             view={
-              RANGE_FACETS_NEWEST_FIRST.has(facet)
-                ? RangeFacetNewestFirstView
-                : undefined
+              showExcludeLibraries && facet === "type"
+                ? OrgTypeFacetView
+                : RANGE_FACETS_NEWEST_FIRST.has(facet)
+                  ? RangeFacetNewestFirstView
+                  : undefined
             }
           />
         ))}

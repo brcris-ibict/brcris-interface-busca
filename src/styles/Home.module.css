@@ -228,6 +228,29 @@
   display: none !important;
 }
 
+.excludeLibrariesSwitch {
+  display: flex;
+  margin: 0.35rem 0 0.85rem;
+}
+
+.orgTypeFacet {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.orgTypeFacetOptions :global(.sui-facet) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.orgTypeFacetOptions :global(.sui-facet__title),
+.orgTypeFacetOptions :global(legend) {
+  display: none;
+}
+
 .filtersToggleLeft {
   margin-right: 0;
 }

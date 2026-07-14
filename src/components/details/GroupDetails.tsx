@@ -4,7 +4,6 @@ import { useTranslation } from "next-i18next";
 import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
 import CopyLink from "../CopyLink";
-import ShowAuthorItem from "../customResultView/ShowAuthorItem";
 import ShowItem from "../customResultView/ShowItem";
 import DataUpdateModal from "../DataUpdateModal";
 import ExpandableContent from "../ExpandableContent";
@@ -74,14 +73,28 @@ export default function GroupDetails() {
             value={result.researchLine?.raw}
           />
 
-          <ShowAuthorItem label={t("Leader")} authors={result.leader?.raw} />
+          {result.leaderResearcher?.raw?.length > 0 && (
+            <li>
+              <span className="sui-result__key">{t("Leader")}</span>
 
-          {result.orgUnit?.raw?.length > 0 && (
+              <ExpandableContent
+                items={result.leaderResearcher.raw}
+                initialCount={5}
+                renderItem={(leader: any) => (
+                  <a key={leader.id} href={`/people/${leader.id}`}>
+                    {Array.isArray(leader.name) ? leader.name[0] : leader.name}
+                  </a>
+                )}
+              />
+            </li>
+          )}
+
+          {result.leaderOrgUnit?.raw?.length > 0 && (
             <li>
               <span className="sui-result__key">{t("Organization")}</span>
 
               <ExpandableContent
-                items={result.orgUnit.raw}
+                items={result.leaderOrgUnit.raw}
                 initialCount={5}
                 renderItem={(org: OrgUnit) => (
                   <a key={org.id} href={`/organizations/${org.id}`}>
@@ -132,22 +145,6 @@ export default function GroupDetails() {
                   <div key={idx} className="member-item">
                     <a href={`/people/${item.id}`}>{item?.name}</a>
                   </div>
-                )}
-              />
-            </li>
-          )}
-
-          {result.leaderResearcher?.raw?.length > 0 && (
-            <li>
-              <span className="sui-result__key">{t("Leader")}</span>
-
-              <ExpandableContent
-                items={result.leaderResearcher.raw}
-                initialCount={5}
-                renderItem={(leader: any) => (
-                  <a key={leader.id} href={`/people/${leader.id}`}>
-                    {Array.isArray(leader.name) ? leader.name[0] : leader.name}
-                  </a>
                 )}
               />
             </li>
