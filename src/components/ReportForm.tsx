@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";

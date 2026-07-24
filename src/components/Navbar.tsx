@@ -6,12 +6,22 @@ import { useTranslation } from "next-i18next";
 import { useTheme } from "../contexts/ThemeContext";
 import dropdownStyle from "../styles/Dropdown.module.css";
 
+const NAV_ITEMS = [
+  { href: "/", label: "Home" },
+  { href: "/dashboards", label: "Dashboards" },
+  { href: "/team", label: "Team" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+  { href: "/faq", label: "Faq" },
+  { href: "/data-sources", label: "Data Sources" },
+];
+
 function Navbar() {
   const LANGUAGES = process.env.LANGUAGES?.split(",");
   const router = useRouter();
   const { t } = useTranslation("navbar");
 
-  const { asPath } = router;
+  const { asPath, pathname } = router;
   const { resolvedTheme, setThemePreference, themePreference } = useTheme();
   const ibictLogoSrc =
     resolvedTheme === "dark"
@@ -28,6 +38,13 @@ function Navbar() {
     );
 
   const changeTo = (lang: string) => lang;
+  const isNavItemActive = (href: string) =>
+    href === "/"
+      ? pathname === href
+      : pathname === href || pathname.startsWith(`${href}/`);
+
+  const getNavLinkClassName = (href: string) =>
+    isNavItemActive(href) ? "nav-link active" : "nav-link";
 
   return (
     <nav className="navbar navbar-expand-lg py-0">
@@ -74,43 +91,21 @@ function Navbar() {
           <div className="navbar-nav me-auto mb-2 mb-lg-0"></div>
 
           <ul className="navbar-nav nav nav-tabs">
-            <li className="nav-item me-2" role="presentation">
-              <Link href="/" className="nav-link">
-                {t("Home")}
-              </Link>
-            </li>
+            {NAV_ITEMS.map(({ href, label }) => {
+              const isActive = isNavItemActive(href);
 
-            <li className="nav-item me-2" role="presentation">
-              <Link href="/dashboards" className="nav-link">
-                {t("Dashboards")}
-              </Link>
-            </li>
-
-            <li className="nav-item me-2" role="presentation">
-              <Link href="/team" className="nav-link">
-                {t("Team")}
-              </Link>
-            </li>
-            <li className="nav-item me-2" role="presentation">
-              <Link href="/about" className="nav-link">
-                {t("About")}
-              </Link>
-            </li>
-            <li className="nav-item me-2" role="presentation">
-              <Link href="/contact" className="nav-link">
-                {t("Contact")}
-              </Link>
-            </li>
-            <li className="nav-item me-2" role="presentation">
-              <Link href="/faq" className="nav-link">
-                {t("Faq")}
-              </Link>
-            </li>
-            <li className="nav-item me-2" role="presentation">
-              <Link href="/data-sources" className="nav-link">
-                {t("Data Sources")}
-              </Link>
-            </li>
+              return (
+                <li className="nav-item me-2" role="presentation" key={href}>
+                  <Link
+                    href={href}
+                    className={getNavLinkClassName(href)}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {t(label)}
+                  </Link>
+                </li>
+              );
+            })}
             <li className="nav-item me-2" role="presentation">
               <div className={dropdownStyle.dropdown}>
                 <div className={dropdownStyle.flexCenter}>
