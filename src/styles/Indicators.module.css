@@ -6,7 +6,6 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 0.75rem;
-
 }
 
 .title {
@@ -22,7 +21,6 @@
   right: 8px;
 }
 
-
 @media (max-width: 800px) {
   .charts {
     margin-right: 0;
@@ -32,5 +30,4 @@
     padding: 0 16px;
     /* margin-top: 20px; */
   }
-
 }

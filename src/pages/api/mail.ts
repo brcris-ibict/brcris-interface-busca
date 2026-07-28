@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import { IncomingForm } from "formidable";
 import fs from "fs";
 import type { NextApiRequest, NextApiResponse } from "next";

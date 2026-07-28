@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 import { Search } from "lucide-react";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";

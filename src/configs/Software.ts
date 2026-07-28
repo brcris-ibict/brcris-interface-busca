@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import CustomResultViewSoftwares from "../components/customResultView/CustomResultViewSoftwares";
 import DefaultQueryConfig from "../components/DefaultQueryConfig";
 import SoftwaresIndicators from "../components/indicators/SoftwaresIndicators";

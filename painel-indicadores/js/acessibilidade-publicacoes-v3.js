@@ -33,21 +33,21 @@ window.PainelA11y = (function () {
 
     const details = document.createElement("details");
     details.className = "painel-tabela-alt";
-    
+
     const summary = document.createElement("summary");
     summary.textContent = `Visualizar dados em tabela: ${title}`;
     details.appendChild(summary);
 
     const wrapper = document.createElement("div");
     wrapper.className = "table-responsive";
-    
+
     const table = document.createElement("table");
     table.className = "painel-table";
-    
+
     // Thead
     const thead = document.createElement("thead");
     const trHead = document.createElement("tr");
-    headers.forEach(h => {
+    headers.forEach((h) => {
       const th = document.createElement("th");
       th.scope = "col";
       th.textContent = h;
@@ -58,9 +58,9 @@ window.PainelA11y = (function () {
 
     // Tbody
     const tbody = document.createElement("tbody");
-    rows.forEach(row => {
+    rows.forEach((row) => {
       const tr = document.createElement("tr");
-      row.forEach(cell => {
+      row.forEach((cell) => {
         const td = document.createElement("td");
         td.textContent = cell;
         tr.appendChild(td);
@@ -68,7 +68,7 @@ window.PainelA11y = (function () {
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);
-    
+
     wrapper.appendChild(table);
     details.appendChild(wrapper);
     container.appendChild(details);
@@ -77,6 +77,6 @@ window.PainelA11y = (function () {
   return {
     init: init,
     announce: announce,
-    createAltTable: createAltTable
+    createAltTable: createAltTable,
   };
 })();

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 // Interface para opções de conversão
 export interface CsvOptions {
   headers?: boolean;

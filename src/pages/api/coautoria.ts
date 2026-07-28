@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
 import logger from "../../services/Logger";

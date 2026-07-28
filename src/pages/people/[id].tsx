@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { SearchProvider } from "@elastic/react-search-ui";
 import type { RequestState, SearchDriverOptions } from "@elastic/search-ui";
 import type { GetServerSideProps } from "next";

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 "use client";
 import * as d3 from "d3";
 import { Download, Info } from "lucide-react";
@@ -226,6 +224,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           return `Publications with ${mainAuthor.name}: ${pubs.length}`;
         }
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chords, nodes]);
 
   if (!mainAuthor) {

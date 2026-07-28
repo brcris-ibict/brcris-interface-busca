@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 

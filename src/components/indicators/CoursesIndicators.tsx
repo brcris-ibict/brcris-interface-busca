@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { SearchContext, withSearch } from "@elastic/react-search-ui";
 import {

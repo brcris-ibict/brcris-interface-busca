@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/a11y/useValidAnchor: explanation */
 import { Laptop, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";

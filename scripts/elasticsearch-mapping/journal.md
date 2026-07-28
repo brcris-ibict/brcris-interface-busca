@@ -1,8 +1,8 @@
 Para o índice `brc-nov2025-journal`, os únicos campos `text` são:
 
-* `publication.title_text`
-* `publisher.name_text`
-* `title_text`
+- `publication.title_text`
+- `publisher.name_text`
+- `title_text`
 
 Então o mapping para `brc-nov2025-journal-v2` fica:
 

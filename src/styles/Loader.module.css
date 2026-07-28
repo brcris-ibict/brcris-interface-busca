@@ -16,9 +16,14 @@
   height: 100px;
   border-radius: 50%;
   background:
-    radial-gradient(farthest-side, var(--secondary-color) 94%, transparent) top / 16px 16px no-repeat,
+    radial-gradient(farthest-side, var(--secondary-color) 94%, transparent)
+      top / 16px 16px no-repeat,
     conic-gradient(transparent 30%, var(--secondary-color));
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 16px), #000 0);
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 16px),
+    #000 0
+  );
   animation: s3 1s infinite linear;
 }
 

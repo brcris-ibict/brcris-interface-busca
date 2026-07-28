@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/** biome-ignore-all lint/a11y/useSemanticElements: <explanation> */
-/** biome-ignore-all lint/correctness/useHookAtTopLevel: ok */
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: explanation */
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: explanation */
-
 import * as reactSearchUi from "@elastic/react-search-ui";
 import { Layout } from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";

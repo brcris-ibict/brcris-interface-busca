@@ -1,7 +1,7 @@
 Para `brc-nov2025-software`, apenas estes campos são `text`:
 
-* `creator.name_text`
-* `title_text`
+- `creator.name_text`
+- `title_text`
 
 Mapping para `brc-nov2025-software-v2`:
 

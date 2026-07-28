@@ -1,5 +1,3 @@
-
-
 .container {
   padding: 0 2rem;
 }
@@ -638,7 +636,7 @@
   .searchLayout {
     width: 100%;
   }
-    .resultsLayout {
+  .resultsLayout {
     flex-direction: column;
   }
 
@@ -649,16 +647,16 @@
     width: 100%;
     min-width: 0;
   }
-  
+
   .toolbarWrap {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
 
-  .toolbar{
-      flex-wrap: wrap;
-      justify-content: flex-start;
+  .toolbar {
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
   .about {
     flex-direction: column;

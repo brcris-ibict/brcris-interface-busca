@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import CustomResultViewGroups from "../components/customResultView/CustomResultViewGroups";
 import DefaultQueryConfig from "../components/DefaultQueryConfig";
 import GroupsIndicators from "../components/indicators/GroupsIndicators";

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useTranslation } from "next-i18next";
 import { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";

@@ -210,7 +210,6 @@ function AdvisingGraph({
       .attr("r", 12)
       .attr("fill", (d) => color(d.level));
 
-    node;
     node
       .append("a")
       .attr("xlink:href", (d) => `/people/${d.uri}`)

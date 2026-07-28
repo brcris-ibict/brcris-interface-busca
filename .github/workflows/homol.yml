@@ -18,7 +18,7 @@ jobs:
     runs-on: [self-hosted, Linux, x64, runner-homol]
     environment:
       name: homol
-      url: 'http://172.16.20.48:3000/'
+      url: "http://172.16.20.48:3000/"
     env:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
     steps:

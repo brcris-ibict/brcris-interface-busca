@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noAssignInExpressions: explanation */
 import type { SearchDriverOptions } from "@elastic/search-ui";
 
 type ButtonFieldSelectProps = {
@@ -25,11 +24,11 @@ export default function ButtonFieldSelect({
       data-field="title"
       aria-selected="true"
       onClick={() => {
-        config.searchQuery
-          ? (config.searchQuery.search_fields = {
-              [searchField]: {},
-            })
-          : null;
+        if (config.searchQuery) {
+          config.searchQuery.search_fields = {
+            [searchField]: {},
+          };
+        }
       }}
     >
       {title}

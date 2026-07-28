@@ -596,9 +596,9 @@ li .sui-result__key:after {
   justify-content: flex-end;
 }
 
-.nav-tabs .nav-link.active{
-    border-color: transparent;
-    background-color: transparent;
+.nav-tabs .nav-link.active {
+  border-color: transparent;
+  background-color: transparent;
 }
 
 .page-title {
@@ -1581,7 +1581,6 @@ h3.popover-header a {
 }
 
 @media (max-width: 800px) {
-
   .navbar {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
@@ -1628,7 +1627,7 @@ h3.popover-header a {
   }
 
   .page-search .sui-layout {
-     /*padding: 0 16px;*/
+    /*padding: 0 16px;*/
     width: 100%;
     margin-left: 0;
   }

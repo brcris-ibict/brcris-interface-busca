@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/suspicious/noAssignInExpressions: explanation */
-/** biome-ignore-all lint/suspicious/noImplicitAnyLet: explanation */
 import en from "../../public/locales/en/advanced.json";
 import ptBr from "../../public/locales/pt-BR/advanced.json";
 

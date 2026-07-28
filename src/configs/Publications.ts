@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import CustomResultViewPublications from "../components/customResultView/CustomResultViewPublications";
 import DefaultQueryConfig from "../components/DefaultQueryConfig";
 import PublicationsIndicators from "../components/indicators/PublicationsIndicators";

@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";

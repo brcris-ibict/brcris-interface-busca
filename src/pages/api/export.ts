@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/** biome-ignore-all lint/suspicious/noImplicitAnyLet: <explanation> */
 import archiver from "archiver";
 import crypto from "crypto";
 import { Client } from "es7";

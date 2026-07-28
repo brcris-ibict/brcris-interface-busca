@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { useTranslation } from "next-i18next";
 import type { DisplayField } from "../../configs/DisplayFields";
 import styles from "../../styles/Home.module.css";

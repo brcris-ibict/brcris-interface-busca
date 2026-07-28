@@ -1,6 +1,7 @@
 # Elasticsearch Mapping for PPG
 
 1. Create normalized index
+
 ```
 PUT brc-nov2025-program-v2
 {
@@ -113,6 +114,7 @@ PUT brc-nov2025-program-v2
 ```
 
 2. Reindex data
+
 ```
 POST _reindex
 {

@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: ok */
 import { SearchContext, withSearch } from "@elastic/react-search-ui";
 import {
   ArcElement,
@@ -150,12 +149,19 @@ function PublicationsIndicators({
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryKey, fields, normalizedOperator, resultSearchTerm, filters]);
 
   // ----------- DATA PROCESSING -----------
 
-  const yearIndicators: IndicatorType[] = indicators?.[0] ?? [];
-  const typeIndicators: IndicatorType[] = indicators?.[1] ?? [];
+  const yearIndicators: IndicatorType[] = useMemo(
+    () => indicators?.[0] ?? [],
+    [indicators],
+  );
+  const typeIndicators: IndicatorType[] = useMemo(
+    () => indicators?.[1] ?? [],
+    [indicators],
+  );
 
   const sortedYearIndicators = useMemo(() => {
     return [...yearIndicators].sort((a, b) => Number(a.key) - Number(b.key));

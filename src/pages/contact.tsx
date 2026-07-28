@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { GetStaticProps } from "next";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";

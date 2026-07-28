@@ -10,7 +10,6 @@ export function usePersonIdentifiers(ids: string[]) {
   const [data, setData] = useState<PersonIdentifiers[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional
   useEffect(() => {
     if (!ids || ids.length === 0) return;
 
@@ -39,7 +38,7 @@ export function usePersonIdentifiers(ids: string[]) {
     };
 
     fetchPersons();
-  }, [ids.join(",")]);
+  }, [ids]);
 
   return { data, loading };
 }

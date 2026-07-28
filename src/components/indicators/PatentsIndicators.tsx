@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import { SearchContext, withSearch } from "@elastic/react-search-ui";
 import {
   ArcElement,
@@ -208,10 +207,12 @@ function PatentsIndicators({
       ? kindCodeIndicators.map((d) => d.doc_count)
       : [];
 
-  depositeDateIndicators &&
+  if (depositeDateIndicators) {
     depositeDateIndicators.sort((a, b) => Number(a.key) - Number(b.key));
-  publicationDateIndicators &&
+  }
+  if (publicationDateIndicators) {
     publicationDateIndicators.sort((a, b) => Number(a.key) - Number(b.key));
+  }
 
   return (
     <div className="indicators" hidden={isEmpty()}>

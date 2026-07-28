@@ -1,7 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
-/* eslint-disable react/jsx-no-comment-textnodes */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";

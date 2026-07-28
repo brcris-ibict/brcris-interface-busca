@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { SearchContext, withSearch } from "@elastic/react-search-ui";
 import { Download } from "lucide-react";
 import { useRouter } from "next/router";

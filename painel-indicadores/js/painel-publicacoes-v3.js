@@ -6,11 +6,12 @@
   "use strict";
 
   document.addEventListener("DOMContentLoaded", function () {
-    
     // 1. Verificação de Dependência Crítica (ECharts)
     if (typeof window.echarts === "undefined") {
       console.error("A biblioteca ECharts não foi carregada.");
-      showDashboardError("Falha crítica: ECharts ausente. Verifique a conexão com a internet ou adblockers.");
+      showDashboardError(
+        "Falha crítica: ECharts ausente. Verifique a conexão com a internet ou adblockers.",
+      );
       return;
     }
 
@@ -31,7 +32,7 @@
         throw new Error("Módulo de dados (PainelDados) não carregado.");
       }
       const records = window.PainelDados.getAll();
-      
+
       if (!records || records.length === 0) {
         throw new Error("Nenhum dado retornado pela base.");
       }
@@ -55,18 +56,18 @@
       if (window.PainelGraficos) window.PainelGraficos.render(records, state);
 
       // 8. Remover placeholder de carregamento
-      const filtrosPlaceholder = document.querySelector(".painel-filtros-placeholder");
+      const filtrosPlaceholder = document.querySelector(
+        ".painel-filtros-placeholder",
+      );
       if (filtrosPlaceholder) {
         filtrosPlaceholder.remove(); // Os filtros verdadeiros já foram injetados
       }
 
       setupThemeDropdown();
-
     } catch (error) {
       console.error("Falha ao inicializar o painel:", error);
       showDashboardError(error.message);
     }
-
   });
 
   function showDashboardError(msg) {
@@ -88,16 +89,17 @@
   function setupThemeDropdown() {
     const themeBtn = document.getElementById("theme-btn");
     const themeMenu = document.getElementById("theme-menu");
-    
+
     if (themeBtn && themeMenu) {
       // Toggle menu
-      themeBtn.addEventListener("click", function(e) {
+      themeBtn.addEventListener("click", function (e) {
         e.stopPropagation();
-        themeMenu.style.display = themeMenu.style.display === "none" ? "block" : "none";
+        themeMenu.style.display =
+          themeMenu.style.display === "none" ? "block" : "none";
       });
 
       // Fechar ao clicar fora
-      document.addEventListener("click", function(e) {
+      document.addEventListener("click", function (e) {
         if (!themeMenu.contains(e.target) && !themeBtn.contains(e.target)) {
           themeMenu.style.display = "none";
         }
@@ -105,13 +107,16 @@
     }
 
     const themeDropdownItems = document.querySelectorAll("[data-theme-value]");
-    themeDropdownItems.forEach(item => {
+    themeDropdownItems.forEach((item) => {
       item.addEventListener("click", () => {
         const theme = item.getAttribute("data-theme-value");
         let resolvedTheme = theme;
-        
+
         if (theme === "auto") {
-          resolvedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light";
+          resolvedTheme = window.matchMedia("(prefers-color-scheme: dark)")
+            .matches
+            ? "dark"
+            : "light";
           localStorage.removeItem("brcris-theme");
         } else {
           localStorage.setItem("brcris-theme", theme);
@@ -119,11 +124,13 @@
 
         document.documentElement.setAttribute("data-theme", resolvedTheme);
         document.documentElement.setAttribute("data-bs-theme", resolvedTheme);
-        
+
         // Atualiza UI do dropdown
-        themeDropdownItems.forEach(i => i.classList.remove("Dropdown_activeItem__ozQsU"));
+        themeDropdownItems.forEach((i) =>
+          i.classList.remove("Dropdown_activeItem__ozQsU"),
+        );
         item.classList.add("Dropdown_activeItem__ozQsU");
-        
+
         const themeText = document.getElementById("theme-text");
         if (themeText) {
           const map = { light: "Claro", dark: "Escuro", auto: "Sistema" };
@@ -134,5 +141,4 @@
       });
     });
   }
-
 })();

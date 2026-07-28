@@ -1,289 +1,752 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Indicadores de Publicações — BrCris</title>
-  
-  <!-- Estilos Globais BrCris extraídos do site oficial -->
-  <link rel="stylesheet" href="https://brcris.ibict.br/_next/static/css/ba473664864b8886.css">
-  <link rel="stylesheet" href="https://brcris.ibict.br/_next/static/css/9fdd3397b587a5bc.css">
-  
-  <!-- Estilos Específicos do Painel -->
-  <link rel="stylesheet" href="css/painel-publicacoes-v3.css">
-  
-  <!-- Lógica Oficial de Tema -->
-  <script id="theme-init">
-    (function () {
-      try {
-        var storedTheme = window.localStorage.getItem("brcris-theme");
-        var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        var resolvedTheme = storedTheme === "dark"
-          ? "dark"
-          : storedTheme === "light"
-            ? "light"
-            : (prefersDark ? "dark" : "light");
-        document.documentElement.dataset.theme = resolvedTheme;
-        document.documentElement.style.colorScheme = resolvedTheme;
-      } catch (error) {
-        document.documentElement.dataset.theme = "light";
-        document.documentElement.style.colorScheme = "light";
-      }
-    })();
-  </script>
-</head>
-<body class="d-flex flex-column min-vh-100">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel de Indicadores de Publicações — BrCris</title>
 
-  <a href="#main-content" class="visually-hidden-focusable p-3 bg-primary text-white position-absolute top-0 start-0 z-3">Pular para o conteúdo principal</a>
+    <!-- Estilos Globais BrCris extraídos do site oficial -->
+    <link
+      rel="stylesheet"
+      href="https://brcris.ibict.br/_next/static/css/ba473664864b8886.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://brcris.ibict.br/_next/static/css/9fdd3397b587a5bc.css"
+    />
 
-  <!-- Header Institucional Exato -->
-  <nav class="navbar navbar-expand-lg py-0">
-    <div class="container-fluid d-flex">
-      <div class="flex-nowrap d-flex align-items-end flex-justify-content-between gap-3 ms-md-5">
-        <a class="navbar-brand" href="https://www.gov.br/ibict/pt-br" target="_blank" rel="noreferrer">
-          <picture class="navbar-logo">
-            <img class="img-fluid ibict" src="https://brcris.ibict.br/logos/logo-ibict.png" alt="logo do ibict"/>
-          </picture>
-        </a>
-        <span class="divider"> </span>
-        <a class="navbar-brand" href="https://brcris.ibict.br/">
-          <picture class="navbar-logo">
-            <img class="img-fluid brcris" src="https://brcris.ibict.br/logos/logo-brcris.png" alt="logo do brcris"/>
-          </picture>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      </div>
-      <div class="collapse navbar-collapse ms-md-4" id="navbarNav">
-        <div class="navbar-nav me-auto mb-2 mb-lg-0"></div>
-        <ul class="navbar-nav nav nav-tabs">
-          <li class="nav-item me-2" role="presentation"><a class="nav-link" href="https://brcris.ibict.br/">Início</a></li>
-          <li class="nav-item me-2" role="presentation"><a class="nav-link active" href="https://brcris.ibict.br/dashboards">Painéis de Indicadores</a></li>
-          <li class="nav-item me-2" role="presentation"><a class="nav-link" href="https://brcris.ibict.br/team">Equipe</a></li>
-          <li class="nav-item me-2" role="presentation"><a class="nav-link" href="https://brcris.ibict.br/about">Sobre</a></li>
-          <li class="nav-item me-2" role="presentation"><a class="nav-link" href="https://brcris.ibict.br/contact">Contato</a></li>
-          <li class="nav-item me-2" role="presentation"><a class="nav-link" href="https://brcris.ibict.br/faq">FAQ</a></li>
-          <li class="nav-item me-2" role="presentation"><a class="nav-link" href="https://brcris.ibict.br/data-sources">Fontes de Dados</a></li>
-          
-          <li class="nav-item me-2" role="presentation">
-            <div class="Dropdown_dropdown__fZINd">
-              <div class="Dropdown_flexCenter__Q9ZZG">
-                <a href="#" class="nav-link d-flex align-items-center">Português<svg height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" class="css-tj5bde-Svg"><path fill="currentColor" d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg></a>
+    <!-- Estilos Específicos do Painel -->
+    <link rel="stylesheet" href="css/painel-publicacoes-v3.css" />
+
+    <!-- Lógica Oficial de Tema -->
+    <script id="theme-init">
+      (function () {
+        try {
+          var storedTheme = window.localStorage.getItem("brcris-theme");
+          var prefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)",
+          ).matches;
+          var resolvedTheme =
+            storedTheme === "dark"
+              ? "dark"
+              : storedTheme === "light"
+                ? "light"
+                : prefersDark
+                  ? "dark"
+                  : "light";
+          document.documentElement.dataset.theme = resolvedTheme;
+          document.documentElement.style.colorScheme = resolvedTheme;
+        } catch (error) {
+          document.documentElement.dataset.theme = "light";
+          document.documentElement.style.colorScheme = "light";
+        }
+      })();
+    </script>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <a
+      href="#main-content"
+      class="visually-hidden-focusable p-3 bg-primary text-white position-absolute top-0 start-0 z-3"
+      >Pular para o conteúdo principal</a
+    >
+
+    <!-- Header Institucional Exato -->
+    <nav class="navbar navbar-expand-lg py-0">
+      <div class="container-fluid d-flex">
+        <div
+          class="flex-nowrap d-flex align-items-end flex-justify-content-between gap-3 ms-md-5"
+        >
+          <a
+            class="navbar-brand"
+            href="https://www.gov.br/ibict/pt-br"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <picture class="navbar-logo">
+              <img
+                class="img-fluid ibict"
+                src="https://brcris.ibict.br/logos/logo-ibict.png"
+                alt="logo do ibict"
+              />
+            </picture>
+          </a>
+          <span class="divider"> </span>
+          <a class="navbar-brand" href="https://brcris.ibict.br/">
+            <picture class="navbar-logo">
+              <img
+                class="img-fluid brcris"
+                src="https://brcris.ibict.br/logos/logo-brcris.png"
+                alt="logo do brcris"
+              />
+            </picture>
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+        <div class="collapse navbar-collapse ms-md-4" id="navbarNav">
+          <div class="navbar-nav me-auto mb-2 mb-lg-0"></div>
+          <ul class="navbar-nav nav nav-tabs">
+            <li class="nav-item me-2" role="presentation">
+              <a class="nav-link" href="https://brcris.ibict.br/">Início</a>
+            </li>
+            <li class="nav-item me-2" role="presentation">
+              <a
+                class="nav-link active"
+                href="https://brcris.ibict.br/dashboards"
+                >Painéis de Indicadores</a
+              >
+            </li>
+            <li class="nav-item me-2" role="presentation">
+              <a class="nav-link" href="https://brcris.ibict.br/team">Equipe</a>
+            </li>
+            <li class="nav-item me-2" role="presentation">
+              <a class="nav-link" href="https://brcris.ibict.br/about">Sobre</a>
+            </li>
+            <li class="nav-item me-2" role="presentation">
+              <a class="nav-link" href="https://brcris.ibict.br/contact"
+                >Contato</a
+              >
+            </li>
+            <li class="nav-item me-2" role="presentation">
+              <a class="nav-link" href="https://brcris.ibict.br/faq">FAQ</a>
+            </li>
+            <li class="nav-item me-2" role="presentation">
+              <a class="nav-link" href="https://brcris.ibict.br/data-sources"
+                >Fontes de Dados</a
+              >
+            </li>
+
+            <li class="nav-item me-2" role="presentation">
+              <div class="Dropdown_dropdown__fZINd">
+                <div class="Dropdown_flexCenter__Q9ZZG">
+                  <a href="#" class="nav-link d-flex align-items-center"
+                    >Português<svg
+                      height="20"
+                      width="20"
+                      viewBox="0 0 20 20"
+                      aria-hidden="true"
+                      focusable="false"
+                      class="css-tj5bde-Svg"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                      ></path></svg
+                  ></a>
+                </div>
+                <!-- Menu mockado para efeitos visuais, sem navegação real em PT/EN nesta página demonstrativa -->
               </div>
-              <!-- Menu mockado para efeitos visuais, sem navegação real em PT/EN nesta página demonstrativa -->
-            </div>
-          </li>
-          
-          <li class="nav-item me-2" role="presentation">
-            <div class="Dropdown_dropdown__fZINd" id="theme-dropdown-container">
-              <div class="Dropdown_flexCenter__Q9ZZG">
-                <button type="button" class="nav-link theme-toggle-button" id="theme-btn" aria-label="Modo de tema: sistema" title="Modo de tema">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-laptop" aria-hidden="true"><path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z"></path><path d="M20.054 15.987H3.946"></path></svg>
-                  <span>Tema</span>
-                  <span class="theme-toggle-value" id="theme-text">Sistema</span>
-                </button>
+            </li>
+
+            <li class="nav-item me-2" role="presentation">
+              <div
+                class="Dropdown_dropdown__fZINd"
+                id="theme-dropdown-container"
+              >
+                <div class="Dropdown_flexCenter__Q9ZZG">
+                  <button
+                    type="button"
+                    class="nav-link theme-toggle-button"
+                    id="theme-btn"
+                    aria-label="Modo de tema: sistema"
+                    title="Modo de tema"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-laptop"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z"
+                      ></path>
+                      <path d="M20.054 15.987H3.946"></path>
+                    </svg>
+                    <span>Tema</span>
+                    <span class="theme-toggle-value" id="theme-text"
+                      >Sistema</span
+                    >
+                  </button>
+                </div>
+                <div
+                  class="Dropdown_dropdownContent__g_ubi"
+                  id="theme-menu"
+                  style="
+                    display: none;
+                    position: absolute;
+                    right: 0;
+                    background: var(--painel-card-bg);
+                    border: 1px solid var(--painel-border);
+                    z-index: 1000;
+                    border-radius: 4px;
+                    padding: 0.5rem;
+                    box-shadow: var(--painel-card-shadow);
+                  "
+                >
+                  <button
+                    type="button"
+                    class="d-flex align-items-center Dropdown_dropdownAction__qUl_i"
+                    data-theme-value="auto"
+                    style="
+                      border: none;
+                      background: transparent;
+                      width: 100%;
+                      text-align: left;
+                      padding: 0.5rem;
+                    "
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-laptop me-2"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z"
+                      ></path>
+                      <path d="M20.054 15.987H3.946"></path></svg
+                    >Sistema
+                  </button>
+                  <button
+                    type="button"
+                    class="d-flex align-items-center Dropdown_dropdownAction__qUl_i"
+                    data-theme-value="light"
+                    style="
+                      border: none;
+                      background: transparent;
+                      width: 100%;
+                      text-align: left;
+                      padding: 0.5rem;
+                    "
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-sun me-2"
+                      aria-hidden="true"
+                    >
+                      <circle cx="12" cy="12" r="4"></circle>
+                      <path d="M12 2v2"></path>
+                      <path d="M12 20v2"></path>
+                      <path d="m4.93 4.93 1.41 1.41"></path>
+                      <path d="m17.66 17.66 1.41 1.41"></path>
+                      <path d="M2 12h2"></path>
+                      <path d="M20 12h2"></path>
+                      <path d="m6.34 17.66-1.41 1.41"></path>
+                      <path d="m19.07 4.93-1.41 1.41"></path></svg
+                    >Claro
+                  </button>
+                  <button
+                    type="button"
+                    class="d-flex align-items-center Dropdown_dropdownAction__qUl_i"
+                    data-theme-value="dark"
+                    style="
+                      border: none;
+                      background: transparent;
+                      width: 100%;
+                      text-align: left;
+                      padding: 0.5rem;
+                    "
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-moon me-2"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"
+                      ></path></svg
+                    >Escuro
+                  </button>
+                </div>
               </div>
-              <div class="Dropdown_dropdownContent__g_ubi" id="theme-menu" style="display: none; position: absolute; right: 0; background: var(--painel-card-bg); border: 1px solid var(--painel-border); z-index: 1000; border-radius: 4px; padding: 0.5rem; box-shadow: var(--painel-card-shadow);">
-                <button type="button" class="d-flex align-items-center Dropdown_dropdownAction__qUl_i" data-theme-value="auto" style="border: none; background: transparent; width: 100%; text-align: left; padding: 0.5rem;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-laptop me-2" aria-hidden="true"><path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z"></path><path d="M20.054 15.987H3.946"></path></svg>Sistema</button>
-                <button type="button" class="d-flex align-items-center Dropdown_dropdownAction__qUl_i" data-theme-value="light" style="border: none; background: transparent; width: 100%; text-align: left; padding: 0.5rem;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun me-2" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>Claro</button>
-                <button type="button" class="d-flex align-items-center Dropdown_dropdownAction__qUl_i" data-theme-value="dark" style="border: none; background: transparent; width: 100%; text-align: left; padding: 0.5rem;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon me-2" aria-hidden="true"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg>Escuro</button>
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Conteúdo Principal -->
-  <main id="main-content" class="flex-grow-1" style="padding-top: 2rem; padding-bottom: 4rem;">
-    
-    <div class="container-fluid px-4 px-md-5">
-      
-      <!-- Cabeçalho da Página Correto e Limpo (Removido nav/ol do bootstrap para evitar bugs no css do Next.js) -->
-      <div style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--painel-text-muted);">
-        <a href="https://brcris.ibict.br/" style="color: inherit; text-decoration: none;">Início</a> &gt; 
-        <a href="https://brcris.ibict.br/dashboards" style="color: inherit; text-decoration: none;">Painéis</a> &gt; 
-        <strong style="color: var(--painel-text);">Publicações</strong>
-      </div>
-      
-      <h1 class="fw-bold mb-3" style="font-size: 2.2rem; display: block;">Indicadores de publicações</h1>
-      <p class="text-muted mb-4" style="max-width: 800px; font-size: 1.1rem;">
-        Explore o panorama e a evolução da produção científica e documental indexada no ecossistema BrCris.
-      </p>
-
-      <!-- Alerta de Dados Demonstrativos -->
-      <div id="demo-data-alert" class="painel-alerta-mock" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-        </svg>
-        <span>Dados demonstrativos para validação do protótipo. Não utilize para análises oficiais. A página utiliza uma semente fixa para garantir determinismo.</span>
-      </div>
-
-      <!-- Componente Discreto de Transparência -->
-      <details class="painel-disclosure mb-4" style="font-size: 0.9rem;">
-        <summary class="fw-semibold" style="cursor: pointer; color: var(--painel-accent);">Sobre os Dados Deste Painel</summary>
-        <div class="mt-2 text-muted">
-          <p class="mb-2">Este painel apresenta informações agregadas sobre publicações, relatórios e outros documentos de pesquisa indexados no BrCris. Considere os seguintes pontos:</p>
-          <ul class="mb-0 ps-3">
-            <li class="mb-1"><strong>Registros Multivalorados:</strong> Uma publicação pode estar associada a múltiplas instituições ou áreas. A soma das categorias nesses gráficos superará o total de publicações absolutas.</li>
-            <li class="mb-1"><strong>Variação Temporal:</strong> O crescimento de registros recentes reflete tanto a produção real quanto melhorias de indexação ou carga retroativa das fontes do BrCris.</li>
-            <li><strong>Cobertura:</strong> O painel reflete exclusivamente os dados disponíveis até a data da última carga do BrCris.</li>
+            </li>
           </ul>
         </div>
-      </details>
+      </div>
+    </nav>
 
-      <!-- Área de Filtros -->
-      <section id="filtros-section" class="mb-4" aria-label="Filtros de dados">
-        <div class="painel-filtros-placeholder" style="padding: 2rem; text-align: center; border: 1px dashed var(--painel-border);">
-          Carregando filtros...
+    <!-- Conteúdo Principal -->
+    <main
+      id="main-content"
+      class="flex-grow-1"
+      style="padding-top: 2rem; padding-bottom: 4rem"
+    >
+      <div class="container-fluid px-4 px-md-5">
+        <!-- Cabeçalho da Página Correto e Limpo (Removido nav/ol do bootstrap para evitar bugs no css do Next.js) -->
+        <div
+          style="
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--painel-text-muted);
+          "
+        >
+          <a
+            href="https://brcris.ibict.br/"
+            style="color: inherit; text-decoration: none"
+            >Início</a
+          >
+          &gt;
+          <a
+            href="https://brcris.ibict.br/dashboards"
+            style="color: inherit; text-decoration: none"
+            >Painéis</a
+          >
+          &gt;
+          <strong style="color: var(--painel-text)">Publicações</strong>
         </div>
-      </section>
 
-      <!-- Visão Geral (Cards) -->
-      <section class="painel-publicacoes__visao-geral mb-5" aria-labelledby="titulo-visao-geral">
-        <div class="painel-publicacoes__section-header mb-3">
-          <h2 id="titulo-visao-geral" style="font-size: 1.5rem; margin-bottom: 0;">Visão geral</h2>
-        </div>
-        <div class="painel-publicacoes__cards painel-kpis-grid" data-summary-cards>
-          <!-- Injetado por js -->
-        </div>
-      </section>
+        <h1 class="fw-bold mb-3" style="font-size: 2.2rem; display: block">
+          Indicadores de publicações
+        </h1>
+        <p class="text-muted mb-4" style="max-width: 800px; font-size: 1.1rem">
+          Explore o panorama e a evolução da produção científica e documental
+          indexada no ecossistema BrCris.
+        </p>
 
-      <!-- Gráficos Analíticos -->
-      <section id="graficos-section" aria-label="Gráficos analíticos">
-        
-        <!-- Bloco Evolução -->
-        <div class="painel-publicacoes__section-header mb-3 mt-5">
-          <h2 style="font-size: 1.5rem; margin-bottom: 0;">Evolução</h2>
+        <!-- Alerta de Dados Demonstrativos -->
+        <div id="demo-data-alert" class="painel-alerta-mock" hidden>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            fill="currentColor"
+            class="bi bi-exclamation-triangle-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+            />
+          </svg>
+          <span
+            >Dados demonstrativos para validação do protótipo. Não utilize para
+            análises oficiais. A página utiliza uma semente fixa para garantir
+            determinismo.</span
+          >
         </div>
-        <div class="row g-4 mb-5">
-          
-          <div class="col-lg-6">
-            <article class="painel-publicacoes__chart-card painel-grafico-card h-100">
-              <header class="painel-publicacoes__chart-header painel-grafico-header">
-                <h2 class="painel-grafico-title">Evolução de Publicações Disponíveis no BrCris</h2>
-              </header>
-              <div id="chart-evolution" class="painel-publicacoes__chart painel-echarts-container" style="width: 100%; min-height: 340px;" role="img" aria-label="Evolução anual das publicações"></div>
-              <div id="table-g1-alt"></div>
-            </article>
+
+        <!-- Componente Discreto de Transparência -->
+        <details class="painel-disclosure mb-4" style="font-size: 0.9rem">
+          <summary
+            class="fw-semibold"
+            style="cursor: pointer; color: var(--painel-accent)"
+          >
+            Sobre os Dados Deste Painel
+          </summary>
+          <div class="mt-2 text-muted">
+            <p class="mb-2">
+              Este painel apresenta informações agregadas sobre publicações,
+              relatórios e outros documentos de pesquisa indexados no BrCris.
+              Considere os seguintes pontos:
+            </p>
+            <ul class="mb-0 ps-3">
+              <li class="mb-1">
+                <strong>Registros Multivalorados:</strong> Uma publicação pode
+                estar associada a múltiplas instituições ou áreas. A soma das
+                categorias nesses gráficos superará o total de publicações
+                absolutas.
+              </li>
+              <li class="mb-1">
+                <strong>Variação Temporal:</strong> O crescimento de registros
+                recentes reflete tanto a produção real quanto melhorias de
+                indexação ou carga retroativa das fontes do BrCris.
+              </li>
+              <li>
+                <strong>Cobertura:</strong> O painel reflete exclusivamente os
+                dados disponíveis até a data da última carga do BrCris.
+              </li>
+            </ul>
           </div>
-          
-          <div class="col-lg-6">
-            <article class="painel-publicacoes__chart-card painel-grafico-card h-100">
-              <header class="painel-publicacoes__chart-header painel-grafico-header">
-                <h2 class="painel-grafico-title">Evolução da Composição por Tipo</h2>
-              </header>
-              <div id="chart-type-evolution" class="painel-publicacoes__chart painel-echarts-container" style="width: 100%; min-height: 340px;" role="img" aria-label="Composição temporal por tipo documental"></div>
-              <div id="table-g5-alt"></div>
-            </article>
+        </details>
+
+        <!-- Área de Filtros -->
+        <section
+          id="filtros-section"
+          class="mb-4"
+          aria-label="Filtros de dados"
+        >
+          <div
+            class="painel-filtros-placeholder"
+            style="
+              padding: 2rem;
+              text-align: center;
+              border: 1px dashed var(--painel-border);
+            "
+          >
+            Carregando filtros...
           </div>
-        </div>
+        </section>
 
-        <!-- Bloco Distribuição e Concentração -->
-        <div class="painel-publicacoes__section-header mb-3 mt-4">
-          <h2 style="font-size: 1.5rem; margin-bottom: 0;">Distribuição e concentração</h2>
-        </div>
-        <div class="row g-4 mb-5">
-          
-          <div class="col-lg-4">
-            <article class="painel-publicacoes__chart-card painel-grafico-card h-100">
-              <header class="painel-publicacoes__chart-header painel-grafico-header">
-                <h2 class="painel-grafico-title">Composição por Tipo</h2>
-              </header>
-              <div id="chart-types" class="painel-publicacoes__chart painel-echarts-container" style="width: 100%; min-height: 340px;" role="img" aria-label="Tipos documentais predominantes"></div>
-              <div id="table-g2-alt"></div>
-            </article>
+        <!-- Visão Geral (Cards) -->
+        <section
+          class="painel-publicacoes__visao-geral mb-5"
+          aria-labelledby="titulo-visao-geral"
+        >
+          <div class="painel-publicacoes__section-header mb-3">
+            <h2
+              id="titulo-visao-geral"
+              style="font-size: 1.5rem; margin-bottom: 0"
+            >
+              Visão geral
+            </h2>
+          </div>
+          <div
+            class="painel-publicacoes__cards painel-kpis-grid"
+            data-summary-cards
+          >
+            <!-- Injetado por js -->
+          </div>
+        </section>
+
+        <!-- Gráficos Analíticos -->
+        <section id="graficos-section" aria-label="Gráficos analíticos">
+          <!-- Bloco Evolução -->
+          <div class="painel-publicacoes__section-header mb-3 mt-5">
+            <h2 style="font-size: 1.5rem; margin-bottom: 0">Evolução</h2>
+          </div>
+          <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+              <article
+                class="painel-publicacoes__chart-card painel-grafico-card h-100"
+              >
+                <header
+                  class="painel-publicacoes__chart-header painel-grafico-header"
+                >
+                  <h2 class="painel-grafico-title">
+                    Evolução de Publicações Disponíveis no BrCris
+                  </h2>
+                </header>
+                <div
+                  id="chart-evolution"
+                  class="painel-publicacoes__chart painel-echarts-container"
+                  style="width: 100%; min-height: 340px"
+                  role="img"
+                  aria-label="Evolução anual das publicações"
+                ></div>
+                <div id="table-g1-alt"></div>
+              </article>
+            </div>
+
+            <div class="col-lg-6">
+              <article
+                class="painel-publicacoes__chart-card painel-grafico-card h-100"
+              >
+                <header
+                  class="painel-publicacoes__chart-header painel-grafico-header"
+                >
+                  <h2 class="painel-grafico-title">
+                    Evolução da Composição por Tipo
+                  </h2>
+                </header>
+                <div
+                  id="chart-type-evolution"
+                  class="painel-publicacoes__chart painel-echarts-container"
+                  style="width: 100%; min-height: 340px"
+                  role="img"
+                  aria-label="Composição temporal por tipo documental"
+                ></div>
+                <div id="table-g5-alt"></div>
+              </article>
+            </div>
           </div>
 
-          <div class="col-lg-4">
-            <article class="painel-publicacoes__chart-card painel-grafico-card h-100">
-              <header class="painel-publicacoes__chart-header painel-grafico-header">
-                <h2 class="painel-grafico-title">Distribuição por Idioma</h2>
-              </header>
-              <div id="chart-languages" class="painel-publicacoes__chart painel-echarts-container" style="width: 100%; min-height: 340px;" role="img" aria-label="Principais idiomas"></div>
-              <div id="table-g3-alt"></div>
-            </article>
+          <!-- Bloco Distribuição e Concentração -->
+          <div class="painel-publicacoes__section-header mb-3 mt-4">
+            <h2 style="font-size: 1.5rem; margin-bottom: 0">
+              Distribuição e concentração
+            </h2>
+          </div>
+          <div class="row g-4 mb-5">
+            <div class="col-lg-4">
+              <article
+                class="painel-publicacoes__chart-card painel-grafico-card h-100"
+              >
+                <header
+                  class="painel-publicacoes__chart-header painel-grafico-header"
+                >
+                  <h2 class="painel-grafico-title">Composição por Tipo</h2>
+                </header>
+                <div
+                  id="chart-types"
+                  class="painel-publicacoes__chart painel-echarts-container"
+                  style="width: 100%; min-height: 340px"
+                  role="img"
+                  aria-label="Tipos documentais predominantes"
+                ></div>
+                <div id="table-g2-alt"></div>
+              </article>
+            </div>
+
+            <div class="col-lg-4">
+              <article
+                class="painel-publicacoes__chart-card painel-grafico-card h-100"
+              >
+                <header
+                  class="painel-publicacoes__chart-header painel-grafico-header"
+                >
+                  <h2 class="painel-grafico-title">Distribuição por Idioma</h2>
+                </header>
+                <div
+                  id="chart-languages"
+                  class="painel-publicacoes__chart painel-echarts-container"
+                  style="width: 100%; min-height: 340px"
+                  role="img"
+                  aria-label="Principais idiomas"
+                ></div>
+                <div id="table-g3-alt"></div>
+              </article>
+            </div>
+
+            <div class="col-lg-4">
+              <article
+                class="painel-publicacoes__chart-card painel-grafico-card h-100"
+              >
+                <header
+                  class="painel-publicacoes__chart-header painel-grafico-header"
+                >
+                  <h2 class="painel-grafico-title">Top 10 Instituições</h2>
+                </header>
+                <div class="painel-grafico-body" style="padding-top: 10px">
+                  <div class="text-muted small mb-2 px-3">
+                    Uma publicação pode ser associada a múltiplas instituições.
+                  </div>
+                  <div
+                    id="chart-institutions"
+                    class="painel-publicacoes__chart painel-echarts-container"
+                    style="width: 100%; min-height: 310px"
+                    role="img"
+                    aria-label="Top 10 instituições"
+                  ></div>
+                </div>
+                <div id="table-g4-alt"></div>
+              </article>
+            </div>
           </div>
 
-          <div class="col-lg-4">
-            <article class="painel-publicacoes__chart-card painel-grafico-card h-100">
-              <header class="painel-publicacoes__chart-header painel-grafico-header">
-                <h2 class="painel-grafico-title">Top 10 Instituições</h2>
-              </header>
-              <div class="painel-grafico-body" style="padding-top: 10px;">
-                <div class="text-muted small mb-2 px-3">Uma publicação pode ser associada a múltiplas instituições.</div>
-                <div id="chart-institutions" class="painel-publicacoes__chart painel-echarts-container" style="width: 100%; min-height: 310px;" role="img" aria-label="Top 10 instituições"></div>
-              </div>
-              <div id="table-g4-alt"></div>
-            </article>
+          <!-- Bloco Periódicos -->
+          <div class="painel-publicacoes__section-header mb-3 mt-4">
+            <h2 style="font-size: 1.5rem; margin-bottom: 0">Periódicos</h2>
           </div>
-        </div>
-
-        <!-- Bloco Periódicos -->
-        <div class="painel-publicacoes__section-header mb-3 mt-4">
-          <h2 style="font-size: 1.5rem; margin-bottom: 0;">Periódicos</h2>
-        </div>
-        <div class="row g-4 mb-5">
-
-          <!-- Tabela de Periódicos OBRIGATÓRIA no formato exigido -->
-          <div class="col-12 mt-2">
-            <article class="painel-publicacoes__chart-card painel-grafico-card">
-              <header class="painel-publicacoes__chart-header painel-grafico-header">
-                <h2 class="painel-grafico-title">Top 10 Periódicos (Artigos)</h2>
-              </header>
-              <div class="painel-grafico-body p-0" style="overflow-x: auto; overflow-y: visible !important; max-height: none !important; height: auto !important;">
-                <table id="journal-table" class="painel-table m-0">
-                  <caption class="visually-hidden">Periódicos mais recorrentes no recorte selecionado</caption>
-                  <thead>
-                    <tr>
-                      <th scope="col" style="width: 60px;">Posição</th>
-                      <th scope="col">Periódico</th>
-                      <th scope="col" class="text-end">Publicações</th>
-                      <th scope="col" class="text-end">Participação</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-            </article>
+          <div class="row g-4 mb-5">
+            <!-- Tabela de Periódicos OBRIGATÓRIA no formato exigido -->
+            <div class="col-12 mt-2">
+              <article
+                class="painel-publicacoes__chart-card painel-grafico-card"
+              >
+                <header
+                  class="painel-publicacoes__chart-header painel-grafico-header"
+                >
+                  <h2 class="painel-grafico-title">
+                    Top 10 Periódicos (Artigos)
+                  </h2>
+                </header>
+                <div
+                  class="painel-grafico-body p-0"
+                  style="
+                    overflow-x: auto;
+                    overflow-y: visible !important;
+                    max-height: none !important;
+                    height: auto !important;
+                  "
+                >
+                  <table id="journal-table" class="painel-table m-0">
+                    <caption class="visually-hidden">
+                      Periódicos mais recorrentes no recorte selecionado
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th scope="col" style="width: 60px">Posição</th>
+                        <th scope="col">Periódico</th>
+                        <th scope="col" class="text-end">Publicações</th>
+                        <th scope="col" class="text-end">Participação</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </article>
+            </div>
           </div>
+        </section>
+      </div>
+    </main>
 
+    <!-- Footer Oficial -->
+    <footer id="more">
+      <div class="social-media-icons">
+        <a
+          href="https://www.youtube.com/user/IBICTbr/"
+          target="_blank"
+          rel="noreferrer"
+          title="YouTube do IBICT"
+          ><svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M21.5821 7.16905C21.3521 6.30296 20.6744 5.62086 19.8139 5.38938C18.2542 4.96875 12 4.96875 12 4.96875C12 4.96875 5.74586 4.96875 4.18613 5.38938C3.32565 5.6209 2.64794 6.30296 2.41792 7.16905C2 8.73889 2 12.0142 2 12.0142C2 12.0142 2 15.2895 2.41792 16.8593C2.64794 17.7254 3.32565 18.3791 4.18613 18.6106C5.74586 19.0312 12 19.0312 12 19.0312C12 19.0312 18.2541 19.0312 19.8139 18.6106C20.6744 18.3791 21.3521 17.7254 21.5821 16.8593C22 15.2895 22 12.0142 22 12.0142C22 12.0142 22 8.73889 21.5821 7.16905V7.16905ZM9.95453 14.9879V9.04046L15.1818 12.0143L9.95453 14.9879V14.9879Z"
+              fill="currentColor"
+            ></path></svg
+        ></a>
+        <a
+          href="https://www.facebook.com/IBICTbr/"
+          target="_blank"
+          rel="noreferrer"
+          title="Facebook do IBICT"
+          ><svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16.6539 13.25L17.2094 9.63047H13.7364V7.28164C13.7364 6.29141 14.2215 5.32617 15.777 5.32617H17.3559V2.24453C17.3559 2.24453 15.9231 2 14.5531 2C11.693 2 9.82346 3.73359 9.82346 6.87188V9.63047H6.64417V13.25H9.82346V22H13.7364V13.25H16.6539Z"
+              fill="currentColor"
+            ></path></svg
+        ></a>
+        <a href="https://twitter.com/ibictbr" target="_blank" rel="noreferrer"
+          ><svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect
+              width="24"
+              height="24"
+              rx="4"
+              fill="currentColor"
+              fill-opacity="0"
+            ></rect>
+            <path
+              d="M6 6L11 13L6.5 18H8.2L11.8 14.2L14.8 18H18L12.9 11L17 6H15.3L12 9.6L9.3 6H6Z"
+              fill="currentColor"
+            ></path></svg
+        ></a>
+        <a
+          href="https://www.linkedin.com/company/ibict---instituto-brasileiro-de-informa-o-em-ci-ncia-e-tecnologia/mycompany/"
+          target="_blank"
+          rel="noreferrer"
+          title="LinkedIn do IBICT"
+          ><svg
+            width="18"
+            height="18"
+            viewBox="0 0 16 16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m13.6313333 13.6346667h-2.3693333v-3.7126667c0-.88533333-.018-2.02466667-1.2346667-2.02466667-1.2353333 0-1.42399997.96333334-1.42399997 1.95933334v3.77800003h-2.36933333v-7.6346667h2.276v1.04066667h.03066667c.318-.6 1.09133333-1.23333334 2.24666663-1.23333334 2.4006667 0 2.8446667 1.58 2.8446667 3.63666667v4.1906667zm-10.0733333-8.67933337c-.76266667 0-1.37533333-.61733333-1.37533333-1.37666666 0-.75866667.61333333-1.37533334 1.37533333-1.37533334.76 0 1.376.61666667 1.376 1.37533334 0 .75933333-.61666667 1.37666666-1.376 1.37666666zm1.188 8.67933337h-2.376v-7.6346667h2.376zm10.0706667-13.6346667h-13.63600003c-.65266667 0-1.18066667.516-1.18066667 1.15266667v13.69466663c0 .6373334.528 1.1526667 1.18066667 1.1526667h13.63400003c.652 0 1.1853333-.5153333 1.1853333-1.1526667v-13.69466663c0-.63666667-.5333333-1.15266667-1.1853333-1.15266667z"
+              fill="currentColor"
+            ></path></svg
+        ></a>
+        <a
+          href="https://www.instagram.com/ibict/ "
+          target="_blank"
+          rel="noreferrer"
+          ><svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            role="img"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <rect
+              width="24"
+              height="24"
+              rx="4"
+              fill="currentColor"
+              fill-opacity="0"
+            ></rect>
+            <path
+              fill="currentColor"
+              d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"
+            ></path></svg
+        ></a>
+      </div>
+
+      <div class="footer">
+        <a
+          href="https://www.gov.br/ibict/pt-br"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <picture>
+            <img
+              src="https://brcris.ibict.br/logos/logo-periodo-defeso-transparente.svg"
+              class="logo-rodape logo-periodo-defeso"
+              alt="Logo do IBICT - período de defeso"
+            />
+          </picture>
+        </a>
+        <p class="footer-adress">
+          Instituto Brasileiro de Informação em Ciência e Tecnologia (Ibict)<br />SAUS
+          Quadra 5 - Lote 6 Bloco H - Asa sul - CEP: 70.070-912 - Brasília - DF
+        </p>
+        <div class="copyright">
+          Todo o conteúdo deste site está publicado sob a licença<!-- -->
+          <a
+            rel="license"
+            href="https://creativecommons.org/licenses/by-nd/3.0/deed.pt_BR"
+            >Creative Commons Atribuição-SemDerivações 3.0 Não Adaptada</a
+          >.
         </div>
-      </section>
-      
-    </div>
-  </main>
+      </div>
+    </footer>
 
-  <!-- Footer Oficial -->
-  <footer id="more">
-    <div class="social-media-icons">
-      <a href="https://www.youtube.com/user/IBICTbr/" target="_blank" rel="noreferrer" title="YouTube do IBICT"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.5821 7.16905C21.3521 6.30296 20.6744 5.62086 19.8139 5.38938C18.2542 4.96875 12 4.96875 12 4.96875C12 4.96875 5.74586 4.96875 4.18613 5.38938C3.32565 5.6209 2.64794 6.30296 2.41792 7.16905C2 8.73889 2 12.0142 2 12.0142C2 12.0142 2 15.2895 2.41792 16.8593C2.64794 17.7254 3.32565 18.3791 4.18613 18.6106C5.74586 19.0312 12 19.0312 12 19.0312C12 19.0312 18.2541 19.0312 19.8139 18.6106C20.6744 18.3791 21.3521 17.7254 21.5821 16.8593C22 15.2895 22 12.0142 22 12.0142C22 12.0142 22 8.73889 21.5821 7.16905V7.16905ZM9.95453 14.9879V9.04046L15.1818 12.0143L9.95453 14.9879V14.9879Z" fill="currentColor"></path></svg></a>
-      <a href="https://www.facebook.com/IBICTbr/" target="_blank" rel="noreferrer" title="Facebook do IBICT"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6539 13.25L17.2094 9.63047H13.7364V7.28164C13.7364 6.29141 14.2215 5.32617 15.777 5.32617H17.3559V2.24453C17.3559 2.24453 15.9231 2 14.5531 2C11.693 2 9.82346 3.73359 9.82346 6.87188V9.63047H6.64417V13.25H9.82346V22H13.7364V13.25H16.6539Z" fill="currentColor"></path></svg></a>
-      <a href="https://twitter.com/ibictbr" target="_blank" rel="noreferrer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="24" height="24" rx="4" fill="currentColor" fill-opacity="0"></rect><path d="M6 6L11 13L6.5 18H8.2L11.8 14.2L14.8 18H18L12.9 11L17 6H15.3L12 9.6L9.3 6H6Z" fill="currentColor"></path></svg></a>
-      <a href="https://www.linkedin.com/company/ibict---instituto-brasileiro-de-informa-o-em-ci-ncia-e-tecnologia/mycompany/" target="_blank" rel="noreferrer" title="LinkedIn do IBICT"><svg width="18" height="18" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="m13.6313333 13.6346667h-2.3693333v-3.7126667c0-.88533333-.018-2.02466667-1.2346667-2.02466667-1.2353333 0-1.42399997.96333334-1.42399997 1.95933334v3.77800003h-2.36933333v-7.6346667h2.276v1.04066667h.03066667c.318-.6 1.09133333-1.23333334 2.24666663-1.23333334 2.4006667 0 2.8446667 1.58 2.8446667 3.63666667v4.1906667zm-10.0733333-8.67933337c-.76266667 0-1.37533333-.61733333-1.37533333-1.37666666 0-.75866667.61333333-1.37533334 1.37533333-1.37533334.76 0 1.376.61666667 1.376 1.37533334 0 .75933333-.61666667 1.37666666-1.376 1.37666666zm1.188 8.67933337h-2.376v-7.6346667h2.376zm10.0706667-13.6346667h-13.63600003c-.65266667 0-1.18066667.516-1.18066667 1.15266667v13.69466663c0 .6373334.528 1.1526667 1.18066667 1.1526667h13.63400003c.652 0 1.1853333-.5153333 1.1853333-1.1526667v-13.69466663c0-.63666667-.5333333-1.15266667-1.1853333-1.15266667z" fill="currentColor"></path></svg></a>
-      <a href="https://www.instagram.com/ibict/ " target="_blank" rel="noreferrer"><svg width="24" height="24" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="24" height="24" rx="4" fill="currentColor" fill-opacity="0"></rect><path fill="currentColor" d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"></path></svg></a>
-    </div>
-
-    <div class="footer">
-      <a href="https://www.gov.br/ibict/pt-br" target="_blank" rel="noopener noreferrer">
-        <picture>
-          <img src="https://brcris.ibict.br/logos/logo-periodo-defeso-transparente.svg" class="logo-rodape logo-periodo-defeso" alt="Logo do IBICT - período de defeso"/>
-        </picture>
-      </a>
-      <p class="footer-adress">Instituto Brasileiro de Informação em Ciência e Tecnologia (Ibict)<br/>SAUS Quadra 5 - Lote 6 Bloco H - Asa sul - CEP: 70.070-912 - Brasília - DF</p>
-      <div class="copyright">Todo o conteúdo deste site está publicado sob a licença<!-- --> <a rel="license" href="https://creativecommons.org/licenses/by-nd/3.0/deed.pt_BR">Creative Commons Atribuição-SemDerivações 3.0 Não Adaptada</a>.</div>
-    </div>
-  </footer>
-
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
-  <script src="js/acessibilidade-publicacoes-v3.js"></script>
-  <script src="js/dados-publicacoes-v3.js"></script>
-  <script src="js/filtros-publicacoes-v3.js"></script>
-  <script src="js/cards-publicacoes-v3.js"></script>
-  <script src="js/graficos-publicacoes-v3.js"></script>
-  <script src="js/painel-publicacoes-v3.js"></script>
-</body>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <script src="js/acessibilidade-publicacoes-v3.js"></script>
+    <script src="js/dados-publicacoes-v3.js"></script>
+    <script src="js/filtros-publicacoes-v3.js"></script>
+    <script src="js/cards-publicacoes-v3.js"></script>
+    <script src="js/graficos-publicacoes-v3.js"></script>
+    <script src="js/painel-publicacoes-v3.js"></script>
+  </body>
 </html>

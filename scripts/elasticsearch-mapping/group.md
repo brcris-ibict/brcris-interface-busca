@@ -1,10 +1,10 @@
 Para `brc-nov2025-group`, os campos `text` são:
 
-* `leaderOrgUnit.name_text`
-* `leaderResearcher.name_text`
-* `member.name_text`
-* `name_text`
-* `partner.name_text`
+- `leaderOrgUnit.name_text`
+- `leaderResearcher.name_text`
+- `member.name_text`
+- `name_text`
+- `partner.name_text`
 
 Mapping para `brc-nov2025-group-v2`:
 

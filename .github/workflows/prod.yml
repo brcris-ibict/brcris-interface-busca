@@ -18,7 +18,7 @@ jobs:
     runs-on: [self-hosted, Linux, x64, runner-pacova]
     environment:
       name: prod
-      url: 'https://brcris.ibict.br'
+      url: "https://brcris.ibict.br"
 
     steps:
       - uses: actions/checkout@v3

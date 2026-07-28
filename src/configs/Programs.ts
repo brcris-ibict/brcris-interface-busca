@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import CustomResultViewPeople from "../components/customResultView/CustomResultViewPrograms";
 import DefaultQueryConfig from "../components/DefaultQueryConfig";
 import ProgramsIndicators from "../components/indicators/ProgramsIndicators";

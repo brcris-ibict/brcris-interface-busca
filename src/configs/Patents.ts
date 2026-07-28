@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import CustomResultViewPatents from "../components/customResultView/CustomResultViewPatents";
 import DefaultQueryConfig from "../components/DefaultQueryConfig";
 import PatentsIndicators from "../components/indicators/PatentsIndicators";

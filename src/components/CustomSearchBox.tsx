@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import { useTranslation } from "next-i18next";
 import { useContext } from "react";
 import style from "../styles/Switch.module.css";

@@ -12,7 +12,9 @@
   font-weight: 500;
   cursor: pointer;
   box-sizing: border-box;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .updateTrigger:hover {
@@ -137,7 +139,9 @@
   color: var(--icon-muted);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .modalClose:hover {

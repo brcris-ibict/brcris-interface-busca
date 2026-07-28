@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import CustomResultViewCourses from "../components/customResultView/CustomResultViewCourses";
 import DefaultQueryConfig from "../components/DefaultQueryConfig";
 import CoursesIndicators from "../components/indicators/CoursesIndicators";

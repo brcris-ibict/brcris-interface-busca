@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { SearchDriverOptions } from "@elastic/search-ui";
 
 type OperatorSelectProps = {

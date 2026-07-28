@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import {
   ArcElement,
   BarElement,
@@ -171,7 +169,6 @@ export default function PersonProduction({
   );
   const typeDoc_count = typeIndicators.map((d) => d.doc_count);
   const CSVLinkFix = CSVLink as any;
-  // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
   const [authorData, setAuthorData] = useState<{
     coauthors: any[];
     hasCoauthors: boolean;

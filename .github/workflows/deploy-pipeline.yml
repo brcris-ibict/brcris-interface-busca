@@ -22,7 +22,7 @@ jobs:
     runs-on: [self-hosted, Linux, x64, runner-iroxa]
     environment:
       name: dev
-      url: 'http://codich1.ibict.br:8086/'
+      url: "http://codich1.ibict.br:8086/"
 
     steps:
       - uses: actions/checkout@v3
@@ -39,7 +39,7 @@ jobs:
     runs-on: [self-hosted, Linux, x64, runner-homol]
     environment:
       name: homol
-      url: 'http://172.16.20.48:3000/'
+      url: "http://172.16.20.48:3000/"
     env:
       NODE_TLS_REJECT_UNAUTHORIZED: 0
     steps:
@@ -57,7 +57,7 @@ jobs:
     runs-on: [self-hosted, Linux, x64, runner-pacova]
     environment:
       name: prod
-      url: 'https://brcris.ibict.br'
+      url: "https://brcris.ibict.br"
 
     steps:
       - uses: actions/checkout@v3

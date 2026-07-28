@@ -148,7 +148,9 @@
   box-shadow: var(--painel-card-shadow);
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   height: 100%;
 }
 
@@ -312,33 +314,66 @@
 }
 
 /* Adições Estruturais Solicitadas (Painel Publicacoes API) */
-.painel-publicacoes__chart { width: 100%; }
-.painel-publicacoes__kpi-label { margin: 0; font-size: 0.85rem; font-weight: 600; color: var(--painel-text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-.painel-publicacoes__kpi-value { margin: 0.5rem 0; font-size: 2rem; font-weight: 700; color: var(--painel-text); }
-.painel-publicacoes__kpi-context { margin: 0; font-size: 0.85rem; color: var(--painel-text-muted); }
-
+.painel-publicacoes__chart {
+  width: 100%;
+}
+.painel-publicacoes__kpi-label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--painel-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.painel-publicacoes__kpi-value {
+  margin: 0.5rem 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--painel-text);
+}
+.painel-publicacoes__kpi-context {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--painel-text-muted);
+}
 
 /* V2 Adjustments */
-#journal-table { height: auto !important; max-height: none !important; }
-.table-responsive { overflow-y: visible !important; }
-.painel-kpi-value, .painel-kpi-title { overflow-wrap: break-word; word-wrap: break-word; }
-.painel-insight { font-size: 0.9rem; font-style: italic; margin-top: 1rem; color: var(--painel-text-muted); }
-
+#journal-table {
+  height: auto !important;
+  max-height: none !important;
+}
+.table-responsive {
+  overflow-y: visible !important;
+}
+.painel-kpi-value,
+.painel-kpi-title {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+.painel-insight {
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-top: 1rem;
+  color: var(--painel-text-muted);
+}
 
 /* V3 Fixes */
-.painel-publicacoes { margin-top: 130px; }
-
+.painel-publicacoes {
+  margin-top: 130px;
+}
 
 /* V3 Table Scroll Override */
 .painel-grafico-body.table-responsive {
-    overflow-y: visible !important;
-    max-height: none !important;
+  overflow-y: visible !important;
+  max-height: none !important;
 }
 #journal-table {
-    height: auto !important;
-    max-height: none !important;
+  height: auto !important;
+  max-height: none !important;
 }
 
-
-main, .painel-publicacoes__main { padding-top: calc(var(--altura-header, 88px) + 24px) !important; margin-top: 0 !important; }
-
+main,
+.painel-publicacoes__main {
+  padding-top: calc(var(--altura-header, 88px) + 24px) !important;
+  margin-top: 0 !important;
+}

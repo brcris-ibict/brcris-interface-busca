@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import type { ChartOptions } from "chart.js";
 import type { ComponentType } from "react";

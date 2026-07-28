@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/a11y/noAutofocus: <explanation> */
-
 import { Search } from "lucide-react";
 import type { GetStaticProps } from "next";
 import Head from "next/head";
@@ -202,7 +200,6 @@ export default function App() {
 
           <div className="partners">
             {partners.map((partner, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               <div key={index} className={partner.class}>
                 <a href={partner.url} target="_blank" rel="noreferrer">
                   <picture>

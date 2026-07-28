@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import CustomResultViewOrganizations from "../components/customResultView/CustomResultViewOrganizations";
 import DefaultQueryConfig from "../components/DefaultQueryConfig";
 import OrgUnitIndicators from "../components/indicators/OrgUnitIndicators";

@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/suspicious/useIterableCallbackReturn: <explanation> */
-
 import type { Filter, FilterValue } from "@elastic/search-ui";
 import ElasticsearchQueryBuilder from "../../../services/ElasticsearchQueryBuilder";
 import { untranslatedFieldsNames } from "../../SearchSanitization";

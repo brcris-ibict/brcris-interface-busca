@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
-/** biome-ignore-all lint/a11y/useAnchorContent: <explanation> */
 function Footer() {
   return (
     <footer id="more">

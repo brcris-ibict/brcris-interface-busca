@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { withSearch } from "@elastic/react-search-ui";
 import type { SearchContextState } from "@elastic/search-ui";
 import { useTranslation } from "next-i18next";

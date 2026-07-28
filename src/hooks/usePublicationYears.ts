@@ -11,7 +11,6 @@ export function usePublicationYears(ids: string[]) {
   const [data, setData] = useState<PublicationYear[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: dependency is derived from ids array values
   useEffect(() => {
     if (!ids || ids.length === 0) return;
 
@@ -40,7 +39,7 @@ export function usePublicationYears(ids: string[]) {
     };
 
     fetchYears();
-  }, [ids.join(",")]);
+  }, [ids]);
 
   return { data, loading };
 }

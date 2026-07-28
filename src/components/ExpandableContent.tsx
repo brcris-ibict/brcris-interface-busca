@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: explanation */
 import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
 

@@ -1,4 +1,5 @@
 import { ChevronRight, DatabaseBackup, RefreshCw, X } from "lucide-react";
+import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 
@@ -83,13 +84,13 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
                 </span>
               </div>
 
-              <a
+              <Link
                 className={styles.modalButton}
                 href="/data-sources"
                 rel="noreferrer"
               >
                 {t("See sources and collection dates")}
-              </a>
+              </Link>
             </div>
           </div>
         </div>

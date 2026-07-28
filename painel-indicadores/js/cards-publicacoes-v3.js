@@ -16,35 +16,50 @@ window.PainelCards = (function () {
   function calculateMetrics(data) {
     const total = data.length;
     if (total === 0) {
-      return { total: 0, lastYearCount: 0, lastYear: "-", prevYearCount: 0, variation: 0, topInst: "-", topInstPct: 0, topType: "-", topTypePct: 0, totalInsts: 0 };
+      return {
+        total: 0,
+        lastYearCount: 0,
+        lastYear: "-",
+        prevYearCount: 0,
+        variation: 0,
+        topInst: "-",
+        topInstPct: 0,
+        topType: "-",
+        topTypePct: 0,
+        totalInsts: 0,
+      };
     }
 
-    const years = data.map(d => d.year);
+    const years = data.map((d) => d.year);
     const lastYear = Math.max(...years);
     const prevYear = lastYear - 1;
-    const lastYearCount = data.filter(d => d.year === lastYear).length;
-    const prevYearCount = data.filter(d => d.year === prevYear).length;
+    const lastYearCount = data.filter((d) => d.year === lastYear).length;
+    const prevYearCount = data.filter((d) => d.year === prevYear).length;
 
     let variation = null;
     if (prevYearCount > 0) {
       variation = ((lastYearCount - prevYearCount) / prevYearCount) * 100;
-    } else if (lastYearCount > 0 && prevYearCount === 0 && years.includes(prevYear)) {
-      variation = Infinity; 
+    } else if (
+      lastYearCount > 0 &&
+      prevYearCount === 0 &&
+      years.includes(prevYear)
+    ) {
+      variation = Infinity;
     }
 
     // Instituição Principal e Contagem Única
     const instSet = new Set();
     const instCounts = {};
-    
-    data.forEach(d => {
-      d.institutions.forEach(inst => {
+
+    data.forEach((d) => {
+      d.institutions.forEach((inst) => {
         instSet.add(inst);
         instCounts[inst] = (instCounts[inst] || 0) + 1;
       });
     });
 
     const totalInsts = instSet.size;
-    
+
     let topInst = "-";
     let topInstCount = 0;
     for (let inst in instCounts) {
@@ -82,13 +97,14 @@ window.PainelCards = (function () {
       topType,
       topTypePct,
       topInstCount,
-      totalInsts
+      totalInsts,
     };
   }
 
   function render(data, state) {
     const container = document.querySelector("[data-summary-cards]");
-    if (!container) throw new Error("Contêiner [data-summary-cards] não encontrado.");
+    if (!container)
+      throw new Error("Contêiner [data-summary-cards] não encontrado.");
 
     if (data.length === 0) {
       container.innerHTML = `
@@ -100,16 +116,19 @@ window.PainelCards = (function () {
     }
 
     const m = calculateMetrics(data);
-    const fNum = n => n.toLocaleString('pt-BR');
-    const fPct = n => n.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + '%';
-    const shorten = (str, max) => str.length > max ? str.substring(0, max) + "..." : str;
+    const fNum = (n) => n.toLocaleString("pt-BR");
+    const fPct = (n) =>
+      n.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%";
+    const shorten = (str, max) =>
+      str.length > max ? str.substring(0, max) + "..." : str;
 
-    const yearLabel = m.lastYear !== "-" ? `Publicações em ${m.lastYear}` : `Último Ano`;
-    
+    const yearLabel =
+      m.lastYear !== "-" ? `Publicações em ${m.lastYear}` : `Último Ano`;
+
     let variationVal = "-";
     let variationContext = `Em relação a ${m.prevYear}`;
     let variationColor = "var(--painel-text)";
-    
+
     if (m.variation === null) {
       variationVal = "-";
       variationContext = "Sem ano anterior para comparar";
@@ -121,26 +140,55 @@ window.PainelCards = (function () {
       const isNegative = m.variation < 0;
       const sign = isPositive ? "+" : "";
       variationVal = `${sign}${fPct(m.variation)}`;
-      
+
       if (isPositive) variationColor = "#198754"; // Bootstrap Success
       if (isNegative) variationColor = "#dc3545"; // Bootstrap Danger
     }
 
     const metrics = [
-      { label: "Total de Publicações", value: fNum(m.total), context: "No recorte selecionado", color: null },
-      { label: yearLabel, value: fNum(m.lastYearCount), context: "Último ano do recorte", color: null },
-      { label: "Variação Anual", value: variationVal, context: variationContext, color: variationColor },
-      { label: "Instituições Representadas", value: fNum(m.totalInsts), context: "Quantidade de instituições associadas", color: null },
-      { label: "Tipo Predominante", value: m.topType, context: `${fPct(m.topTypePct)} das publicações`, color: null }
+      {
+        label: "Total de Publicações",
+        value: fNum(m.total),
+        context: "No recorte selecionado",
+        color: null,
+      },
+      {
+        label: yearLabel,
+        value: fNum(m.lastYearCount),
+        context: "Último ano do recorte",
+        color: null,
+      },
+      {
+        label: "Variação Anual",
+        value: variationVal,
+        context: variationContext,
+        color: variationColor,
+      },
+      {
+        label: "Instituições Representadas",
+        value: fNum(m.totalInsts),
+        context: "Quantidade de instituições associadas",
+        color: null,
+      },
+      {
+        label: "Tipo Predominante",
+        value: m.topType,
+        context: `${fPct(m.topTypePct)} das publicações`,
+        color: null,
+      },
     ];
 
-    container.innerHTML = metrics.map(metric => `
+    container.innerHTML = metrics
+      .map(
+        (metric) => `
       <article class="painel-publicacoes__kpi painel-kpi-card" tabindex="0">
         <p class="painel-publicacoes__kpi-label painel-kpi-title">${metric.label}</p>
         <p class="painel-publicacoes__kpi-value painel-kpi-value" ${metric.color ? `style="color: ${metric.color};"` : ""}>${metric.value}</p>
         <p class="painel-publicacoes__kpi-context painel-kpi-meta">${metric.context}</p>
       </article>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   return { init, render };

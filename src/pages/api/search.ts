@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { estypes } from "@elastic/elasticsearch";
 import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 import type { NextApiRequest, NextApiResponse } from "next";

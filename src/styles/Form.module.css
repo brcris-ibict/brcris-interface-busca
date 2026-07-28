@@ -42,7 +42,9 @@
   border-radius: 12px;
   cursor: pointer;
   margin-top: 15px;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .dropzone:hover {

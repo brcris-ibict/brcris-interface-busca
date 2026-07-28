@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import CustomResultViewJournals from "../components/customResultView/CustomResultViewJournals";
 import DefaultQueryConfig from "../components/DefaultQueryConfig";
 import JornalsIndicators from "../components/indicators/JornalsIndicators";
