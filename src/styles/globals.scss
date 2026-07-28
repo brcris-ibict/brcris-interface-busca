@@ -426,7 +426,7 @@ a.nav-link {
 }
 
 a.nav-link:hover {
-  font-weight: 600;
+  text-decoration: underline;
 }
 
 .card .nav-link {
@@ -435,10 +435,6 @@ a.nav-link:hover {
 
 .card .nav-tabs .nav-link.active {
   color: var(--secondary-color);
-}
-
-.navbar .nav-link.active {
-  font-weight: bold !important;
 }
 
 .navbar-btn {
@@ -1450,6 +1446,7 @@ h3.popover-header a {
 
 .nav-tabs .nav-link.active {
   color: var(--bs-link-color);
+  text-decoration: underline;
 }
 
 .nav-tabs .nav-link:not(.active) {
