@@ -178,7 +178,6 @@ export default function JournalDetails() {
                   {t("Publications")}: ({publications.length})
                 </strong>
                 {/* @ts-ignore */}
-
                 <CSVLink
                   data={formattedPublicationsForCsv}
                   headers={journalCsvHeaders}

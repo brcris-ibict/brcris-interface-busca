@@ -181,6 +181,7 @@ export default function CourseDetails() {
             <li>
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <span className="sui-result__key">{t("Publications")}</span>
+                {/* @ts-ignore */}
                 <CSVLink
                   data={formattedPublicationsForCsv}
                   headers={publicationCsvHeaders}

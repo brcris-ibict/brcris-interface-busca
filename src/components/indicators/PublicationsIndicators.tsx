@@ -225,6 +225,7 @@ function PublicationsIndicators({
       <PopoverButton className="position-absolute" />
 
       <div className={styles.chart}>
+        {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
           title="Export to csv"
@@ -239,6 +240,7 @@ function PublicationsIndicators({
       </div>
 
       <div className={styles.chart}>
+        {/* @ts-ignore */}
         <CSVLink
           className={styles.download}
           title={t("Export to csv") || ""}
