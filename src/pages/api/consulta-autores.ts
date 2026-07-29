@@ -18,7 +18,7 @@ export default async function handler(
     }
 
     const response = await client.search({
-      index: "brc-nov2025-person",
+      index: process.env.INDEX_PERSON || "",
       size: 1000,
       _source: ["id", "lattesId", "brcrisId"],
       body: {
