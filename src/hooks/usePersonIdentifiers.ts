@@ -10,6 +10,8 @@ export function usePersonIdentifiers(ids: string[]) {
   const [data, setData] = useState<PersonIdentifiers[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const idsKey = ids.join(",");
+
   useEffect(() => {
     if (!ids || ids.length === 0) return;
 
@@ -38,7 +40,8 @@ export function usePersonIdentifiers(ids: string[]) {
     };
 
     fetchPersons();
-  }, [ids]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idsKey]);
 
   return { data, loading };
 }

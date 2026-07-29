@@ -11,6 +11,8 @@ export function usePublicationYears(ids: string[]) {
   const [data, setData] = useState<PublicationYear[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const idsKey = ids.join(",");
+
   useEffect(() => {
     if (!ids || ids.length === 0) return;
 
@@ -39,7 +41,8 @@ export function usePublicationYears(ids: string[]) {
     };
 
     fetchYears();
-  }, [ids]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idsKey]);
 
   return { data, loading };
 }
