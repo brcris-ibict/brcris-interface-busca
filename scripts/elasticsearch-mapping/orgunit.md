@@ -139,6 +139,16 @@ PUT /brc-nov2025-orgunit-v2
           }
         }
       },
+      "relatedOrgUnit": {
+        "properties": {
+          "id": { "type": "keyword" },
+          "name": { "type": "keyword" },
+          "name_text": {
+            "type": "text",
+            "analyzer": "accent_insensitive"
+          }
+        }
+      },
       "ringgoId": { "type": "keyword" },
       "rorid": { "type": "keyword" },
       "scopusId": { "type": "keyword" },

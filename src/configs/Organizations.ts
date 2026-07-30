@@ -37,6 +37,12 @@ const config: CustomSearchDriverOptions = {
       type: {
         raw: {},
       },
+      address: {
+        raw: {},
+      },
+      relatedOrgUnit: {
+        raw: {},
+      },
       country: {
         raw: {},
       },

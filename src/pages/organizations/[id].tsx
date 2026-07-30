@@ -71,6 +71,15 @@ export default function OragnizationDetailsPage() {
         brcrisId: {
           raw: {},
         },
+        type: {
+          raw: {},
+        },
+        address: {
+          raw: {},
+        },
+        relatedOrgUnit: {
+          raw: {},
+        },
         coordinates: {
           raw: {},
         },

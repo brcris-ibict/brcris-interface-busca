@@ -1,9 +1,12 @@
 import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { useMemo } from "react";
 import { CSVLink } from "react-csv";
-import { getLattesIdentifier } from "../../../utils/Utils";
+import { getLattesIdentifier, normalizeText } from "../../../utils/Utils";
+import { useLibraryInstitutions } from "../../hooks/useLibraryInstitutions";
 import { usePersonIdentifiers } from "../../hooks/usePersonIdentifiers";
+import { ORG_LIBRARY_TYPE } from "../../lib/orgunitSearchQuery";
 import NotFound from "../../pages/404";
 import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
@@ -17,6 +20,19 @@ const membersCsvHeaders = [
   { label: "IDLattes", key: "lattesId" },
   { label: "BrCrisID", key: "brcrisId" },
 ];
+
+function asText(value: unknown): string {
+  if (Array.isArray(value)) return String(value[0] ?? "");
+  if (value == null) return "";
+  return String(value);
+}
+
+function isLibraryType(typeValue: unknown): boolean {
+  if (Array.isArray(typeValue)) {
+    return typeValue.some((item) => String(item) === ORG_LIBRARY_TYPE);
+  }
+  return String(typeValue ?? "") === ORG_LIBRARY_TYPE;
+}
 
 export default function OrganizationDetails() {
   const { isLoading, results, wasSearched } = useSearch();
@@ -36,6 +52,22 @@ export default function OrganizationDetails() {
       brcrisId: extra?.brcrisId ?? member?.id ?? "",
     };
   });
+
+  const orgId = asText(result?.id?.raw);
+  const isLibrary = isLibraryType(result?.type?.raw);
+  const libraryIds = useMemo(
+    () => (isLibrary && orgId ? [orgId] : []),
+    [isLibrary, orgId],
+  );
+  const { data: institutionByLibrary } = useLibraryInstitutions(libraryIds);
+  const linkedInstitution = orgId ? institutionByLibrary[orgId] : undefined;
+
+  const relatedOrgUnits = Array.isArray(result?.relatedOrgUnit?.raw)
+    ? result.relatedOrgUnit.raw
+    : result?.relatedOrgUnit?.raw
+      ? [result.relatedOrgUnit.raw]
+      : [];
+
   if (isLoading || !wasSearched) {
     return <Loader />;
   }
@@ -109,9 +141,52 @@ export default function OrganizationDetails() {
             </li>
           )}
           <ShowItem value={result.acronym?.raw} label={t("Acronym")} />
+          <ShowItem value={result.type?.raw} label={t("Type")} />
+          {linkedInstitution?.name && (
+            <li className="sui-result__item">
+              <span className="sui-result__key">{t("Institution")}</span>
+              <span className="sui-result__value">
+                {linkedInstitution.id ? (
+                  <a href={`/organizations/${linkedInstitution.id}`}>
+                    {normalizeText(linkedInstitution.name)}
+                  </a>
+                ) : (
+                  normalizeText(linkedInstitution.name)
+                )}
+              </span>
+            </li>
+          )}
           <ShowItem value={result.country?.raw} label={t("Country")} />
           <ShowItem value={result.state?.raw} label={t("State")} />
           <ShowItem value={result.city?.raw} label={t("City")} />
+          {!isLibrary && (
+            <ShowItem value={result.address?.raw} label={t("Address")} />
+          )}
+
+          {relatedOrgUnits.length > 0 && (
+            <li>
+              <span className="sui-result__key">{t("Libraries")}</span>
+              <span>
+                <ExpandableContent
+                  items={[...relatedOrgUnits].sort((a: any, b: any) =>
+                    String(a?.name ?? "").localeCompare(String(b?.name ?? "")),
+                  )}
+                  initialCount={5}
+                  renderItem={(item: any) => (
+                    <>
+                      {item.id ? (
+                        <a href={`/organizations/${item.id}`}>
+                          {normalizeText(item.name)}
+                        </a>
+                      ) : (
+                        normalizeText(item.name)
+                      )}
+                    </>
+                  )}
+                />
+              </span>
+            </li>
+          )}
 
           {result.capesId?.raw?.length > 0 && (
             <li>
