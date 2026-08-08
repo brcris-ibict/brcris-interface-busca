@@ -56,7 +56,7 @@ export default function PeopleDetails() {
   };
 
   const result = results?.[0];
-  const title = result?.name?.raw || t("Person");
+  const title = normalizeText(result?.name?.raw) || t("Person");
 
   const rawDescription = results?.[0]?.bio?.raw?.[0] || "";
   const stripHtml = (html: string) => html.replace(/<[^>]+>/g, "");
@@ -95,12 +95,14 @@ export default function PeopleDetails() {
           <div className="details-main">
             <Head>
               <title>
-                {result.name?.raw ? `${result.name.raw} | BrCris` : "BrCris"}
+                {result.name?.raw
+                  ? `${normalizeText(result.name.raw)} | BrCris`
+                  : "BrCris"}
               </title>
             </Head>
             <div className="d-flex justify-content-between align-items-center">
               <div className="author-header">
-                <h1>{result.name?.raw}</h1>
+                <h1>{normalizeText(result.name?.raw)}</h1>
               </div>
             </div>
             <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
@@ -165,7 +167,7 @@ export default function PeopleDetails() {
                     <div className="chips-container">
                       {result.researchArea.raw.map((area: string) => (
                         <span key={area} className="chip">
-                          {area}
+                          {normalizeText(area)}
                         </span>
                       ))}
                     </div>
@@ -225,7 +227,7 @@ export default function PeopleDetails() {
                                   {normalizeText(item.name)}{" "}
                                 </a>
                               ) : (
-                                item.name
+                                normalizeText(item.name)
                               )}
                               {` (${t(item.role)})`}
                               {index < groupsMap.size - 1 && ", "}

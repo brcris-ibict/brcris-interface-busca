@@ -2,6 +2,7 @@ import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
+import { normalizeText } from "../../../utils/Utils";
 import { usePublicationYears } from "../../hooks/usePublicationYears";
 import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
@@ -96,12 +97,12 @@ export default function CourseDetails() {
   return (
     <div>
       <Head>
-        <title>{`${result.name?.raw} | BrCris`}</title>
+        <title>{`${normalizeText(result.name?.raw)} | BrCris`}</title>
       </Head>
 
       <div className="mb-3 position-relative">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 className="title mb-0">{result.name?.raw}</h1>
+          <h1 className="title mb-0">{normalizeText(result.name?.raw)}</h1>
         </div>
 
         <div className="mt-2">
@@ -148,7 +149,9 @@ export default function CourseDetails() {
                 initialCount={3}
                 renderItem={(program: OrgUnit, idx: number) => (
                   <span key={idx}>
-                    <a href={`/programs/${program.id}`}>{program.name}</a>
+                    <a href={`/programs/${program.id}`}>
+                      {normalizeText(program.name)}
+                    </a>
                   </span>
                 )}
               />
@@ -170,7 +173,9 @@ export default function CourseDetails() {
                 initialCount={3}
                 renderItem={(unit: OrgUnit, idx: number) => (
                   <span key={idx}>
-                    <a href={`/organizations/${unit.id}`}>{unit.name}</a>
+                    <a href={`/organizations/${unit.id}`}>
+                      {normalizeText(unit.name)}
+                    </a>
                   </span>
                 )}
               />
@@ -212,7 +217,7 @@ export default function CourseDetails() {
                   return (
                     <div key={publication?.id} className="publication-item">
                       <a href={`/publications/${publication?.id}`}>
-                        {publication?.title}
+                        {normalizeText(publication?.title)}
                       </a>
                       <div className="publication-meta">
                         {[year, authors].filter(Boolean).join(" - ")}

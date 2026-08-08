@@ -2,6 +2,7 @@ import {
   formatFirstPublicationValue,
   formatPublicationType,
   formatPublicationYear,
+  normalizeText,
 } from "../../../utils/Utils";
 import {
   getFieldTextValue,
@@ -87,5 +88,33 @@ export default function SearchTableCell({
     return formatted || "-";
   }
 
-  return fieldTextValue;
+  const skipNormalize = new Set([
+    "orcid",
+    "lattesId",
+    "issn_l",
+    "issn",
+    "countryCode",
+    "kindCode",
+    "isOA",
+    "publicationDate",
+    "depositDate",
+    "startDate",
+    "endDate",
+    "edition",
+    "volume",
+    "issue",
+    "series",
+    "id",
+    "brcrisId",
+    "capesId",
+    "language",
+    "doi",
+    "url",
+  ]);
+
+  if (fieldTextValue === "-" || skipNormalize.has(fieldKey)) {
+    return fieldTextValue;
+  }
+
+  return normalizeText(fieldTextValue);
 }

@@ -2,7 +2,7 @@ import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
-import { formatBooleanString } from "../../../utils/Utils";
+import { formatBooleanString, normalizeText } from "../../../utils/Utils";
 import { usePublicationYears } from "../../hooks/usePublicationYears";
 import NotFound from "../../pages/404";
 import CopyLink from "../CopyLink";
@@ -67,11 +67,11 @@ export default function JournalDetails() {
   return (
     <div key={result.id}>
       <Head>
-        <title>{`${result.title?.raw} | BrCris`}</title>
+        <title>{`${normalizeText(result.title?.raw)} | BrCris`}</title>
       </Head>
       <div className="mb-3 position-relative">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 className="title mb-0">{result.title?.raw}</h1>
+          <h1 className="title mb-0">{normalizeText(result.title?.raw)}</h1>
           <PopoverButton />
         </div>
 
@@ -109,7 +109,7 @@ export default function JournalDetails() {
                 initialCount={5}
                 renderItem={(area: any, idx: number) => (
                   <div key={idx} className="research-area-item">
-                    {area?.name}
+                    {normalizeText(area?.name)}
                   </div>
                 )}
               />
@@ -194,7 +194,7 @@ export default function JournalDetails() {
                 renderItem={(publication: any) => (
                   <div className="publication-item">
                     <a href={`/publications/${publication?.id}`}>
-                      {publication?.title}
+                      {normalizeText(publication?.title)}
                     </a>
 
                     {getYearById(publication?.id) && (

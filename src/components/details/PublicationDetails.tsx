@@ -7,6 +7,7 @@ import {
   formatPublicationType,
   formatPublicationYear,
   normalizeDoiList,
+  normalizeText,
 } from "../../../utils/Utils";
 import NotFound from "../../pages/404";
 import type { OrgUnit, Service } from "../../types/Entities";
@@ -205,7 +206,9 @@ export default function PublicationDetails() {
                   initialCount={5}
                   renderItem={(item: any, idx: number) => (
                     <div key={idx} className="member-item">
-                      <a href={`/people/${item.id}`}>{item?.name}</a>
+                      <a href={`/people/${item.id}`}>
+                        {normalizeText(item?.name)}
+                      </a>
                     </div>
                   )}
                 />
@@ -237,7 +240,9 @@ export default function PublicationDetails() {
                       initialCount={5}
                       renderItem={(org: OrgUnit, idx: number) => (
                         <div key={idx}>
-                          <a href={`/organizations/${org.id}`}>{org?.name}</a>
+                          <a href={`/organizations/${org.id}`}>
+                            {normalizeText(org?.name)}
+                          </a>
                         </div>
                       )}
                     />
@@ -303,7 +308,7 @@ export default function PublicationDetails() {
               label={t("Affiliation")}
               value={result.sponsorOrgUnit?.raw.map((org: any) => (
                 <a key={org.id} href={`/organizations/${org.id}`}>
-                  {org.name?.[0]}
+                  {normalizeText(org.name?.[0])}
                 </a>
               ))}
             />
@@ -320,7 +325,9 @@ export default function PublicationDetails() {
                   value={result.researchArea.raw
                     .filter((researchArea: any) => researchArea?.name)
                     .map((researchArea: any) => (
-                      <span key={researchArea.id}>{researchArea.name}</span>
+                      <span key={researchArea.id}>
+                        {normalizeText(researchArea.name)}
+                      </span>
                     ))}
                 />
               )}
@@ -329,7 +336,9 @@ export default function PublicationDetails() {
               <ShowItem
                 label={t("Conference")}
                 value={result.conference.raw.map((conference: any) => (
-                  <span key={conference.id}>{conference.name}</span>
+                  <span key={conference.id}>
+                    {normalizeText(conference.name)}
+                  </span>
                 ))}
               />
             )}
@@ -343,7 +352,9 @@ export default function PublicationDetails() {
                     renderItem={(program: any) => (
                       <>
                         {program.name && (
-                          <a href={`/programs/${program.id}`}>{program.name}</a>
+                          <a href={`/programs/${program.id}`}>
+                            {normalizeText(program.name)}
+                          </a>
                         )}
                       </>
                     )}
@@ -360,7 +371,9 @@ export default function PublicationDetails() {
                     initialCount={5}
                     renderItem={(item: any) => (
                       <>
-                        <a href={`/organizations/${item.id}`}>{item?.name}</a>
+                        <a href={`/organizations/${item.id}`}>
+                          {normalizeText(item?.name)}
+                        </a>
                       </>
                     )}
                   />

@@ -1,7 +1,7 @@
 import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
-import { formatDate } from "../../../utils/Utils";
+import { formatDate, normalizeText } from "../../../utils/Utils";
 import NotFound from "../../pages/404";
 import CopyLink from "../CopyLink";
 import ShowItem from "../customResultView/ShowItem";
@@ -85,12 +85,12 @@ export default function SoftwareDetails() {
   return (
     <div>
       <Head>
-        <title>{`${result.title?.raw} | BrCris`}</title>
+        <title>{`${normalizeText(result.title?.raw)} | BrCris`}</title>
       </Head>
 
       <div className="mb-3 position-relative">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 className="title mb-0">{result.title?.raw}</h1>
+          <h1 className="title mb-0">{normalizeText(result.title?.raw)}</h1>
         </div>
 
         <div className="mt-2">
@@ -128,7 +128,9 @@ export default function SoftwareDetails() {
                 initialCount={5}
                 renderItem={(item: any, idx: number) => (
                   <div key={idx} className="creator-item">
-                    <a href={`/people/${item.id}`}>{item?.name}</a>
+                    <a href={`/people/${item.id}`}>
+                      {normalizeText(item?.name)}
+                    </a>
                   </div>
                 )}
               />

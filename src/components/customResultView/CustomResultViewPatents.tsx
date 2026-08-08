@@ -20,7 +20,7 @@ const CustomResultViewPatents = ({ result, onClickLink }: ResultViewProps) => {
           {isVisible("inventor") && result.inventor?.raw && (
             <span>
               {result.inventor?.raw?.map((inventor: Author) => (
-                <span key={inventor.id}>{inventor.name}</span>
+                <span key={inventor.id}>{normalizeText(inventor.name)}</span>
               ))}
             </span>
           )}

@@ -1,6 +1,7 @@
 import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { normalizeText } from "../../../utils/Utils";
 import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
 import CopyLink from "../CopyLink";
@@ -29,12 +30,12 @@ export default function GroupDetails() {
   return (
     <div>
       <Head>
-        <title>{`${result.name?.raw} | BrCris`}</title>
+        <title>{`${normalizeText(result.name?.raw)} | BrCris`}</title>
       </Head>
 
       <div className="mb-3 position-relative">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 className="title mb-0">{result.name?.raw}</h1>
+          <h1 className="title mb-0">{normalizeText(result.name?.raw)}</h1>
         </div>
 
         <div className="mt-2">
@@ -82,7 +83,9 @@ export default function GroupDetails() {
                 initialCount={5}
                 renderItem={(leader: any) => (
                   <a key={leader.id} href={`/people/${leader.id}`}>
-                    {Array.isArray(leader.name) ? leader.name[0] : leader.name}
+                    {normalizeText(
+                      Array.isArray(leader.name) ? leader.name[0] : leader.name,
+                    )}
                   </a>
                 )}
               />
@@ -98,7 +101,7 @@ export default function GroupDetails() {
                 initialCount={5}
                 renderItem={(org: OrgUnit) => (
                   <a key={org.id} href={`/organizations/${org.id}`}>
-                    {org.name}
+                    {normalizeText(org.name)}
                   </a>
                 )}
               />
@@ -114,7 +117,7 @@ export default function GroupDetails() {
                 initialCount={5}
                 renderItem={(partner: any) => (
                   <a key={partner.id} href={`/organizations/${partner.id}`}>
-                    {partner.name}
+                    {normalizeText(partner.name)}
                   </a>
                 )}
               />
@@ -143,7 +146,9 @@ export default function GroupDetails() {
                 initialCount={5}
                 renderItem={(item: any, idx: number) => (
                   <div key={idx} className="member-item">
-                    <a href={`/people/${item.id}`}>{item?.name}</a>
+                    <a href={`/people/${item.id}`}>
+                      {normalizeText(item?.name)}
+                    </a>
                   </div>
                 )}
               />

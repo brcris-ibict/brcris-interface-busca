@@ -3,6 +3,7 @@
 import * as d3 from "d3";
 import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
+import { normalizeText } from "../../../utils/Utils";
 
 type Advisee = {
   id: string;
@@ -291,10 +292,10 @@ export default function AdvisorGraph({ advisorId }: { advisorId: string }) {
       className="p-6 flex flex-col items-center justify-center w-full"
     >
       <AdvisingGraph
-        advisorName={data.name}
+        advisorName={normalizeText(data.name)}
         advisorUri={data.id}
         advisees={data.advisees.map((a: any) => ({
-          adviseeName: a.name,
+          adviseeName: normalizeText(a.name),
           advisee: a.id,
           level: a.type,
         }))}

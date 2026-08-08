@@ -78,11 +78,11 @@ export default function OrganizationDetails() {
   return (
     <div key={result.id}>
       <Head>
-        <title>{`${result.name?.raw} | BrCris`}</title>
+        <title>{`${normalizeText(result.name?.raw)} | BrCris`}</title>
       </Head>
       <div className="mb-3 position-relative">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 className="title mb-0">{result.name?.raw}</h1>
+          <h1 className="title mb-0">{normalizeText(result.name?.raw)}</h1>
         </div>
 
         <div className="mt-2">
@@ -134,14 +134,19 @@ export default function OrganizationDetails() {
                 initialCount={5}
                 renderItem={(item: any, idx: number) => (
                   <div key={idx} className="member-item">
-                    <a href={`/people/${item.id}`}>{item?.name}</a>
+                    <a href={`/people/${item.id}`}>
+                      {normalizeText(item?.name)}
+                    </a>
                   </div>
                 )}
               />
             </li>
           )}
           <ShowItem value={result.acronym?.raw} label={t("Acronym")} />
-          <ShowItem value={result.type?.raw} label={t("Type")} />
+          <ShowItem
+            value={normalizeText(result.type?.raw)}
+            label={t("Type")}
+          />
           {linkedInstitution?.name && (
             <li className="sui-result__item">
               <span className="sui-result__key">{t("Institution")}</span>
@@ -156,11 +161,23 @@ export default function OrganizationDetails() {
               </span>
             </li>
           )}
-          <ShowItem value={result.country?.raw} label={t("Country")} />
-          <ShowItem value={result.state?.raw} label={t("State")} />
-          <ShowItem value={result.city?.raw} label={t("City")} />
+          <ShowItem
+            value={normalizeText(result.country?.raw)}
+            label={t("Country")}
+          />
+          <ShowItem
+            value={normalizeText(result.state?.raw)}
+            label={t("State")}
+          />
+          <ShowItem
+            value={normalizeText(result.city?.raw)}
+            label={t("City")}
+          />
           {!isLibrary && (
-            <ShowItem value={result.address?.raw} label={t("Address")} />
+            <ShowItem
+              value={normalizeText(result.address?.raw)}
+              label={t("Address")}
+            />
           )}
 
           {relatedOrgUnits.length > 0 && (
@@ -214,7 +231,9 @@ export default function OrganizationDetails() {
                   renderItem={(program: any) => (
                     <>
                       {program.name && (
-                        <a href={`/programs/${program.id}`}>{program.name}</a>
+                        <a href={`/programs/${program.id}`}>
+                          {normalizeText(program.name)}
+                        </a>
                       )}
                     </>
                   )}
@@ -231,7 +250,9 @@ export default function OrganizationDetails() {
                   initialCount={5}
                   renderItem={(item: any) => (
                     <>
-                      <a href={`/organizations/${item.id}`}>{item?.name}</a>
+                      <a href={`/organizations/${item.id}`}>
+                        {normalizeText(item?.name)}
+                      </a>
                     </>
                   )}
                 />
@@ -247,7 +268,7 @@ export default function OrganizationDetails() {
                 renderItem={(publication: any, index: number) => (
                   <div key={index} className="publication-item">
                     <a href={`/publications/${publication?.id}`}>
-                      {publication?.title}
+                      {normalizeText(publication?.title)}
                     </a>
                   </div>
                 )}

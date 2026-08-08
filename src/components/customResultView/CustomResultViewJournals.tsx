@@ -1,4 +1,5 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
+import { normalizeText } from "../../../utils/Utils";
 import type { Publisher, ResearchArea } from "../../types/Entities";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
@@ -10,13 +11,15 @@ const CustomResultViewJournals = ({ result, onClickLink }: ResultViewProps) => {
       <a onClick={onClickLink} href={`/journals/${result.id.raw}`}>
         <h2
           dangerouslySetInnerHTML={{
-            __html: result.title.snippet || result.title.raw,
+            __html: normalizeText(result.title.snippet || result.title.raw),
           }}
         ></h2>
         <div className="result-metadata">
           {isVisible("publisher") &&
             result.publisher?.raw?.map((publisher: Publisher) => (
-              <span key={publisher.id}>{publisher.name ?? ""}</span>
+              <span key={publisher.id}>
+                {normalizeText(publisher.name ?? "")}
+              </span>
             ))}
           {isVisible("researchArea") &&
             result.researchArea?.raw?.map((researchArea: ResearchArea) => {
@@ -24,7 +27,9 @@ const CustomResultViewJournals = ({ result, onClickLink }: ResultViewProps) => {
                 ? researchArea.name.join(", ")
                 : String(researchArea.name ?? "");
               if (!names) return null;
-              return <span key={researchArea.id}>{names}</span>;
+              return (
+                <span key={researchArea.id}>{normalizeText(names)}</span>
+              );
             })}
           {isVisible("issn_l") && result.issn_l?.raw && (
             <span>{result.issn_l.raw}</span>
