@@ -1,3 +1,6 @@
+import { formatAcronym } from "./ptAcronyms";
+import { restorePtAccents } from "./ptAccentMap";
+
 export const CHART_BACKGROUD_COLORS = [
   "rgba(255,0,0, 0.2)",
   "rgba(54, 162, 235, 0.2)",
@@ -205,6 +208,7 @@ const LOWER_WORDS = new Set([
   "por",
   "com",
   "tem",
+  "se",
 ]);
 
 export function normalizeText(text: any): string {
@@ -220,12 +224,17 @@ export function normalizeText(text: any): string {
 
   if (!safeText) return "";
 
-  return safeText.toLowerCase().replace(/\p{L}+/gu, (word, offset) => {
-    if (offset === 0 || !LOWER_WORDS.has(word)) {
-      return word.charAt(0).toUpperCase() + word.slice(1);
+  return safeText.replace(/\p{L}+/gu, (word, offset) => {
+    const acronym = formatAcronym(word);
+    if (acronym) return acronym;
+
+    const restored = restorePtAccents(word.toLowerCase());
+
+    if (offset === 0 || !LOWER_WORDS.has(restored)) {
+      return restored.charAt(0).toUpperCase() + restored.slice(1);
     }
 
-    return word;
+    return restored;
   });
 }
 
