@@ -1,0 +1,1041 @@
+openapi: 3.0.3
+info:
+  title: BrCris Interface de Busca API
+  version: 1.3.0
+  description: |
+    Documentacao Swagger/OpenAPI dos endpoints atuais em `src/pages/api`.
+
+    Observacoes:
+    - A aplicacao usa Next.js API Routes.
+    - As rotas nao validam explicitamente o metodo HTTP no codigo atual; esta especificacao documenta o metodo pretendido a partir do uso de `req.query` ou `req.body`.
+    - `sendMail.ts` e `googleCaptchaValidation.ts` ficam em `pages/api`, mas sao modulos auxiliares sem handler `default`; por isso nao foram documentados como endpoints publicos.
+    - As credenciais de Elasticsearch, SMTP e reCAPTCHA sao configuradas por variaveis de ambiente no servidor.
+servers:
+  - url: http://localhost:3000
+    description: Desenvolvimento local
+  - url: https://brcris.ibict.br
+    description: Producao
+tags:
+  - name: Busca
+    description: Busca, autocomplete e estatisticas de indices
+  - name: Indicadores
+    description: Agregacoes e consultas para indicadores
+  - name: Exportacao
+    description: Geracao e download de arquivos
+  - name: Relacionamentos
+    description: Consultas auxiliares por relacoes entre entidades
+  - name: Comunicacao
+    description: Formularios, captcha e e-mail
+  - name: Sistema
+    description: Informacoes de versao e operacao
+paths:
+  /api/search:
+    post:
+      tags:
+        - Busca
+      summary: Executa busca principal no Elasticsearch
+      description: |
+        Recebe o estado da Elastic Search UI e a configuracao do indice. A API monta/ajusta a Query DSL,
+        aplica regras especificas de publicacoes e organizacoes, e delega a consulta ao conector Elasticsearch.
+      operationId: search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchRequest"
+            example:
+              requestState:
+                searchTerm: "machine learning"
+                filters: []
+                current: 1
+                resultsPerPage: 10
+              queryConfig:
+                index: "brc-nov2025-publication-v2"
+                search_fields:
+                  title_text:
+                    weight: 3
+                  author.name_text: {}
+                result_fields:
+                  title:
+                    snippet: {}
+                  author:
+                    raw: {}
+                facets:
+                  type:
+                    type: value
+      responses:
+        "200":
+          description: Resposta normalizada pela Elastic Search UI.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchUiResponse"
+        "400":
+          description: Erro de validacao ou falha de busca.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/autocomplete:
+    post:
+      tags:
+        - Busca
+      summary: Executa autocomplete no Elasticsearch
+      operationId: autocomplete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AutocompleteRequest"
+            example:
+              requestState:
+                searchTerm: "brasil"
+              queryConfig:
+                index: "brc-nov2025-publication-v2"
+                results:
+                  index: "brc-nov2025-publication-v2"
+                  resultsPerPage: 6
+      responses:
+        "200":
+          description: Sugestoes e/ou resultados de autocomplete retornados pelo conector da Elastic.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /api/index-stats:
+    get:
+      tags:
+        - Busca
+      summary: Retorna estatisticas de um ou mais indices Elasticsearch
+      operationId: indexStats
+      parameters:
+        - name: indexesName
+          in: query
+          required: true
+          description: Nome de um indice ou lista aceita pelo Elasticsearch cat indices.
+          schema:
+            type: string
+          example: brc-nov2025-publication-v2
+      responses:
+        "200":
+          description: Estatisticas do indice. Quando ha apenas um indice, retorna um objeto; caso contrario, retorna array.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/IndexStats"
+                  - type: array
+                    items:
+                      $ref: "#/components/schemas/IndexStats"
+
+  /api/indicators:
+    post:
+      tags:
+        - Indicadores
+      summary: Executa multiplas consultas de agregacao para indicadores
+      description: |
+        O handler atual faz `JSON.parse(req.body)`. No consumo existente, o corpo e enviado como string JSON
+        sem `Content-Type: application/json`. Para compatibilidade direta com o codigo atual, esta rota esta documentada
+        com `text/plain` contendo JSON serializado.
+      operationId: indicators
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              description: "JSON serializado com `queries` e `index`."
+            example: '{"index":"brc-nov2025-publication-v2","queries":[{"size":0,"aggs":{"aggregate":{"terms":{"field":"type.keyword"}}}}]}'
+      responses:
+        "200":
+          description: Lista de buckets de agregacao para cada query enviada.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/AggregationBucket"
+        "400":
+          description: Falha ao executar agregacoes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/export:
+    post:
+      tags:
+        - Exportacao
+      summary: Gera arquivo de exportacao em ZIP
+      description: |
+        Gera CSV ou RIS a partir de uma query Elasticsearch. Para exportacoes acima de 1000 resultados,
+        valida reCAPTCHA e processa em background, enviando o link por e-mail.
+      operationId: exportSearchResults
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportRequest"
+            example:
+              index: "brc-nov2025-publication-v2"
+              indexName: "Publications"
+              typeArq: "csv"
+              totalResults: 500
+              resultFields:
+                - title
+                - author
+                - publicationDate
+              query:
+                bool:
+                  must:
+                    - match:
+                        title_text: "ciencia aberta"
+      responses:
+        "200":
+          description: Arquivo pronto ou exportacao em background iniciada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportResponse"
+              examples:
+                ready:
+                  value:
+                    file: /tmp/brcris/csvabc123.zip
+                background:
+                  value: {}
+        "400":
+          description: Erro de validacao, captcha ou geracao do arquivo.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ErrorResponse"
+                  - type: object
+                    additionalProperties: true
+        "507":
+          description: "Quantidade solicitada excede `MAX_DOWNLOAD_PERMITED`."
+          content:
+            application/json:
+              schema:
+                type: string
+
+  /api/download:
+    get:
+      tags:
+        - Exportacao
+      summary: Faz download de um ZIP previamente gerado
+      operationId: downloadExport
+      parameters:
+        - name: fileName
+          in: query
+          required: false
+          description: "Caminho do arquivo ZIP gerado. O handler tambem aceita `filename`."
+          schema:
+            type: string
+          example: /tmp/brcris/csvabc123.zip
+        - name: filename
+          in: query
+          required: false
+          description: "Alias aceito para `fileName`."
+          schema:
+            type: string
+        - name: indexName
+          in: query
+          required: false
+          description: Nome usado para compor o filename do download.
+          schema:
+            type: string
+          example: Publications
+      responses:
+        "200":
+          description: Arquivo ZIP.
+          headers:
+            Content-Disposition:
+              description: Nome do arquivo de download.
+              schema:
+                type: string
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+
+  /api/mail:
+    post:
+      tags:
+        - Comunicacao
+      summary: Envia mensagem de contato ou relatorio por e-mail
+      description: |
+        Aceita JSON ou multipart/form-data. Em ambos os formatos, valida reCAPTCHA antes de enviar.
+        No multipart, o campo `file` pode ser enviado como anexo.
+      operationId: sendContactMail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MailRequest"
+            example:
+              type: contact
+              name: "Maria Silva"
+              email: "maria@example.org"
+              description: "Mensagem enviada pelo formulario"
+              captcha: "captcha-token"
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - captcha
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - contact
+                    - report
+                  default: contact
+                url:
+                  type: string
+                  format: uri
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                description:
+                  type: string
+                message:
+                  type: string
+                  description: "Alias aceito para `description`."
+                captcha:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: E-mail enviado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Campos obrigatorios ausentes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "422":
+          description: Captcha invalido.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "500":
+          description: Erro no envio do e-mail.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageErrorResponse"
+
+  /api/consulta-autores:
+    post:
+      tags:
+        - Relacionamentos
+      summary: Consulta identificadores de autores por IDs
+      operationId: consultaAutores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdsRequest"
+            example:
+              ids:
+                - "123"
+                - "456"
+      responses:
+        "200":
+          description: Autores encontrados com Lattes e BrCris.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuthorIdentifier"
+        "400":
+          description: Lista de IDs ausente ou vazia.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Erro ao consultar o Elasticsearch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/consulta-publicacoes:
+    post:
+      tags:
+        - Relacionamentos
+      summary: Consulta metadados resumidos de publicacoes por IDs
+      operationId: consultaPublicacoes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdsRequest"
+            example:
+              ids:
+                - "pub-1"
+                - "pub-2"
+      responses:
+        "200":
+          description: Publicacoes encontradas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PublicationLookup"
+        "400":
+          description: Lista de IDs ausente ou vazia.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Erro ao consultar o Elasticsearch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/publicacoes-revista:
+    post:
+      tags:
+        - Relacionamentos
+      summary: Consulta revistas associadas a publicacoes
+      operationId: publicacoesRevista
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdsRequest"
+            example:
+              ids:
+                - "pub-1"
+                - "pub-2"
+      responses:
+        "200":
+          description: Relacao entre publicacao e titulo de revista.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/JournalByPublication"
+        "400":
+          description: Lista de IDs ausente ou vazia.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Erro ao consultar o Elasticsearch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/coautoria:
+    get:
+      tags:
+        - Relacionamentos
+      summary: Retorna dados de coautoria de um autor
+      operationId: coautoria
+      parameters:
+        - name: authorId
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "author-123"
+      responses:
+        "200":
+          description: "Dados de coautoria, ou `null` quando nao ha publicacoes."
+          content:
+            application/json:
+              schema:
+                nullable: true
+                allOf:
+                  - $ref: "#/components/schemas/CoauthorshipResponse"
+        "400":
+          description: Erro ao consultar coautoria.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/autor-xml:
+    get:
+      tags:
+        - Relacionamentos
+      summary: Gera rede de coautoria em GraphML/XML
+      operationId: autorXml
+      parameters:
+        - name: authorId
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "author-123"
+      responses:
+        "200":
+          description: Arquivo GraphML/XML com a rede de coautoria.
+          headers:
+            Content-Disposition:
+              description: Nome do arquivo GraphML.
+              schema:
+                type: string
+          content:
+            application/xml:
+              schema:
+                type: string
+                example: "<graphml></graphml>"
+        "400":
+          description: Erro ao gerar XML.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/orientacoes:
+    get:
+      tags:
+        - Relacionamentos
+      summary: Retorna orientandos de um orientador
+      operationId: orientacoes
+      parameters:
+        - name: advisorId
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "advisor-123"
+      responses:
+        "200":
+          description: Orientador e lista de orientandos.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdviseesResponse"
+        "400":
+          description: "`advisorId` ausente."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Erro ao consultar orientacoes.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/patent:
+    get:
+      tags:
+        - Relacionamentos
+      summary: Retorna patentes de uma pessoa inventora
+      operationId: patentsByInventor
+      parameters:
+        - name: personId
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "person-123"
+      responses:
+        "200":
+          description: Lista de patentes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatentSummary"
+        "400":
+          description: "`personId` ausente ou erro de consulta."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/software:
+    get:
+      tags:
+        - Relacionamentos
+      summary: Retorna dados resumidos de software por ID
+      operationId: software
+      parameters:
+        - name: softwareId
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "software-123"
+      responses:
+        "200":
+          description: Software encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SoftwareSummary"
+        "400":
+          description: "`softwareId` ausente ou erro de consulta."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Software nao encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/version:
+    get:
+      tags:
+        - Sistema
+      summary: Retorna a versao da API
+      operationId: version
+      responses:
+        "200":
+          description: Versao atual.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - version
+                properties:
+                  version:
+                    type: string
+                    example: "1.3.0"
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+
+    MessageResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    MessageErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+        error:
+          type: string
+
+    SearchRequest:
+      type: object
+      required:
+        - requestState
+        - queryConfig
+      properties:
+        requestState:
+          $ref: "#/components/schemas/SearchRequestState"
+        queryConfig:
+          $ref: "#/components/schemas/SearchQueryConfig"
+
+    AutocompleteRequest:
+      type: object
+      required:
+        - requestState
+        - queryConfig
+      properties:
+        requestState:
+          type: object
+          additionalProperties: true
+          properties:
+            searchTerm:
+              type: string
+        queryConfig:
+          type: object
+          additionalProperties: true
+          required:
+            - index
+          properties:
+            index:
+              type: string
+            results:
+              type: object
+              additionalProperties: true
+            suggestions:
+              type: object
+              additionalProperties: true
+
+    SearchRequestState:
+      type: object
+      additionalProperties: true
+      properties:
+        searchTerm:
+          type: string
+        filters:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        current:
+          type: integer
+          minimum: 1
+        resultsPerPage:
+          type: integer
+          minimum: 1
+        sortList:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    SearchQueryConfig:
+      type: object
+      additionalProperties: true
+      required:
+        - index
+      properties:
+        index:
+          type: string
+        operator:
+          type: string
+          example: OR
+        search_fields:
+          type: object
+          additionalProperties: true
+        advanced_fields:
+          type: object
+          additionalProperties: true
+        result_fields:
+          type: object
+          additionalProperties: true
+        facets:
+          type: object
+          additionalProperties: true
+        disjunctiveFacets:
+          type: array
+          items:
+            type: string
+
+    SearchUiResponse:
+      type: object
+      additionalProperties: true
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        totalResults:
+          type: integer
+        totalPages:
+          type: integer
+        requestId:
+          type: string
+        facets:
+          type: object
+          additionalProperties: true
+
+    IdsRequest:
+      type: object
+      required:
+        - ids
+      properties:
+        ids:
+          type: array
+          minItems: 1
+          items:
+            type: string
+
+    AuthorIdentifier:
+      type: object
+      properties:
+        id:
+          type: string
+        lattesId:
+          type: string
+          nullable: true
+        brcrisId:
+          type: string
+          nullable: true
+
+    PublicationLookup:
+      type: object
+      properties:
+        id:
+          type: string
+        year:
+          type: string
+          nullable: true
+          example: "2024"
+        authors:
+          type: array
+          items:
+            type: string
+        advisors:
+          type: array
+          items:
+            type: string
+
+    JournalByPublication:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID da publicacao.
+        journal:
+          type: string
+
+    CoauthorshipResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        coAuthors:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+        publications:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              title:
+                oneOf:
+                  - type: string
+                  - type: array
+                    items:
+                      type: string
+              publicationDate:
+                oneOf:
+                  - type: string
+                  - type: integer
+              authors:
+                type: array
+                items:
+                  type: string
+        number_of_authored_works:
+          type: integer
+        coauthors_filtered:
+          type: integer
+        earliest_publication:
+          type: integer
+          nullable: true
+        latest_publication:
+          type: integer
+          nullable: true
+        graphData:
+          type: array
+          items:
+            type: object
+            properties:
+              year:
+                type: integer
+              coauthorships:
+                type: integer
+
+    AdviseesResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        advisees:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              title:
+                type: string
+              type:
+                type: string
+
+    PatentSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+
+    SoftwareSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+
+    IndexStats:
+      type: object
+      properties:
+        health:
+          type: string
+          example: green
+        status:
+          type: string
+          example: open
+        index:
+          type: string
+          example: brc-nov2025-publication-v2
+        docs.count:
+          type: string
+          example: "12345"
+        docs.deleted:
+          type: string
+          example: "0"
+        store.size:
+          type: string
+          example: 12mb
+
+    AggregationBucket:
+      type: object
+      additionalProperties: true
+      properties:
+        key:
+          oneOf:
+            - type: string
+            - type: number
+        doc_count:
+          type: integer
+
+    ExportRequest:
+      type: object
+      required:
+        - query
+        - index
+        - resultFields
+        - totalResults
+        - indexName
+        - typeArq
+      properties:
+        query:
+          type: object
+          additionalProperties: true
+          description: Query DSL do Elasticsearch.
+        index:
+          type: string
+          description: Nome fisico do indice Elasticsearch.
+        resultFields:
+          type: array
+          items:
+            type: string
+        totalResults:
+          type: integer
+          minimum: 0
+        indexName:
+          type: string
+          description: Nome legivel usado no arquivo gerado.
+        typeArq:
+          type: string
+          enum:
+            - csv
+            - ris
+        email:
+          type: string
+          format: email
+          description: "Obrigatorio quando `totalResults > 1000`."
+        captcha:
+          type: string
+          description: "Obrigatorio quando `totalResults > 1000`."
+
+    ExportResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        file:
+          type: string
+          description: Caminho do ZIP gerado. Ausente quando a exportacao segue em background.
+
+    MailRequest:
+      type: object
+      required:
+        - name
+        - email
+        - captcha
+      properties:
+        type:
+          type: string
+          enum:
+            - contact
+            - report
+          default: contact
+        url:
+          type: string
+          format: uri
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        description:
+          type: string
+        message:
+          type: string
+          description: "Alias aceito para `description`."
+        captcha:
+          type: string
