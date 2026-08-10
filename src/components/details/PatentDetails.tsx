@@ -1,7 +1,7 @@
 import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
-import { capitalizeName } from "../../../utils/Utils";
+import { normalizeText } from "../../../utils/Utils";
 import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
 import CopyLink from "../CopyLink";
@@ -30,12 +30,12 @@ export default function PatentDetails() {
   return (
     <div>
       <Head>
-        <title>{`${result.title?.raw} | BrCris`}</title>
+        <title>{`${normalizeText(result.title?.raw)} | BrCris`}</title>
       </Head>
 
       <div className="mb-3 position-relative">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 className="title mb-0">{result.title?.raw}</h1>
+          <h1 className="title mb-0">{normalizeText(result.title?.raw)}</h1>
         </div>
 
         <div className="mt-2">
@@ -72,7 +72,7 @@ export default function PatentDetails() {
                 renderItem={(inventor: any, idx: number) => {
                   const sameAsPatent = inventor.id === patentId;
 
-                  const name = inventor.name.map(capitalizeName).join("; ");
+                  const name = inventor.name.map(normalizeText).join("; ");
 
                   return (
                     <span key={idx} className="sui-result__value">
@@ -97,7 +97,7 @@ export default function PatentDetails() {
                 initialCount={5}
                 renderItem={(applicant: OrgUnit) => (
                   <a key={applicant.id} href={`/organizations/${applicant.id}`}>
-                    {applicant.name}
+                    {normalizeText(applicant.name)}
                   </a>
                 )}
               />

@@ -1,5 +1,6 @@
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
+import { normalizeText } from "../../../utils/Utils";
 import ExpandableContent from "../ExpandableContent";
 
 interface Props {
@@ -47,7 +48,7 @@ function PatentsByInventor({ personId }: Props) {
         initialCount={5}
         renderItem={(p: Patent) => (
           <div key={p.id}>
-            <a href={`/patents/${p.id}`}>{p.title}</a>
+            <a href={`/patents/${p.id}`}>{normalizeText(p.title)}</a>
           </div>
         )}
       />

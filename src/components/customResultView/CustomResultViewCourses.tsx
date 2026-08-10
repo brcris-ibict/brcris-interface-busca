@@ -1,5 +1,6 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { useTranslation } from "next-i18next";
+import { normalizeText } from "../../../utils/Utils";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
 const CustomResultViewCourses = ({ result, onClickLink }: ResultViewProps) => {
@@ -11,17 +12,17 @@ const CustomResultViewCourses = ({ result, onClickLink }: ResultViewProps) => {
       <a onClick={onClickLink} href={`/courses/${result.id.raw}`}>
         <h3
           dangerouslySetInnerHTML={{
-            __html: result.name?.snippet || result.name?.raw || "",
+            __html: normalizeText(result.name?.snippet || result.name?.raw || ""),
           }}
         ></h3>
 
         <div className="result-metadata">
           {isVisible("degree") && result.degree?.raw && (
-            <span>{`${t("Degree")}: ${result.degree.raw}`}</span>
+            <span>{`${t("Degree")}: ${normalizeText(result.degree.raw)}`}</span>
           )}
 
           {isVisible("type") && result.type?.raw && (
-            <span>{`${t("Type")}: ${result.type.raw}`}</span>
+            <span>{`${t("Type")}: ${normalizeText(result.type.raw)}`}</span>
           )}
 
           {isVisible("startDate") && result.startDate?.raw && (
@@ -36,9 +37,9 @@ const CustomResultViewCourses = ({ result, onClickLink }: ResultViewProps) => {
             result.program?.raw &&
             result.program.raw.length > 0 && (
               <span>
-                {t("Program")}
+                {t("Program")}{" "}
                 {result.program.raw
-                  .map((p: { name: string }) => p.name)
+                  .map((p: { name: string }) => normalizeText(p.name))
                   .join(", ")}
               </span>
             )}
@@ -52,7 +53,7 @@ const CustomResultViewCourses = ({ result, onClickLink }: ResultViewProps) => {
                 </span>{" "}
                 <span className="sui-result__value">
                   {result.orgUnit.raw
-                    .map((o: { name: string }) => o.name)
+                    .map((o: { name: string }) => normalizeText(o.name))
                     .join(", ")}
                 </span>
               </div>

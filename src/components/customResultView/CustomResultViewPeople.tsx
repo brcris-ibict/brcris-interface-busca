@@ -52,7 +52,9 @@ const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
           </span>
         )}
         {isVisible("memberOf") && hasFieldValue(record, "memberOf") && (
-          <span>{getFieldTextValue(record, "memberOf")}</span>
+          <span>
+            {normalizeText(getFieldTextValue(record, "memberOf"))}
+          </span>
         )}
       </div>
     </li>

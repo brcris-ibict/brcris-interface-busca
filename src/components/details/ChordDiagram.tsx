@@ -5,6 +5,7 @@ import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Overlay, Popover } from "react-bootstrap";
 import coautoriaService from "../../services/CoautoriaService";
+import { normalizeText } from "../../../utils/Utils";
 import ExpandableContent from "../ExpandableContent";
 export default function ChordDiagram({ authorId }: { authorId: string }) {
   const { t } = useTranslation("common");
@@ -63,14 +64,17 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
 
         const normalizedAuthor = {
           ...data,
-          name: normalizedName,
+          name: normalizeText(normalizedName),
         };
 
         setMainAuthor(normalizedAuthor);
 
         const newNodes = [
           { id: normalizedAuthor.id, name: normalizedAuthor.name },
-          ...normalizedAuthor.coAuthors,
+          ...normalizedAuthor.coAuthors.map((author: any) => ({
+            ...author,
+            name: normalizeText(author.name),
+          })),
         ];
 
         const nodeIndex = new Map(newNodes.map((a, i) => [a.id, i]));
@@ -287,7 +291,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
                   renderItem={(publication: any) => (
                     <div key={publication.id} className="publication-item">
                       <a href={`/publications/${publication.id}`}>
-                        {publication.title}
+                        {normalizeText(publication.title)}
                       </a>
                       <div className="publication-meta">
                         {publication.publicationDate?.[0] && (

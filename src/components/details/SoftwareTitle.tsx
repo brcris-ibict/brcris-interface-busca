@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { normalizeText } from "../../../utils/Utils";
 
 function SoftwareTitle({ softwareId }: { softwareId: string }) {
   const [title, setTitle] = useState<string>(softwareId);
@@ -18,7 +19,7 @@ function SoftwareTitle({ softwareId }: { softwareId: string }) {
     fetchTitle();
   }, [softwareId]);
 
-  return <>{title}</>;
+  return <>{normalizeText(title)}</>;
 }
 
 export default SoftwareTitle;

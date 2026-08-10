@@ -2,6 +2,7 @@ import { useTranslation } from "next-i18next";
 import type { DisplayField } from "../../configs/DisplayFields";
 import styles from "../../styles/Home.module.css";
 import SearchTableCell from "./SearchTableCell";
+import { normalizeText } from "../../../utils/Utils";
 import {
   getFieldColumnClassName,
   getPrimaryColumnClassName,
@@ -50,15 +51,12 @@ export default function SearchResultsTable({
           {results.map((result, idx) => {
             const idValue = stringifyValue(result.id?.raw);
             const href = idValue ? `/${entityKey}/${idValue}` : undefined;
+            const title = normalizeText(getResultTitle(result));
 
             return (
               <tr key={`${idValue || "result"}-${idx}`}>
                 <td className={primaryColumnClassName}>
-                  {href ? (
-                    <a href={href}>{getResultTitle(result)}</a>
-                  ) : (
-                    getResultTitle(result)
-                  )}
+                  {href ? <a href={href}>{title}</a> : title}
                 </td>
                 {selectedTableColumns.map((field) => (
                   <td

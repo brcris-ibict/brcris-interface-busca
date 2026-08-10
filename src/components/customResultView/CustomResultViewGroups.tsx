@@ -26,7 +26,9 @@ const CustomResultViewGroups = ({ result, onClickLink }: ResultViewProps) => {
         <div className="result-metadata">
           {isVisible("leaderResearcher") &&
             hasFieldValue(record, "leaderResearcher") && (
-              <span>{getFieldTextValue(record, "leaderResearcher")}</span>
+              <span>
+                {normalizeText(getFieldTextValue(record, "leaderResearcher"))}
+              </span>
             )}
           {isVisible("leaderOrgUnit") &&
             result.leaderOrgUnit?.raw?.map((leaderOrgUnit: OrgUnit) => (

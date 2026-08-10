@@ -1,6 +1,7 @@
 import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
+import { normalizeText } from "../../../utils/Utils";
 import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
 import CopyLink from "../CopyLink";
@@ -29,12 +30,12 @@ export default function ProgramDetails() {
   return (
     <div>
       <Head>
-        <title>{`${result.name?.raw} | BrCris`}</title>
+        <title>{`${normalizeText(result.name?.raw)} | BrCris`}</title>
       </Head>
 
       <div className="mb-3 position-relative">
         <div className="d-flex justify-content-between align-items-center">
-          <h1 className="title mb-0">{result.name?.raw}</h1>
+          <h1 className="title mb-0">{normalizeText(result.name?.raw)}</h1>
         </div>
 
         <div className="mt-2">
@@ -70,7 +71,7 @@ export default function ProgramDetails() {
                 initialCount={5}
                 renderItem={(org: OrgUnit) => (
                   <a key={org.id} href={`/organizations/${org.id}`}>
-                    {org.name}
+                    {normalizeText(org.name)}
                   </a>
                 )}
               />
@@ -80,7 +81,9 @@ export default function ProgramDetails() {
           <ShowItem
             label={t("Research field")}
             value={result.researchArea?.raw?.map((researchArea: any) => (
-              <span key={researchArea.id}>{researchArea.name}</span>
+              <span key={researchArea.id}>
+                {normalizeText(researchArea.name)}
+              </span>
             ))}
           />
 
@@ -115,7 +118,9 @@ export default function ProgramDetails() {
 
                   return (
                     <div className="course-item" key={course.id}>
-                      <a href={`/courses/${course.id}`}>{name}</a>
+                      <a href={`/courses/${course.id}`}>
+                        {normalizeText(name)}
+                      </a>
 
                       <div className="course-meta">
                         <span className="type">{t(degree)}</span>
