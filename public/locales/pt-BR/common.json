@@ -305,5 +305,17 @@
   "See sources and collection dates": "Ver fontes e datas de coleta",
   "july of 2026": "julho de 2026",
   "Hide libraries": "Ocultar bibliotecas",
-  "DGP ID": "ID DGP"
+  "DGP ID": "ID DGP",
+  "Year from": "Ano de",
+  "Year to": "Ano até",
+  "Publication type": "Tipo de publicação",
+  "Language": "Idioma",
+  "All": "Todos",
+  "No options found": "Nenhuma opção encontrada",
+  "Annual publications by type": "Distribuição anual de publicações por tipo",
+  "Chart bars": "Barras",
+  "Chart lines": "Linhas",
+  "Chart area": "Área",
+  "Apply filters": "Aplicar",
+  "Open filters": "Abrir filtros"  
 }

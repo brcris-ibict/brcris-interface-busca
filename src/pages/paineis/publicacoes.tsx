@@ -3,6 +3,8 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import PageHeader from "../../components/paineis/PageHeader";
+import FiltrosPublicacoes from "../../components/paineis/FiltrosPublicacoes";
+import DistribuicaoAnualPorTipo from "../../components/paineis/DistribuicaoAnualPorTipo";
 
 type Props = {};
 
@@ -31,9 +33,14 @@ export default function Publicacoes() {
                 { label: t("Breadcrumb panels") },
                 { label: t("navbar:Publications") },
               ]}
+              actions={<FiltrosPublicacoes />}
             />
 
-            {/* Depois: filtros, big numbers, gráficos */}
+            <div className="row g-3">
+              <div className="col-12">
+                <DistribuicaoAnualPorTipo />
+              </div>
+            </div>
           </div>
         </div>
       </div>

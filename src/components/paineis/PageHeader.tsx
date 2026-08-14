@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 
 export type Crumb = {
@@ -9,12 +10,14 @@ type PageHeaderProps = {
   title: string;
   subtitle?: string;
   breadcrumbs: Crumb[];
+  actions?: ReactNode;
 };
 
 export default function PageHeader({
   title,
   subtitle,
   breadcrumbs,
+  actions,
 }: PageHeaderProps) {
   return (
     <div className="brcris-page-header">
@@ -44,13 +47,21 @@ export default function PageHeader({
         </ol>
       </nav>
 
-      <div className="page-title mb-0">
-        <h1>{title}</h1>
-      </div>
+      <div className="brcris-page-header__row">
+        <div className="brcris-page-header__copy">
+          <div className="page-title mb-0">
+            <h1>{title}</h1>
+          </div>
 
-      {subtitle ? (
-        <p className="brcris-page-header__subtitle">{subtitle}</p>
-      ) : null}
+          {subtitle ? (
+            <p className="brcris-page-header__subtitle">{subtitle}</p>
+          ) : null}
+        </div>
+
+        {actions ? (
+          <div className="brcris-page-header__actions">{actions}</div>
+        ) : null}
+      </div>
     </div>
   );
 }
