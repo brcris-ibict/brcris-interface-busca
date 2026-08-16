@@ -2,12 +2,33 @@ import { withSearch } from "@elastic/react-search-ui";
 import type { SearchContextState } from "@elastic/search-ui";
 import { CircleX, Plus, Search } from "lucide-react";
 import { useTranslation } from "next-i18next";
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useState } from "react";
 import styles from "../styles/AdvancedSearch.module.css";
 import type { QueryItem } from "../types/Entities";
+import { findPropertyByValue } from "./SearchSanitization";
 
 interface CustomSearchBoxProps extends SearchContextState {
   fieldNames: string[];
+}
+
+function fieldSupportsFuzzy(fieldLabel: string): boolean {
+  if (!fieldLabel || fieldLabel === "Select") return false;
+  const key = findPropertyByValue(fieldLabel);
+  return (
+    key.endsWith("_text") || key === "keyword" || key === "keywords"
+  );
+}
+
+function formatQueryValue(row: QueryItem): string {
+  const value = row.value.trim();
+  if (!row.isFuzzy) return value;
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    value.endsWith("~")
+  ) {
+    return value;
+  }
+  return `${value}~`;
 }
 
 const AdvancedSearchBox = ({
@@ -16,13 +37,16 @@ const AdvancedSearchBox = ({
 }: CustomSearchBoxProps) => {
   const { t } = useTranslation(["advanced", "common"]);
   const [inputs, setInputs] = useState<QueryItem[]>([
-    { field: "Select", value: "" },
+    { field: "Select", value: "", isFuzzy: false },
   ]);
 
-  fieldNames = fieldNames.map((field) => t(field));
+  const translatedFieldNames = fieldNames.map((field) => t(field));
 
   const addInput = () => {
-    setInputs([...inputs, { value: "", field: t("Select"), operator: "AND" }]);
+    setInputs([
+      ...inputs,
+      { value: "", field: t("Select"), operator: "AND", isFuzzy: false },
+    ]);
   };
 
   const removeInput = (index: number) => {
@@ -33,7 +57,7 @@ const AdvancedSearchBox = ({
 
   const handleChange = (
     index: number,
-    { value, operator, field }: QueryItem,
+    { value, operator, field, isFuzzy }: QueryItem,
   ) => {
     const newInputs = [...inputs];
     if (value !== undefined) {
@@ -42,6 +66,9 @@ const AdvancedSearchBox = ({
       newInputs[index].operator = operator;
     } else if (field) {
       newInputs[index].field = field;
+      newInputs[index].isFuzzy = false;
+    } else if (isFuzzy !== undefined) {
+      newInputs[index].isFuzzy = isFuzzy;
     }
     setInputs(newInputs);
   };
@@ -50,17 +77,15 @@ const AdvancedSearchBox = ({
     event.preventDefault();
     if (inputs.length === 0 || !isFormValid) return;
 
-    let formatted = `(${inputs[0].field}:${inputs[0].value})`;
+    let formatted = `(${inputs[0].field}:${formatQueryValue(inputs[0])})`;
 
     for (let i = 1; i < inputs.length; i++) {
       const row = inputs[i];
-      formatted += ` ${row.operator} (${row.field}:${row.value})`;
+      formatted += ` ${row.operator} (${row.field}:${formatQueryValue(row)})`;
     }
 
     setSearchTerm(formatted);
   };
-
-  useEffect(() => {}, []);
 
   const isFormValid = inputs.some(
     (input) =>
@@ -77,6 +102,8 @@ const AdvancedSearchBox = ({
           const valueId = `search-value-${index}`;
           const fieldId = `search-field-${index}`;
           const operatorId = `search-operator-${index}`;
+          const matchModeId = `search-match-mode-${index}`;
+          const showFuzzy = fieldSupportsFuzzy(campo.field);
 
           return (
             <div
@@ -121,6 +148,27 @@ const AdvancedSearchBox = ({
                   }`}
                 />
 
+                {showFuzzy && (
+                  <>
+                    <label htmlFor={matchModeId} className="visually-hidden">
+                      {t("Match mode")}
+                    </label>
+                    <select
+                      id={matchModeId}
+                      value={campo.isFuzzy ? "true" : "false"}
+                      onChange={(e) =>
+                        handleChange(index, {
+                          isFuzzy: e.target.value === "true",
+                        } as QueryItem)
+                      }
+                      className={`form-select ${styles.matchMode}`}
+                    >
+                      <option value="false">{t("Exact")}</option>
+                      <option value="true">{t("Approximate")}</option>
+                    </select>
+                  </>
+                )}
+
                 <label htmlFor={fieldId} className="visually-hidden">
                   {t("Field")}
                 </label>
@@ -133,7 +181,7 @@ const AdvancedSearchBox = ({
                   className="form-select"
                 >
                   <option value="Select">{t("Select")}</option>
-                  {fieldNames.map((field) => (
+                  {translatedFieldNames.map((field) => (
                     <option key={field} value={field}>
                       {field.toLowerCase() === "doi" ? "DOI" : field}
                     </option>

@@ -62,4 +62,5 @@ export type QueryItem = {
   field: string;
   operator?: string;
   value: string;
+  isFuzzy?: boolean;
 };

@@ -49,5 +49,8 @@
   "acronym": "Acronym",
   "acronym_text": "Acronym",
   "Select": "Select",
-  "Search": "Search"
+  "Search": "Search",
+  "Exact": "Exact",
+  "Approximate": "Approximate",
+  "Match mode": "Match mode"
 }

@@ -68,6 +68,14 @@ input.firstInput {
   border-radius: 24px 0 0 24px !important;
 }
 
+.matchMode {
+  border: 0 !important;
+  border-left: 1px solid var(--control-border-subtle) !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  min-width: 8em !important;
+}
+
 .group select.op:focus {
   border-right: 1px solid var(--control-border-subtle) !important;
 }

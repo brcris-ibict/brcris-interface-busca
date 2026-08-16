@@ -16,6 +16,38 @@ type BoolShouldType = {
   };
 };
 
+type MatchClause = string | { query: string; fuzziness?: string };
+
+function parseSearchValue(raw: string): {
+  matchType: "match" | "match_phrase";
+  matchValue: MatchClause;
+} {
+  const value = (raw || "").trim();
+  const isPhrase = value.startsWith('"') && value.endsWith('"') && value.length > 1;
+
+  if (isPhrase) {
+    return {
+      matchType: "match_phrase",
+      matchValue: value.slice(1, -1),
+    };
+  }
+
+  if (value.endsWith("~")) {
+    return {
+      matchType: "match",
+      matchValue: {
+        query: value.slice(0, -1),
+        fuzziness: "AUTO",
+      },
+    };
+  }
+
+  return {
+    matchType: "match",
+    matchValue: value,
+  };
+}
+
 class ElasticsearchQueryBuilder {
   private queryBase: BoolType = {
     bool: {
@@ -75,9 +107,9 @@ class ElasticsearchQueryBuilder {
     allFields: string[],
   ) {
     this.validQuery(operator, field, value);
-    const match =
-      value.startsWith('"') && value.endsWith('"') ? "match_phrase" : "match";
-    if (value === "*") {
+    const { matchType, matchValue } = parseSearchValue(value);
+
+    if (value === "*" || value === "*~") {
       this.queryBase.bool.must.push({
         match_all: {},
       });
@@ -90,50 +122,62 @@ class ElasticsearchQueryBuilder {
         };
         allFields.forEach((fieldName) => {
           subQuery.bool.should.push({
-            [match]: {
-              [fieldName]: value.replaceAll('"', ""),
+            [matchType]: {
+              [fieldName]: matchValue,
             },
           });
         });
         this.queryBase.bool.must.push(subQuery);
       } else if (operator.trim() === "OR") {
         allFields.forEach((fieldName) => {
-          this.shouldQuery(match, fieldName, value);
+          this.shouldQuery(matchType, fieldName, matchValue);
         });
       } else {
         allFields.forEach((fieldName) => {
-          this.mustNotQuery(match, fieldName, value);
+          this.mustNotQuery(matchType, fieldName, matchValue);
         });
       }
     } else if (operator.trim() === "AND") {
-      this.mustQuery(match, field, value);
+      this.mustQuery(matchType, field, matchValue);
     } else if (operator.trim() === "OR") {
-      this.shouldQuery(match, field, value);
+      this.shouldQuery(matchType, field, matchValue);
     } else if (operator.trim() === "AND NOT") {
-      this.mustNotQuery(match, field, value);
+      this.mustNotQuery(matchType, field, matchValue);
     }
   }
 
-  private mustNotQuery(match: string, field: string, value: string) {
+  private mustNotQuery(
+    match: "match" | "match_phrase",
+    field: string,
+    value: MatchClause,
+  ) {
     this.queryBase.bool.must_not.push({
       [match]: {
-        [field]: value.replaceAll('"', ""),
+        [field]: value,
       },
     });
   }
 
-  private mustQuery(match: string, field: string, value: string) {
+  private mustQuery(
+    match: "match" | "match_phrase",
+    field: string,
+    value: MatchClause,
+  ) {
     this.queryBase.bool.must.push({
       [match]: {
-        [field]: value.replaceAll('"', ""),
+        [field]: value,
       },
     });
   }
 
-  private shouldQuery(match: string, field: string, value: string) {
+  private shouldQuery(
+    match: "match" | "match_phrase",
+    field: string,
+    value: MatchClause,
+  ) {
     this.queryBase.bool.should.push({
       [match]: {
-        [field]: value.replaceAll('"', ""),
+        [field]: value,
       },
     });
   }
