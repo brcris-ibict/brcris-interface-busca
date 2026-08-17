@@ -2013,9 +2013,9 @@ h3.popover-header a {
 }
 
 .brcris-chart-card__title {
-  margin: 0;
-  color: var(--text-color);
-  font-size: 0.95rem;
+  margin: 0 0 0 12px;
+  color: var(--bs-gray);
+  font-size: 0.85rem;
   font-weight: 600;
   line-height: 1.3;
 }
@@ -2058,5 +2058,9 @@ h3.popover-header a {
 .brcris-chart-card__body {
   position: relative;
   width: 100%;
+}
+
+.row > [class*="col-"] > .brcris-chart-card {
+  height: 100%;
 }
 

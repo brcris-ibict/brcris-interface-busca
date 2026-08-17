@@ -312,10 +312,13 @@
   "Language": "Idioma",
   "All": "Todos",
   "No options found": "Nenhuma opção encontrada",
-  "Annual publications by type": "Distribuição anual de publicações por tipo",
+  "Annual publications by type": "Variação anual de publicações",
   "Chart bars": "Barras",
   "Chart lines": "Linhas",
   "Chart area": "Área",
+  "Publications by type composition": "Distribuição de publicações por tipo",
+  "Chart pie": "Circular",
+  "Chart horizontal bars": "Barras",
   "Apply filters": "Aplicar",
   "Open filters": "Abrir filtros"  
 }

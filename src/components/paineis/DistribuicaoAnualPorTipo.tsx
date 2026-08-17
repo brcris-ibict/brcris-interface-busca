@@ -5,9 +5,10 @@ import dynamic from "next/dynamic";
 import { BarChart3, ChartArea, LineChart } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import {
-  PAINEL_CHART_COLORS,
+  PRIMARY_CHART_COLOR,
   anos,
-  seriesAnual,
+  hexToRgba,
+  seriesAnualTotal,
 } from "./mocks/publicacoesCharts";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
@@ -39,7 +40,7 @@ export default function DistribuicaoAnualPorTipo({ height = 360 }: Props) {
 
   const option = useMemo<EChartsOption>(
     () => ({
-      color: PAINEL_CHART_COLORS,
+      color: [PRIMARY_CHART_COLOR],
       textStyle: {
         fontFamily: '"rawline", helvetica, arial, sans-serif',
         color: textMuted,
@@ -48,19 +49,12 @@ export default function DistribuicaoAnualPorTipo({ height = 360 }: Props) {
         trigger: "axis",
         axisPointer: { type: tipo === "bar" ? "shadow" : "line" },
       },
-      legend: {
-        bottom: 0,
-        type: "scroll",
-        icon: "roundRect",
-        itemWidth: 12,
-        itemHeight: 8,
-        textStyle: { color: textMuted, fontSize: 12 },
-      },
+      legend: { show: false },
       grid: {
         left: 16,
         right: 16,
         top: 16,
-        bottom: 56,
+        bottom: 24,
         containLabel: true,
       },
       xAxis: {
@@ -79,25 +73,33 @@ export default function DistribuicaoAnualPorTipo({ height = 360 }: Props) {
           lineStyle: { color: gridColor, type: "solid", width: 1 },
         },
       },
-      series: seriesAnual.map((serie) => ({
-        name: serie.name,
-        type: serieType,
-        data: serie.data,
-        barMaxWidth: 26,
-        barGap: "5%",
-        barCategoryGap: "20%",
-        itemStyle: { borderRadius: 0 },
-        ...(tipo === "line" || tipo === "area"
-          ? {
-              smooth: false,
-              symbol: "circle",
-              symbolSize: 6,
-              ...(tipo === "area" ? { areaStyle: { opacity: 0.35 } } : {}),
-            }
-          : {}),
-      })),
+      series: [
+        {
+          name: t("Publications"),
+          type: serieType,
+          data: seriesAnualTotal.data,
+          barMaxWidth: 72,
+          barCategoryGap: "28%",
+          itemStyle: { color: PRIMARY_CHART_COLOR, borderRadius: 0 },
+          ...(tipo === "line" || tipo === "area"
+            ? {
+                smooth: false,
+                symbol: "circle",
+                symbolSize: 6,
+                lineStyle: { color: PRIMARY_CHART_COLOR, width: 2 },
+                ...(tipo === "area"
+                  ? {
+                      areaStyle: {
+                        color: hexToRgba(PRIMARY_CHART_COLOR, 0.28),
+                      },
+                    }
+                  : {}),
+              }
+            : {}),
+        },
+      ],
     }),
-    [tipo, serieType, textMuted, gridColor],
+    [tipo, serieType, textMuted, gridColor, t],
   );
 
   return (

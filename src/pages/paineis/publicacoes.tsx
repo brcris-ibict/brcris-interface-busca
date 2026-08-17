@@ -5,6 +5,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import PageHeader from "../../components/paineis/PageHeader";
 import FiltrosPublicacoes from "../../components/paineis/FiltrosPublicacoes";
 import DistribuicaoAnualPorTipo from "../../components/paineis/DistribuicaoAnualPorTipo";
+import DistribuicaoPorTipo from "../../components/paineis/DistribuicaoPorTipo";
 
 type Props = {};
 
@@ -37,8 +38,11 @@ export default function Publicacoes() {
             />
 
             <div className="row g-3">
-              <div className="col-12">
+              <div className="col-12 col-lg-8">
                 <DistribuicaoAnualPorTipo />
+              </div>
+              <div className="col-12 col-lg-4">
+                <DistribuicaoPorTipo />
               </div>
             </div>
           </div>
