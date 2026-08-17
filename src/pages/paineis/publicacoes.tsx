@@ -18,6 +18,31 @@ export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
 export default function Publicacoes() {
   const { t } = useTranslation(["common", "navbar"]);
 
+  /*
+  type SerieAnual = {
+    anos: string[];
+    data: number[];
+  };
+
+  const { data, loading, error, get, post } = useRequest<SerieAnual>();
+
+  // GET
+  useEffect(() => {
+    get(
+      `/api/paineis/publicacoes/anual?year=${filtros.publicationDate}&type=${filtros.type}&language=${filtros.language}`,
+    );
+  }, [filtros, get]);
+
+  // POST
+  useEffect(() => {
+    post("/api/paineis/publicacoes/anual", {
+      year: filtros.publicationDate,
+      type: filtros.type,
+      language: filtros.language,
+    });
+  }, [filtros, post]);
+  */
+
   return (
     <>
       <Head>
