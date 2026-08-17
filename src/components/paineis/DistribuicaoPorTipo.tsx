@@ -4,10 +4,9 @@ import type { EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
 import { ChartBar, ChartPie } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-  PAINEL_CHART_COLORS,
-  seriesPorTipo,
-} from "./mocks/publicacoesCharts";
+import type { PublicationsByTypePoint } from "../../types/PublicationsDashboard";
+import ChartFeedback from "./ChartFeedback";
+import { PAINEL_CHART_COLORS } from "./publicacoesChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
@@ -23,10 +22,18 @@ const TOGGLES: {
 ];
 
 type Props = {
+  data: PublicationsByTypePoint[];
+  loading: boolean;
+  error: boolean;
   height?: number;
 };
 
-export default function DistribuicaoPorTipo({ height = 380 }: Props) {
+export default function DistribuicaoPorTipo({
+  data,
+  loading,
+  error,
+  height = 380,
+}: Props) {
   const { t } = useTranslation("common");
   const { resolvedTheme } = useTheme();
   const [tipo, setTipo] = useState<ChartKind>("pie");
@@ -42,7 +49,7 @@ export default function DistribuicaoPorTipo({ height = 380 }: Props) {
         color: textMuted,
       },
     };
-    const total = seriesPorTipo.reduce((sum, item) => sum + item.value, 0);
+    const total = data.reduce((sum, item) => sum + item.count, 0);
     const textMain = resolvedTheme === "dark" ? "#e5e7eb" : "#333333";
     const cardBg = resolvedTheme === "dark" ? "#171b22" : "#fefefe";
 
@@ -105,9 +112,9 @@ export default function DistribuicaoPorTipo({ height = 380 }: Props) {
               length2: 8,
               lineStyle: { color: gridColor, width: 1 },
             },
-            data: seriesPorTipo.map((item) => ({
-              name: item.name,
-              value: item.value,
+            data: data.map((item) => ({
+              name: t(item.type),
+              value: item.count,
             })),
           },
         ],
@@ -134,7 +141,7 @@ export default function DistribuicaoPorTipo({ height = 380 }: Props) {
       },
       yAxis: {
         type: "category",
-        data: seriesPorTipo.map((item) => item.name).reverse(),
+        data: data.map((item) => t(item.type)).reverse(),
         axisLine: { show: false },
         axisTick: { show: false },
         axisLabel: { color: textMuted, fontSize: 11 },
@@ -142,7 +149,7 @@ export default function DistribuicaoPorTipo({ height = 380 }: Props) {
       series: [
         {
           type: "bar",
-          data: seriesPorTipo.map((item) => item.value).reverse(),
+          data: data.map((item) => item.count).reverse(),
           barMaxWidth: 32,
           barCategoryGap: "22%",
           itemStyle: { borderRadius: 0 },
@@ -151,13 +158,12 @@ export default function DistribuicaoPorTipo({ height = 380 }: Props) {
             position: "right",
             color: textMuted,
             fontSize: 11,
-            formatter: (params) =>
-              Number(params.value).toLocaleString("pt-BR"),
+            formatter: (params) => Number(params.value).toLocaleString("pt-BR"),
           },
         },
       ],
     };
-  }, [tipo, textMuted, gridColor, resolvedTheme, t]);
+  }, [data, tipo, textMuted, gridColor, resolvedTheme, t]);
 
   return (
     <div className="brcris-chart-card">
@@ -183,8 +189,16 @@ export default function DistribuicaoPorTipo({ height = 380 }: Props) {
         </div>
       </div>
 
-      <div className="brcris-chart-card__body">
-        <EChart option={option} height={height} />
+      <div className="brcris-chart-card__body" aria-busy={loading}>
+        <ChartFeedback
+          height={height}
+          loading={loading}
+          error={error}
+          empty={data.length === 0}
+        />
+        {!loading && !error && data.length > 0 ? (
+          <EChart option={option} height={height} />
+        ) : null}
       </div>
     </div>
   );

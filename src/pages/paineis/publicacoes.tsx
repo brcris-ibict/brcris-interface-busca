@@ -2,10 +2,13 @@ import type { GetStaticProps } from "next";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import PageHeader from "../../components/paineis/PageHeader";
-import FiltrosPublicacoes from "../../components/paineis/FiltrosPublicacoes";
+import { useState } from "react";
 import DistribuicaoAnualPorTipo from "../../components/paineis/DistribuicaoAnualPorTipo";
 import DistribuicaoPorTipo from "../../components/paineis/DistribuicaoPorTipo";
+import FiltrosPublicacoes from "../../components/paineis/FiltrosPublicacoes";
+import PageHeader from "../../components/paineis/PageHeader";
+import usePublicationsDashboard from "../../hooks/usePublicationsDashboard";
+import type { PublicationsDashboardFilters } from "../../types/PublicationsDashboard";
 
 type Props = {};
 
@@ -17,31 +20,13 @@ export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
 
 export default function Publicacoes() {
   const { t } = useTranslation(["common", "navbar"]);
-
-  /*
-  type SerieAnual = {
-    anos: string[];
-    data: number[];
-  };
-
-  const { data, loading, error, get, post } = useRequest<SerieAnual>();
-
-  // GET
-  useEffect(() => {
-    get(
-      `/api/paineis/publicacoes/anual?year=${filtros.publicationDate}&type=${filtros.type}&language=${filtros.language}`,
-    );
-  }, [filtros, get]);
-
-  // POST
-  useEffect(() => {
-    post("/api/paineis/publicacoes/anual", {
-      year: filtros.publicationDate,
-      type: filtros.type,
-      language: filtros.language,
-    });
-  }, [filtros, post]);
-  */
+  const [filters, setFilters] = useState<PublicationsDashboardFilters>({
+    publicationDate: "",
+    type: "",
+    language: "",
+  });
+  const { data, loading, error, filterOptions } =
+    usePublicationsDashboard(filters);
 
   return (
     <>
@@ -59,15 +44,29 @@ export default function Publicacoes() {
                 { label: t("Breadcrumb panels") },
                 { label: t("navbar:Publications") },
               ]}
-              actions={<FiltrosPublicacoes />}
+              actions={
+                <FiltrosPublicacoes
+                  value={filters}
+                  options={filterOptions}
+                  onChange={setFilters}
+                />
+              }
             />
 
             <div className="row g-3">
               <div className="col-12 col-lg-8">
-                <DistribuicaoAnualPorTipo />
+                <DistribuicaoAnualPorTipo
+                  data={data?.annual ?? []}
+                  loading={loading}
+                  error={error}
+                />
               </div>
               <div className="col-12 col-lg-4">
-                <DistribuicaoPorTipo />
+                <DistribuicaoPorTipo
+                  data={data?.byType ?? []}
+                  loading={loading}
+                  error={error}
+                />
               </div>
             </div>
           </div>

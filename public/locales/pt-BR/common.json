@@ -312,6 +312,9 @@
   "Language": "Idioma",
   "All": "Todos",
   "No options found": "Nenhuma opção encontrada",
+  "Loading dashboard data": "Carregando dados",
+  "Unable to load dashboard data": "Não foi possível carregar os dados do painel",
+  "No data for selected filters": "Nenhum dado encontrado para os filtros selecionados",
   "Annual publications by type": "Variação anual de publicações",
   "Chart bars": "Barras",
   "Chart lines": "Linhas",
@@ -320,5 +323,5 @@
   "Chart pie": "Circular",
   "Chart horizontal bars": "Barras",
   "Apply filters": "Aplicar",
-  "Open filters": "Abrir filtros"  
+  "Open filters": "Abrir filtros"
 }

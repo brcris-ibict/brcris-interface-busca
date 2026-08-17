@@ -4,12 +4,9 @@ import type { EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
 import { BarChart3, ChartArea, LineChart } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-  PRIMARY_CHART_COLOR,
-  anos,
-  hexToRgba,
-  seriesAnualTotal,
-} from "./mocks/publicacoesCharts";
+import type { PublicationsByYearPoint } from "../../types/PublicationsDashboard";
+import ChartFeedback from "./ChartFeedback";
+import { PRIMARY_CHART_COLOR, hexToRgba } from "./publicacoesChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
@@ -26,10 +23,18 @@ const TOGGLES: {
 ];
 
 type Props = {
+  data: PublicationsByYearPoint[];
+  loading: boolean;
+  error: boolean;
   height?: number;
 };
 
-export default function DistribuicaoAnualPorTipo({ height = 360 }: Props) {
+export default function DistribuicaoAnualPorTipo({
+  data,
+  loading,
+  error,
+  height = 360,
+}: Props) {
   const { t } = useTranslation("common");
   const { resolvedTheme } = useTheme();
   const [tipo, setTipo] = useState<ChartKind>("bar");
@@ -59,7 +64,7 @@ export default function DistribuicaoAnualPorTipo({ height = 360 }: Props) {
       },
       xAxis: {
         type: "category",
-        data: anos,
+        data: data.map((point) => point.year),
         axisLine: { show: false },
         axisTick: { show: false },
         axisLabel: { color: textMuted, fontSize: 12 },
@@ -77,7 +82,7 @@ export default function DistribuicaoAnualPorTipo({ height = 360 }: Props) {
         {
           name: t("Publications"),
           type: serieType,
-          data: seriesAnualTotal.data,
+          data: data.map((point) => point.count),
           barMaxWidth: 72,
           barCategoryGap: "28%",
           itemStyle: { color: PRIMARY_CHART_COLOR, borderRadius: 0 },
@@ -99,7 +104,7 @@ export default function DistribuicaoAnualPorTipo({ height = 360 }: Props) {
         },
       ],
     }),
-    [tipo, serieType, textMuted, gridColor, t],
+    [data, tipo, serieType, textMuted, gridColor, t],
   );
 
   return (
@@ -126,8 +131,16 @@ export default function DistribuicaoAnualPorTipo({ height = 360 }: Props) {
         </div>
       </div>
 
-      <div className="brcris-chart-card__body">
-        <EChart option={option} height={height} />
+      <div className="brcris-chart-card__body" aria-busy={loading}>
+        <ChartFeedback
+          height={height}
+          loading={loading}
+          error={error}
+          empty={data.length === 0}
+        />
+        {!loading && !error && data.length > 0 ? (
+          <EChart option={option} height={height} />
+        ) : null}
       </div>
     </div>
   );

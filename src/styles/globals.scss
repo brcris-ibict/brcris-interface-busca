@@ -2060,7 +2060,28 @@ h3.popover-header a {
   width: 100%;
 }
 
+.brcris-chart-card__feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  color: var(--text-secondary-color);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.brcris-chart-card__spinner {
+  animation: brcris-chart-spinner 0.9s linear infinite;
+}
+
+@keyframes brcris-chart-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .row > [class*="col-"] > .brcris-chart-card {
   height: 100%;
 }
-
