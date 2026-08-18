@@ -1,16 +1,8 @@
-import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 import logger from "../../services/Logger";
 
-const client = new Client({
-  maxRetries: 5,
-  requestTimeout: 60000,
-  sniffOnStart: true,
-  node: process.env.HOST_ELASTIC,
-  auth: {
-    apiKey: process.env.API_KEY!,
-  },
-});
+const client = createElasticsearchClient();
 
 type RequestData = {
   queries: string[];
@@ -25,12 +17,12 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       queries.push({ index: data.index });
       queries.push(query);
     });
-    // https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/7.17/msearch_examples.html
-    const { body } = await client.msearch({
-      body: queries,
+    // https://www.elastic.co/docs/reference/elasticsearch/clients/javascript/msearch_examples
+    const response = await client.msearch({
+      searches: queries,
     });
 
-    const buckets = body.responses.map(
+    const buckets = response.responses.map(
       (resp: any) => resp.aggregations?.aggregate.buckets,
     );
     res.json(buckets);

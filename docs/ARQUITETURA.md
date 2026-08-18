@@ -31,7 +31,7 @@ flowchart LR
 - **Roteamento:** Pages Router (`src/pages`), incluindo rotas dinâmicas como `people/[id].tsx`.
 - **Linguagem:** TypeScript com `allowJs`, `strict: false`, `strictNullChecks: true` e `noImplicitAny: true`.
 - **Internacionalização:** `next-i18next` com locales `pt-BR` e `en`.
-- **Busca:** `@elastic/react-search-ui`, `@elastic/search-ui`, `@elastic/search-ui-elasticsearch-connector` e cliente Elasticsearch 7 via alias `es7`.
+- **Busca:** `@elastic/react-search-ui`, `@elastic/search-ui`, `@elastic/search-ui-elasticsearch-connector` e cliente Elasticsearch 8 via alias `es8`.
 - **UI:** Bootstrap, React Bootstrap, Bootstrap Icons, Lucide React, SCSS modules e `globals.scss`.
 - **Indicadores e visualização:** Chart.js, React Chart.js 2, D3, `react-graph-vis`.
 - **Exportação:** `archiver`, `@json2csv/plainjs`, `@json2csv/transforms`, `json-2-csv`, geração RIS própria.
@@ -327,7 +327,7 @@ Arquivos são gerados em `DOWNLOAD_FOLDER_PATH`, com nome derivado de hash SHA-2
 
 As variáveis estão exemplificadas em `.env.example`. As principais categorias são:
 
-- Elasticsearch: `HOST_ELASTIC`, `API_KEY`.
+- Elasticsearch: `HOST_ELASTIC`, `API_KEY`, `ELASTICSEARCH_CA_CERT_PATH`.
 - Índices: `INDEX_PUBLICATION`, `INDEX_PERSON`, `INDEX_ORGUNIT`, `INDEX_JOURNAL`, `INDEX_PROGRAM`, `INDEX_PATENT`, `INDEX_GROUP`, `INDEX_SOFTWARE`, `INDEX_COURSE`.
 - E-mail: `MAIL_SENDER`, `MAIL_PASSWORD`, `MAIL_PORT`, `MAIL_HOST`, `MAIL_RECIPIENT`.
 - Captcha: `PUBLIC_RECAPTCHA_SITE_KEY`, `RECAPTCHA_SECRET_KEY`.
@@ -335,6 +335,12 @@ As variáveis estão exemplificadas em `.env.example`. As principais categorias 
 - Aplicação pública: `BRCRIS_HOST_BASE`, `LANGUAGES`, `NEXT_PUBLIC_GA_TRACKINK`.
 
 Observação: `next.config.js` expõe algumas variáveis via `env`, tornando-as disponíveis no bundle do cliente. Variáveis sensíveis como `API_KEY`, `MAIL_PASSWORD` e `RECAPTCHA_SECRET_KEY` não devem ser adicionadas a essa lista.
+
+Clusters Elasticsearch que usam uma CA privada devem configurar `HOST_ELASTIC`
+com `https://` e informar em `ELASTICSEARCH_CA_CERT_PATH` o caminho absoluto
+ou relativo à raiz do projeto para o certificado da CA. A API key precisa do privilégio de índice `monitor`
+para que `/api/index-stats` possa consultar `/_cat/indices`; as buscas comuns
+continuam exigindo apenas os privilégios de leitura correspondentes.
 
 ## Build, lint e deploy
 

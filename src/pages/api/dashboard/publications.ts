@@ -1,5 +1,5 @@
-import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../../services/ElasticsearchClient";
 import logger from "../../../services/Logger";
 import type {
   PublicationsDashboardErrorResponse,
@@ -7,15 +7,7 @@ import type {
   PublicationsDashboardResponse,
 } from "../../../types/PublicationsDashboard";
 
-const client = new Client({
-  maxRetries: 5,
-  requestTimeout: 60000,
-  sniffOnStart: true,
-  node: process.env.HOST_ELASTIC,
-  auth: {
-    apiKey: process.env.API_KEY!,
-  },
-});
+const client = createElasticsearchClient();
 
 const MAX_FILTER_LENGTH = 200;
 
@@ -119,54 +111,52 @@ export default async function handler(
 
   try {
     const filters = getFilters(req);
-    const { body } = await client.search({
+    const response = await client.search({
       index,
-      body: {
-        size: 0,
-        track_total_hits: true,
-        query: buildQuery(filters),
-        aggs: {
-          annual: {
-            terms: {
-              field: "publicationDate",
-              include: filters.publicationDate
-                ? [filters.publicationDate]
-                : undefined,
-              size: 200,
-              order: { _key: "asc" },
-            },
+      size: 0,
+      track_total_hits: true,
+      query: buildQuery(filters),
+      aggs: {
+        annual: {
+          terms: {
+            field: "publicationDate",
+            include: filters.publicationDate
+              ? [filters.publicationDate]
+              : undefined,
+            size: 200,
+            order: { _key: "asc" },
           },
-          byType: {
-            terms: {
-              field: "type",
-              include: filters.type ? [filters.type] : undefined,
-              size: 100,
-              order: { _count: "desc" },
-            },
+        },
+        byType: {
+          terms: {
+            field: "type",
+            include: filters.type ? [filters.type] : undefined,
+            size: 100,
+            order: { _count: "desc" },
           },
-          filterOptions: {
-            global: {},
-            aggs: {
-              publicationDates: {
-                terms: {
-                  field: "publicationDate",
-                  size: 200,
-                  order: { _key: "desc" },
-                },
+        },
+        filterOptions: {
+          global: {},
+          aggs: {
+            publicationDates: {
+              terms: {
+                field: "publicationDate",
+                size: 200,
+                order: { _key: "desc" },
               },
-              types: {
-                terms: {
-                  field: "type",
-                  size: 100,
-                  order: { _key: "asc" },
-                },
+            },
+            types: {
+              terms: {
+                field: "type",
+                size: 100,
+                order: { _key: "asc" },
               },
-              languages: {
-                terms: {
-                  field: "language",
-                  size: 100,
-                  order: { _key: "asc" },
-                },
+            },
+            languages: {
+              terms: {
+                field: "language",
+                size: 100,
+                order: { _key: "asc" },
               },
             },
           },
@@ -174,10 +164,11 @@ export default async function handler(
       },
     });
 
-    const aggregations = body.aggregations as DashboardAggregations | undefined;
+    const aggregations = response.aggregations as
+      DashboardAggregations | undefined;
 
     return res.status(200).json({
-      total: getTotal(body.hits?.total),
+      total: getTotal(response.hits?.total),
       annual: getBuckets(aggregations?.annual).map((bucket) => ({
         year: getBucketKey(bucket),
         count: bucket.doc_count,

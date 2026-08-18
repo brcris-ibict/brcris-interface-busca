@@ -1,10 +1,7 @@
-import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 
-const client = new Client({
-  node: process.env.HOST_ELASTIC,
-  auth: { apiKey: process.env.API_KEY! },
-});
+const client = createElasticsearchClient();
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,16 +18,14 @@ export default async function handler(
       index: process.env.INDEX_PUBLICATION || "",
       size: 1000,
       _source: ["id", "publicationDate", "author", "advisor"],
-      body: {
-        query: {
-          terms: {
-            id: ids,
-          },
+      query: {
+        terms: {
+          id: ids,
         },
       },
     });
 
-    const hits = response.body.hits?.hits ?? [];
+    const hits = response.hits?.hits ?? [];
     const normalizeName = (person: any) => {
       if (!person) return "";
       if (typeof person === "string") return person;

@@ -1,46 +1,48 @@
-import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 import logger from "../../services/Logger";
 
-const client = new Client({
-  maxRetries: 5,
-  requestTimeout: 60000,
-  sniffOnStart: true,
-  node: process.env.HOST_ELASTIC,
-  auth: {
-    apiKey: process.env.API_KEY!,
-  },
-});
+const client = createElasticsearchClient();
+
+type Author = {
+  id: string;
+  name: string;
+};
+
+type Publication = {
+  id: string;
+  title: string | string[];
+  author: Author[];
+  publicationDate: string | string[];
+};
 
 const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { authorId } = req.query as { authorId: string };
 
-    const response = await client.search({
+    const response = await client.search<Publication>({
       index: process.env.INDEX_PUBLICATION || "",
       _source: ["id", "title", "author", "publicationDate"],
       size: 10000,
-      body: {
-        query: {
-          match: {
-            "author.id": authorId,
-          },
+      query: {
+        match: {
+          "author.id": authorId,
         },
       },
     });
 
-    // @ts-expect-error
-    const hits = response.body.hits.hits.map((h) => h._source);
+    const hits = response.hits.hits.flatMap((hit) =>
+      hit._source ? [hit._source] : [],
+    );
 
     if (!hits.length) return res.json(null);
 
-    // @ts-expect-error
     const mainAuthorData = hits[0].author.find((a) => a.id === authorId);
 
     const coAuthorCount: Record<string, { name: string; count: number }> = {};
 
-    hits.forEach((pub: any) => {
-      pub.author.forEach((a: any) => {
+    hits.forEach((pub) => {
+      pub.author.forEach((a) => {
         if (a.id !== authorId) {
           if (!coAuthorCount[a.id]) {
             coAuthorCount[a.id] = { name: a.name, count: 0 };
@@ -79,12 +81,12 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const validIds = new Set(coAuthors.map((a) => a.id));
 
-    const publications = hits.map((pub: any) => ({
+    const publications = hits.map((pub) => ({
       id: pub.id,
       title: pub.title,
       publicationDate: pub.publicationDate,
       authors: pub.author
-        .map((a: any) => a.id)
+        .map((a) => a.id)
         .filter((id: string) => id === authorId || validIds.has(id)),
     }));
 
@@ -118,7 +120,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
 
     res.json({
       id: authorId,
-      name: mainAuthorData.name,
+      name: mainAuthorData?.name ?? "",
       coAuthors,
       publications,
       number_of_authored_works: hits.length,

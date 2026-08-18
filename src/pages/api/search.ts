@@ -1,6 +1,6 @@
-import type { estypes } from "@elastic/elasticsearch";
 import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { estypes } from "es8";
 import {
   excludeOrgLibraries,
   isOrgUnitIndex,
@@ -12,6 +12,7 @@ import {
   isPublicationIndex,
 } from "../../lib/publicationSearchQuery";
 import ElasticsearchQueryBuilder from "../../services/ElasticsearchQueryBuilder";
+import { createSearchUiTransporter } from "../../services/ElasticsearchSearchUiTransporter";
 import logger from "../../services/Logger";
 import type { CustomSearchQuery } from "../../types/Entities";
 
@@ -19,9 +20,8 @@ import type { CustomSearchQuery } from "../../types/Entities";
 function builConnector(index: string) {
   const connector = new ElasticsearchAPIConnector(
     {
-      host: process.env.HOST_ELASTIC,
-      index: index || "",
-      apiKey: process.env.API_KEY,
+      apiClient: createSearchUiTransporter(index),
+      index,
     },
     (requestBody, requestState, queryConfig) => {
       requestBody.track_total_hits = true;

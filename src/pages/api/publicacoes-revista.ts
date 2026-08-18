@@ -1,10 +1,7 @@
-import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 
-const client = new Client({
-  node: process.env.HOST_ELASTIC,
-  auth: { apiKey: process.env.API_KEY! },
-});
+const client = createElasticsearchClient();
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,17 +17,15 @@ export default async function handler(
     const response = await client.search({
       index: process.env.INDEX_JOURNAL || "",
       size: 1000,
-      body: {
-        query: {
-          terms: {
-            "publication.id": ids,
-          },
+      query: {
+        terms: {
+          "publication.id": ids,
         },
-        _source: ["id", "title", "publication"],
       },
+      _source: ["id", "title", "publication"],
     });
 
-    const journals = response.body.hits.hits.flatMap((hit: any) => {
+    const journals = response.hits.hits.flatMap((hit: any) => {
       const journal = hit._source;
 
       return journal.publication

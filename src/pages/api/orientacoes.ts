@@ -1,10 +1,20 @@
-import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 
-const client = new Client({
-  node: process.env.HOST_ELASTIC,
-  auth: { apiKey: process.env.API_KEY! },
-});
+const client = createElasticsearchClient();
+
+type PersonReference = {
+  id?: string;
+  name?: string | string[];
+};
+
+type GuidancePublication = {
+  id?: string;
+  title?: string | string[];
+  type?: string | string[];
+  advisor?: PersonReference[];
+  author?: PersonReference[];
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,18 +28,16 @@ export default async function handler(
     }
 
     // 🔍 Busca publicações com este orientador
-    const pubs = await client.search({
+    const pubs = await client.search<GuidancePublication>({
       index: process.env.INDEX_PUBLICATION || "",
       size: 1000,
-      body: {
-        query: {
-          term: { "advisor.id": advisorId },
-        },
-        _source: ["id", "title", "type", "advisor", "author"],
+      query: {
+        term: { "advisor.id": advisorId },
       },
+      _source: ["id", "title", "type", "advisor", "author"],
     });
 
-    const hits = pubs.body.hits.hits;
+    const hits = pubs.hits.hits;
     if (!hits.length) {
       return res.json({ id: advisorId, advisees: [] });
     }
@@ -38,19 +46,22 @@ export default async function handler(
     let advisorName = "Desconhecido";
 
     if (first?.advisor) {
-      const adv = first.advisor.find((a: any) => a.id === advisorId);
+      const adv = first.advisor.find((a) => a.id === advisorId);
       if (adv) {
-        advisorName = Array.isArray(adv.name) ? adv.name[0] : adv.name;
+        advisorName = Array.isArray(adv.name)
+          ? (adv.name[0] ?? advisorName)
+          : (adv.name ?? advisorName);
       }
     }
     const advisees: any[] = [];
 
-    hits.forEach((hit: any) => {
+    hits.forEach((hit) => {
       const pub = hit._source;
+      if (!pub) return;
       const thesisType = Array.isArray(pub.type) ? pub.type[0] : pub.type;
 
       if (Array.isArray(pub.author)) {
-        pub.author.forEach((a: any) => {
+        pub.author.forEach((a) => {
           const name = Array.isArray(a.name) ? a.name[0] : a.name;
           if (name) {
             advisees.push({
