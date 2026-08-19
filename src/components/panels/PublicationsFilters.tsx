@@ -5,15 +5,13 @@ import type {
 } from "../../types/PublicationsDashboard";
 import BrcrisSelect from "./BrcrisSelect";
 
-export type FiltrosPublicacoesState = PublicationsDashboardFilters;
-
 type Props = {
-  value: FiltrosPublicacoesState;
+  value: PublicationsDashboardFilters;
   options: PublicationsDashboardFilterOptions;
-  onChange: (filtros: FiltrosPublicacoesState) => void;
+  onChange: (filters: PublicationsDashboardFilters) => void;
 };
 
-export default function FiltrosPublicacoes({
+export default function PublicationsFilters({
   value,
   options,
   onChange,
@@ -21,17 +19,17 @@ export default function FiltrosPublicacoes({
   const { t } = useTranslation("common");
 
   const handleChange = (
-    field: keyof FiltrosPublicacoesState,
+    field: keyof PublicationsDashboardFilters,
     nextValue: string,
   ) => {
     onChange({ ...value, [field]: nextValue });
   };
 
   return (
-    <div className="brcris-filtros">
-      <div className="brcris-filtros__fields">
+    <div className="brcris-filters">
+      <div className="brcris-filters__fields">
         <BrcrisSelect
-          id="pub-ano"
+          id="pub-year"
           label={t("Year")}
           value={value.publicationDate}
           onChange={(value) => handleChange("publicationDate", value)}
@@ -45,7 +43,7 @@ export default function FiltrosPublicacoes({
         />
 
         <BrcrisSelect
-          id="pub-tipo"
+          id="pub-type"
           label={t("Publication type")}
           value={value.type}
           onChange={(value) => handleChange("type", value)}
@@ -59,7 +57,7 @@ export default function FiltrosPublicacoes({
         />
 
         <BrcrisSelect
-          id="pub-idioma"
+          id="pub-language"
           label={t("Language")}
           value={value.language}
           onChange={(value) => handleChange("language", value)}

@@ -1815,19 +1815,19 @@ h3.popover-header a {
   font-weight: 500;
 }
 
-.brcris-filtros {
+.brcris-filters {
   margin: 0;
   overflow: visible;
 }
 
-.brcris-filtros__fields {
+.brcris-filters__fields {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.75rem;
 }
 
-.brcris-filtros__fields .brcris-field {
+.brcris-filters__fields .brcris-field {
   width: 11.5rem;
 }
 
@@ -1837,11 +1837,11 @@ h3.popover-header a {
     align-items: stretch;
   }
 
-  .brcris-filtros__fields {
+  .brcris-filters__fields {
     justify-content: stretch;
   }
 
-  .brcris-filtros__fields .brcris-field {
+  .brcris-filters__fields .brcris-field {
     flex: 1 1 10rem;
     width: auto;
   }
@@ -2058,6 +2058,26 @@ h3.popover-header a {
 .brcris-chart-card__body {
   position: relative;
   width: 100%;
+}
+
+.brcris-chart-card__scroll {
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
+.brcris-chart-card__scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.brcris-chart-card__scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text-secondary-color) 45%, transparent);
+  border-radius: 999px;
+}
+
+.brcris-chart-card__scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .brcris-chart-card__feedback {

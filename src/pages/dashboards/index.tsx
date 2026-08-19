@@ -37,7 +37,7 @@ export default function Dashboards() {
           </div>
           <div className="dashboards">
             <div className="card text-center p-2">
-              <Link href="/paineis/publicacoes">
+              <Link href="/panels/publications">
                 <h2>{t("Publications")}</h2>
                 <Newspaper width={128} height={128} />
                 <div className="card-body">
