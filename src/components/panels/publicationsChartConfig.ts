@@ -1,6 +1,6 @@
 export const PRIMARY_CHART_COLOR = "#0284a0";
 
-export const PAINEL_CHART_COLORS = [
+export const PANEL_CHART_COLORS = [
   "#67c5d8",
   "#6c757d",
   "#0ea5b7",

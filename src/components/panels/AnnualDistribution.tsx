@@ -6,7 +6,7 @@ import { BarChart3, ChartArea, LineChart } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByYearPoint } from "../../types/PublicationsDashboard";
 import ChartFeedback from "./ChartFeedback";
-import { PRIMARY_CHART_COLOR, hexToRgba } from "./publicacoesChartConfig";
+import { PRIMARY_CHART_COLOR, hexToRgba } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
@@ -29,7 +29,7 @@ type Props = {
   height?: number;
 };
 
-export default function DistribuicaoAnualPorTipo({
+export default function AnnualDistribution({
   data,
   loading,
   error,
@@ -37,11 +37,11 @@ export default function DistribuicaoAnualPorTipo({
 }: Props) {
   const { t } = useTranslation("common");
   const { resolvedTheme } = useTheme();
-  const [tipo, setTipo] = useState<ChartKind>("bar");
+  const [chartKind, setChartKind] = useState<ChartKind>("bar");
 
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
-  const serieType = tipo === "area" ? "line" : tipo;
+  const seriesType = chartKind === "area" ? "line" : chartKind;
 
   const option = useMemo<EChartsOption>(
     () => ({
@@ -52,7 +52,7 @@ export default function DistribuicaoAnualPorTipo({
       },
       tooltip: {
         trigger: "axis",
-        axisPointer: { type: tipo === "bar" ? "shadow" : "line" },
+        axisPointer: { type: chartKind === "bar" ? "shadow" : "line" },
       },
       legend: { show: false },
       grid: {
@@ -81,18 +81,18 @@ export default function DistribuicaoAnualPorTipo({
       series: [
         {
           name: t("Publications"),
-          type: serieType,
+          type: seriesType,
           data: data.map((point) => point.count),
           barMaxWidth: 72,
           barCategoryGap: "28%",
           itemStyle: { color: PRIMARY_CHART_COLOR, borderRadius: 0 },
-          ...(tipo === "line" || tipo === "area"
+          ...(chartKind === "line" || chartKind === "area"
             ? {
                 smooth: false,
                 symbol: "circle",
                 symbolSize: 6,
                 lineStyle: { color: PRIMARY_CHART_COLOR, width: 2 },
-                ...(tipo === "area"
+                ...(chartKind === "area"
                   ? {
                       areaStyle: {
                         color: hexToRgba(PRIMARY_CHART_COLOR, 0.28),
@@ -104,7 +104,7 @@ export default function DistribuicaoAnualPorTipo({
         },
       ],
     }),
-    [data, tipo, serieType, textMuted, gridColor, t],
+    [data, chartKind, seriesType, textMuted, gridColor, t],
   );
 
   return (
@@ -119,11 +119,11 @@ export default function DistribuicaoAnualPorTipo({
             <button
               key={kind}
               type="button"
-              className={tipo === kind ? "is-active" : undefined}
+              className={chartKind === kind ? "is-active" : undefined}
               title={t(labelKey)}
               aria-label={t(labelKey)}
-              aria-pressed={tipo === kind}
-              onClick={() => setTipo(kind)}
+              aria-pressed={chartKind === kind}
+              onClick={() => setChartKind(kind)}
             >
               <Icon size={18} />
             </button>

@@ -24,6 +24,7 @@ type TermsAggregation = {
 type DashboardAggregations = {
   annual?: TermsAggregation;
   byType?: TermsAggregation;
+  byLanguage?: TermsAggregation;
   filterOptions?: {
     publicationDates?: TermsAggregation;
     types?: TermsAggregation;
@@ -135,6 +136,14 @@ export default async function handler(
             order: { _count: "desc" },
           },
         },
+        byLanguage: {
+          terms: {
+            field: "language",
+            include: filters.language ? [filters.language] : undefined,
+            size: 100,
+            order: { _count: "desc" },
+          },
+        },
         filterOptions: {
           global: {},
           aggs: {
@@ -175,6 +184,10 @@ export default async function handler(
       })),
       byType: getBuckets(aggregations?.byType).map((bucket) => ({
         type: getBucketKey(bucket),
+        count: bucket.doc_count,
+      })),
+      byLanguage: getBuckets(aggregations?.byLanguage).map((bucket) => ({
+        language: getBucketKey(bucket),
         count: bucket.doc_count,
       })),
       filterOptions: {

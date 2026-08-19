@@ -20,10 +20,16 @@ export type PublicationsByTypePoint = {
   count: number;
 };
 
+export type PublicationsByLanguagePoint = {
+  language: string;
+  count: number;
+};
+
 export type PublicationsDashboardResponse = {
   total: number;
   annual: PublicationsByYearPoint[];
   byType: PublicationsByTypePoint[];
+  byLanguage: PublicationsByLanguagePoint[];
   filterOptions: PublicationsDashboardFilterOptions;
 };
 

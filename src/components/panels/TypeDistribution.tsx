@@ -6,7 +6,7 @@ import { ChartBar, ChartPie } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByTypePoint } from "../../types/PublicationsDashboard";
 import ChartFeedback from "./ChartFeedback";
-import { PAINEL_CHART_COLORS } from "./publicacoesChartConfig";
+import { PANEL_CHART_COLORS } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
@@ -28,7 +28,7 @@ type Props = {
   height?: number;
 };
 
-export default function DistribuicaoPorTipo({
+export default function TypeDistribution({
   data,
   loading,
   error,
@@ -36,14 +36,14 @@ export default function DistribuicaoPorTipo({
 }: Props) {
   const { t } = useTranslation("common");
   const { resolvedTheme } = useTheme();
-  const [tipo, setTipo] = useState<ChartKind>("pie");
+  const [chartKind, setChartKind] = useState<ChartKind>("pie");
 
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
 
   const option = useMemo<EChartsOption>(() => {
     const common = {
-      color: PAINEL_CHART_COLORS,
+      color: PANEL_CHART_COLORS,
       textStyle: {
         fontFamily: '"rawline", helvetica, arial, sans-serif',
         color: textMuted,
@@ -53,7 +53,7 @@ export default function DistribuicaoPorTipo({
     const textMain = resolvedTheme === "dark" ? "#e5e7eb" : "#333333";
     const cardBg = resolvedTheme === "dark" ? "#171b22" : "#fefefe";
 
-    if (tipo === "pie") {
+    if (chartKind === "pie") {
       return {
         ...common,
         tooltip: {
@@ -163,7 +163,7 @@ export default function DistribuicaoPorTipo({
         },
       ],
     };
-  }, [data, tipo, textMuted, gridColor, resolvedTheme, t]);
+  }, [data, chartKind, textMuted, gridColor, resolvedTheme, t]);
 
   return (
     <div className="brcris-chart-card">
@@ -177,11 +177,11 @@ export default function DistribuicaoPorTipo({
             <button
               key={kind}
               type="button"
-              className={tipo === kind ? "is-active" : undefined}
+              className={chartKind === kind ? "is-active" : undefined}
               title={t(labelKey)}
               aria-label={t(labelKey)}
-              aria-pressed={tipo === kind}
-              onClick={() => setTipo(kind)}
+              aria-pressed={chartKind === kind}
+              onClick={() => setChartKind(kind)}
             >
               <Icon size={18} />
             </button>
