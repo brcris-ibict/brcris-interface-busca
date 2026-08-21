@@ -47,5 +47,8 @@
   "acronym": "Sigla",
   "acronym_text": "Sigla",
   "Select": "Selecione",
-  "Search": "Buscar"
+  "Search": "Buscar",
+  "Exact": "Exata",
+  "Approximate": "Aproximada",
+  "Match mode": "Modo de busca"
 }
