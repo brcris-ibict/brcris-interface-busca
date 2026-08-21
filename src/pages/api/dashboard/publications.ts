@@ -25,10 +25,12 @@ type DashboardAggregations = {
   annual?: TermsAggregation;
   byType?: TermsAggregation;
   byLanguage?: TermsAggregation;
+  byInstitution?: TermsAggregation;
   filterOptions?: {
     publicationDates?: TermsAggregation;
     types?: TermsAggregation;
     languages?: TermsAggregation;
+    institutions?: TermsAggregation;
   };
 };
 
@@ -60,6 +62,7 @@ function getFilters(req: NextApiRequest): PublicationsDashboardFilters {
     publicationDate: readFilter(req.query.publicationDate, "publicationDate"),
     type: readFilter(req.query.type, "type"),
     language: readFilter(req.query.language, "language"),
+    institution: readFilter(req.query.institution, "institution"),
   };
 
   if (filters.publicationDate && !/^\d{4}$/.test(filters.publicationDate)) {
@@ -71,10 +74,21 @@ function getFilters(req: NextApiRequest): PublicationsDashboardFilters {
   return filters;
 }
 
+const FILTER_FIELDS: Record<keyof PublicationsDashboardFilters, string> = {
+  publicationDate: "publicationDate",
+  type: "type",
+  language: "language",
+  institution: "sponsorOrgUnit.name",
+};
+
 function buildQuery(filters: PublicationsDashboardFilters) {
-  const clauses = Object.entries(filters)
+  const clauses = (
+    Object.entries(filters) as [keyof PublicationsDashboardFilters, string][]
+  )
     .filter(([, value]) => value)
-    .map(([field, value]) => ({ term: { [field]: value } }));
+    .map(([field, value]) => ({
+      term: { [FILTER_FIELDS[field]]: value },
+    }));
 
   return clauses.length > 0 ? { bool: { filter: clauses } } : { match_all: {} };
 }
@@ -144,6 +158,14 @@ export default async function handler(
             order: { _count: "desc" },
           },
         },
+        byInstitution: {
+          terms: {
+            field: "sponsorOrgUnit.name",
+            include: filters.institution ? [filters.institution] : undefined,
+            size: 1000,
+            order: { _count: "desc" },
+          },
+        },
         filterOptions: {
           global: {},
           aggs: {
@@ -168,6 +190,13 @@ export default async function handler(
                 order: { _key: "asc" },
               },
             },
+            institutions: {
+              terms: {
+                field: "sponsorOrgUnit.name",
+                size: 5000,
+                order: { _count: "desc" },
+              },
+            },
           },
         },
       },
@@ -190,6 +219,10 @@ export default async function handler(
         language: getBucketKey(bucket),
         count: bucket.doc_count,
       })),
+      byInstitution: getBuckets(aggregations?.byInstitution).map((bucket) => ({
+        institution: getBucketKey(bucket),
+        count: bucket.doc_count,
+      })),
       filterOptions: {
         publicationDates: getBuckets(
           aggregations?.filterOptions?.publicationDates,
@@ -198,6 +231,9 @@ export default async function handler(
         languages: getBuckets(aggregations?.filterOptions?.languages).map(
           getBucketKey,
         ),
+        institutions: getBuckets(
+          aggregations?.filterOptions?.institutions,
+        ).map(getBucketKey),
       },
     });
   } catch (error: unknown) {

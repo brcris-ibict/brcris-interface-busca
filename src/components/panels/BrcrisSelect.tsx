@@ -13,6 +13,13 @@ export type BrcrisSelectOption = {
   label: string;
 };
 
+function normalizeSearch(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 type Props = {
   id: string;
   label: string;
@@ -39,11 +46,12 @@ export default function BrcrisSelect({
   const selectedLabel = selected?.label ?? "";
 
   const filtered = useMemo(() => {
-    const term = query.trim().toLowerCase();
+    const term = normalizeSearch(query.trim());
     if (!term) return options;
 
-    return options.filter((opt) => opt.label.toLowerCase().includes(term));
-
+    return options.filter((opt) =>
+      normalizeSearch(opt.label).includes(term),
+    );
   }, [options, query]);
 
   useEffect(() => {

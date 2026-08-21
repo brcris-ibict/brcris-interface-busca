@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
 import AnnualDistribution from "../../components/panels/AnnualDistribution";
+import InstitutionDistribution from "../../components/panels/InstitutionDistribution";
 import LanguageDistribution from "../../components/panels/LanguageDistribution";
 import TypeDistribution from "../../components/panels/TypeDistribution";
 import PublicationsFilters from "../../components/panels/PublicationsFilters";
@@ -21,6 +22,7 @@ const EMPTY_FILTER_OPTIONS: PublicationsDashboardFilterOptions = {
   publicationDates: [],
   types: [],
   languages: [],
+  institutions: [],
 };
 
 function buildPublicationsUrl(filters: PublicationsDashboardFilters) {
@@ -48,6 +50,7 @@ export default function Publications() {
     publicationDate: "",
     type: "",
     language: "",
+    institution: "",
   });
 
   const { data, loading, error, get } =
@@ -92,16 +95,23 @@ export default function Publications() {
                   error={Boolean(error)}
                 />
               </div>
-              <div className="col-12 col-lg-6">
+              <div className="col-12 col-lg-4">
                 <TypeDistribution
                   data={data?.byType ?? []}
                   loading={loading}
                   error={Boolean(error)}
                 />
               </div>
-              <div className="col-12 col-lg-6">
+              <div className="col-12 col-lg-4">
                 <LanguageDistribution
                   data={data?.byLanguage ?? []}
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12 col-lg-4">
+                <InstitutionDistribution
+                  data={data?.byInstitution ?? []}
                   loading={loading}
                   error={Boolean(error)}
                 />

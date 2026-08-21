@@ -69,6 +69,20 @@ export default function PublicationsFilters({
             })),
           ]}
         />
+
+        <BrcrisSelect
+          id="pub-institution"
+          label={t("Institution")}
+          value={value.institution}
+          onChange={(value) => handleChange("institution", value)}
+          options={[
+            { value: "", label: t("All") },
+            ...options.institutions.map((institution) => ({
+              value: institution,
+              label: institution,
+            })),
+          ]}
+        />
       </div>
     </div>
   );
