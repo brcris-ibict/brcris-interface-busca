@@ -1,7 +1,10 @@
 const { i18n } = require("./next-i18next.config.js");
 
+const basePath = process.env.NEXT_BASE_PATH || "";
+
 const nextConfig = {
   reactStrictMode: false,
+  basePath,
   // swcMinify: false,
   env: {
     LANGUAGES: process.env.LANGUAGES,
