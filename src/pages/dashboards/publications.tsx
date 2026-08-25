@@ -10,6 +10,7 @@ import TypeDistribution from "../../components/panels/TypeDistribution";
 import PublicationsFilters from "../../components/panels/PublicationsFilters";
 import PageHeader from "../../components/panels/PageHeader";
 import useRequest from "../../hooks/useRequest";
+import { withBasePath } from "../../lib/basePath";
 import type {
   PublicationsDashboardFilterOptions,
   PublicationsDashboardFilters,
@@ -34,8 +35,8 @@ function buildPublicationsUrl(filters: PublicationsDashboardFilters) {
 
   const query = params.toString();
   return query
-    ? `/api/dashboard/publications?${query}`
-    : "/api/dashboard/publications";
+    ? withBasePath(`/api/dashboard/publications?${query}`)
+    : withBasePath("/api/dashboard/publications");
 }
 
 export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({

@@ -1,6 +1,7 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { useTranslation } from "next-i18next";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
 const CustomResultViewCourses = ({ result, onClickLink }: ResultViewProps) => {
@@ -9,10 +10,12 @@ const CustomResultViewCourses = ({ result, onClickLink }: ResultViewProps) => {
 
   return (
     <li className="sui-result">
-      <a onClick={onClickLink} href={`/courses/${result.id.raw}`}>
+      <a onClick={onClickLink} href={withBasePath(`/courses/${result.id.raw}`)}>
         <h3
           dangerouslySetInnerHTML={{
-            __html: normalizeText(result.name?.snippet || result.name?.raw || ""),
+            __html: normalizeText(
+              result.name?.snippet || result.name?.raw || "",
+            ),
           }}
         ></h3>
 

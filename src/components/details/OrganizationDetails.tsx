@@ -6,6 +6,7 @@ import { CSVLink } from "react-csv";
 import { getLattesIdentifier, normalizeText } from "../../../utils/Utils";
 import { useLibraryInstitutions } from "../../hooks/useLibraryInstitutions";
 import { usePersonIdentifiers } from "../../hooks/usePersonIdentifiers";
+import { withBasePath } from "../../lib/basePath";
 import { ORG_LIBRARY_TYPE } from "../../lib/orgunitSearchQuery";
 import NotFound from "../../pages/404";
 import CopyLink from "../CopyLink";
@@ -91,12 +92,12 @@ export default function OrganizationDetails() {
               <div className="d-flex align-items-center gap-2">
                 <img
                   className="brcris-logo"
-                  src="/logos/brcris-grafo.svg"
+                  src={withBasePath("/logos/brcris-grafo.svg")}
                   alt="logo do BrCris"
                 />
 
                 <CopyLink
-                  link={`${location.origin}/organizations/${result.id.raw}`}
+                  link={`${location.origin}${withBasePath(`/organizations/${result.id.raw}`)}`}
                 />
               </div>
 
@@ -134,7 +135,7 @@ export default function OrganizationDetails() {
                 initialCount={5}
                 renderItem={(item: any, idx: number) => (
                   <div key={idx} className="member-item">
-                    <a href={`/people/${item.id}`}>
+                    <a href={withBasePath(`/people/${item.id}`)}>
                       {normalizeText(item?.name)}
                     </a>
                   </div>
@@ -143,16 +144,17 @@ export default function OrganizationDetails() {
             </li>
           )}
           <ShowItem value={result.acronym?.raw} label={t("Acronym")} />
-          <ShowItem
-            value={normalizeText(result.type?.raw)}
-            label={t("Type")}
-          />
+          <ShowItem value={normalizeText(result.type?.raw)} label={t("Type")} />
           {linkedInstitution?.name && (
             <li className="sui-result__item">
               <span className="sui-result__key">{t("Institution")}</span>
               <span className="sui-result__value">
                 {linkedInstitution.id ? (
-                  <a href={`/organizations/${linkedInstitution.id}`}>
+                  <a
+                    href={withBasePath(
+                      `/organizations/${linkedInstitution.id}`,
+                    )}
+                  >
                     {normalizeText(linkedInstitution.name)}
                   </a>
                 ) : (
@@ -169,10 +171,7 @@ export default function OrganizationDetails() {
             value={normalizeText(result.state?.raw)}
             label={t("State")}
           />
-          <ShowItem
-            value={normalizeText(result.city?.raw)}
-            label={t("City")}
-          />
+          <ShowItem value={normalizeText(result.city?.raw)} label={t("City")} />
           {!isLibrary && (
             <ShowItem
               value={normalizeText(result.address?.raw)}
@@ -192,7 +191,7 @@ export default function OrganizationDetails() {
                   renderItem={(item: any) => (
                     <>
                       {item.id ? (
-                        <a href={`/organizations/${item.id}`}>
+                        <a href={withBasePath(`/organizations/${item.id}`)}>
                           {normalizeText(item.name)}
                         </a>
                       ) : (
@@ -231,7 +230,7 @@ export default function OrganizationDetails() {
                   renderItem={(program: any) => (
                     <>
                       {program.name && (
-                        <a href={`/programs/${program.id}`}>
+                        <a href={withBasePath(`/programs/${program.id}`)}>
                           {normalizeText(program.name)}
                         </a>
                       )}
@@ -250,7 +249,7 @@ export default function OrganizationDetails() {
                   initialCount={5}
                   renderItem={(item: any) => (
                     <>
-                      <a href={`/organizations/${item.id}`}>
+                      <a href={withBasePath(`/organizations/${item.id}`)}>
                         {normalizeText(item?.name)}
                       </a>
                     </>
@@ -267,7 +266,7 @@ export default function OrganizationDetails() {
                 initialCount={5}
                 renderItem={(publication: any, index: number) => (
                   <div key={index} className="publication-item">
-                    <a href={`/publications/${publication?.id}`}>
+                    <a href={withBasePath(`/publications/${publication?.id}`)}>
                       {normalizeText(publication?.title)}
                     </a>
                   </div>

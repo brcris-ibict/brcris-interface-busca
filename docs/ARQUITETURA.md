@@ -332,9 +332,15 @@ As variáveis estão exemplificadas em `.env.example`. As principais categorias 
 - E-mail: `MAIL_SENDER`, `MAIL_PASSWORD`, `MAIL_PORT`, `MAIL_HOST`, `MAIL_RECIPIENT`.
 - Captcha: `PUBLIC_RECAPTCHA_SITE_KEY`, `RECAPTCHA_SECRET_KEY`.
 - Infra local: `DOWNLOAD_FOLDER_PATH`, `LOG_FOLDER_PATH`, `FIELDS_RIS`, `MAX_DOWNLOAD_PERMITED`.
-- Aplicação pública: `BRCRIS_HOST_BASE`, `LANGUAGES`, `NEXT_PUBLIC_GA_TRACKINK`.
+- Aplicação pública: `BRCRIS_HOST_BASE`, `NEXT_BASE_PATH`, `LANGUAGES`, `NEXT_PUBLIC_GA_TRACKINK`.
 
 Observação: `next.config.js` expõe algumas variáveis via `env`, tornando-as disponíveis no bundle do cliente. Variáveis sensíveis como `API_KEY`, `MAIL_PASSWORD` e `RECAPTCHA_SECRET_KEY` não devem ser adicionadas a essa lista.
+
+Quando a aplicação for publicada em um subcaminho, `NEXT_BASE_PATH` deve usar o
+prefixo sem barra final, por exemplo `/brcris`. Nesse caso,
+`BRCRIS_HOST_BASE` deve conter a URL pública completa
+(`https://host.example/brcris`) para que links absolutos gerados pelo servidor
+também incluam o prefixo. Alterar o `basePath` exige um novo build do Next.js.
 
 Clusters Elasticsearch que usam uma CA privada devem configurar `HOST_ELASTIC`
 com `https://` e informar em `ELASTICSEARCH_CA_CERT_PATH` o caminho absoluto

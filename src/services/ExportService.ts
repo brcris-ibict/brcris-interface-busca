@@ -1,3 +1,5 @@
+import { withBasePath } from "../lib/basePath";
+
 type QueryDslQueryContainer = Record<string, any>;
 class ExportService {
   async search(
@@ -20,7 +22,7 @@ class ExportService {
       email,
       captcha,
     });
-    const response = await fetch("/api/export", {
+    const response = await fetch(withBasePath("/api/export"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

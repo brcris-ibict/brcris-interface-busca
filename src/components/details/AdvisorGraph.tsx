@@ -4,6 +4,7 @@ import * as d3 from "d3";
 import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 
 type Advisee = {
   id: string;
@@ -213,7 +214,7 @@ function AdvisingGraph({
 
     node
       .append("a")
-      .attr("xlink:href", (d) => `/people/${d.uri}`)
+      .attr("xlink:href", (d) => withBasePath(`/people/${d.uri}`))
       .append("text")
       .text((d) => d.name)
       .attr("x", 18)
@@ -278,7 +279,7 @@ export default function AdvisorGraph({ advisorId }: { advisorId: string }) {
 
   useEffect(() => {
     if (!advisorId) return;
-    fetch(`/api/orientacoes?advisorId=${advisorId}`)
+    fetch(withBasePath(`/api/orientacoes?advisorId=${advisorId}`))
       .then((res) => res.json())
       .then((json) => setData(json))
       .catch(() => setData(null));
