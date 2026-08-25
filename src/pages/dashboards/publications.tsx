@@ -7,15 +7,12 @@ import AnnualDistribution from "../../components/panels/AnnualDistribution";
 import InstitutionDistribution from "../../components/panels/InstitutionDistribution";
 import LanguageDistribution from "../../components/panels/LanguageDistribution";
 import TypeDistribution from "../../components/panels/TypeDistribution";
+import PublicationsBigNumbers from "../../components/panels/PublicationsBigNumbers";
 import PublicationsFilters from "../../components/panels/PublicationsFilters";
 import PageHeader from "../../components/panels/PageHeader";
 import useRequest from "../../hooks/useRequest";
 import { withBasePath } from "../../lib/basePath";
-import type {
-  PublicationsDashboardFilterOptions,
-  PublicationsDashboardFilters,
-  PublicationsDashboardResponse,
-} from "../../types/PublicationsDashboard";
+import type { PublicationsDashboardFilterOptions, PublicationsDashboardFilters, PublicationsDashboardResponse } from "../../types/PublicationsDashboard";
 
 type Props = {};
 
@@ -34,9 +31,7 @@ function buildPublicationsUrl(filters: PublicationsDashboardFilters) {
   });
 
   const query = params.toString();
-  return query
-    ? withBasePath(`/api/dashboard/publications?${query}`)
-    : withBasePath("/api/dashboard/publications");
+  return query ? withBasePath(`/api/dashboard/publications?${query}`) : withBasePath("/api/dashboard/publications");
 }
 
 export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
@@ -46,6 +41,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
 });
 
 export default function Publications() {
+  
   const { t } = useTranslation(["common", "navbar"]);
   const [filters, setFilters] = useState<PublicationsDashboardFilters>({
     publicationDate: "",
@@ -54,11 +50,11 @@ export default function Publications() {
     institution: "",
   });
 
-  const { data, loading, error, get } =
-    useRequest<PublicationsDashboardResponse>();
+  const { data, loading, error, get } = useRequest<PublicationsDashboardResponse>();
 
   useEffect(() => {
     get(buildPublicationsUrl(filters));
+
   }, [filters, get]);
 
   const filterOptions = data?.filterOptions ?? EMPTY_FILTER_OPTIONS;
@@ -83,12 +79,19 @@ export default function Publications() {
               }
             />
 
+            <PublicationsBigNumbers
+              summary={data?.summary}
+              loading={loading}
+              error={Boolean(error)}
+            />
+
             <div className="row g-3">
               <div className="col-12">
                 <AnnualDistribution
                   data={data?.annual ?? []}
                   loading={loading}
                   error={Boolean(error)}
+                  height={260}
                 />
               </div>
               <div className="col-12 col-lg-4">

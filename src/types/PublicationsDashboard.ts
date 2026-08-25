@@ -32,8 +32,18 @@ export type PublicationsByInstitutionPoint = {
   count: number;
 };
 
+export type PublicationsDashboardSummary = {
+  total: number;
+  lastYear: string;
+  lastYearCount: number;
+  institutionsCount: number;
+  predominantType: string;
+  predominantTypeShare: number;
+};
+
 export type PublicationsDashboardResponse = {
   total: number;
+  summary: PublicationsDashboardSummary;
   annual: PublicationsByYearPoint[];
   byType: PublicationsByTypePoint[];
   byLanguage: PublicationsByLanguagePoint[];
