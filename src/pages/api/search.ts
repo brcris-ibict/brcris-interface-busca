@@ -18,13 +18,17 @@ import type { CustomSearchQuery } from "../../types/Entities";
 
 // https://docs.elastic.co/search-ui/api/connectors/elasticsearch#customise-the-elasticsearch-request-body
 function builConnector(index: string) {
-  const connector = new ElasticsearchAPIConnector(
-    {
-      apiClient: createSearchUiTransporter(index),
-      index,
-    },
-    (requestBody, requestState, queryConfig) => {
-      requestBody.track_total_hits = true;
+  const connector = new ElasticsearchAPIConnector({
+    apiClient: createSearchUiTransporter(index),
+    index,
+    interceptSearchRequest: (
+      { requestBody, requestState, queryConfig },
+      next,
+    ) => {
+      const interceptedRequestBody = {
+        ...requestBody,
+        track_total_hits: true,
+      };
 
       if (requestState.searchTerm) {
         const searchTerm = requestState.searchTerm.replaceAll(": ", " ");
@@ -34,25 +38,29 @@ function builConnector(index: string) {
           Object.keys(searchFields),
         ) as estypes.QueryDslQueryContainer;
         console.log("fullQuery", JSON.stringify(fullQuery));
-        requestBody.query = fullQuery;
+        interceptedRequestBody.query = fullQuery;
       }
 
       if (isPublicationIndex(index)) {
-        requestBody.query = excludePublicationsWithMultipleTypes(
-          requestBody.query,
+        interceptedRequestBody.query = excludePublicationsWithMultipleTypes(
+          interceptedRequestBody.query,
         );
       }
 
       if (isOrgUnitIndex(index)) {
-        requestBody.query = stripExcludeLibrariesFilter(requestBody.query);
+        interceptedRequestBody.query = stripExcludeLibrariesFilter(
+          interceptedRequestBody.query,
+        );
         if (shouldExcludeOrgLibraries(requestState.filters)) {
-          requestBody.query = excludeOrgLibraries(requestBody.query);
+          interceptedRequestBody.query = excludeOrgLibraries(
+            interceptedRequestBody.query,
+          );
         }
       }
 
-      return requestBody;
+      return next(interceptedRequestBody);
     },
-  );
+  });
   return connector;
 }
 
