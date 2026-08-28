@@ -3,9 +3,11 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
+import AnnualByTypeDistribution from "../../components/panels/AnnualByTypeDistribution";
 import AnnualDistribution from "../../components/panels/AnnualDistribution";
 import InstitutionDistribution from "../../components/panels/InstitutionDistribution";
 import LanguageDistribution from "../../components/panels/LanguageDistribution";
+import TopJournalsArticlesTable from "../../components/panels/TopJournalsArticlesTable";
 import TypeDistribution from "../../components/panels/TypeDistribution";
 import PublicationsBigNumbers from "../../components/panels/PublicationsBigNumbers";
 import PublicationsFilters from "../../components/panels/PublicationsFilters";
@@ -86,12 +88,20 @@ export default function Publications() {
             />
 
             <div className="row g-3">
-              <div className="col-12">
+              <div className="col-12 col-xl-6">
                 <AnnualDistribution
                   data={data?.annual ?? []}
                   loading={loading}
                   error={Boolean(error)}
-                  height={260}
+                  height={280}
+                />
+              </div>
+              <div className="col-12 col-xl-6">
+                <AnnualByTypeDistribution
+                  data={data?.annualByType ?? []}
+                  loading={loading}
+                  error={Boolean(error)}
+                  height={280}
                 />
               </div>
               <div className="col-12 col-lg-4">
@@ -111,6 +121,13 @@ export default function Publications() {
               <div className="col-12 col-lg-4">
                 <InstitutionDistribution
                   data={data?.byInstitution ?? []}
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12">
+                <TopJournalsArticlesTable
+                  data={data?.topJournalsArticles}
                   loading={loading}
                   error={Boolean(error)}
                 />

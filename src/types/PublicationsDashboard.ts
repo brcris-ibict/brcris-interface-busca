@@ -32,6 +32,23 @@ export type PublicationsByInstitutionPoint = {
   count: number;
 };
 
+export type PublicationsAnnualByTypePoint = {
+  year: string;
+  types: PublicationsByTypePoint[];
+};
+
+export type PublicationsTopJournalPoint = {
+  rank: number;
+  journal: string;
+  count: number;
+  share: number;
+};
+
+export type PublicationsTopJournalsArticles = {
+  totalArticles: number;
+  items: PublicationsTopJournalPoint[];
+};
+
 export type PublicationsDashboardSummary = {
   total: number;
   lastYear: string;
@@ -45,9 +62,11 @@ export type PublicationsDashboardResponse = {
   total: number;
   summary: PublicationsDashboardSummary;
   annual: PublicationsByYearPoint[];
+  annualByType: PublicationsAnnualByTypePoint[];
   byType: PublicationsByTypePoint[];
   byLanguage: PublicationsByLanguagePoint[];
   byInstitution: PublicationsByInstitutionPoint[];
+  topJournalsArticles: PublicationsTopJournalsArticles;
   filterOptions: PublicationsDashboardFilterOptions;
 };
 

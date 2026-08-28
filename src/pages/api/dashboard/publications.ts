@@ -7,6 +7,7 @@ const client = createElasticsearchClient();
 
 const MAX_FILTER_LENGTH = 200;
 const MIN_PUBLICATION_YEAR = 1960;
+const ARTICLE_PUBLICATION_TYPE = "Artigo";
 
 function getCurrentPublicationYear() {
   return new Date().getFullYear();
@@ -23,12 +24,23 @@ type TermsAggregation = {
   buckets?: TermBucket[];
 };
 
+type AnnualByTypeBucket = TermBucket & {
+  byType?: TermsAggregation;
+};
+
 type DashboardAggregations = {
   annual?: TermsAggregation;
+  annualByType?: {
+    buckets?: AnnualByTypeBucket[];
+  };
   byType?: TermsAggregation;
   byLanguage?: TermsAggregation;
   byInstitution?: TermsAggregation;
   institutionsCount?: { value?: number };
+  topJournalsArticles?: {
+    doc_count?: number;
+    byJournal?: TermsAggregation;
+  };
   filterOptions?: {
     withoutFutureYears?: {
       publicationDates?: TermsAggregation;
@@ -119,9 +131,7 @@ function buildQuery(filters: PublicationsDashboardFilters) {
     },
   ];
 
-  (
-    Object.entries(filters) as [keyof PublicationsDashboardFilters, string][]
-  )
+  ( Object.entries(filters) as [keyof PublicationsDashboardFilters, string][])
     .filter(([, value]) => value)
     .forEach(([field, value]) => {
       clauses.push({
@@ -183,6 +193,24 @@ export default async function handler(
             order: { _key: "asc" },
           },
         },
+        annualByType: {
+          terms: {
+            field: "publicationDate",
+            include: filters.publicationDate ? [filters.publicationDate] : undefined,
+            size: 200,
+            order: { _key: "asc" },
+          },
+          aggs: {
+            byType: {
+              terms: {
+                field: "type",
+                include: filters.type ? [filters.type] : undefined,
+                size: 50,
+                order: { _count: "desc" },
+              },
+            },
+          },
+        },
         byType: {
           terms: {
             field: "type",
@@ -210,6 +238,25 @@ export default async function handler(
         institutionsCount: {
           cardinality: {
             field: "sponsorOrgUnit.name",
+          },
+        },
+        topJournalsArticles: {
+          filter: {
+            bool: {
+              filter: [
+                { term: { type: ARTICLE_PUBLICATION_TYPE } },
+                { exists: { field: "journal.title" } },
+              ],
+            },
+          },
+          aggs: {
+            byJournal: {
+              terms: {
+                field: "journal.title",
+                size: 10,
+                order: { _count: "desc" },
+              },
+            },
           },
         },
         filterOptions: {
@@ -267,6 +314,15 @@ export default async function handler(
       year: getBucketKey(bucket),
       count: bucket.doc_count,
     }));
+    const annualByType = (aggregations?.annualByType?.buckets ?? []).map(
+      (bucket) => ({
+        year: getBucketKey(bucket),
+        types: getBuckets(bucket.byType).map((typeBucket) => ({
+          type: getBucketKey(typeBucket),
+          count: typeBucket.doc_count,
+        })),
+      }),
+    );
     const byType = getBuckets(aggregations?.byType).map((bucket) => ({
       type: getBucketKey(bucket),
       count: bucket.doc_count,
@@ -289,6 +345,19 @@ export default async function handler(
     const predominant = byType[0];
     const predominantTypeShare = predominant && predominant.count > 0 ? Number(((predominant.count / total) * 100).toFixed(1)) : 0;
 
+    const topJournalBuckets = getBuckets(aggregations?.topJournalsArticles?.byJournal);
+    const totalArticles = aggregations?.topJournalsArticles?.doc_count ?? 0;
+
+    const topJournalsArticles = {
+      totalArticles,
+      items: topJournalBuckets.map((bucket, index) => ({
+        rank: index + 1,
+        journal: getBucketKey(bucket),
+        count: bucket.doc_count,
+        share: totalArticles > 0 ? Number(((bucket.doc_count / totalArticles) * 100).toFixed(1)) : 0,
+      })),
+    };
+
     return res.status(200).json({
       total,
       summary: {
@@ -300,9 +369,11 @@ export default async function handler(
         predominantTypeShare,
       },
       annual,
+      annualByType,
       byType,
       byLanguage,
       byInstitution,
+      topJournalsArticles,
       filterOptions: {
         publicationDates: getBuckets(
           aggregations?.filterOptions?.withoutFutureYears?.publicationDates,

@@ -2279,3 +2279,63 @@ h3.popover-header a {
     transform: none;
   }
 }
+
+.brcris-panel-table__header {
+  margin-bottom: 0.75rem;
+}
+
+.brcris-panel-table__caption {
+  margin: 0.35rem 0 0 12px;
+  color: var(--text-secondary-color);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.brcris-panel-table__body {
+  position: relative;
+}
+
+.brcris-panel-table__scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.brcris-panel-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.brcris-panel-table__table th,
+.brcris-panel-table__table td {
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.brcris-panel-table__table th {
+  color: var(--text-secondary-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: left;
+  background: var(--table-header-bg);
+}
+
+.brcris-panel-table__table tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--bg-muted) 55%, transparent);
+}
+
+.brcris-panel-table__table tbody tr:hover {
+  background: var(--table-row-hover-bg);
+}
+
+.brcris-panel-table__table td.is-numeric,
+.brcris-panel-table__table th.is-numeric {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.brcris-panel-table__table td:first-child {
+  width: 4.5rem;
+  white-space: nowrap;
+}

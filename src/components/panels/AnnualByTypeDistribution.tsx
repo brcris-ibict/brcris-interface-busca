@@ -4,9 +4,9 @@ import type { EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
 import { BarChart3, ChartArea, LineChart } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import type { PublicationsByYearPoint } from "../../types/PublicationsDashboard";
+import type { PublicationsAnnualByTypePoint } from "../../types/PublicationsDashboard";
 import ChartFeedback from "./ChartFeedback";
-import { PRIMARY_CHART_COLOR, hexToRgba } from "./publicationsChartConfig";
+import { PANEL_CHART_COLORS } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
@@ -23,17 +23,17 @@ const TOGGLES: {
 ];
 
 type Props = {
-  data: PublicationsByYearPoint[];
+  data: PublicationsAnnualByTypePoint[];
   loading: boolean;
   error: boolean;
   height?: number;
 };
 
-export default function AnnualDistribution({
+export default function AnnualByTypeDistribution({
   data,
   loading,
   error,
-  height = 360,
+  height = 320,
 }: Props) {
   const { t } = useTranslation("common");
   const { resolvedTheme } = useTheme();
@@ -43,9 +43,30 @@ export default function AnnualDistribution({
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
   const seriesType = chartKind === "area" ? "line" : chartKind;
 
-  const option = useMemo<EChartsOption>(
-    () => ({
-      color: [PRIMARY_CHART_COLOR],
+  const years = useMemo(() => data.map((point) => point.year), [data]);
+
+  const typeNames = useMemo(() => {
+    const names = new Set<string>();
+
+    data.forEach((point) => {
+      point.types.forEach((item) => names.add(item.type));
+    });
+
+    return Array.from(names);
+    
+  }, [data]);
+
+  const option = useMemo<EChartsOption>(() => {
+    const countByYearAndType = new Map<string, number>();
+
+    data.forEach((point) => {
+      point.types.forEach((item) => {
+        countByYearAndType.set(`${point.year}::${item.type}`, item.count);
+      });
+    });
+
+    return {
+      color: PANEL_CHART_COLORS,
       textStyle: {
         fontFamily: '"rawline", helvetica, arial, sans-serif',
         color: textMuted,
@@ -54,20 +75,27 @@ export default function AnnualDistribution({
         trigger: "axis",
         axisPointer: { type: chartKind === "bar" ? "shadow" : "line" },
       },
-      legend: { show: false },
+      legend: {
+        type: "scroll",
+        bottom: 0,
+        itemWidth: 10,
+        itemHeight: 10,
+        itemGap: 8,
+        textStyle: { color: textMuted, fontSize: 10 },
+      },
       grid: {
         left: 16,
         right: 16,
         top: 16,
-        bottom: 24,
+        bottom: 48,
         containLabel: true,
       },
       xAxis: {
         type: "category",
-        data: data.map((point) => point.year),
+        data: years,
         axisLine: { show: false },
         axisTick: { show: false },
-        axisLabel: { color: textMuted, fontSize: 12 },
+        axisLabel: { color: textMuted, fontSize: 11 },
       },
       yAxis: {
         type: "value",
@@ -78,40 +106,36 @@ export default function AnnualDistribution({
           lineStyle: { color: gridColor, type: "solid", width: 1 },
         },
       },
-      series: [
-        {
-          name: t("Publications"),
-          type: seriesType,
-          data: data.map((point) => point.count),
-          barMaxWidth: 48,
-          barCategoryGap: "28%",
-          itemStyle: { color: PRIMARY_CHART_COLOR, borderRadius: 0 },
-          ...(chartKind === "line" || chartKind === "area"
-            ? {
-                smooth: false,
-                symbol: "circle",
-                symbolSize: 6,
-                lineStyle: { color: PRIMARY_CHART_COLOR, width: 2 },
-                ...(chartKind === "area"
-                  ? {
-                      areaStyle: {
-                        color: hexToRgba(PRIMARY_CHART_COLOR, 0.28),
-                      },
-                    }
-                  : {}),
-              }
-            : {}),
-        },
-      ],
-    }),
-    [data, chartKind, seriesType, textMuted, gridColor, t],
-  );
+      series: typeNames.map((typeName) => ({
+        name: typeName,
+        type: seriesType,
+        stack: "annualByType",
+        emphasis: { focus: "series" },
+        data: years.map(
+          (year) => countByYearAndType.get(`${year}::${typeName}`) ?? 0,
+        ),
+        ...(chartKind === "bar"
+          ? { barMaxWidth: 36 }
+          : {
+              smooth: false,
+              symbol: "circle",
+              symbolSize: 4,
+              lineStyle: { width: 2 },
+              ...(chartKind === "area"
+                ? { areaStyle: { opacity: 0.35 } }
+                : {}),
+            }),
+      })),
+    };
+  }, [data, years, typeNames, chartKind, seriesType, textMuted, gridColor]);
+
+  const empty = !loading && !error && (data.length === 0 || typeNames.length === 0);
 
   return (
     <div className="brcris-chart-card">
       <div className="brcris-chart-card__header">
         <h2 className="brcris-chart-card__title">
-          {t("Annual publications by type")}
+          {t("Annual distribution by type")}
         </h2>
 
         <div className="brcris-chart-card__toggles" role="group">
@@ -136,9 +160,9 @@ export default function AnnualDistribution({
           height={height}
           loading={loading}
           error={error}
-          empty={data.length === 0}
+          empty={empty}
         />
-        {!loading && !error && data.length > 0 ? (
+        {!loading && !error && !empty ? (
           <EChart option={option} height={height} />
         ) : null}
       </div>
