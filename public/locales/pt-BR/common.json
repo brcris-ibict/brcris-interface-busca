@@ -345,6 +345,12 @@
   "Publications by institution composition": "Distribuição de publicações por instituição",
   "Chart pie": "Circular",
   "Chart horizontal bars": "Barras",
+  "Others": "Outras",
+  "Top 10 institutions": "10 maiores instituições",
+  "Without linked institution": "Sem instituição vinculada",
+  "Without linked language": "Sem idioma vinculado",
+  "Load more chart items": "Carregar mais",
+  "Showing chart items of total": "Exibindo {{visible}} de {{total}}",
   "Apply filters": "Aplicar",
   "Open filters": "Abrir filtros"
 }

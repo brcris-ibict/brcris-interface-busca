@@ -60,6 +60,8 @@ export type PublicationsDashboardSummary = {
 
 export type PublicationsDashboardResponse = {
   total: number;
+  publicationsWithoutInstitution: number;
+  publicationsWithoutLanguage: number;
   summary: PublicationsDashboardSummary;
   annual: PublicationsByYearPoint[];
   annualByType: PublicationsAnnualByTypePoint[];

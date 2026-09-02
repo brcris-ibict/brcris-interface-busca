@@ -29,5 +29,11 @@ export default function EChart({ option, height = 360 }: Props) {
     chart?.setOption(option, true);
   }, [option]);
 
+  useEffect(() => {
+    if (!ref.current) return;
+    const chart = echarts.getInstanceByDom(ref.current);
+    chart?.resize();
+  }, [height]);
+
   return <div ref={ref} style={{ width: "100%", height }} />;
 }

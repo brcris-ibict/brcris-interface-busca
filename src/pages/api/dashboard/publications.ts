@@ -37,6 +37,8 @@ type DashboardAggregations = {
   byLanguage?: TermsAggregation;
   byInstitution?: TermsAggregation;
   institutionsCount?: { value?: number };
+  publicationsWithoutInstitution?: { doc_count?: number };
+  publicationsWithoutLanguage?: { doc_count?: number };
   topJournalsArticles?: {
     doc_count?: number;
     byJournal?: TermsAggregation;
@@ -231,13 +233,31 @@ export default async function handler(
           terms: {
             field: "sponsorOrgUnit.name",
             include: filters.institution ? [filters.institution] : undefined,
-            size: 1000,
+            size: 10000,
             order: { _count: "desc" },
           },
         },
         institutionsCount: {
           cardinality: {
             field: "sponsorOrgUnit.name",
+          },
+        },
+        publicationsWithoutInstitution: {
+          filter: {
+            bool: {
+              must_not: {
+                exists: { field: "sponsorOrgUnit.name" },
+              },
+            },
+          },
+        },
+        publicationsWithoutLanguage: {
+          filter: {
+            bool: {
+              must_not: {
+                exists: { field: "language" },
+              },
+            },
           },
         },
         topJournalsArticles: {
@@ -296,7 +316,7 @@ export default async function handler(
                 institutions: {
                   terms: {
                     field: "sponsorOrgUnit.name",
-                    size: 5000,
+                    size: 10000,
                     order: { _count: "desc" },
                   },
                 },
@@ -360,6 +380,8 @@ export default async function handler(
 
     return res.status(200).json({
       total,
+      publicationsWithoutInstitution: aggregations?.publicationsWithoutInstitution?.doc_count ?? 0,
+      publicationsWithoutLanguage: aggregations?.publicationsWithoutLanguage?.doc_count ?? 0,
       summary: {
         total,
         lastYear: lastYearPoint.year,

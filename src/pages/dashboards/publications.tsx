@@ -114,6 +114,10 @@ export default function Publications() {
               <div className="col-12 col-lg-4">
                 <LanguageDistribution
                   data={data?.byLanguage ?? []}
+                  totalPublications={data?.total}
+                  publicationsWithoutLanguage={
+                    data?.publicationsWithoutLanguage ?? 0
+                  }
                   loading={loading}
                   error={Boolean(error)}
                 />
@@ -121,6 +125,10 @@ export default function Publications() {
               <div className="col-12 col-lg-4">
                 <InstitutionDistribution
                   data={data?.byInstitution ?? []}
+                  totalPublications={data?.total}
+                  publicationsWithoutInstitution={
+                    data?.publicationsWithoutInstitution ?? 0
+                  }
                   loading={loading}
                   error={Boolean(error)}
                 />

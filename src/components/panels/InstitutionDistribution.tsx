@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "next-i18next";
 import type { EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
-import { ChartBar, ChartPie } from "lucide-react";
+import { ChartBar, ChartPie, Plus } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByInstitutionPoint } from "../../types/PublicationsDashboard";
 import ChartFeedback from "./ChartFeedback";
@@ -23,23 +23,71 @@ const TOGGLES: {
 
 type Props = {
   data: PublicationsByInstitutionPoint[];
+  totalPublications?: number;
+  publicationsWithoutInstitution?: number;
   loading: boolean;
   error: boolean;
   height?: number;
 };
 
 const BAR_ROW_HEIGHT = 52;
+const PAGE_SIZE = 10;
 const LABEL_MAX_CHARS = 32;
-const PIE_SLICE_LIMIT = 15;
-const MAX_RENDER_BARS = 200;
+const PIE_SLICE_LIMIT = 10;
 
 function shortenLabel(name: string) {
   if (name.length <= LABEL_MAX_CHARS) return name;
   return `${name.slice(0, LABEL_MAX_CHARS - 1)}…`;
 }
 
+function buildInstitutionPieSeries(
+  data: PublicationsByInstitutionPoint[],
+  topInstitutionsLabel: string,
+  othersLabel: string,
+  withoutInstitutionLabel: string,
+  totalPublications?: number,
+  publicationsWithoutInstitution = 0,
+) {
+  const topInstitutionsCount = data
+    .slice(0, PIE_SLICE_LIMIT)
+    .reduce((sum, item) => sum + item.count, 0);
+  const othersInstitutionsCount = data
+    .slice(PIE_SLICE_LIMIT)
+    .reduce((sum, item) => sum + item.count, 0);
+
+  const series: { name: string; value: number }[] = [];
+
+  if (topInstitutionsCount > 0) {
+    series.push({
+      name: topInstitutionsLabel,
+      value: topInstitutionsCount,
+    });
+  }
+
+  if (othersInstitutionsCount > 0) {
+    series.push({
+      name: othersLabel,
+      value: othersInstitutionsCount,
+    });
+  }
+
+  if (publicationsWithoutInstitution > 0) {
+    series.push({
+      name: withoutInstitutionLabel,
+      value: publicationsWithoutInstitution,
+    });
+  }
+
+  const institutionsTotal = data.reduce((sum, item) => sum + item.count, 0);
+  const total = totalPublications ?? institutionsTotal + publicationsWithoutInstitution;
+
+  return { series, total };
+}
+
 export default function InstitutionDistribution({
   data,
+  totalPublications,
+  publicationsWithoutInstitution = 0,
   loading,
   error,
   height = 380,
@@ -47,11 +95,28 @@ export default function InstitutionDistribution({
   const { t } = useTranslation("common");
   const { resolvedTheme } = useTheme();
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [data]);
+
+  const visibleData = useMemo(
+    () => data.slice(0, visibleCount),
+    [data, visibleCount],
+  );
+
+  const hasMore = visibleData.length < data.length;
+
+  const handleLoadMore = () => {
+    setVisibleCount((current) => Math.min(current + PAGE_SIZE, data.length));
+  };
 
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
-  const chartData = data.slice(0, MAX_RENDER_BARS);
-  const barChartHeight = Math.max(height, chartData.length * BAR_ROW_HEIGHT);
+  const barChartHeight = visibleData.length * BAR_ROW_HEIGHT;
+
+  const hasChartData = data.length > 0 || publicationsWithoutInstitution > 0;
 
   const option = useMemo<EChartsOption>(() => {
     const common = {
@@ -61,19 +126,30 @@ export default function InstitutionDistribution({
         color: textMuted,
       },
     };
+    const chartData = visibleData;
     const textMain = resolvedTheme === "dark" ? "#e5e7eb" : "#333333";
     const cardBg = resolvedTheme === "dark" ? "#171b22" : "#fefefe";
 
     if (chartKind === "pie") {
-      const pieData = chartData.slice(0, PIE_SLICE_LIMIT);
-      const total = pieData.reduce((sum, item) => sum + item.count, 0);
+      const { series: pieSeriesData, total } = buildInstitutionPieSeries(
+        data,
+        t("Top 10 institutions"),
+        t("Others"),
+        t("Without linked institution"),
+        totalPublications,
+        publicationsWithoutInstitution,
+      );
 
       return {
         ...common,
         tooltip: {
           trigger: "item",
           formatter: (params) => {
-            const item = params as { name?: string; value?: number; percent?: number };
+            const item = params as {
+              name?: string;
+              value?: number;
+              percent?: number;
+            };
             return `${item.name}: ${Number(item.value).toLocaleString("pt-BR")} (${item.percent}%)`;
           },
         },
@@ -132,10 +208,7 @@ export default function InstitutionDistribution({
               length2: 8,
               lineStyle: { color: gridColor, width: 1 },
             },
-            data: pieData.map((item) => ({
-              name: item.institution,
-              value: item.count,
-            })),
+            data: pieSeriesData,
           },
         ],
       };
@@ -204,7 +277,17 @@ export default function InstitutionDistribution({
         },
       ],
     };
-  }, [chartData, chartKind, textMuted, gridColor, resolvedTheme, t]);
+  }, [
+    data,
+    visibleData,
+    chartKind,
+    textMuted,
+    gridColor,
+    resolvedTheme,
+    t,
+    totalPublications,
+    publicationsWithoutInstitution,
+  ]);
 
   return (
     <div className="brcris-chart-card">
@@ -235,9 +318,9 @@ export default function InstitutionDistribution({
           height={height}
           loading={loading}
           error={error}
-          empty={data.length === 0}
+          empty={!hasChartData}
         />
-        {!loading && !error && data.length > 0 ? (
+        {!loading && !error && hasChartData ? (
           chartKind === "bar" ? (
             <div
               className="brcris-chart-card__scroll"
@@ -248,6 +331,29 @@ export default function InstitutionDistribution({
           ) : (
             <EChart option={option} height={height} />
           )
+        ) : null}
+
+        {!loading && !error && hasChartData && chartKind === "bar" ? (
+          <div className="brcris-chart-card__footer">
+            <span className="brcris-chart-card__meta">
+              {t("Showing chart items of total", {
+                visible: visibleData.length,
+                total: data.length,
+              })}
+            </span>
+
+            {hasMore ? (
+              <button
+                type="button"
+                className="brcris-chart-card__load-more"
+                title={t("Load more chart items")}
+                aria-label={t("Load more chart items")}
+                onClick={handleLoadMore}
+              >
+                <Plus size={18} />
+              </button>
+            ) : null}
+          </div>
         ) : null}
       </div>
     </div>
