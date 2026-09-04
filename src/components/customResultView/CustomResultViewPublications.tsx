@@ -4,6 +4,7 @@ import {
   formatPublicationYear,
   normalizeText,
 } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import type { Author, Conference, OrgUnit } from "../../types/Entities";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
@@ -15,7 +16,10 @@ const CustomResultViewPublications = ({
 
   return (
     <li className="sui-result">
-      <a onClick={onClickLink} href={`/publications/${result.id.raw}`}>
+      <a
+        onClick={onClickLink}
+        href={withBasePath(`/publications/${result.id.raw}`)}
+      >
         <h2
           dangerouslySetInnerHTML={{
             __html: normalizeText(result.title?.snippet || result.title.raw),

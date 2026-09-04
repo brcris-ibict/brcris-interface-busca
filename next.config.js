@@ -1,9 +1,17 @@
 const { i18n } = require("./next-i18next.config.js");
 
+const configuredBasePath = process.env.NEXT_BASE_PATH?.trim() || "";
+const basePath =
+  !configuredBasePath || configuredBasePath === "/"
+    ? ""
+    : `/${configuredBasePath.replace(/^\/+|\/+$/g, "")}`;
+
 const nextConfig = {
   reactStrictMode: false,
+  basePath,
   // swcMinify: false,
   env: {
+    NEXT_PUBLIC_BASE_PATH: basePath,
     LANGUAGES: process.env.LANGUAGES,
     PUBLIC_RECAPTCHA_SITE_KEY: process.env.PUBLIC_RECAPTCHA_SITE_KEY,
     INDEX_PUBLICATION: process.env.INDEX_PUBLICATION,

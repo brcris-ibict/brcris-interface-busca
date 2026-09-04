@@ -11,6 +11,7 @@ import AllIndexVisNetwork from "../components/AllIndexVisNetwork";
 import DataUpdateModal from "../components/DataUpdateModal";
 import indexes from "../configs/Indexes";
 import { useTheme } from "../contexts/ThemeContext";
+import { withBasePath } from "../lib/basePath";
 import { getIndexStats } from "../services/ElasticSearchStatsService";
 import styles from "../styles/Home.module.css";
 
@@ -32,18 +33,18 @@ export default function App() {
       url: "https://www.gov.br/ibict/pt-br",
       path:
         resolvedTheme === "dark"
-          ? "/logos/logo-ibict-pb.png"
-          : "/logos/logo-ibict.png",
+          ? withBasePath("/logos/logo-ibict-pb.png")
+          : withBasePath("/logos/logo-ibict.png"),
       description: "Logo do IBICT",
     },
     {
       url: "http://www.finep.gov.br/",
-      path: "/logos/finep.png",
+      path: withBasePath("/logos/finep.png"),
       description: "Logo do Finep",
     },
     {
       url: "https://www.fap.df.gov.br/",
-      path: "/logos/fapdf.png",
+      path: withBasePath("/logos/fapdf.png"),
       description: "Logo do FAPDF",
       class: "minus",
     },
@@ -51,24 +52,24 @@ export default function App() {
       url: "https://portal.fiocruz.br/",
       path:
         resolvedTheme === "dark"
-          ? "/logos/logo-fiocruz-pb.png"
-          : "/logos/fiocruz.png",
+          ? withBasePath("/logos/logo-fiocruz-pb.png")
+          : withBasePath("/logos/fiocruz.png"),
       description: "Logo da Fiocruz",
     },
     {
       url: "https://www.gov.br/cnpq/pt-br",
-      path: "/logos/cnpq.png",
+      path: withBasePath("/logos/cnpq.png"),
       description: "Logo do CNPq",
     },
     {
       url: "https://www.fundep.ufmg.br/",
-      path: "/logos/fundep.png",
+      path: withBasePath("/logos/fundep.png"),
       description: "Logo do FUNDEP",
       class: "minus",
     },
     {
       url: "https://www.lareferencia.info/pt/",
-      path: "/logos/lareferencia.png",
+      path: withBasePath("/logos/lareferencia.png"),
       description: "Logo do LA Referencia",
     },
   ];
@@ -110,9 +111,11 @@ export default function App() {
 
           <form
             className="form-search"
-            action={`/${router.locale}/${replaceSpacesWithHyphens(
-              indexLabel.toLowerCase(),
-            )}`}
+            action={withBasePath(
+              `/${router.locale}/${replaceSpacesWithHyphens(
+                indexLabel.toLowerCase(),
+              )}`,
+            )}
           >
             <div className="form-group">
               <div className="custom-select">

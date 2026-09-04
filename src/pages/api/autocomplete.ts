@@ -1,11 +1,11 @@
 import ElasticsearchAPIConnector from "@elastic/search-ui-elasticsearch-connector";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createSearchUiTransporter } from "../../services/ElasticsearchSearchUiTransporter";
 
 function builConnector(index: string) {
   const connector = new ElasticsearchAPIConnector({
-    host: process.env.HOST_ELASTIC,
-    index: index,
-    apiKey: process.env.API_KEY,
+    apiClient: createSearchUiTransporter(index),
+    index,
   });
   return connector;
 }

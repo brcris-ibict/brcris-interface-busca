@@ -1,4 +1,5 @@
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import type { Author } from "../../types/Entities";
 import LattesLink from "./LattesLink";
 
@@ -9,7 +10,7 @@ function AuthorLink({ id, name, idLattes }: Author) {
 
   return (
     <>
-      <a key={id} href={`/people/${id}`}>
+      <a key={id} href={withBasePath(`/people/${id}`)}>
         {displayName}
       </a>
       {idLattes ? <LattesLink lattesId={idLattes!} /> : ""}

@@ -1,16 +1,13 @@
-import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 import logger from "../../services/Logger";
 
-const client = new Client({
-  maxRetries: 5,
-  requestTimeout: 60000,
-  sniffOnStart: true,
-  node: process.env.HOST_ELASTIC,
-  auth: {
-    apiKey: process.env.API_KEY!,
-  },
-});
+const client = createElasticsearchClient();
+
+type Software = {
+  id?: string;
+  title?: string | string[];
+};
 
 const softwareProxy = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -20,20 +17,19 @@ const softwareProxy = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ error: "softwareId is required" });
     }
 
-    const response = await client.search({
+    const response = await client.search<Software>({
       index: process.env.INDEX_SOFTWARE || "",
-      _source: ["title"],
-      body: {
-        query: {
-          match: {
-            id: softwareId,
-          },
+      _source: ["id", "title"],
+      query: {
+        match: {
+          id: softwareId,
         },
       },
     });
 
-    // @ts-expect-error
-    const hits = response.body.hits.hits.map((h) => h._source);
+    const hits = response.hits.hits.flatMap((hit) =>
+      hit._source ? [hit._source] : [],
+    );
 
     if (!hits.length) {
       return res.status(404).json({ error: "Software not found" });

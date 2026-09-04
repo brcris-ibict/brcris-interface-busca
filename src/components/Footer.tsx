@@ -1,3 +1,5 @@
+import { withBasePath } from "../lib/basePath";
+
 function Footer() {
   return (
     <footer id="more">
@@ -118,7 +120,7 @@ function Footer() {
         >
           <picture>
             <img
-              src="/logos/logo-periodo-defeso-transparente.svg"
+              src={withBasePath("/logos/logo-periodo-defeso-transparente.svg")}
               className="logo-rodape logo-periodo-defeso"
               alt="Logo do IBICT - período de defeso"
             />

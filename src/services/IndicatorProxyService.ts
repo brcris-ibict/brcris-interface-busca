@@ -1,3 +1,5 @@
+import { withBasePath } from "../lib/basePath";
+
 class IndicatorProxyService {
   private readonly ONE_DAY_MS = 1000 * 60 * 60 * 24;
 
@@ -57,7 +59,7 @@ class IndicatorProxyService {
     // }
 
     const body = JSON.stringify({ queries, index });
-    const response = await fetch("/api/indicators", {
+    const response = await fetch(withBasePath("/api/indicators"), {
       method: "POST",
       body,
     });

@@ -10,6 +10,7 @@ import {
   normalizeText,
 } from "../../../utils/Utils";
 import NotFound from "../../pages/404";
+import { withBasePath } from "../../lib/basePath";
 import type { OrgUnit, Service } from "../../types/Entities";
 import CopyLink from "../CopyLink";
 import ShowAuthorItem from "../customResultView/ShowAuthorItem";
@@ -136,7 +137,7 @@ export default function PublicationDetails() {
                         className="d-flex align-items-center gap-2 flex-shrink-0"
                       >
                         <img
-                          src="/logos/oasisbr.ico"
+                          src={withBasePath("/logos/oasisbr.ico")}
                           alt="Oasisbr"
                           style={{ width: 20 }}
                         />
@@ -159,7 +160,7 @@ export default function PublicationDetails() {
                         className="d-flex align-items-center gap-2 flex-shrink-0"
                       >
                         <img
-                          src="/logos/DOI_logo.svg"
+                          src={withBasePath("/logos/DOI_logo.svg")}
                           alt="DOI"
                           style={{ width: 20 }}
                         />
@@ -172,12 +173,12 @@ export default function PublicationDetails() {
                   <div className="d-flex align-items-center gap-2 flex-shrink-0">
                     <img
                       className="brcris-logo"
-                      src="/logos/brcris-grafo.svg"
+                      src={withBasePath("/logos/brcris-grafo.svg")}
                       alt="logo do BrCris"
                     />
 
                     <CopyLink
-                      link={`${location.origin}/publications/${result.id.raw}`}
+                      link={`${location.origin}${withBasePath(`/publications/${result.id.raw}`)}`}
                     />
                   </div>
                 )}
@@ -206,7 +207,7 @@ export default function PublicationDetails() {
                   initialCount={5}
                   renderItem={(item: any, idx: number) => (
                     <div key={idx} className="member-item">
-                      <a href={`/people/${item.id}`}>
+                      <a href={withBasePath(`/people/${item.id}`)}>
                         {normalizeText(item?.name)}
                       </a>
                     </div>
@@ -240,7 +241,7 @@ export default function PublicationDetails() {
                       initialCount={5}
                       renderItem={(org: OrgUnit, idx: number) => (
                         <div key={idx}>
-                          <a href={`/organizations/${org.id}`}>
+                          <a href={withBasePath(`/organizations/${org.id}`)}>
                             {normalizeText(org?.name)}
                           </a>
                         </div>
@@ -256,7 +257,10 @@ export default function PublicationDetails() {
                       renderItem={(service: Service, idx: number) => (
                         <div key={idx}>
                           {service.title?.map((title: string) => (
-                            <a key={title} href={`/serv_${service.id}`}>
+                            <a
+                              key={title}
+                              href={withBasePath(`/serv_${service.id}`)}
+                            >
                               {_normalizeScientificTitle(title, "text")}
                             </a>
                           ))}
@@ -272,7 +276,7 @@ export default function PublicationDetails() {
                       initialCount={5}
                       renderItem={(journal: any, idx: number) => (
                         <div key={idx}>
-                          <a href={`/journals/${journal.id}`}>
+                          <a href={withBasePath(`/journals/${journal.id}`)}>
                             {journal.title
                               ? _normalizeScientificTitle(journal.title, "text")
                               : journal}
@@ -307,7 +311,7 @@ export default function PublicationDetails() {
             <ShowItem
               label={t("Affiliation")}
               value={result.sponsorOrgUnit?.raw.map((org: any) => (
-                <a key={org.id} href={`/organizations/${org.id}`}>
+                <a key={org.id} href={withBasePath(`/organizations/${org.id}`)}>
                   {normalizeText(org.name?.[0])}
                 </a>
               ))}
@@ -352,7 +356,7 @@ export default function PublicationDetails() {
                     renderItem={(program: any) => (
                       <>
                         {program.name && (
-                          <a href={`/programs/${program.id}`}>
+                          <a href={withBasePath(`/programs/${program.id}`)}>
                             {normalizeText(program.name)}
                           </a>
                         )}
@@ -371,7 +375,7 @@ export default function PublicationDetails() {
                     initialCount={5}
                     renderItem={(item: any) => (
                       <>
-                        <a href={`/organizations/${item.id}`}>
+                        <a href={withBasePath(`/organizations/${item.id}`)}>
                           {normalizeText(item?.name)}
                         </a>
                       </>

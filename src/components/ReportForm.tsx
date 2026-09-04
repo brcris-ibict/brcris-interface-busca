@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import ReCAPTCHA from "react-google-recaptcha";
 
+import { withBasePath } from "../lib/basePath";
 import { alertService } from "../services/AlertService";
 
 import style from "../styles/Form.module.css";
@@ -100,7 +101,7 @@ function ReportForm() {
         formData.append("file", file);
       });
 
-      const response = await fetch("/api/mail", {
+      const response = await fetch(withBasePath("/api/mail"), {
         method: "POST",
         body: formData,
       });

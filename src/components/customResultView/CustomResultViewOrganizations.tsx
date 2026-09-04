@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useTranslation } from "next-i18next";
 import { normalizeText } from "../../../utils/Utils";
 import { useLibraryInstitutions } from "../../hooks/useLibraryInstitutions";
+import { withBasePath } from "../../lib/basePath";
 import { ORG_LIBRARY_TYPE } from "../../lib/orgunitSearchQuery";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
@@ -43,7 +44,10 @@ const CustomResultViewOrganizations = ({
 
   return (
     <li className="sui-result">
-      <a onClick={onClickLink} href={`/organizations/${result.id.raw}`}>
+      <a
+        onClick={onClickLink}
+        href={withBasePath(`/organizations/${result.id.raw}`)}
+      >
         <h2
           dangerouslySetInnerHTML={{
             __html:

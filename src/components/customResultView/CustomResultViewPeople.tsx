@@ -1,5 +1,6 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import type { OrgUnit } from "../../types/Entities";
 import {
   getFieldTextValue,
@@ -17,7 +18,7 @@ const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
 
   return (
     <li className="sui-result">
-      <a onClick={onClickLink} href={`/people/${result.id.raw}`}>
+      <a onClick={onClickLink} href={withBasePath(`/people/${result.id.raw}`)}>
         <h2
           dangerouslySetInnerHTML={{
             __html: normalizeText(result.name.snippet || result.name.raw),
@@ -52,9 +53,7 @@ const CustomResultViewPeople = ({ result, onClickLink }: ResultViewProps) => {
           </span>
         )}
         {isVisible("memberOf") && hasFieldValue(record, "memberOf") && (
-          <span>
-            {normalizeText(getFieldTextValue(record, "memberOf"))}
-          </span>
+          <span>{normalizeText(getFieldTextValue(record, "memberOf"))}</span>
         )}
       </div>
     </li>

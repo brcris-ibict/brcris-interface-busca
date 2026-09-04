@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { withBasePath } from "../lib/basePath";
 
 type PersonIdentifiers = {
   id: string;
@@ -19,7 +20,7 @@ export function usePersonIdentifiers(ids: string[]) {
       setLoading(true);
 
       try {
-        const res = await fetch("/api/consulta-autores", {
+        const res = await fetch(withBasePath("/api/consulta-autores"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -5,6 +5,7 @@ import { useTranslation } from "next-i18next";
 import { useContext, useRef, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
+import { withBasePath } from "../lib/basePath";
 import { alertService } from "../services/AlertService";
 import ExportService from "../services/ExportService";
 import type { CustomSearchQuery } from "../types/Entities";
@@ -153,7 +154,9 @@ const DownloadModal = ({
   }
 
   function getDownloadLink(file: any) {
-    return `/api/download?fileName=${file}&indexName=${getIndexName()}`;
+    return withBasePath(
+      `/api/download?fileName=${file}&indexName=${getIndexName()}`,
+    );
   }
 
   return (

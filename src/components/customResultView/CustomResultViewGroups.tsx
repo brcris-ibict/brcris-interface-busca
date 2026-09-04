@@ -1,6 +1,7 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { useMemo } from "react";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import type { OrgUnit } from "../../types/Entities";
 import {
   getFieldTextValue,
@@ -17,7 +18,10 @@ const CustomResultViewGroups = ({ result, onClickLink }: ResultViewProps) => {
 
   return (
     <li className="sui-result">
-      <a onClick={onClickLink} href={`/research-groups/${result.id.raw}`}>
+      <a
+        onClick={onClickLink}
+        href={withBasePath(`/research-groups/${result.id.raw}`)}
+      >
         <h2
           dangerouslySetInnerHTML={{
             __html: normalizedName,
