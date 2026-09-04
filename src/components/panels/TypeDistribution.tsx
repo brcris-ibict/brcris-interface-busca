@@ -6,12 +6,14 @@ import { ChartBar, ChartPie } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByTypePoint } from "../../types/PublicationsDashboard";
 import ChartFeedback from "./ChartFeedback";
-import { PANEL_CHART_COLORS } from "./publicationsChartConfig";
+import { getPublicationTypeStyle } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
+// Tipos de gráficos disponíveis
 type ChartKind = "pie" | "bar";
 
+// Botões de seleção de tipo de gráfico
 const TOGGLES: {
   kind: ChartKind;
   Icon: typeof ChartPie;
@@ -21,15 +23,24 @@ const TOGGLES: {
   { kind: "bar", Icon: ChartBar, labelKey: "Chart horizontal bars" },
 ];
 
+// Props do componente
 type Props = {
   data: PublicationsByTypePoint[];
+  totalPublications?: number;
   loading: boolean;
   error: boolean;
   height?: number;
 };
 
+// Função responsável por calcular o percentual de uma quantidade em relação a um total
+function percentOfTotal(count: number, total: number) {
+  if (total <= 0) return 0;
+  return Number(((count / total) * 100).toFixed(2));
+}
+
 export default function TypeDistribution({
   data,
+  totalPublications,
   loading,
   error,
   height = 380,
@@ -41,24 +52,33 @@ export default function TypeDistribution({
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
 
+  // Responsável por construir a opção do gráfico, de acordo com o tipo de gráfico selecionado
   const option = useMemo<EChartsOption>(() => {
     const common = {
-      color: PANEL_CHART_COLORS,
       textStyle: {
         fontFamily: '"rawline", helvetica, arial, sans-serif',
         color: textMuted,
       },
     };
-    const total = data.reduce((sum, item) => sum + item.count, 0);
+    const bucketsTotal = data.reduce((sum, item) => sum + item.count, 0);
+    const total = totalPublications ?? bucketsTotal;
     const textMain = resolvedTheme === "dark" ? "#e5e7eb" : "#333333";
-    const cardBg = resolvedTheme === "dark" ? "#171b22" : "#fefefe";
 
+    // Construção do gráfico de pizza
     if (chartKind === "pie") {
       return {
         ...common,
         tooltip: {
           trigger: "item",
-          formatter: "{b}: {c} ({d}%)",
+          formatter: (params) => {
+            const item = params as {
+              name?: string;
+              value?: number;
+              data?: { percentOfUnique?: number };
+            };
+            const percent = item.data?.percentOfUnique ?? 0;
+            return `${item.name}: ${Number(item.value).toLocaleString("pt-BR")} (${percent}%)`;
+          },
         },
         legend: { show: false },
         graphic: [
@@ -93,15 +113,21 @@ export default function TypeDistribution({
             type: "pie",
             radius: ["48%", "68%"],
             center: ["50%", "50%"],
-            padAngle: 2,
+            padAngle: 1,
             avoidLabelOverlap: true,
             itemStyle: {
-              borderColor: cardBg,
-              borderWidth: 3,
+              borderWidth: 1,
             },
             label: {
               show: true,
-              formatter: "{b}\n{d}%",
+              formatter: (params) => {
+                const item = params as {
+                  name?: string;
+                  data?: { percentOfUnique?: number };
+                };
+                const percent = item.data?.percentOfUnique ?? 0;
+                return `${item.name}\n${percent}%`;
+              },
               color: textMuted,
               fontSize: 11,
               lineHeight: 16,
@@ -112,15 +138,25 @@ export default function TypeDistribution({
               length2: 8,
               lineStyle: { color: gridColor, width: 1 },
             },
-            data: data.map((item) => ({
-              name: t(item.type),
-              value: item.count,
-            })),
+            data: data.map((item) => {
+              const style = getPublicationTypeStyle(item.type);
+              return {
+                name: t(item.type),
+                value: item.count,
+                percentOfUnique: percentOfTotal(item.count, total),
+                itemStyle: {
+                  color: style.color,
+                  borderColor: style.borderColor,
+                  borderWidth: 1,
+                },
+              };
+            }),
           },
         ],
       };
     }
 
+    // Construção do gráfico de barras
     return {
       ...common,
       tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
@@ -149,10 +185,22 @@ export default function TypeDistribution({
       series: [
         {
           type: "bar",
-          data: data.map((item) => item.count).reverse(),
+          data: data
+            .map((item) => {
+              const style = getPublicationTypeStyle(item.type);
+              return {
+                value: item.count,
+                itemStyle: {
+                  color: style.color,
+                  borderColor: style.borderColor,
+                  borderWidth: 1,
+                  borderRadius: 0,
+                },
+              };
+            })
+            .reverse(),
           barMaxWidth: 32,
           barCategoryGap: "22%",
-          itemStyle: { borderRadius: 0 },
           label: {
             show: true,
             position: "right",
@@ -163,10 +211,10 @@ export default function TypeDistribution({
         },
       ],
     };
-  }, [data, chartKind, textMuted, gridColor, resolvedTheme, t]);
+  }, [data, chartKind, textMuted, gridColor, resolvedTheme, t, totalPublications]);
 
   return (
-    <div className="brcris-chart-card">
+    <div className="brcris-chart-card" style={{ height: `500px` }}>
       <div className="brcris-chart-card__header">
         <h2 className="brcris-chart-card__title">
           {t("Publications by type composition")}
@@ -198,6 +246,14 @@ export default function TypeDistribution({
         />
         {!loading && !error && data.length > 0 ? (
           <EChart option={option} height={height} />
+        ) : null}
+
+        {!loading && !error && data.length > 0 ? (
+          <div className="brcris-chart-card__footer">
+            <span className="brcris-chart-card__meta">
+              {t("A publication may have more than one type")}
+            </span>
+          </div>
         ) : null}
       </div>
     </div>

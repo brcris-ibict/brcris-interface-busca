@@ -6,12 +6,14 @@ import { BarChart3, ChartArea, LineChart } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsAnnualByTypePoint } from "../../types/PublicationsDashboard";
 import ChartFeedback from "./ChartFeedback";
-import { PANEL_CHART_COLORS } from "./publicationsChartConfig";
+import { getPublicationTypeStyle } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
+// Tipos de gráficos disponíveis
 type ChartKind = "bar" | "line" | "area";
 
+// Botões de seleção de tipo de gráfico
 const TOGGLES: {
   kind: ChartKind;
   Icon: typeof BarChart3;
@@ -22,6 +24,7 @@ const TOGGLES: {
   { kind: "area", Icon: ChartArea, labelKey: "Chart area" },
 ];
 
+// Props do componente
 type Props = {
   data: PublicationsAnnualByTypePoint[];
   loading: boolean;
@@ -45,6 +48,7 @@ export default function AnnualByTypeDistribution({
 
   const years = useMemo(() => data.map((point) => point.year), [data]);
 
+  // Retorna os tipos de publicação únicos
   const typeNames = useMemo(() => {
     const names = new Set<string>();
 
@@ -56,9 +60,11 @@ export default function AnnualByTypeDistribution({
     
   }, [data]);
 
+  // Responsável por construir a opção do gráfico, de acordo com o tipo de gráfico selecionado
   const option = useMemo<EChartsOption>(() => {
     const countByYearAndType = new Map<string, number>();
 
+    // Contabiliza a quantidade de publicações por ano e tipo
     data.forEach((point) => {
       point.types.forEach((item) => {
         countByYearAndType.set(`${point.year}::${item.type}`, item.count);
@@ -66,7 +72,6 @@ export default function AnnualByTypeDistribution({
     });
 
     return {
-      color: PANEL_CHART_COLORS,
       textStyle: {
         fontFamily: '"rawline", helvetica, arial, sans-serif',
         color: textMuted,
@@ -106,31 +111,41 @@ export default function AnnualByTypeDistribution({
           lineStyle: { color: gridColor, type: "solid", width: 1 },
         },
       },
-      series: typeNames.map((typeName) => ({
-        name: typeName,
-        type: seriesType,
-        stack: "annualByType",
-        emphasis: { focus: "series" },
-        data: years.map(
-          (year) => countByYearAndType.get(`${year}::${typeName}`) ?? 0,
-        ),
-        ...(chartKind === "bar"
-          ? { barMaxWidth: 36 }
-          : {
-              smooth: false,
-              symbol: "circle",
-              symbolSize: 4,
-              lineStyle: { width: 2 },
-              ...(chartKind === "area"
-                ? { areaStyle: { opacity: 0.35 } }
-                : {}),
-            }),
-      })),
+      series: typeNames.map((typeName) => {
+        const style = getPublicationTypeStyle(typeName);
+        return {
+          name: t(typeName),
+          type: seriesType,
+          stack: "annualByType",
+          emphasis: { focus: "series" },
+          data: years.map(
+            (year) => countByYearAndType.get(`${year}::${typeName}`) ?? 0,
+          ),
+          itemStyle: {
+            color: style.color,
+            borderColor: style.borderColor,
+            borderWidth: 1,
+          },
+          ...(chartKind === "bar"
+            ? { barMaxWidth: 36 }
+            : {
+                smooth: false,
+                symbol: "circle",
+                symbolSize: 4,
+                lineStyle: { width: 2, color: style.borderColor },
+                ...(chartKind === "area"
+                  ? { areaStyle: { color: style.color, opacity: 1 } }
+                  : {}),
+              }),
+        };
+      }),
     };
-  }, [data, years, typeNames, chartKind, seriesType, textMuted, gridColor]);
+  }, [data, years, typeNames, chartKind, seriesType, textMuted, gridColor, t]);
 
+  // Verifica se o gráfico está vazio
   const empty = !loading && !error && (data.length === 0 || typeNames.length === 0);
 
+  // Retorna o componente do gráfico
   return (
     <div className="brcris-chart-card">
       <div className="brcris-chart-card__header">

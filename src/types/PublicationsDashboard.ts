@@ -49,6 +49,16 @@ export type PublicationsTopJournalsArticles = {
   items: PublicationsTopJournalPoint[];
 };
 
+export type PublicationsAuthorPoint = {
+  rank: number;
+  author: string;
+  count: number;
+};
+
+export type PublicationsAuthors = {
+  items: PublicationsAuthorPoint[];
+};
+
 export type PublicationsDashboardSummary = {
   total: number;
   lastYear: string;
@@ -69,6 +79,7 @@ export type PublicationsDashboardResponse = {
   byLanguage: PublicationsByLanguagePoint[];
   byInstitution: PublicationsByInstitutionPoint[];
   topJournalsArticles: PublicationsTopJournalsArticles;
+  authors: PublicationsAuthors;
   filterOptions: PublicationsDashboardFilterOptions;
 };
 

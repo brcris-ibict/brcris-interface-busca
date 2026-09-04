@@ -43,6 +43,7 @@ type DashboardAggregations = {
     doc_count?: number;
     byJournal?: TermsAggregation;
   };
+  topAuthors?: TermsAggregation;
   filterOptions?: {
     withoutFutureYears?: {
       publicationDates?: TermsAggregation;
@@ -273,10 +274,17 @@ export default async function handler(
             byJournal: {
               terms: {
                 field: "journal.title",
-                size: 10,
+                size: 10000,
                 order: { _count: "desc" },
               },
             },
+          },
+        },
+        topAuthors: {
+          terms: {
+            field: "author.name",
+            size: 10000,
+            order: { _count: "desc" },
           },
         },
         filterOptions: {
@@ -378,6 +386,15 @@ export default async function handler(
       })),
     };
 
+    const authorBuckets = getBuckets(aggregations?.topAuthors);
+    const authors = {
+      items: authorBuckets.map((bucket, index) => ({
+        rank: index + 1,
+        author: getBucketKey(bucket),
+        count: bucket.doc_count,
+      })),
+    };
+
     return res.status(200).json({
       total,
       publicationsWithoutInstitution: aggregations?.publicationsWithoutInstitution?.doc_count ?? 0,
@@ -396,6 +413,7 @@ export default async function handler(
       byLanguage,
       byInstitution,
       topJournalsArticles,
+      authors,
       filterOptions: {
         publicationDates: getBuckets(
           aggregations?.filterOptions?.withoutFutureYears?.publicationDates,

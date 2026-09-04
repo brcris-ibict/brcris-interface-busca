@@ -2,16 +2,22 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "next-i18next";
 import type { EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
-import { ChartBar, ChartPie, Plus } from "lucide-react";
+import { ChartBar, ChartPie, Plus, RotateCcw } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByInstitutionPoint } from "../../types/PublicationsDashboard";
 import ChartFeedback from "./ChartFeedback";
-import { PANEL_CHART_COLORS } from "./publicationsChartConfig";
+import {
+  PRIMARY_CHART_COLOR,
+  getPanelSeriesStyle,
+  hexToRgba,
+} from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
+// Tipos de gráficos disponíveis
 type ChartKind = "pie" | "bar";
 
+// Botões de seleção de tipo de gráfico
 const TOGGLES: {
   kind: ChartKind;
   Icon: typeof ChartPie;
@@ -21,6 +27,7 @@ const TOGGLES: {
   { kind: "bar", Icon: ChartBar, labelKey: "Chart horizontal bars" },
 ];
 
+// Props do componente
 type Props = {
   data: PublicationsByInstitutionPoint[];
   totalPublications?: number;
@@ -30,16 +37,32 @@ type Props = {
   height?: number;
 };
 
+// Altura das linhas do gráfico de barras
+// Existe porque o gráfico de barras é scrollável
+// Está relacionada a função handleLoadMore
 const BAR_ROW_HEIGHT = 52;
+
+// Quantidade de itens visíveis por página
 const PAGE_SIZE = 10;
+
+// Limite de caracteres para o nome da instituição
 const LABEL_MAX_CHARS = 32;
+
+// Limite de itens para o gráfico de pizza
 const PIE_SLICE_LIMIT = 10;
 
+// Função responsável por abreviar o nome da instituição
+// Aqui faz o truncate do nome da instituição
 function shortenLabel(name: string) {
   if (name.length <= LABEL_MAX_CHARS) return name;
   return `${name.slice(0, LABEL_MAX_CHARS - 1)}…`;
 }
 
+// Função responsável por construir os dados para o gráfico de pizza
+// O gráfico apresenta as 10 instituições com mais publicações e as outras instituições
+// O objetivo de forma destacada as 10 mais que publicam e quanto isso representa em relação ao todo,
+// as que estão fora do top 10 e quanto isso representa em relação ao todo,
+// e a instituição sem vinculo com uma instituição de referência e quanto isso representa em relação ao todo.
 function buildInstitutionPieSeries(
   data: PublicationsByInstitutionPoint[],
   topInstitutionsLabel: string,
@@ -48,15 +71,17 @@ function buildInstitutionPieSeries(
   totalPublications?: number,
   publicationsWithoutInstitution = 0,
 ) {
-  const topInstitutionsCount = data
-    .slice(0, PIE_SLICE_LIMIT)
-    .reduce((sum, item) => sum + item.count, 0);
-  const othersInstitutionsCount = data
-    .slice(PIE_SLICE_LIMIT)
-    .reduce((sum, item) => sum + item.count, 0);
+  const topInstitutionsCount = data.slice(0, PIE_SLICE_LIMIT).reduce((sum, item) => sum + item.count, 0); // Soma a quantidade de publicações por instituição
+  const othersInstitutionsCount = data.slice(PIE_SLICE_LIMIT).reduce((sum, item) => sum + item.count, 0); // Soma as outras instituições
 
-  const series: { name: string; value: number }[] = [];
+  // Array de dados para o gráfico de pizza
+  const series: {
+    name: string;
+    value: number;
+    isWithoutInstitution?: boolean;
+  }[] = [];
 
+  // Parte 1) Adiciona a instituição com mais publicações
   if (topInstitutionsCount > 0) {
     series.push({
       name: topInstitutionsLabel,
@@ -64,6 +89,7 @@ function buildInstitutionPieSeries(
     });
   }
 
+  // Parte 2) Adiciona as outras instituições
   if (othersInstitutionsCount > 0) {
     series.push({
       name: othersLabel,
@@ -71,19 +97,25 @@ function buildInstitutionPieSeries(
     });
   }
 
+  // Parte 3) Adiciona a instituição sem vinculo com uma instituição de referência
   if (publicationsWithoutInstitution > 0) {
     series.push({
       name: withoutInstitutionLabel,
       value: publicationsWithoutInstitution,
+      isWithoutInstitution: true,
     });
   }
 
+  // Soma a quantidade total de publicações por instituição
   const institutionsTotal = data.reduce((sum, item) => sum + item.count, 0);
+
+  // Soma a quantidade total de publicações por instituição e a instituição sem vinculo com uma instituição de referência
   const total = totalPublications ?? institutionsTotal + publicationsWithoutInstitution;
 
   return { series, total };
 }
 
+// Componente principal
 export default function InstitutionDistribution({
   data,
   totalPublications,
@@ -97,19 +129,29 @@ export default function InstitutionDistribution({
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
+  // Atualiza a quantidade de itens visíveis quando os dados mudam
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
   }, [data]);
 
+  // Retorna os dados visíveis
   const visibleData = useMemo(
     () => data.slice(0, visibleCount),
     [data, visibleCount],
   );
 
-  const hasMore = visibleData.length < data.length;
+  const hasMore = visibleData.length < data.length; // Verifica se ainda existem mais itens para carregar
 
+  // Carrega mais itens quando o usuário clica no botão "Carregar mais"
   const handleLoadMore = () => {
     setVisibleCount((current) => Math.min(current + PAGE_SIZE, data.length));
+  };
+
+  const canReset = visibleCount > PAGE_SIZE; // Verifica se ainda existem itens para resetar
+
+  // Reseta a quantidade de itens visíveis
+  const handleReset = () => {
+    setVisibleCount(PAGE_SIZE);
   };
 
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
@@ -118,9 +160,9 @@ export default function InstitutionDistribution({
 
   const hasChartData = data.length > 0 || publicationsWithoutInstitution > 0;
 
+  // Responsável por construir a opção do gráfico, de acordo com o tipo de gráfico selecionado
   const option = useMemo<EChartsOption>(() => {
     const common = {
-      color: PANEL_CHART_COLORS,
       textStyle: {
         fontFamily: '"rawline", helvetica, arial, sans-serif',
         color: textMuted,
@@ -128,8 +170,9 @@ export default function InstitutionDistribution({
     };
     const chartData = visibleData;
     const textMain = resolvedTheme === "dark" ? "#e5e7eb" : "#333333";
-    const cardBg = resolvedTheme === "dark" ? "#171b22" : "#fefefe";
+    const withoutInstitutionColor = resolvedTheme === "dark" ? "#6b7280" : "#9ca3af";
 
+    // Construção do gráfico de pizza
     if (chartKind === "pie") {
       const { series: pieSeriesData, total } = buildInstitutionPieSeries(
         data,
@@ -186,11 +229,10 @@ export default function InstitutionDistribution({
             type: "pie",
             radius: ["48%", "68%"],
             center: ["50%", "50%"],
-            padAngle: 2,
+            padAngle: 1,
             avoidLabelOverlap: true,
             itemStyle: {
-              borderColor: cardBg,
-              borderWidth: 3,
+              borderWidth: 1,
             },
             label: {
               show: true,
@@ -208,7 +250,29 @@ export default function InstitutionDistribution({
               length2: 8,
               lineStyle: { color: gridColor, width: 1 },
             },
-            data: pieSeriesData,
+            data: pieSeriesData.map((item, index) => {
+              if (item.isWithoutInstitution) {
+                return {
+                  name: item.name,
+                  value: item.value,
+                  itemStyle: {
+                    color: withoutInstitutionColor,
+                    borderColor: withoutInstitutionColor,
+                    borderWidth: 1,
+                  },
+                };
+              }
+              const style = getPanelSeriesStyle(index);
+              return {
+                name: item.name,
+                value: item.value,
+                itemStyle: {
+                  color: style.color,
+                  borderColor: style.borderColor,
+                  borderWidth: 1,
+                },
+              };
+            }),
           },
         ],
       };
@@ -216,8 +280,8 @@ export default function InstitutionDistribution({
 
     const fullNames = chartData.map((item) => item.institution).reverse();
     const shortLabels = fullNames.map(shortenLabel);
-    const values = chartData.map((item) => item.count).reverse();
 
+    // Construção do gráfico de barras
     return {
       ...common,
       tooltip: {
@@ -262,10 +326,15 @@ export default function InstitutionDistribution({
       series: [
         {
           type: "bar",
-          data: values,
+          data: chartData.map((item) => item.count).reverse(),
           barMaxWidth: 44,
           barCategoryGap: "32%",
-          itemStyle: { borderRadius: 0 },
+          itemStyle: {
+            color: hexToRgba(PRIMARY_CHART_COLOR, 0.28),
+            borderColor: PRIMARY_CHART_COLOR,
+            borderWidth: 1,
+            borderRadius: 0,
+          },
           label: {
             show: true,
             position: "right",
@@ -277,20 +346,10 @@ export default function InstitutionDistribution({
         },
       ],
     };
-  }, [
-    data,
-    visibleData,
-    chartKind,
-    textMuted,
-    gridColor,
-    resolvedTheme,
-    t,
-    totalPublications,
-    publicationsWithoutInstitution,
-  ]);
+  }, [data, visibleData, chartKind, textMuted, gridColor, resolvedTheme, t, totalPublications, publicationsWithoutInstitution]);
 
   return (
-    <div className="brcris-chart-card">
+    <div className="brcris-chart-card" style={{ height: `500px` }}>
       <div className="brcris-chart-card__header">
         <h2 className="brcris-chart-card__title">
           {t("Publications by institution composition")}
@@ -321,20 +380,36 @@ export default function InstitutionDistribution({
           empty={!hasChartData}
         />
         {!loading && !error && hasChartData ? (
-          chartKind === "bar" ? (
-            <div
-              className="brcris-chart-card__scroll"
-              style={{ maxHeight: height }}
-            >
-              <EChart option={option} height={barChartHeight} />
-            </div>
-          ) : (
-            <EChart option={option} height={height} />
-          )
+          <div
+            className={
+              chartKind === "bar" ? "brcris-chart-card__scroll" : undefined
+            }
+            style={
+              chartKind === "bar" ? { maxHeight: height } : undefined
+            }
+          >
+            <EChart
+              key={chartKind === "bar" ? `bar-${visibleCount}` : "pie"}
+              option={option}
+              height={chartKind === "bar" ? barChartHeight : height}
+            />
+          </div>
         ) : null}
 
         {!loading && !error && hasChartData && chartKind === "bar" ? (
           <div className="brcris-chart-card__footer">
+            {canReset ? (
+              <button
+                type="button"
+                className="brcris-chart-card__load-more brcris-chart-card__footer-reset"
+                title={t("Reset chart items")}
+                aria-label={t("Reset chart items")}
+                onClick={handleReset}
+              >
+                <RotateCcw size={18} />
+              </button>
+            ) : null}
+
             <span className="brcris-chart-card__meta">
               {t("Showing chart items of total", {
                 visible: visibleData.length,
@@ -342,17 +417,19 @@ export default function InstitutionDistribution({
               })}
             </span>
 
-            {hasMore ? (
-              <button
-                type="button"
-                className="brcris-chart-card__load-more"
-                title={t("Load more chart items")}
-                aria-label={t("Load more chart items")}
-                onClick={handleLoadMore}
-              >
-                <Plus size={18} />
-              </button>
-            ) : null}
+            <div className="brcris-chart-card__pager">
+              {hasMore ? (
+                <button
+                  type="button"
+                  className="brcris-chart-card__load-more"
+                  title={t("Load more chart items")}
+                  aria-label={t("Load more chart items")}
+                  onClick={handleLoadMore}
+                >
+                  <Plus size={18} />
+                </button>
+              ) : null}
+            </div>
           </div>
         ) : null}
       </div>

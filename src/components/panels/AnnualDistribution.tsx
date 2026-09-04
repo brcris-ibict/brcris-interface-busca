@@ -10,8 +10,10 @@ import { PRIMARY_CHART_COLOR, hexToRgba } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
+// Tipos de gráficos disponíveis
 type ChartKind = "bar" | "line" | "area";
 
+// Botões de seleção de tipo de gráfico
 const TOGGLES: {
   kind: ChartKind;
   Icon: typeof BarChart3;
@@ -22,6 +24,7 @@ const TOGGLES: {
   { kind: "area", Icon: ChartArea, labelKey: "Chart area" },
 ];
 
+// Props do componente
 type Props = {
   data: PublicationsByYearPoint[];
   loading: boolean;
@@ -43,6 +46,7 @@ export default function AnnualDistribution({
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
   const seriesType = chartKind === "area" ? "line" : chartKind;
 
+  // Responsável por construir a opção do gráfico, de acordo com o tipo de gráfico selecionado
   const option = useMemo<EChartsOption>(
     () => ({
       color: [PRIMARY_CHART_COLOR],
@@ -85,7 +89,12 @@ export default function AnnualDistribution({
           data: data.map((point) => point.count),
           barMaxWidth: 48,
           barCategoryGap: "28%",
-          itemStyle: { color: PRIMARY_CHART_COLOR, borderRadius: 0 },
+          itemStyle: {
+            color: hexToRgba(PRIMARY_CHART_COLOR, 0.2),
+            borderColor: PRIMARY_CHART_COLOR,
+            borderWidth: 1,
+            borderRadius: 0,
+          },
           ...(chartKind === "line" || chartKind === "area"
             ? {
                 smooth: false,

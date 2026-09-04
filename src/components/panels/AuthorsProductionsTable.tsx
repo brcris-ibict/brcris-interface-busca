@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "next-i18next";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { PublicationsTopJournalsArticles } from "../../types/PublicationsDashboard";
+import type { PublicationsAuthors } from "../../types/PublicationsDashboard";
 import ChartFeedback from "./ChartFeedback";
 
 // Props do componente
 type Props = {
-  data?: PublicationsTopJournalsArticles;
+  data?: PublicationsAuthors;
   loading: boolean;
   error: boolean;
 };
@@ -19,16 +19,7 @@ function formatNumber(value: number, locale: string) {
   return new Intl.NumberFormat(locale).format(value);
 }
 
-// Função responsável por formatar um número em relação ao locale
-function formatShare(value: number, locale: string) {
-  return new Intl.NumberFormat(locale, {
-    minimumFractionDigits: value % 1 === 0 ? 0 : 1,
-    maximumFractionDigits: 1,
-  }).format(value);
-}
-
-// Componente principal
-export default function TopJournalsArticlesTable({
+export default function AuthorsProductionsTable({
   data,
   loading,
   error,
@@ -60,7 +51,7 @@ export default function TopJournalsArticlesTable({
     const windowSize = 5;
     const start = Math.max(1, Math.min(page - 2, totalPages - windowSize + 1));
     const end = Math.min(totalPages, start + windowSize - 1);
-    
+
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
   }, [page, totalPages]);
@@ -68,11 +59,9 @@ export default function TopJournalsArticlesTable({
   return (
     <div className="brcris-chart-card brcris-panel-table">
       <div className="brcris-panel-table__header">
-        <h3 className="brcris-chart-card__title">
-          {t("Top 10 journals articles")}
-        </h3>
+        <h3 className="brcris-chart-card__title">{t("Authors")}</h3>
         <p className="brcris-panel-table__caption">
-          {t("Top journals in selected range")}
+          {t("Authors productions in selected range")}
         </p>
       </div>
 
@@ -90,26 +79,20 @@ export default function TopJournalsArticlesTable({
               <table className="brcris-panel-table__table">
                 <thead>
                   <tr>
-                    <th scope="col">{t("Position")}</th>
-                    <th scope="col">{t("Publication vehicle")}</th>
+                    <th scope="col">#</th>
+                    <th scope="col">{t("Authors")}</th>
                     <th scope="col" className="is-numeric">
                       {t("Productions")}
-                    </th>
-                    <th scope="col" className="is-numeric">
-                      {t("Participation")}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {pageItems.map((item) => (
-                    <tr key={`${item.rank}-${item.journal}`}>
-                      <td>{`${item.rank}º`}</td>
-                      <td>{item.journal}</td>
+                    <tr key={`${item.rank}-${item.author}`}>
+                      <td>{item.rank}</td>
+                      <td>{item.author}</td>
                       <td className="is-numeric">
                         {formatNumber(item.count, locale)}
-                      </td>
-                      <td className="is-numeric">
-                        {`${formatShare(item.share, locale)}%`}
                       </td>
                     </tr>
                   ))}

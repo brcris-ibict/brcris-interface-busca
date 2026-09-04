@@ -8,6 +8,7 @@ import AnnualDistribution from "../../components/panels/AnnualDistribution";
 import InstitutionDistribution from "../../components/panels/InstitutionDistribution";
 import LanguageDistribution from "../../components/panels/LanguageDistribution";
 import TopJournalsArticlesTable from "../../components/panels/TopJournalsArticlesTable";
+import AuthorsProductionsTable from "../../components/panels/AuthorsProductionsTable";
 import TypeDistribution from "../../components/panels/TypeDistribution";
 import PublicationsBigNumbers from "../../components/panels/PublicationsBigNumbers";
 import PublicationsFilters from "../../components/panels/PublicationsFilters";
@@ -107,6 +108,7 @@ export default function Publications() {
               <div className="col-12 col-lg-4">
                 <TypeDistribution
                   data={data?.byType ?? []}
+                  totalPublications={data?.total}
                   loading={loading}
                   error={Boolean(error)}
                 />
@@ -133,9 +135,16 @@ export default function Publications() {
                   error={Boolean(error)}
                 />
               </div>
-              <div className="col-12">
+              <div className="col-12 col-lg-6">
                 <TopJournalsArticlesTable
                   data={data?.topJournalsArticles}
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <AuthorsProductionsTable
+                  data={data?.authors}
                   loading={loading}
                   error={Boolean(error)}
                 />

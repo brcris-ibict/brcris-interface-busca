@@ -2103,11 +2103,26 @@ h3.popover-header a {
 }
 
 .brcris-chart-card__footer {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+  min-height: 2rem;
   padding: 0.5rem 0 0.15rem;
+}
+
+.brcris-chart-card__footer-reset {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.brcris-chart-card__pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .brcris-chart-card__load-more {
@@ -2379,4 +2394,48 @@ h3.popover-header a {
 .brcris-panel-table__table td:first-child {
   width: 4.5rem;
   white-space: nowrap;
+}
+
+.brcris-panel-table__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.75rem 0 0.15rem;
+}
+
+.brcris-panel-table__page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.4rem;
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--border-radius) - 0.35rem);
+  background: var(--bg);
+  color: var(--text-secondary-color);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.brcris-panel-table__page-btn:hover:not(:disabled) {
+  border-color: var(--secondary-color);
+  color: var(--primary-color);
+}
+
+.brcris-panel-table__page-btn.is-active {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.brcris-panel-table__page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.brcris-panel-table__page-ellipsis {
+  color: var(--text-secondary-color);
+  font-size: 0.8rem;
 }
