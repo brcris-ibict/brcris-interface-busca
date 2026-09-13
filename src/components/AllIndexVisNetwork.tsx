@@ -11,8 +11,7 @@ import indexes from "../configs/Indexes";
 import { useTheme } from "../contexts/ThemeContext";
 import ElasticSearchStatsService from "../services/ElasticSearchStatsService";
 
-// @ts-expect-error
-const Graph = dynamic(import("react-graph-vis"), { ssr: false });
+const Graph = dynamic(() => import("react-graph-vis"), { ssr: false });
 
 type IndexStat = {
   index: string;

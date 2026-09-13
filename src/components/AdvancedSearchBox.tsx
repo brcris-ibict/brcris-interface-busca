@@ -15,20 +15,27 @@ function fieldSupportsFuzzy(fieldLabel: string): boolean {
   if (!fieldLabel || fieldLabel === "Select") return false;
   const key = findPropertyByValue(fieldLabel);
   return (
-    key.endsWith("_text") || key === "keyword" || key === "keywords"
+    key.endsWith("_text") ||
+    key === "name" ||
+    key === "keyword" ||
+    key === "keywords" ||
+    key === "publisher" ||
+    key === "researchArea"
   );
+}
+
+function isQuoted(value: string): boolean {
+  return value.startsWith('"') && value.endsWith('"') && value.length > 1;
 }
 
 function formatQueryValue(row: QueryItem): string {
   const value = row.value.trim();
-  if (!row.isFuzzy) return value;
-  if (
-    (value.startsWith('"') && value.endsWith('"')) ||
-    value.endsWith("~")
-  ) {
-    return value;
+  if (row.isFuzzy) {
+    if (isQuoted(value) || value.endsWith("~")) return value;
+    return `${value}~`;
   }
-  return `${value}~`;
+  if (isQuoted(value) || !/\s/.test(value)) return value;
+  return `"${value.replaceAll('"', "")}"`;
 }
 
 const AdvancedSearchBox = ({
@@ -59,18 +66,22 @@ const AdvancedSearchBox = ({
     index: number,
     { value, operator, field, isFuzzy }: QueryItem,
   ) => {
-    const newInputs = [...inputs];
-    if (value !== undefined) {
-      newInputs[index].value = value;
-    } else if (operator) {
-      newInputs[index].operator = operator;
-    } else if (field) {
-      newInputs[index].field = field;
-      newInputs[index].isFuzzy = false;
-    } else if (isFuzzy !== undefined) {
-      newInputs[index].isFuzzy = isFuzzy;
-    }
-    setInputs(newInputs);
+    setInputs((prev) => {
+      const next = [...prev];
+      const current = { ...next[index] };
+      if (value !== undefined) {
+        current.value = value;
+      } else if (operator) {
+        current.operator = operator;
+      } else if (field) {
+        current.field = field;
+        current.isFuzzy = false;
+      } else if (isFuzzy !== undefined) {
+        current.isFuzzy = isFuzzy;
+      }
+      next[index] = current;
+      return next;
+    });
   };
 
   const handleSubmit = (event: FormEvent) => {
