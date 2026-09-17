@@ -1,72 +1,72 @@
-name: Deploy dev-homol-prod
+# name: Deploy dev-homol-prod
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
 
-env:
-  HOST_ELASTIC: ${{secrets.HOST_ELASTIC}}
-  API_KEY: ${{secrets.API_KEY}}
-  MAIL_HOST: ${{secrets.MAIL_HOST}}
-  MAIL_SENDER: ${{secrets.MAIL_SENDER}}
-  MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
-  MAIL_PORT: ${{secrets.MAIL_PORT}}
-  MAIL_RECIPIENT: ${{secrets.MAIL_RECIPIENT}}
-  RECAPTCHA_SECRET_KEY: ${{secrets.RECAPTCHA_SECRET_KEY}}
-  BRCRIS_HOST_BASE: ${{vars.BRCRIS_HOST_BASE}}
-  NEXT_BASE_PATH: ${{vars.NEXT_BASE_PATH}}
+# env:
+#   HOST_ELASTIC: ${{secrets.HOST_ELASTIC}}
+#   API_KEY: ${{secrets.API_KEY}}
+#   MAIL_HOST: ${{secrets.MAIL_HOST}}
+#   MAIL_SENDER: ${{secrets.MAIL_SENDER}}
+#   MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+#   MAIL_PORT: ${{secrets.MAIL_PORT}}
+#   MAIL_RECIPIENT: ${{secrets.MAIL_RECIPIENT}}
+#   RECAPTCHA_SECRET_KEY: ${{secrets.RECAPTCHA_SECRET_KEY}}
+#   BRCRIS_HOST_BASE: ${{vars.BRCRIS_HOST_BASE}}
+#   NEXT_BASE_PATH: ${{vars.NEXT_BASE_PATH}}
 
-jobs:
-  dev:
-    runs-on: [self-hosted, Linux, x64, runner-iroxa]
-    environment:
-      name: dev
-      url: "http://codich1.ibict.br:8086/"
+# jobs:
+#   dev:
+#     runs-on: [self-hosted, Linux, x64, runner-iroxa]
+#     environment:
+#       name: dev
+#       url: "http://codich1.ibict.br:8086/"
 
-    steps:
-      - uses: actions/checkout@v3
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 24
 
-      - name: Run deploy
-        run: sh scripts/deploy.sh
+#       - name: Run deploy
+#         run: sh scripts/deploy.sh
 
-  homol:
-    runs-on: [self-hosted, Linux, x64, runner-homol]
-    environment:
-      name: homol
-      url: "http://172.16.20.48:3000/"
-    env:
-      NODE_TLS_REJECT_UNAUTHORIZED: 0
-    steps:
-      - uses: actions/checkout@v3
+#   homol:
+#     runs-on: [self-hosted, Linux, x64, runner-homol]
+#     environment:
+#       name: homol
+#       url: "http://172.16.20.48:3000/"
+#     env:
+#       NODE_TLS_REJECT_UNAUTHORIZED: 0
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 24
 
-      - name: Run deploy
-        run: sh scripts/deploy.sh
+#       - name: Run deploy
+#         run: sh scripts/deploy.sh
 
-  prod:
-    runs-on: [self-hosted, Linux, x64, runner-pacova]
-    environment:
-      name: prod
-      url: "https://brcris.ibict.br"
+#   prod:
+#     runs-on: [self-hosted, Linux, x64, runner-pacova]
+#     environment:
+#       name: prod
+#       url: "https://brcris.ibict.br"
 
-    steps:
-      - uses: actions/checkout@v3
+#     steps:
+#       - uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 24
 
-      - name: Run deploy
-        run: sh scripts/deploy.sh
+#       - name: Run deploy
+#         run: sh scripts/deploy.sh
