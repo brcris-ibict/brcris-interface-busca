@@ -5,6 +5,20 @@ import fs from "fs";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 import { createFolderIfNotExists } from "../../services/createFolderIfNotExists";
+import {
+  applyJournalIssn,
+  collectJournalIdsFromHits,
+  fetchJournalIssnById,
+} from "../../services/enrichPublicationIssn";
+import {
+  applyAuthorOrcid,
+  collectAuthorIdsFromHits,
+  fetchPersonOrcidById,
+} from "../../services/enrichPublicationOrcid";
+import {
+  excludePublicationsWithMultipleTypes,
+  isPublicationIndex,
+} from "../../lib/publicationSearchQuery";
 import { csvOptions, jsonToCsv } from "../../services/JsonToCsv";
 import { jsonToRis } from "../../services/JsonToRis";
 import logger from "../../services/Logger";
@@ -22,8 +36,17 @@ const fieldsRis = JSON.parse(process.env.FIELDS_RIS);
 
 const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { query, index, resultFields, totalResults, indexName, typeArq } =
-      req.body;
+    const {
+      query: rawQuery,
+      index,
+      resultFields,
+      totalResults,
+      indexName,
+      typeArq,
+    } = req.body;
+    const query = isPublicationIndex(index)
+      ? excludePublicationsWithMultipleTypes(rawQuery)
+      : rawQuery;
 
     if (totalResults > (process.env.MAX_DOWNLOAD_PERMITED || 100000)) {
       return res
@@ -34,7 +57,17 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     createFolderIfNotExists(process.env.DOWNLOAD_FOLDER_PATH);
-    const fileName = getFileName(index, JSON.stringify(query));
+    const fileName = getFileName(
+      index,
+      JSON.stringify({
+        query,
+        resultFields,
+        typeArq,
+        includeId: true,
+        sanitizeCsv: true,
+        entityIds: true,
+      }),
+    );
     const zipFilePath = `${process.env.DOWNLOAD_FOLDER_PATH}/${typeArq}${fileName}.zip`;
     logger.info(
       `Iniciando exportação, arquivo: ${zipFilePath}, index: ${index}, query: ${JSON.stringify(query)}`,
@@ -120,13 +153,29 @@ async function writeCsvFile(
   query: estypes.QueryDslQueryContainer,
   resultFields: string[],
 ) {
-  const params: estypes.SearchRequest = {
+  const isPublicationExport = index === process.env.INDEX_PUBLICATION;
+  const shouldEnrichIssn =
+    isPublicationExport && Boolean(process.env.INDEX_JOURNAL);
+  const shouldEnrichOrcid =
+    isPublicationExport && Boolean(process.env.INDEX_PERSON);
+  const sourceFields = Array.from(
+    new Set([
+      ...resultFields,
+      "id",
+      ...(shouldEnrichIssn ? ["journal", "issn"] : []),
+      ...(shouldEnrichOrcid ? ["author", "orcid"] : []),
+      ...(resultFields.includes("author_id") ? ["author"] : []),
+      ...(resultFields.includes("journal_id") ? ["journal"] : []),
+    ]),
+  );
+  const params: Search = {
     index: index,
     scroll: "30s",
     size: 1000,
-    _source: resultFields,
-    _source_excludes: "id",
-    query,
+    _source: sourceFields,
+    body: {
+      query: query,
+    },
   };
   let writeStream;
   try {
@@ -137,12 +186,51 @@ async function writeCsvFile(
     writeStream.write(csvHeaders);
     writeStream.write(csvOptions.eol);
 
+    const batch: Array<{ _id?: string; _source?: Record<string, unknown> }> =
+      [];
+    const flush = async () => {
+      if (batch.length === 0) return;
+      if (shouldEnrichIssn) {
+        const journalIds = collectJournalIdsFromHits(batch);
+        const issnByJournalId = await fetchJournalIssnById(
+          client,
+          process.env.INDEX_JOURNAL || "",
+          journalIds,
+        );
+        for (const hit of batch) {
+          if (hit._source) applyJournalIssn(hit._source, issnByJournalId);
+        }
+      }
+      if (shouldEnrichOrcid) {
+        const authorIds = collectAuthorIdsFromHits(batch);
+        const orcidByPersonId = await fetchPersonOrcidById(
+          client,
+          process.env.INDEX_PERSON || "",
+          authorIds,
+        );
+        for (const hit of batch) {
+          if (hit._source) applyAuthorOrcid(hit._source, orcidByPersonId);
+        }
+      }
+      for (const hit of batch) {
+        const source = hit._source || {};
+        if (!hasRecordId(source) && hit._id) {
+          source.id = hit._id;
+        }
+        const data = jsonToCsv(source, resultFields);
+        writeStream!.write(data);
+        writeStream!.write(csvOptions.eol);
+      }
+      batch.length = 0;
+    };
+
     for await (const hit of scrollSearch(params)) {
-      if (!hit._source) continue;
-      const data = jsonToCsv(hit._source, resultFields);
-      writeStream.write(data);
-      writeStream.write(csvOptions.eol);
+      batch.push(hit);
+      if (batch.length >= 1000) {
+        await flush();
+      }
     }
+    await flush();
     return csvFilePath;
   } catch (err) {
     throw err;
@@ -162,8 +250,9 @@ async function writeRisFile(
     scroll: "30s",
     size: 1000,
     _source: resultFields,
-    _source_excludes: "id",
-    query,
+    body: {
+      query: query,
+    },
   };
   let writeStream;
   try {
@@ -235,6 +324,13 @@ async function* scrollSearch(params: estypes.SearchRequest) {
       scroll: params.scroll,
     });
   }
+}
+
+function hasRecordId(source: Record<string, unknown>): boolean {
+  const value = source.id;
+  if (value == null || value === "") return false;
+  if (Array.isArray(value)) return value.some((item) => Boolean(item));
+  return true;
 }
 
 function getFileName(index: string, query: string) {
