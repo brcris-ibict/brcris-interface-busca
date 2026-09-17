@@ -4,6 +4,7 @@ import type { PropsWithChildren } from "react";
 import CookieConsent from "../banners/CookieConsent";
 import Footer from "../Footer";
 import Navbar from "../Navbar";
+import Breadcrumbs from "./Breadcrumbs";
 
 interface LayoutProps extends PropsWithChildren {}
 
@@ -14,6 +15,7 @@ export default function Layout({ children }: LayoutProps) {
   const locales = router.locales;
   const defaultLocale = router.defaultLocale;
   const currentPath = router.asPath;
+  const isHomePage = router.pathname === "/";
 
   return (
     <>
@@ -31,6 +33,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* <Alert /> */}
 
       <main style={{ paddingTop: "100px" }} className={`container-fluid`}>
+        {!isHomePage ? <Breadcrumbs /> : null}
         {children}
       </main>
       <CookieConsent />

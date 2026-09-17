@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "prepare": "husky install",
-    "dev": "set NODE_TLS_REJECT_UNAUTHORIZED=0 && next dev",
+    "dev": "next dev",
     "start": "PORT=3000 && next start -p $PORT",
     "build": "next build",
     "postbuild": "next-sitemap",
@@ -23,7 +23,8 @@
     "bootstrap-icons": "^1.13.1",
     "chart.js": "^3.9.1",
     "d3": "^7.9.0",
-    "es7": "npm:@elastic/elasticsearch@7",
+    "echarts": "6.1.0",
+    "es8": "npm:@elastic/elasticsearch@^8.19.2",
     "formidable": "^3.5.4",
     "i18next": "^24.0.2",
     "js-cookie": "^3.0.5",

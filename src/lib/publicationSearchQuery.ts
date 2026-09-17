@@ -1,4 +1,4 @@
-import type { estypes } from "@elastic/elasticsearch";
+import type { estypes } from "es8";
 
 const MULTI_TYPE_EXCLUSION: estypes.QueryDslQueryContainer = {
   script: {

@@ -1,4 +1,5 @@
 import indexes from "../configs/Indexes";
+import { withBasePath } from "../lib/basePath";
 
 export function getIndexStats(
   indexLabel: string,
@@ -24,7 +25,9 @@ export function getIndexStats(
 }
 
 const proxy = async (indexesName: string | string[]) => {
-  const response = await fetch(`/api/index-stats?indexesName=${indexesName}`);
+  const response = await fetch(
+    withBasePath(`/api/index-stats?indexesName=${indexesName}`),
+  );
   return response.json();
 };
 

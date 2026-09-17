@@ -1,5 +1,6 @@
 import { useTranslation } from "next-i18next";
 import type { DisplayField } from "../../configs/DisplayFields";
+import { withBasePath } from "../../lib/basePath";
 import styles from "../../styles/Home.module.css";
 import SearchTableCell from "./SearchTableCell";
 import { normalizeText } from "../../../utils/Utils";
@@ -50,7 +51,9 @@ export default function SearchResultsTable({
         <tbody>
           {results.map((result, idx) => {
             const idValue = stringifyValue(result.id?.raw);
-            const href = idValue ? `/${entityKey}/${idValue}` : undefined;
+            const href = idValue
+              ? withBasePath(`/${entityKey}/${idValue}`)
+              : undefined;
             const title = normalizeText(getResultTitle(result));
 
             return (

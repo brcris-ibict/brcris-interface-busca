@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
 import { formatBooleanString, normalizeText } from "../../../utils/Utils";
 import { usePublicationYears } from "../../hooks/usePublicationYears";
+import { withBasePath } from "../../lib/basePath";
 import NotFound from "../../pages/404";
 import CopyLink from "../CopyLink";
 import ShowAuthorItem from "../customResultView/ShowAuthorItem";
@@ -81,12 +82,12 @@ export default function JournalDetails() {
               <div className="d-flex align-items-center gap-2">
                 <img
                   className="brcris-logo"
-                  src="/logos/brcris-grafo.svg"
+                  src={withBasePath("/logos/brcris-grafo.svg")}
                   alt="logo do BrCris"
                 />
 
                 <CopyLink
-                  link={`${location.origin}/journals/${result.id.raw}`}
+                  link={`${location.origin}${withBasePath(`/journals/${result.id.raw}`)}`}
                 />
               </div>
 
@@ -193,7 +194,7 @@ export default function JournalDetails() {
                 initialCount={5}
                 renderItem={(publication: any) => (
                   <div className="publication-item">
-                    <a href={`/publications/${publication?.id}`}>
+                    <a href={withBasePath(`/publications/${publication?.id}`)}>
                       {normalizeText(publication?.title)}
                     </a>
 

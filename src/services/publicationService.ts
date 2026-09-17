@@ -1,3 +1,5 @@
+import { withBasePath } from "../lib/basePath";
+
 export async function fetchJournalsByPublicationIds(
   ids: string[],
 ): Promise<Record<string, string>> {
@@ -6,7 +8,7 @@ export async function fetchJournalsByPublicationIds(
   }
 
   try {
-    const response = await fetch("/api/publicacoes-revista", {
+    const response = await fetch(withBasePath("/api/publicacoes-revista"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids }),

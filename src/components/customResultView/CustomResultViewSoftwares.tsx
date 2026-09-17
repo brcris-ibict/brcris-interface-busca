@@ -1,5 +1,6 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import type { Author } from "../../types/Entities";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
@@ -11,7 +12,10 @@ const CustomResultViewSoftwares = ({
 
   return (
     <li className="sui-result">
-      <a onClick={onClickLink} href={`/software/${result.id.raw}`}>
+      <a
+        onClick={onClickLink}
+        href={withBasePath(`/software/${result.id.raw}`)}
+      >
         <h2
           dangerouslySetInnerHTML={{
             __html: normalizeText(result.title?.snippet || result.title.raw),

@@ -5,6 +5,7 @@ import { useTranslation } from "next-i18next";
 import { useEffect, useRef, useState } from "react";
 import { Overlay, Popover } from "react-bootstrap";
 import coautoriaService from "../../services/CoautoriaService";
+import { withBasePath } from "../../lib/basePath";
 import { normalizeText } from "../../../utils/Utils";
 import ExpandableContent from "../ExpandableContent";
 export default function ChordDiagram({ authorId }: { authorId: string }) {
@@ -228,14 +229,14 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           return `Publications with ${mainAuthor.name}: ${pubs.length}`;
         }
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chords, nodes]);
 
   if (!mainAuthor) {
     return null;
   }
   const handleDownloadGraphML = async () => {
-    const url = `/api/autor-xml?authorId=${authorId}`;
+    const url = withBasePath(`/api/autor-xml?authorId=${authorId}`);
     const response = await fetch(url);
     const blob = await response.blob();
     const a = document.createElement("a");
@@ -271,7 +272,9 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
         <div>
           <Popover id="popover-coauthor">
             <Popover.Header as="h3">
-              <a href={`/people/${selectedNode.id}`}>{selectedNode.name}</a>
+              <a href={withBasePath(`/people/${selectedNode.id}`)}>
+                {selectedNode.name}
+              </a>
             </Popover.Header>
             <Popover.Body>
               <span>{` ${t("Publications with")} ${mainAuthor.name}: ${pubs.length}`}</span>
@@ -290,7 +293,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
                   })}
                   renderItem={(publication: any) => (
                     <div key={publication.id} className="publication-item">
-                      <a href={`/publications/${publication.id}`}>
+                      <a href={withBasePath(`/publications/${publication.id}`)}>
                         {normalizeText(publication.title)}
                       </a>
                       <div className="publication-meta">
@@ -325,7 +328,7 @@ export default function ChordDiagram({ authorId }: { authorId: string }) {
           </span>
 
           <div className="graphml-action" onClick={handleDownloadGraphML}>
-            <img src="/images/graphml.svg" alt="GraphML" />
+            <img src={withBasePath("/images/graphml.svg")} alt="GraphML" />
             <span>{t("GraphML file")}</span>
           </div>
         </div>

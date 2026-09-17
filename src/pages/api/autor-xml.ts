@@ -1,14 +1,8 @@
-import { Client } from "es7";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 import logger from "../../services/Logger";
 
-const client = new Client({
-  maxRetries: 5,
-  requestTimeout: 60000,
-  sniffOnStart: true,
-  node: process.env.HOST_ELASTIC,
-  auth: { apiKey: process.env.API_KEY! },
-});
+const client = createElasticsearchClient();
 
 const autorXML = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -18,10 +12,10 @@ const autorXML = async (req: NextApiRequest, res: NextApiResponse) => {
       index: process.env.INDEX_PUBLICATION || "",
       _source: ["id", "title", "author", "publicationDate"],
       size: 10000,
-      body: { query: { match: { "author.id": authorId } } },
+      query: { match: { "author.id": authorId } },
     });
 
-    const hits = response.body.hits.hits.map((h: any) => h._source);
+    const hits = response.hits.hits.map((h: any) => h._source);
     if (!hits.length) return res.send("<graphml></graphml>");
 
     const protocol = req.headers["x-forwarded-proto"] || "http";

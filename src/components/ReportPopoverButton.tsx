@@ -2,6 +2,7 @@ import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { useState } from "react";
 import { Overlay, Popover } from "react-bootstrap";
+import { withBasePath } from "../lib/basePath";
 
 type ReportPopoverButtonProps = {
   className?: string;
@@ -48,7 +49,9 @@ export default function ReportPopoverButton({
             <p>{t("Found an error or outdated information on this page?")}</p>
 
             <a
-              href={`/report?url=${encodeURIComponent(currentUrl)}`}
+              href={withBasePath(
+                `/report?url=${encodeURIComponent(currentUrl)}`,
+              )}
               className="report-popover-link"
             >
               {t("Submit correction")}

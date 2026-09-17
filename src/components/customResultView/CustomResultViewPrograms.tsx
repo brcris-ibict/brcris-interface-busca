@@ -1,5 +1,6 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import type { OrgUnit, ResearchArea } from "../../types/Entities";
 import { formatResearchAreaLabel } from "../search/utils";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
@@ -9,7 +10,10 @@ const CustomResultViewPrograms = ({ result, onClickLink }: ResultViewProps) => {
 
   return (
     <li className="sui-result">
-      <a onClick={onClickLink} href={`/programs/${result.id.raw}`}>
+      <a
+        onClick={onClickLink}
+        href={withBasePath(`/programs/${result.id.raw}`)}
+      >
         <h2
           dangerouslySetInnerHTML={{
             __html: normalizeText(result.name?.snippet || result.name?.raw),

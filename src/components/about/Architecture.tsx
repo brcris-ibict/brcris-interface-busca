@@ -1,6 +1,7 @@
 import type { GetStaticProps } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { withBasePath } from "../../lib/basePath";
 
 type Props = {};
 // or getServerSideProps: GetServerSideProps<Props> = async ({ locale })
@@ -26,7 +27,7 @@ const Architecture = () => {
       <picture className="d-flex justify-content-center">
         <img
           className="img-fluid"
-          src="/images/BrCris_entidades_eng.png"
+          src={withBasePath("/images/BrCris_entidades_eng.png")}
           alt="entidades que compõe o BrCris"
         />
       </picture>
@@ -46,7 +47,7 @@ const Architecture = () => {
       <picture className="d-flex justify-content-center">
         <img
           className="img-fluid"
-          src="/images/ecossistema.jpeg"
+          src={withBasePath("/images/ecossistema.jpeg")}
           alt="entidades que compõe o ecossistema do BrCris"
         />
       </picture>

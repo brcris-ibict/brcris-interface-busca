@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { withBasePath } from "../lib/basePath";
 
 type PublicationYear = {
   id: string;
@@ -20,7 +21,7 @@ export function usePublicationYears(ids: string[]) {
       setLoading(true);
 
       try {
-        const res = await fetch("/api/consulta-publicacoes", {
+        const res = await fetch(withBasePath("/api/consulta-publicacoes"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

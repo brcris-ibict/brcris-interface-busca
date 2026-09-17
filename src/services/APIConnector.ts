@@ -1,3 +1,5 @@
+import { withBasePath } from "../lib/basePath";
+
 class APIConnector {
   private cacheTTL = 1000 * 60 * 60 * 24; // 1 day
 
@@ -65,7 +67,7 @@ class APIConnector {
     // }
 
     console.log("Fetching fresh data");
-    const response = await fetch("/api/search", {
+    const response = await fetch(withBasePath("/api/search"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ requestState, queryConfig }),
@@ -78,7 +80,7 @@ class APIConnector {
 
   async onAutocomplete(requestState: any, queryConfig: any) {
     queryConfig.index = queryConfig.results.index;
-    const response = await fetch("/api/autocomplete", {
+    const response = await fetch(withBasePath("/api/autocomplete"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ requestState, queryConfig }),

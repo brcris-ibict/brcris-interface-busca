@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useTheme } from "../contexts/ThemeContext";
+import { withBasePath } from "../lib/basePath";
 import dropdownStyle from "../styles/Dropdown.module.css";
 
 const NAV_ITEMS = [
@@ -24,8 +25,8 @@ function Navbar() {
   const { resolvedTheme, setThemePreference, themePreference } = useTheme();
   const ibictLogoSrc =
     resolvedTheme === "dark"
-      ? "/logos/logo-ibict-pb.png"
-      : "/logos/logo-ibict.png";
+      ? withBasePath("/logos/logo-ibict-pb.png")
+      : withBasePath("/logos/logo-ibict.png");
 
   const themeIcon =
     themePreference === "dark" ? (
@@ -68,7 +69,7 @@ function Navbar() {
             <picture className="navbar-logo">
               <img
                 className="img-fluid brcris"
-                src="/logos/logo-brcris.png"
+                src={withBasePath("/logos/logo-brcris.png")}
                 alt="logo do brcris"
               />
             </picture>

@@ -1,9 +1,9 @@
 import archiver from "archiver";
 import crypto from "crypto";
-import { Client } from "es7";
-import type { Search } from "es7/api/requestParams";
+import type { estypes } from "es8";
 import fs from "fs";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 import { createFolderIfNotExists } from "../../services/createFolderIfNotExists";
 import {
   applyJournalIssn,
@@ -25,17 +25,9 @@ import logger from "../../services/Logger";
 import { googleCaptchaValidation } from "./googleCaptchaValidation";
 import { sendMail } from "./sendMail";
 
-// https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/7.17/scroll_examples.html
+// https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/8.19/scroll_examples.html
 
-const client = new Client({
-  maxRetries: 5,
-  requestTimeout: 60000,
-  sniffOnStart: true,
-  node: process.env.HOST_ELASTIC,
-  auth: {
-    apiKey: process.env.API_KEY!,
-  },
-});
+const client = createElasticsearchClient();
 
 if (!process.env.FIELDS_RIS) {
   throw new Error("Environment variable FIELDS_RIS is not defined");
@@ -122,7 +114,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
 async function writeFile(
   zipFilePath: string,
   index: string,
-  query: string,
+  query: estypes.QueryDslQueryContainer,
   indexName: string,
   resultFields: string[],
   typeArq: string,
@@ -158,7 +150,7 @@ async function writeFile(
 async function writeCsvFile(
   zipFilePath: string,
   index: string,
-  query: string,
+  query: estypes.QueryDslQueryContainer,
   resultFields: string[],
 ) {
   const isPublicationExport = index === process.env.INDEX_PUBLICATION;
@@ -250,10 +242,10 @@ async function writeCsvFile(
 async function writeRisFile(
   zipFilePath: string,
   index: string,
-  query: string,
+  query: estypes.QueryDslQueryContainer,
   resultFields: string[],
 ) {
-  const params: Search = {
+  const params: estypes.SearchRequest = {
     index: index,
     scroll: "30s",
     size: 1000,
@@ -268,6 +260,7 @@ async function writeRisFile(
     writeStream = fs.createWriteStream(risFilePath);
 
     for await (const hit of scrollSearch(params)) {
+      if (!hit._source) continue;
       const data = jsonToRis(hit._source, fieldsRis);
       writeStream.write(data);
     }
@@ -309,11 +302,11 @@ function writeZipFile(
 }
 
 // Scroll utility
-async function* scrollSearch(params: Search) {
-  let response = await client.search(params);
+async function* scrollSearch(params: estypes.SearchRequest) {
+  let response = await client.search<Record<string, unknown>>(params);
 
   while (true) {
-    const sourceHits = response.body.hits.hits;
+    const sourceHits = response.hits.hits;
     if (sourceHits.length === 0) {
       break;
     }
@@ -322,12 +315,12 @@ async function* scrollSearch(params: Search) {
       yield hit;
     }
 
-    if (!response.body._scroll_id) {
+    if (!response._scroll_id) {
       break;
     }
 
-    response = await client.scroll({
-      scroll_id: response.body._scroll_id,
+    response = await client.scroll<Record<string, unknown>>({
+      scroll_id: response._scroll_id,
       scroll: params.scroll,
     });
   }
@@ -349,7 +342,7 @@ function getFileName(index: string, query: string) {
 async function backgroundExportation(
   zipFilePath: string,
   index: string,
-  query: string,
+  query: estypes.QueryDslQueryContainer,
   email: string,
   indexName: string,
   resultFields: string[],

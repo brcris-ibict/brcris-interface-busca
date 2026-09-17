@@ -1,9 +1,11 @@
 // services/authorHelpers.ts
+import { withBasePath } from "../lib/basePath";
+
 export async function fetchAuthorData(authorId: string) {
   try {
     const [coauthRes, adviseRes] = await Promise.all([
-      fetch(`/api/coautoria?authorId=${authorId}`),
-      fetch(`/api/orientacoes?advisorId=${authorId}`),
+      fetch(withBasePath(`/api/coautoria?authorId=${authorId}`)),
+      fetch(withBasePath(`/api/orientacoes?advisorId=${authorId}`)),
     ]);
 
     const coauthData: any = await coauthRes.json();

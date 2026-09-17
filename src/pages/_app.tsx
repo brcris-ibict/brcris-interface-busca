@@ -7,25 +7,8 @@ import { appWithTranslation } from "next-i18next";
 import { useEffect } from "react";
 import Analytics from "../components/analytics";
 import Layout from "../components/layouts/Layout";
-import { THEME_STORAGE_KEY, ThemeProvider } from "../contexts/ThemeContext";
+import { ThemeProvider } from "../contexts/ThemeContext";
 import "../styles/globals.scss";
-
-const themeInitScript = `(function () {
-  try {
-    var storedTheme = window.localStorage.getItem("${THEME_STORAGE_KEY}");
-    var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var resolvedTheme = storedTheme === "dark"
-      ? "dark"
-      : storedTheme === "light"
-        ? "light"
-        : (prefersDark ? "dark" : "light");
-    document.documentElement.dataset.theme = resolvedTheme;
-    document.documentElement.style.colorScheme = resolvedTheme;
-  } catch (error) {
-    document.documentElement.dataset.theme = "light";
-    document.documentElement.style.colorScheme = "light";
-  }
-})();`;
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -35,10 +18,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <script
-          id="theme-init"
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
-        />
         <meta
           name="google-site-verification"
           content="O4MlrfmxB744id4GdcKmv79sPQNLIjWzEB_VV9o1byw"

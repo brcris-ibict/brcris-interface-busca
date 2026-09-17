@@ -7,8 +7,9 @@ import {
   useMemo,
   useState,
 } from "react";
+import { THEME_STORAGE_KEY } from "../lib/theme";
 
-export const THEME_STORAGE_KEY = "brcris-theme";
+export { THEME_STORAGE_KEY } from "../lib/theme";
 
 type ThemePreference = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";

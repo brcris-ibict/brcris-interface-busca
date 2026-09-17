@@ -1,6 +1,7 @@
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import ExpandableContent from "../ExpandableContent";
 
 interface Props {
@@ -20,7 +21,9 @@ function PatentsByInventor({ personId }: Props) {
   useEffect(() => {
     const fetchPatents = async () => {
       try {
-        const res = await fetch(`/api/patent?personId=${personId}`);
+        const res = await fetch(
+          withBasePath(`/api/patent?personId=${personId}`),
+        );
         if (!res.ok) return;
 
         const data = await res.json();
@@ -48,7 +51,9 @@ function PatentsByInventor({ personId }: Props) {
         initialCount={5}
         renderItem={(p: Patent) => (
           <div key={p.id}>
-            <a href={`/patents/${p.id}`}>{normalizeText(p.title)}</a>
+            <a href={withBasePath(`/patents/${p.id}`)}>
+              {normalizeText(p.title)}
+            </a>
           </div>
         )}
       />

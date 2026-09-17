@@ -1,4 +1,5 @@
 import { Info } from "lucide-react";
+import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 
@@ -15,9 +16,9 @@ export default function PopoverButton({ className = "" }: PopoverButtonProps) {
       <Popover.Body>
         {t("Data Source Description")}{" "}
         <p>
-          <a href="/data-sources" target="_blank" rel="noreferrer">
+          <Link href="/data-sources" target="_blank" rel="noreferrer">
             {t("click here")}
-          </a>
+          </Link>
           .
         </p>
       </Popover.Body>

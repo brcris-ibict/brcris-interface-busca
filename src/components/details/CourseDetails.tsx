@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import { CSVLink } from "react-csv";
 import { normalizeText } from "../../../utils/Utils";
 import { usePublicationYears } from "../../hooks/usePublicationYears";
+import { withBasePath } from "../../lib/basePath";
 import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
 import CopyLink from "../CopyLink";
@@ -111,11 +112,13 @@ export default function CourseDetails() {
               <div className="d-flex align-items-center gap-2">
                 <img
                   className="brcris-logo"
-                  src="/logos/brcris-grafo.svg"
+                  src={withBasePath("/logos/brcris-grafo.svg")}
                   alt="logo do BrCris"
                 />
 
-                <CopyLink link={`${location.origin}/courses/${courseId}`} />
+                <CopyLink
+                  link={`${location.origin}${withBasePath(`/courses/${courseId}`)}`}
+                />
               </div>
             )}
 
@@ -149,7 +152,7 @@ export default function CourseDetails() {
                 initialCount={3}
                 renderItem={(program: OrgUnit, idx: number) => (
                   <span key={idx}>
-                    <a href={`/programs/${program.id}`}>
+                    <a href={withBasePath(`/programs/${program.id}`)}>
                       {normalizeText(program.name)}
                     </a>
                   </span>
@@ -173,7 +176,7 @@ export default function CourseDetails() {
                 initialCount={3}
                 renderItem={(unit: OrgUnit, idx: number) => (
                   <span key={idx}>
-                    <a href={`/organizations/${unit.id}`}>
+                    <a href={withBasePath(`/organizations/${unit.id}`)}>
                       {normalizeText(unit.name)}
                     </a>
                   </span>
@@ -216,7 +219,9 @@ export default function CourseDetails() {
 
                   return (
                     <div key={publication?.id} className="publication-item">
-                      <a href={`/publications/${publication?.id}`}>
+                      <a
+                        href={withBasePath(`/publications/${publication?.id}`)}
+                      >
                         {normalizeText(publication?.title)}
                       </a>
                       <div className="publication-meta">

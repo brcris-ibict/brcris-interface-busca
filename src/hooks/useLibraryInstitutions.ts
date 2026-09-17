@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { withBasePath } from "../lib/basePath";
 
 export type LibraryInstitution = {
   id: string;
@@ -6,10 +7,7 @@ export type LibraryInstitution = {
 };
 
 const cache = new Map<string, Record<string, LibraryInstitution>>();
-const inflight = new Map<
-  string,
-  Promise<Record<string, LibraryInstitution>>
->();
+const inflight = new Map<string, Promise<Record<string, LibraryInstitution>>>();
 
 async function fetchInstitutions(
   ids: string[],
@@ -21,7 +19,7 @@ async function fetchInstitutions(
   const pending = inflight.get(key);
   if (pending) return pending;
 
-  const request = fetch("/api/consulta-instituicoes", {
+  const request = fetch(withBasePath("/api/consulta-instituicoes"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

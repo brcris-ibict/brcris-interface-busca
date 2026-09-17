@@ -1,4 +1,4 @@
-import type { estypes } from "@elastic/elasticsearch";
+import type { estypes } from "es8";
 import type { Filter } from "@elastic/search-ui";
 
 export const ORG_LIBRARY_TYPE = "Biblioteca";

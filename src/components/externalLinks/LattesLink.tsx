@@ -1,3 +1,5 @@
+import { withBasePath } from "../../lib/basePath";
+
 type LattesAuthor = {
   lattesId: string;
 };
@@ -19,7 +21,7 @@ function LattesLink({ lattesId }: LattesAuthor) {
       <picture>
         <img
           className="lattes-icon"
-          src="/logos/lattes.png"
+          src={withBasePath("/logos/lattes.png")}
           alt="logo do Lattes"
         />
       </picture>

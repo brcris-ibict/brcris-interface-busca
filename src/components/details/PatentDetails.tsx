@@ -2,6 +2,7 @@ import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
 import CopyLink from "../CopyLink";
@@ -44,11 +45,13 @@ export default function PatentDetails() {
               <div className="d-flex align-items-center gap-2">
                 <img
                   className="brcris-logo"
-                  src="/logos/brcris-grafo.svg"
+                  src={withBasePath("/logos/brcris-grafo.svg")}
                   alt="logo do BrCris"
                 />
 
-                <CopyLink link={`${location.origin}/patents/${patentId}`} />
+                <CopyLink
+                  link={`${location.origin}${withBasePath(`/patents/${patentId}`)}`}
+                />
               </div>
             )}
 
@@ -79,7 +82,9 @@ export default function PatentDetails() {
                       {sameAsPatent ? (
                         name
                       ) : (
-                        <a href={`/people/${inventor.id}`}>{name}</a>
+                        <a href={withBasePath(`/people/${inventor.id}`)}>
+                          {name}
+                        </a>
                       )}
                     </span>
                   );
@@ -96,7 +101,10 @@ export default function PatentDetails() {
                 items={result.applicant.raw}
                 initialCount={5}
                 renderItem={(applicant: OrgUnit) => (
-                  <a key={applicant.id} href={`/organizations/${applicant.id}`}>
+                  <a
+                    key={applicant.id}
+                    href={withBasePath(`/organizations/${applicant.id}`)}
+                  >
                     {normalizeText(applicant.name)}
                   </a>
                 )}

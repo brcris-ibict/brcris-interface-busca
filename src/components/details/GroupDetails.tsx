@@ -2,6 +2,7 @@ import { useSearch } from "@elastic/react-search-ui";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import NotFound from "../../pages/404";
 import type { OrgUnit } from "../../types/Entities";
 import CopyLink from "../CopyLink";
@@ -44,12 +45,12 @@ export default function GroupDetails() {
               <div className="d-flex align-items-center gap-2">
                 <img
                   className="brcris-logo"
-                  src="/logos/brcris-grafo.svg"
+                  src={withBasePath("/logos/brcris-grafo.svg")}
                   alt="logo do BrCris"
                 />
 
                 <CopyLink
-                  link={`${location.origin}/research-groups/${groupId}`}
+                  link={`${location.origin}${withBasePath(`/research-groups/${groupId}`)}`}
                 />
               </div>
             )}
@@ -82,7 +83,10 @@ export default function GroupDetails() {
                 items={result.leaderResearcher.raw}
                 initialCount={5}
                 renderItem={(leader: any) => (
-                  <a key={leader.id} href={`/people/${leader.id}`}>
+                  <a
+                    key={leader.id}
+                    href={withBasePath(`/people/${leader.id}`)}
+                  >
                     {normalizeText(
                       Array.isArray(leader.name) ? leader.name[0] : leader.name,
                     )}
@@ -100,7 +104,10 @@ export default function GroupDetails() {
                 items={result.leaderOrgUnit.raw}
                 initialCount={5}
                 renderItem={(org: OrgUnit) => (
-                  <a key={org.id} href={`/organizations/${org.id}`}>
+                  <a
+                    key={org.id}
+                    href={withBasePath(`/organizations/${org.id}`)}
+                  >
                     {normalizeText(org.name)}
                   </a>
                 )}
@@ -116,7 +123,10 @@ export default function GroupDetails() {
                 items={result.partner.raw}
                 initialCount={5}
                 renderItem={(partner: any) => (
-                  <a key={partner.id} href={`/organizations/${partner.id}`}>
+                  <a
+                    key={partner.id}
+                    href={withBasePath(`/organizations/${partner.id}`)}
+                  >
                     {normalizeText(partner.name)}
                   </a>
                 )}
@@ -146,7 +156,7 @@ export default function GroupDetails() {
                 initialCount={5}
                 renderItem={(item: any, idx: number) => (
                   <div key={idx} className="member-item">
-                    <a href={`/people/${item.id}`}>
+                    <a href={withBasePath(`/people/${item.id}`)}>
                       {normalizeText(item?.name)}
                     </a>
                   </div>

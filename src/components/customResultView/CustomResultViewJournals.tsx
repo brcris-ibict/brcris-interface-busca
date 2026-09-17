@@ -1,5 +1,6 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import { normalizeText } from "../../../utils/Utils";
+import { withBasePath } from "../../lib/basePath";
 import type { Publisher, ResearchArea } from "../../types/Entities";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
@@ -8,7 +9,10 @@ const CustomResultViewJournals = ({ result, onClickLink }: ResultViewProps) => {
 
   return (
     <li className="sui-result">
-      <a onClick={onClickLink} href={`/journals/${result.id.raw}`}>
+      <a
+        onClick={onClickLink}
+        href={withBasePath(`/journals/${result.id.raw}`)}
+      >
         <h2
           dangerouslySetInnerHTML={{
             __html: normalizeText(result.title.snippet || result.title.raw),
@@ -27,9 +31,7 @@ const CustomResultViewJournals = ({ result, onClickLink }: ResultViewProps) => {
                 ? researchArea.name.join(", ")
                 : String(researchArea.name ?? "");
               if (!names) return null;
-              return (
-                <span key={researchArea.id}>{normalizeText(names)}</span>
-              );
+              return <span key={researchArea.id}>{normalizeText(names)}</span>;
             })}
           {isVisible("issn_l") && result.issn_l?.raw && (
             <span>{result.issn_l.raw}</span>
