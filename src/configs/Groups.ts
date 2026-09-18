@@ -45,8 +45,8 @@ const config: CustomSearchDriverOptions = {
     },
     disjunctiveFacets: [],
     facets: {
-      creationYear: { type: "value" },
-      researchLine: { type: "value" },
+      creationYear: { type: "value", size: 50 },
+      researchLine: { type: "value", size: 100 },
       "leaderOrgUnit.name": { type: "value" },
       status: { type: "value" },
       "leaderResearcher.name": { type: "value" },

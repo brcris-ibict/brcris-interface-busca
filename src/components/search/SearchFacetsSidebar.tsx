@@ -1,10 +1,21 @@
 import * as reactSearchUi from "@elastic/react-search-ui";
+import type { FacetViewProps } from "@elastic/react-search-ui-views";
 import { useTranslation } from "next-i18next";
 import styles from "../../styles/Home.module.css";
+import CaseInsensitiveFacetView from "./CaseInsensitiveFacetView";
 import ExcludeLibrariesToggle from "./ExcludeLibrariesToggle";
 import RangeFacetNewestFirstView from "./RangeFacetNewestFirstView";
+import YearFacetNewestFirstView from "./YearFacetNewestFirstView";
 
-const RANGE_FACETS_NEWEST_FIRST = new Set(["publicationDate"]);
+function ResearchLineFacetView(props: FacetViewProps) {
+  return <CaseInsensitiveFacetView {...props} field="researchLine" />;
+}
+
+const FACET_VIEWS: Record<string, typeof RangeFacetNewestFirstView> = {
+  publicationDate: RangeFacetNewestFirstView,
+  creationYear: YearFacetNewestFirstView,
+  researchLine: ResearchLineFacetView,
+};
 
 type SearchFacetsSidebarProps = {
   facets: string[];
@@ -58,11 +69,7 @@ export default function SearchFacetsSidebar({
             key={facet}
             field={facet}
             label={t(facet.toLowerCase(), { ns: "facets" })}
-            view={
-              RANGE_FACETS_NEWEST_FIRST.has(facet)
-                ? RangeFacetNewestFirstView
-                : undefined
-            }
+            view={FACET_VIEWS[facet]}
           />
         ))}
       </div>
