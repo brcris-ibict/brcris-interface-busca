@@ -1,4 +1,4 @@
-import type { Client } from "es7";
+import type { Client } from "es8";
 
 type JournalSource = {
   id?: string | string[];
@@ -72,21 +72,19 @@ export async function fetchJournalIssnById(
       index: journalIndex,
       size: chunk.length,
       _source: ["id", "issn", "issn_l"],
-      body: {
-        query: {
-          bool: {
-            should: [{ ids: { values: chunk } }, { terms: { id: chunk } }],
-            minimum_should_match: 1,
-          },
+      query: {
+        bool: {
+          should: [{ ids: { values: chunk } }, { terms: { id: chunk } }],
+          minimum_should_match: 1,
         },
       },
     });
 
-    for (const hit of response.body.hits.hits) {
+    for (const hit of response.hits.hits) {
       const source = hit._source as JournalSource;
       const issn = pickIssn(source);
       if (!issn) continue;
-      issnByJournalId.set(hit._id, issn);
+      if (hit._id) issnByJournalId.set(hit._id, issn);
       const sourceId = Array.isArray(source.id) ? source.id[0] : source.id;
       if (sourceId) issnByJournalId.set(sourceId, issn);
     }

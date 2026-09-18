@@ -168,14 +168,12 @@ async function writeCsvFile(
       ...(resultFields.includes("journal_id") ? ["journal"] : []),
     ]),
   );
-  const params: Search = {
+  const params: estypes.SearchRequest = {
     index: index,
     scroll: "30s",
     size: 1000,
     _source: sourceFields,
-    body: {
-      query: query,
-    },
+    query: query,
   };
   let writeStream;
   try {
@@ -250,9 +248,7 @@ async function writeRisFile(
     scroll: "30s",
     size: 1000,
     _source: resultFields,
-    body: {
-      query: query,
-    },
+    query: query,
   };
   let writeStream;
   try {

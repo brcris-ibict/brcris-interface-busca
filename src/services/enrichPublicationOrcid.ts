@@ -1,4 +1,4 @@
-import type { Client } from "es7";
+import type { Client } from "es8";
 
 type PersonSource = {
   id?: string | string[];
@@ -50,21 +50,19 @@ export async function fetchPersonOrcidById(
       index: personIndex,
       size: chunk.length,
       _source: ["id", "orcid"],
-      body: {
-        query: {
-          bool: {
-            should: [{ ids: { values: chunk } }, { terms: { id: chunk } }],
-            minimum_should_match: 1,
-          },
+      query: {
+        bool: {
+          should: [{ ids: { values: chunk } }, { terms: { id: chunk } }],
+          minimum_should_match: 1,
         },
       },
     });
 
-    for (const hit of response.body.hits.hits) {
+    for (const hit of response.hits.hits) {
       const source = hit._source as PersonSource;
       const orcid = firstNonEmpty(source.orcid);
       if (!orcid) continue;
-      orcidByPersonId.set(hit._id, orcid);
+      if (hit._id) orcidByPersonId.set(hit._id, orcid);
       const sourceId = Array.isArray(source.id) ? source.id[0] : source.id;
       if (sourceId) orcidByPersonId.set(sourceId, orcid);
     }
