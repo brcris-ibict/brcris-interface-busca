@@ -7,6 +7,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
 
 // Tipos de ordenação
@@ -19,7 +20,6 @@ export type PanelTableColumn<T> = {
   accessor: (row: T) => string | number;
   align?: "left" | "right";
   sortable?: boolean;
-  /** Texto inicia em asc; número em desc (padrão). */
   sortAs?: "text" | "number";
   format?: (value: string | number, row: T, locale: string) => ReactNode;
   title?: (row: T) => string;
@@ -38,6 +38,12 @@ type Props<T> = {
   initialSortDirection?: PanelTableSortDirection;
   pageSize?: number;
   feedbackHeight?: number;
+  paginationMode?: "client" | "server";
+  page?: number;
+  totalItems?: number;
+  onPageChange?: (page: number) => void;
+  clientSort?: boolean;
+  exportFilename?: string;
 };
 
 // Função responsável por comparar dois valores em relação à direção de ordenação
@@ -70,71 +76,121 @@ export default function PanelTable<T>({
   initialSortDirection = "desc",
   pageSize = 10,
   feedbackHeight = 220,
+  paginationMode = "client",
+  page: controlledPage,
+  totalItems,
+  onPageChange,
+  clientSort = true,
+  exportFilename,
 }: Props<T>) {
   const { t, i18n } = useTranslation("common");
   const locale = i18n.language || "pt-BR";
   const empty = !loading && !error && items.length === 0;
+  const isServer = paginationMode === "server";
 
-  const [page, setPage] = useState(1); // Página atual
-  const [sortKey, setSortKey] = useState(initialSortKey); // Chave de ordenação
-  const [sortDirection, setSortDirection] = useState<PanelTableSortDirection>(initialSortDirection); // Direção de ordenação
+  const [internalPage, setInternalPage] = useState(1);
+  const [sortKey, setSortKey] = useState(initialSortKey);
+  const [sortDirection, setSortDirection] =
+    useState<PanelTableSortDirection>(initialSortDirection);
+
+  const page = isServer ? (controlledPage ?? 1) : internalPage;
 
   useEffect(() => {
-    setPage(1); // Volta para a primeira página quando os dados mudam
-    setSortKey(initialSortKey); // Volta para a chave de ordenação inicial
-    setSortDirection(initialSortDirection); // Volta para a direção de ordenação inicial
+    if (!isServer) {
+      setInternalPage(1);
+    }
+    setSortKey(initialSortKey);
+    setSortDirection(initialSortDirection);
+  }, [items, initialSortKey, initialSortDirection, isServer]);
 
-  }, [items, initialSortKey, initialSortDirection]);
-
-  // Ordena os itens com base na chave e direção de ordenação
   const sortedItems = useMemo(() => {
+    if (!clientSort) return items;
+
     const column = columns.find((item) => item.key === sortKey);
     if (!column) return items;
 
     const next = [...items];
-    next.sort((a, b) => compareValues(column.accessor(a), column.accessor(b), sortDirection) );
-    
+    next.sort((a, b) =>
+      compareValues(column.accessor(a), column.accessor(b), sortDirection),
+    );
+
     return next;
+  }, [items, columns, sortKey, sortDirection, clientSort]);
 
-  }, [items, columns, sortKey, sortDirection]);
+  const exportColumns = useMemo(
+    () =>
+      columns.map((column) => ({
+        key: column.key,
+        header: column.header,
+      })),
+    [columns],
+  );
 
-  // Calcula o total de páginas
-  const totalPages = Math.max(1, Math.ceil(sortedItems.length / pageSize));
+  const exportRows = useMemo(
+    () =>
+      sortedItems.map((row) => {
+        const record: Record<string, string | number> = {};
+        columns.forEach((column) => {
+          record[column.key] = column.accessor(row);
+        });
+        return record;
+      }),
+    [sortedItems, columns],
+  );
 
-  // Calcula os itens da página atual
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      (isServer ? (totalItems ?? items.length) : sortedItems.length) / pageSize,
+    ),
+  );
+
   const pageItems = useMemo(() => {
+    if (isServer) return sortedItems;
+
     const start = (page - 1) * pageSize;
-
     return sortedItems.slice(start, start + pageSize);
+  }, [sortedItems, page, pageSize, isServer]);
 
-  }, [sortedItems, page, pageSize]);
-
-  // Calcula os números de página
+  // Obtém os números das páginas
   const pageNumbers = useMemo(() => {
+    // Tamanho da janela
     const windowSize = 5;
+    // Início da janela
     const start = Math.max(1, Math.min(page - 2, totalPages - windowSize + 1));
+    // Fim da janela
     const end = Math.min(totalPages, start + windowSize - 1);
 
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i); // Retorna um array com os números de página
-  
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   }, [page, totalPages]);
 
-  // Função responsável por ordenar os itens com base na chave
-  function handleSort(column: PanelTableColumn<T>) {
-    if (column.sortable === false) return;
+  // Função auxiliar para ir para uma página
+  function goToPage(next: number) {
+    // Se estiver no modo server, chama a função de mudança de página
+    if (isServer) {
+      onPageChange?.(next);
+      return;
+    }
+    setInternalPage(next);
+  }
 
-    setPage(1); // Volta para a primeira página quando a chave de ordenação muda
+  function handleSort(column: PanelTableColumn<T>) {
+    // Se não estiver no modo client ou a coluna não for sortável, retorna
+    if (!clientSort || column.sortable === false) return;
+
+    if (!isServer) {
+      setInternalPage(1);
+    }
 
     if (sortKey === column.key) {
       setSortDirection((current) => (current === "asc" ? "desc" : "asc"));
       return;
     }
 
-    setSortKey(column.key); // Define a chave de ordenação
+    setSortKey(column.key);
     setSortDirection(column.sortAs === "text" ? "asc" : "desc");
   }
 
-  // Função responsável por exibir o ícone de ordenação
   function sortIcon(key: string) {
     if (sortKey !== key) return <ArrowUpDown size={12} aria-hidden />;
     return sortDirection === "asc" ? (
@@ -147,8 +203,21 @@ export default function PanelTable<T>({
   return (
     <div className="brcris-chart-card brcris-panel-table">
       <div className="brcris-panel-table__header">
-        <h3 className="brcris-chart-card__title">{title}</h3>
-        <p className="brcris-panel-table__caption">{caption}</p>
+        <div className="brcris-panel-table__heading">
+          <h3 className="brcris-chart-card__title">{title}</h3>
+          <p className="brcris-panel-table__caption">{caption}</p>
+        </div>
+
+        {exportFilename ? (
+          <div className="brcris-chart-card__toggles" role="group">
+            <ChartExportMenu
+              filename={exportFilename}
+              columns={exportColumns}
+              rows={exportRows}
+              disabled={loading || error || items.length === 0}
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="brcris-panel-table__body" aria-busy={loading}>
@@ -168,7 +237,7 @@ export default function PanelTable<T>({
                     {columns.map((column) => {
                       const active = sortKey === column.key;
                       const ariaSort =
-                        column.sortable === false
+                        !clientSort || column.sortable === false
                           ? undefined
                           : active
                             ? sortDirection === "asc"
@@ -178,7 +247,7 @@ export default function PanelTable<T>({
                       const className =
                         column.align === "right" ? "is-numeric" : undefined;
 
-                      if (column.sortable === false) {
+                      if (!clientSort || column.sortable === false) {
                         return (
                           <th
                             key={column.key}
@@ -199,7 +268,11 @@ export default function PanelTable<T>({
                         >
                           <button
                             type="button"
-                            className={ active ? "brcris-panel-table__sort-btn is-active" : "brcris-panel-table__sort-btn"} 
+                            className={
+                              active
+                                ? "brcris-panel-table__sort-btn is-active"
+                                : "brcris-panel-table__sort-btn"
+                            }
                             onClick={() => handleSort(column)}
                             aria-label={t("Sort by column", {
                               column: column.header,
@@ -218,9 +291,14 @@ export default function PanelTable<T>({
                     <tr key={getRowKey(row)}>
                       {columns.map((column) => {
                         const value = column.accessor(row);
-                        const className = column.align === "right" ? "is-numeric" : undefined;
-                        const content = column.format ? column.format(value, row, locale) : value;
-                        const cellTitle = column.title ? column.title(row) : undefined;
+                        const className =
+                          column.align === "right" ? "is-numeric" : undefined;
+                        const content = column.format
+                          ? column.format(value, row, locale)
+                          : value;
+                        const cellTitle = column.title
+                          ? column.title(row)
+                          : undefined;
 
                         return (
                           <td
@@ -245,7 +323,7 @@ export default function PanelTable<T>({
                   className="brcris-panel-table__page-btn"
                   disabled={page <= 1}
                   aria-label={t("Previous page")}
-                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                  onClick={() => goToPage(Math.max(1, page - 1))}
                 >
                   <ChevronLeft size={16} />
                 </button>
@@ -255,7 +333,7 @@ export default function PanelTable<T>({
                     <button
                       type="button"
                       className="brcris-panel-table__page-btn"
-                      onClick={() => setPage(1)}
+                      onClick={() => goToPage(1)}
                     >
                       1
                     </button>
@@ -271,9 +349,13 @@ export default function PanelTable<T>({
                   <button
                     key={n}
                     type="button"
-                    className={ n === page ? "brcris-panel-table__page-btn is-active" : "brcris-panel-table__page-btn"}
+                    className={
+                      n === page
+                        ? "brcris-panel-table__page-btn is-active"
+                        : "brcris-panel-table__page-btn"
+                    }
                     aria-current={n === page ? "page" : undefined}
-                    onClick={() => setPage(n)}
+                    onClick={() => goToPage(n)}
                   >
                     {n}
                   </button>
@@ -289,7 +371,7 @@ export default function PanelTable<T>({
                     <button
                       type="button"
                       className="brcris-panel-table__page-btn"
-                      onClick={() => setPage(totalPages)}
+                      onClick={() => goToPage(totalPages)}
                     >
                       {totalPages}
                     </button>
@@ -301,7 +383,7 @@ export default function PanelTable<T>({
                   className="brcris-panel-table__page-btn"
                   disabled={page >= totalPages}
                   aria-label={t("Next page")}
-                  onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                  onClick={() => goToPage(Math.min(totalPages, page + 1))}
                 >
                   <ChevronRight size={16} />
                 </button>

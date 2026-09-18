@@ -64,6 +64,7 @@ export default function AuthorsProductionsTable({
       error={error}
       initialSortKey="count"
       initialSortDirection="desc"
+      exportFilename="autores"
     />
   );
 }

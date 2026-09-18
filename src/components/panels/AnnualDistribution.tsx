@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "next-i18next";
-import type { EChartsOption } from "echarts";
+import type { ECharts, EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
 import { BarChart3, ChartArea, LineChart } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByYearPoint } from "../../types/PublicationsDashboard";
+import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
 import { PRIMARY_CHART_COLOR, hexToRgba } from "./publicationsChartConfig";
 
@@ -41,6 +42,28 @@ export default function AnnualDistribution({
   const { t } = useTranslation("common");
   const { resolvedTheme } = useTheme();
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
+  const chartRef = useRef<ECharts | null>(null);
+
+  const handleChartReady = useCallback((chart: ECharts | null) => {
+    chartRef.current = chart;
+  }, []);
+
+  const exportRows = useMemo(
+    () =>
+      data.map((point) => ({
+        year: point.year,
+        count: point.count,
+      })),
+    [data],
+  );
+
+  const exportColumns = useMemo(
+    () => [
+      { key: "year", header: t("Year") },
+      { key: "count", header: t("Publications") },
+    ],
+    [t],
+  );
 
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
@@ -137,6 +160,19 @@ export default function AnnualDistribution({
               <Icon size={18} />
             </button>
           ))}
+          <ChartExportMenu
+            filename="publicacoes-anuais"
+            columns={exportColumns}
+            rows={exportRows}
+            disabled={loading || error || data.length === 0}
+            getImageDataUrl={() =>
+              chartRef.current?.getDataURL({
+                type: "png",
+                pixelRatio: 2,
+                backgroundColor: "#ffffff",
+              })
+            }
+          />
         </div>
       </div>
 
@@ -148,7 +184,11 @@ export default function AnnualDistribution({
           empty={data.length === 0}
         />
         {!loading && !error && data.length > 0 ? (
-          <EChart option={option} height={height} />
+          <EChart
+            option={option}
+            height={height}
+            onChartReady={handleChartReady}
+          />
         ) : null}
       </div>
     </div>

@@ -10,6 +10,7 @@ import LanguageDistribution from "../../components/panels/LanguageDistribution";
 import TopJournalsArticlesTable from "../../components/panels/TopJournalsArticlesTable";
 import AuthorsProductionsTable from "../../components/panels/AuthorsProductionsTable";
 import JournalQuantifiersTable from "../../components/panels/JournalQuantifiersTable";
+import KeywordsHeatmap from "../../components/panels/KeywordsHeatmap";
 import TypeDistribution from "../../components/panels/TypeDistribution";
 import PublicationsBigNumbers from "../../components/panels/PublicationsBigNumbers";
 import PublicationsFilters from "../../components/panels/PublicationsFilters";
@@ -106,6 +107,20 @@ export default function Publications() {
                   height={280}
                 />
               </div>
+              <div className="col-12 col-lg-6">
+                <TopJournalsArticlesTable
+                  data={data?.topJournalsArticles}
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <AuthorsProductionsTable
+                  data={data?.authors}
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
               <div className="col-12 col-lg-4">
                 <TypeDistribution
                   data={data?.byType ?? []}
@@ -136,22 +151,11 @@ export default function Publications() {
                   error={Boolean(error)}
                 />
               </div>
-              <div className="col-12 col-lg-6">
-                <TopJournalsArticlesTable
-                  data={data?.topJournalsArticles}
-                  loading={loading}
-                  error={Boolean(error)}
-                />
-              </div>
-              <div className="col-12 col-lg-6">
-                <AuthorsProductionsTable
-                  data={data?.authors}
-                  loading={loading}
-                  error={Boolean(error)}
-                />
-              </div>
               <div className="col-12">
                 <JournalQuantifiersTable filters={filters} />
+              </div>
+              <div className="col-12">
+                <KeywordsHeatmap filters={filters} />
               </div>
             </div>
           </div>

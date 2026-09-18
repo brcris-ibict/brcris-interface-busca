@@ -80,6 +80,7 @@ export default function TopJournalsArticlesTable({
       error={error}
       initialSortKey="count"
       initialSortDirection="desc"
+      exportFilename="veiculos-de-publicacao"
     />
   );
 }

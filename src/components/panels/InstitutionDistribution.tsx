@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "next-i18next";
-import type { EChartsOption } from "echarts";
+import type { ECharts, EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
 import { ChartBar, ChartPie, Plus, RotateCcw } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByInstitutionPoint } from "../../types/PublicationsDashboard";
+import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
 import {
   PRIMARY_CHART_COLOR,
@@ -128,6 +129,33 @@ export default function InstitutionDistribution({
   const { resolvedTheme } = useTheme();
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const chartRef = useRef<ECharts | null>(null);
+
+  const handleChartReady = useCallback((chart: ECharts | null) => {
+    chartRef.current = chart;
+  }, []);
+
+  const exportRows = useMemo(() => {
+    const rows = data.map((item) => ({
+      institution: item.institution,
+      count: item.count,
+    }));
+    if (publicationsWithoutInstitution > 0) {
+      rows.push({
+        institution: t("Without linked institution"),
+        count: publicationsWithoutInstitution,
+      });
+    }
+    return rows;
+  }, [data, publicationsWithoutInstitution, t]);
+
+  const exportColumns = useMemo(
+    () => [
+      { key: "institution", header: t("Institution") },
+      { key: "count", header: t("Publications") },
+    ],
+    [t],
+  );
 
   // Atualiza a quantidade de itens visíveis quando os dados mudam
   useEffect(() => {
@@ -369,6 +397,19 @@ export default function InstitutionDistribution({
               <Icon size={18} />
             </button>
           ))}
+          <ChartExportMenu
+            filename="publicacoes-por-instituicao"
+            columns={exportColumns}
+            rows={exportRows}
+            disabled={loading || error || !hasChartData}
+            getImageDataUrl={() =>
+              chartRef.current?.getDataURL({
+                type: "png",
+                pixelRatio: 2,
+                backgroundColor: "#ffffff",
+              })
+            }
+          />
         </div>
       </div>
 
@@ -392,6 +433,7 @@ export default function InstitutionDistribution({
               key={chartKind === "bar" ? `bar-${visibleCount}` : "pie"}
               option={option}
               height={chartKind === "bar" ? barChartHeight : height}
+              onChartReady={handleChartReady}
             />
           </div>
         ) : null}

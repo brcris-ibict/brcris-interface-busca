@@ -3,12 +3,11 @@ import { createElasticsearchClient } from "../../../services/ElasticsearchClient
 import logger from "../../../services/Logger";
 import type {
   PublicationsDashboardErrorResponse,
-  PublicationsJournalQuantifiers,
+  PublicationsKeywordHeatmap,
 } from "../../../types/PublicationsDashboard";
 
 const client = createElasticsearchClient();
-const MAX_TITLES = 50;
-const DEFAULT_PAGE_SIZE = 10;
+const KEYWORD_SIZE = 30;
 const YEAR_FROM = "1960";
 
 const TYPES = [
@@ -33,29 +32,17 @@ function param(value: string | string[] | undefined) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-// Função auxiliar para converter parâmetros em inteiros positivos
-function parsePositiveInt(
-  value: string | string[] | undefined,
-  fallback: number,
-  max: number,
-) {
-  const raw = typeof value === "string" ? Number(value) : NaN;
-
-  if (!Number.isFinite(raw) || raw < 1) return fallback;
-
-  return Math.min(Math.floor(raw), max);
-
-}
-
 // Handler principal para a API
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<PublicationsJournalQuantifiers | PublicationsDashboardErrorResponse>,
+  res: NextApiResponse<PublicationsKeywordHeatmap | PublicationsDashboardErrorResponse>,
 ) {
   // Verifica se o método da requisição é GET
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
+
     return res.status(405).json({ error: "Metodo nao permitido." });
+
   }
 
   // Obtém o índice de publicações
@@ -73,16 +60,10 @@ export default async function handler(
   const language = param(req.query.language);
   // Obtém a instituição da publicação
   const institution = param(req.query.institution);
-  // Obtém a página
-  const page = parsePositiveInt(req.query.page, 1, 1000);
-  // Obtém o tamanho da página
-  const pageSize = parsePositiveInt(
-    req.query.pageSize,
-    DEFAULT_PAGE_SIZE,
-    MAX_TITLES,
-  );
+  // Obtém o ano atual
   const yearTo = String(new Date().getFullYear());
 
+  // Cria o array de filtros
   const filters: Record<string, unknown>[] = [
     { range: { publicationDate: { gte: YEAR_FROM, lte: yearTo } } },
     {
@@ -93,6 +74,7 @@ export default async function handler(
     },
   ];
 
+  // Adiciona os filtros para a data, tipo, idioma e instituição
   if (publicationDate) filters.push({ term: { publicationDate } });
   if (type) filters.push({ term: { type } });
   if (language) filters.push({ term: { language } });
@@ -100,19 +82,7 @@ export default async function handler(
     filters.push({ term: { "sponsorOrgUnit.name": institution } });
   }
 
-  // terms aggregation não tem from/size: pedimos até o fim da página e fatiamos
-  const fetchSize = Math.min(page * pageSize, MAX_TITLES);
-  const start = (page - 1) * pageSize;
-
-  if (start >= MAX_TITLES) {
-    return res.status(200).json({
-      items: [],
-      page,
-      pageSize,
-      total: MAX_TITLES,
-    });
-  }
-
+  // Realiza a busca nos dados
   try {
     const response = await client.search({
       index,
@@ -120,47 +90,31 @@ export default async function handler(
       track_total_hits: false,
       query: { bool: { filter: filters } },
       aggs: {
-        byTitle: {
+        byKeyword: {
           terms: {
-            field: "title",
-            size: fetchSize,
+            field: "keywords",
+            size: KEYWORD_SIZE,
             order: { _count: "desc" },
-          },
-          aggs: {
-            conferences: { cardinality: { field: "conference.id" } },
-            journals: { cardinality: { field: "journal.id" } },
-            authors: { cardinality: { field: "author.id" } },
-            sponsors: { cardinality: { field: "sponsorOrgUnit.id" } },
           },
         },
       },
     });
 
-    // Obtém os buckets de títulos
-    const buckets = ((response.aggregations as any)?.byTitle?.buckets as any[]) ?? [];
+    // Obtém os buckets de palavras-chave
+    const buckets = ((response.aggregations as any)?.byKeyword?.buckets as any[]) ?? [];
 
-    // Obtém os buckets da página
-    const pageBuckets = buckets.slice(start, start + pageSize);
-
-    // Se voltaram menos buckets que o pedido, total real = length; senão, teto MAX_TITLES
-    const total = buckets.length < fetchSize ? buckets.length : MAX_TITLES;
-
+    // Retorna os resultados
     return res.status(200).json({
-      items: pageBuckets.map((bucket, index) => ({
-        rank: start + index + 1,
-        title: String(bucket.key_as_string ?? bucket.key),
-        publications: bucket.doc_count,
-        conferences: bucket.conferences?.value ?? 0,
-        journals: bucket.journals?.value ?? 0,
-        authors: bucket.authors?.value ?? 0,
-        sponsors: bucket.sponsors?.value ?? 0,
+      items: buckets.map((bucket) => ({
+        keyword: String(bucket.key_as_string ?? bucket.key),
+        count: bucket.doc_count,
       })),
-      page,
-      pageSize,
-      total,
     });
+
   } catch (error) {
     logger.error(error);
+    
     return res.status(500).json({ error: "Falha ao carregar o painel." });
+
   }
 }

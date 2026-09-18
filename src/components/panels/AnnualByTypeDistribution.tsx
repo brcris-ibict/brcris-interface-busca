@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "next-i18next";
-import type { EChartsOption } from "echarts";
+import type { ECharts, EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
 import { BarChart3, ChartArea, LineChart } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsAnnualByTypePoint } from "../../types/PublicationsDashboard";
+import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
 import { getPublicationTypeStyle } from "./publicationsChartConfig";
 
@@ -41,6 +42,11 @@ export default function AnnualByTypeDistribution({
   const { t } = useTranslation("common");
   const { resolvedTheme } = useTheme();
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
+  const chartRef = useRef<ECharts | null>(null);
+
+  const handleChartReady = useCallback((chart: ECharts | null) => {
+    chartRef.current = chart;
+  }, []);
 
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
@@ -57,8 +63,28 @@ export default function AnnualByTypeDistribution({
     });
 
     return Array.from(names);
-    
   }, [data]);
+
+  const exportRows = useMemo(
+    () =>
+      data.flatMap((point) =>
+        point.types.map((item) => ({
+          year: point.year,
+          type: item.type,
+          count: item.count,
+        })),
+      ),
+    [data],
+  );
+
+  const exportColumns = useMemo(
+    () => [
+      { key: "year", header: t("Year") },
+      { key: "type", header: t("Type") },
+      { key: "count", header: t("Publications") },
+    ],
+    [t],
+  );
 
   // Responsável por construir a opção do gráfico, de acordo com o tipo de gráfico selecionado
   const option = useMemo<EChartsOption>(() => {
@@ -167,6 +193,19 @@ export default function AnnualByTypeDistribution({
               <Icon size={18} />
             </button>
           ))}
+          <ChartExportMenu
+            filename="publicacoes-anuais-por-tipo"
+            columns={exportColumns}
+            rows={exportRows}
+            disabled={loading || error || empty}
+            getImageDataUrl={() =>
+              chartRef.current?.getDataURL({
+                type: "png",
+                pixelRatio: 2,
+                backgroundColor: "#ffffff",
+              })
+            }
+          />
         </div>
       </div>
 
@@ -178,7 +217,11 @@ export default function AnnualByTypeDistribution({
           empty={empty}
         />
         {!loading && !error && !empty ? (
-          <EChart option={option} height={height} />
+          <EChart
+            option={option}
+            height={height}
+            onChartReady={handleChartReady}
+          />
         ) : null}
       </div>
     </div>

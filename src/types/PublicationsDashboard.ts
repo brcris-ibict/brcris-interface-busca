@@ -71,6 +71,18 @@ export type PublicationsJournalQuantifierPoint = {
 
 export type PublicationsJournalQuantifiers = {
   items: PublicationsJournalQuantifierPoint[];
+  page: number;
+  pageSize: number;
+  total: number;
+};
+
+export type PublicationsKeywordPoint = {
+  keyword: string;
+  count: number;
+};
+
+export type PublicationsKeywordHeatmap = {
+  items: PublicationsKeywordPoint[];
 };
 
 export type PublicationsDashboardSummary = {
