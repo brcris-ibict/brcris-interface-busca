@@ -8,9 +8,10 @@ import { withBasePath } from "../../lib/basePath";
 import type { PublicationsDashboardFilters, PublicationsKeywordHeatmap } from "../../types/PublicationsDashboard";
 import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
-import { PRIMARY_CHART_COLOR, hexToRgba } from "./publicationsChartConfig";
+import { PRIMARY_CHART_COLOR } from "./publicationsChartConfig";
 
-const EChart = dynamic(() => import("./EChart"), { ssr: false });
+// Carrega EChart + registro do wordCloud só no client (pacote usa `window`)
+const EChart = dynamic(() => import("./WordCloudEChart"), { ssr: false });
 
 // Props do componente
 type Props = {
@@ -19,37 +20,22 @@ type Props = {
 };
 
 // Paleta harmônica em torno do teal BrCris + tons complementares suaves.
-const TREEMAP_PALETTE = [
+const WORD_PALETTE = [
   "#0284a0",
   "#0ea5b7",
   "#14b8a6",
-  "#2dd4bf",
-  "#67c5d8",
-  "#0891b2",
   "#0369a1",
-  "#0e7490",
   "#5b8def",
-  "#7c9cff",
-  "#8b5cf6",
-  "#a78bfa",
+  "#7c3aed",
   "#db2777",
-  "#ec4899",
-  "#f43f5e",
-  "#fb7185",
-  "#f59e0b",
-  "#fbbf24",
-  "#64748b",
-  "#94a3b8",
-  "#475569",
-  "#334155",
-  "#06b6d4",
-  "#22d3ee",
-  "#4f46e5",
-  "#6366f1",
-  "#c026d3",
-  "#e879f9",
+  "#e11d48",
   "#ea580c",
-  "#fb923c",
+  "#d97706",
+  "#0f766e",
+  "#4338ca",
+  "#be185d",
+  "#475569",
+  "#0891b2",
 ];
 
 // Função auxiliar para construir a URL da API
@@ -62,8 +48,9 @@ function buildUrl(filters: PublicationsDashboardFilters) {
 
   const query = params.toString();
 
-  return query ? withBasePath(`/api/dashboard/keyword-heatmap?${query}`) : withBasePath("/api/dashboard/keyword-heatmap");
-
+  return query
+    ? withBasePath(`/api/dashboard/keyword-heatmap?${query}`)
+    : withBasePath("/api/dashboard/keyword-heatmap");
 }
 
 // Função auxiliar para formatar percentuais
@@ -78,31 +65,6 @@ function formatPercent(value: number, locale: string) {
 function formatCount(value: number, locale: string) {
   return new Intl.NumberFormat(locale).format(value);
 }
-
-// Função auxiliar para converter hex para RGB
-function hexToRgb(hex: string) {
-  const value = hex.replace("#", "");
-  // Retorna o RGB
-  return {
-    r: parseInt(value.slice(0, 2), 16),
-    g: parseInt(value.slice(2, 4), 16),
-    b: parseInt(value.slice(4, 6), 16),
-  };
-
-}
-
-// Função auxiliar para definir as cores dos labels
-function labelColorsFor(bg: string) {
-  const { r, g, b } = hexToRgb(bg);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  const dark = luminance > 0.62;
-
-  return {
-    name: dark ? "#0f172a" : "#f8fafc",
-    pct: dark ? hexToRgba("#0f172a", 0.72) : hexToRgba("#f8fafc", 0.88),
-  };
-}
-
 
 export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
   const { t, i18n } = useTranslation("common");
@@ -142,44 +104,28 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
   const locale = i18n.language || "pt-BR";
   const isDark = resolvedTheme === "dark";
   const textMuted = isDark ? "#a1a1aa" : "#64748b";
-  const borderColor = isDark ? "#111827" : "#ffffff";
-  const tooltipBg = isDark ? "rgba(17, 24, 39, 0.94)" : "rgba(255, 255, 255, 0.96)";
+  const tooltipBg = isDark ? "rgba(17, 24, 39, 0.96)" : "rgba(255, 255, 255, 0.98)";
   const tooltipBorder = isDark ? "#374151" : "#e2e8f0";
   const tooltipText = isDark ? "#e5e7eb" : "#0f172a";
+  const canvasBg = isDark
+    ? "rgba(17, 24, 39, 0.35)"
+    : "rgba(248, 250, 252, 0.9)";
 
   // Obtém a opção do gráfico
   const option = useMemo<EChartsOption>(() => {
     // Obtém o total de itens
     const total = items.reduce((sum, item) => sum + item.count, 0) || 1;
+    const shareByKeyword = new Map(
+      items.map((item) => [item.keyword, (item.count / total) * 100]),
+    );
 
-    const treeData = items.map((item, index) => {
-      const share = (item.count / total) * 100;
-      const tileColor = TREEMAP_PALETTE[index % TREEMAP_PALETTE.length];
-      const labels = labelColorsFor(tileColor);
-
-      return {
-        name: item.keyword,
-        value: item.count,
-        share,
-        itemStyle: {
-          color: tileColor,
-          borderColor,
-          borderWidth: 1,
-          borderRadius: 4,
-          gapWidth: 1,
-          shadowBlur: 0,
-          shadowColor: "transparent",
-        },
-        label: {
-          color: labels.name,
-        },
-        labelColors: labels,
-      };
-    });
+    const cloudData = items.map((item) => [item.keyword, item.count]);
 
     return {
-      animationDuration: 450,
+      animationDuration: 650,
       animationEasing: "cubicOut",
+      color: WORD_PALETTE,
+      backgroundColor: "transparent",
       textStyle: {
         fontFamily: '"rawline", helvetica, arial, sans-serif',
         color: textMuted,
@@ -189,132 +135,82 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
         backgroundColor: tooltipBg,
         borderColor: tooltipBorder,
         borderWidth: 1,
-        padding: [10, 12],
-        extraCssText: "border-radius:10px;box-shadow:0 10px 28px rgba(15,23,42,0.14);backdrop-filter:blur(6px);",
+        padding: [12, 14],
+        extraCssText:
+          "border-radius:12px;box-shadow:0 12px 32px rgba(15,23,42,0.16);backdrop-filter:blur(8px);",
         textStyle: {
           color: tooltipText,
           fontSize: 12,
           fontFamily: '"rawline", helvetica, arial, sans-serif',
         },
         formatter: (params: any) => {
-          const name = String(params?.name ?? "");
-          const count = Number(params?.value ?? 0);
-          const share = Number(params?.data?.share ?? 0);
+          const raw = params?.value;
+          const name = String(
+            Array.isArray(raw) ? raw[0] : (params?.name ?? ""),
+          );
+          const count = Number(Array.isArray(raw) ? raw[1] : (params?.value ?? 0));
+          const share = Number(shareByKeyword.get(name) ?? 0);
           const color = String(params?.color ?? PRIMARY_CHART_COLOR);
 
           return [
-            `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">`,
+            `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">`,
             `<span style="width:10px;height:10px;border-radius:999px;background:${color};flex-shrink:0;"></span>`,
-            `<strong style="font-size:13px;line-height:1.2;">${name}</strong>`,
+            `<strong style="font-size:14px;line-height:1.2;letter-spacing:-0.01em;">${name}</strong>`,
             `</div>`,
-            `<div style="opacity:0.9;line-height:1.45;">`,
-            `${formatCount(count, locale)} ${t("publications")}`,
-            `<br/>`,
-            `<span style="opacity:0.8;">${formatPercent(share, locale)}% ${t("of top keywords")}</span>`,
+            `<div style="display:flex;flex-direction:column;gap:4px;line-height:1.4;">`,
+            `<span style="font-size:18px;font-weight:700;letter-spacing:-0.02em;">${formatPercent(share, locale)}%</span>`,
+            `<span style="opacity:0.72;font-size:12px;">${formatCount(count, locale)} ${t("publications")}</span>`,
+            `<span style="opacity:0.55;font-size:11px;">${t("of top keywords")}</span>`,
             `</div>`,
           ].join("");
         },
       },
       series: [
         {
-          type: "treemap",
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-          width: "100%",
-          height: "100%",
-          roam: false,
-          nodeClick: false,
-          breadcrumb: { show: false },
-          leafDepth: 1,
-          squareRatio: 0.65 * (1 + Math.sqrt(5)),
-          visibleMin: 1,
-          label: {
-            show: true,
-            position: "insideTopLeft",
-            padding: [10, 12],
-            formatter: (params: any) => {
-              const name = String(params?.name ?? "");
-              const share = Number(params?.data?.share ?? 0);
-
-              // Tiles pequenos: só %; muito pequenos: sem label (evita ruído)
-              if (share < 1.8) return "";
-              if (share < 2.8) {
-                return `{pct|${formatPercent(share, locale)}%}`;
-              }
-
-              const short =
-                name.length > 22 ? `${name.slice(0, 20)}…` : name;
-
-              return [
-                `{name|${short}}`,
-                `{pct|${formatPercent(share, locale)}%}`,
-              ].join("\n");
-            },
-            rich: {
-              name: {
-                fontSize: 12,
-                fontWeight: 650,
-                lineHeight: 17,
-                color: "inherit",
-              },
-              pct: {
-                fontSize: 18,
-                fontWeight: 700,
-                lineHeight: 24,
-                padding: [4, 0, 0, 0],
-                color: "inherit",
-              },
-            },
+          type: "custom",
+          renderItem: "wordCloud",
+          // wordCloud não usa eixos; default cartesian2d causa "xAxis 0 not found"
+          coordinateSystem: "none",
+          silent: false,
+          itemPayload: {
+            left: "1%",
+            right: "1%",
+            top: "1%",
+            bottom: "1%",
+            // diamante aproveita melhor o retângulo do que o círculo
+            shape: "diamond",
+            // 0° e 90°: legível e empacota melhor o espaço
+            rotationRange: [0, 90],
+            rotationStep: 90,
+            sizeRange: [18, 72],
+            gridSize: 5,
+            shrinkToFit: true,
+            drawOutOfBound: true,
           },
-          upperLabel: { show: false },
           itemStyle: {
-            borderColor,
-            borderWidth: 1,
-            borderRadius: 4,
-            gapWidth: 1,
+            fontFamily: '"rawline", helvetica, arial, sans-serif',
+            fontWeight: 650,
           },
           emphasis: {
-            focus: "none",
+            focus: "self",
             itemStyle: {
-              shadowBlur: 0,
-              borderWidth: 1,
+              fontWeight: 800,
+              shadowBlur: 12,
+              shadowColor: "rgba(15, 23, 42, 0.22)",
             },
           },
-          data: treeData.map((item) => ({
-            ...item,
-            label: {
-              color: item.labelColors.name,
-              rich: {
-                name: { color: item.labelColors.name },
-                pct: { color: item.labelColors.pct },
-              },
-            },
-          })),
-        },
+          data: cloudData,
+        } as any,
       ],
     };
-  }, [
-    items,
-    locale,
-    textMuted,
-    borderColor,
-    tooltipBg,
-    tooltipBorder,
-    tooltipText,
-    isDark,
-    t,
-  ]);
+  }, [items, locale, textMuted, tooltipBg, tooltipBorder, tooltipText, t]);
 
   return (
-    <div className="brcris-chart-card brcris-keywords-treemap">
-      <div className="brcris-chart-card__header brcris-keywords-treemap__header">
-        <div className="brcris-keywords-treemap__heading">
-          <h2 className="brcris-chart-card__title">
-            {t("Keywords heatmap")}
-          </h2>
-          <p className="brcris-keywords-treemap__caption">
+    <div className="brcris-chart-card brcris-keywords-cloud">
+      <div className="brcris-chart-card__header brcris-keywords-cloud__header">
+        <div className="brcris-keywords-cloud__heading">
+          <h2 className="brcris-chart-card__title">{t("Keywords heatmap")}</h2>
+          <p className="brcris-keywords-cloud__caption">
             {t("Keywords heatmap caption")}
           </p>
         </div>
@@ -328,7 +224,7 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
               chartRef.current?.getDataURL({
                 type: "png",
                 pixelRatio: 2,
-                backgroundColor: "#ffffff",
+                backgroundColor: isDark ? "#111827" : "#ffffff",
               })
             }
           />
@@ -344,7 +240,10 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
         />
 
         {!loading && !error && items.length > 0 ? (
-          <div className="brcris-keywords-treemap__canvas">
+          <div
+            className="brcris-keywords-cloud__canvas"
+            style={{ background: canvasBg }}
+          >
             <EChart
               option={option}
               height={height}

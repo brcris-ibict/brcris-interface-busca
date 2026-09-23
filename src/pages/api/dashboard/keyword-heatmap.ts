@@ -7,7 +7,9 @@ import type {
 } from "../../../types/PublicationsDashboard";
 
 const client = createElasticsearchClient();
-const KEYWORD_SIZE = 30;
+const KEYWORD_SIZE = 100;
+// Busca folga no ES para, após unificar variantes, ainda sobrar o top N
+const KEYWORD_FETCH_SIZE = 400;
 const YEAR_FROM = "1960";
 
 const TYPES = [
@@ -30,6 +32,71 @@ const TYPES = [
 // Função auxiliar para tratar parâmetros da query string
 function param(value: string | string[] | undefined) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+// Normaliza para agrupamento (caixa + acentos + espaços)
+function normalizeKeyword(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLocaleLowerCase("pt-BR")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Preferência de rótulo: variante com maior contagem; empate → mais “Title Case”
+function pickDisplayLabel(current: string, candidate: string, currentCount: number, candidateCount: number) {
+  if (candidateCount > currentCount) return candidate;
+  if (candidateCount < currentCount) return current;
+
+  const currentScore = Number(/[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(current));
+  const candidateScore = Number(/[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(candidate));
+
+  return candidateScore > currentScore ? candidate : current;
+}
+
+// Agrupa buckets equivalentes semanticamente (ex.: Educação / educação)
+function mergeKeywordBuckets(
+  buckets: { key?: unknown; key_as_string?: unknown; doc_count?: number }[],
+) {
+  const merged = new Map<
+    string,
+    { keyword: string; count: number; topVariantCount: number }
+  >();
+
+  for (const bucket of buckets) {
+    const raw = String(bucket.key_as_string ?? bucket.key ?? "").trim();
+    if (!raw) continue;
+
+    const key = normalizeKeyword(raw);
+    if (!key) continue;
+
+    const count = Number(bucket.doc_count ?? 0);
+    const existing = merged.get(key);
+
+    if (!existing) {
+      merged.set(key, {
+        keyword: raw,
+        count,
+        topVariantCount: count,
+      });
+      continue;
+    }
+
+    existing.keyword = pickDisplayLabel(
+      existing.keyword,
+      raw,
+      existing.topVariantCount,
+      count,
+    );
+    existing.topVariantCount = Math.max(existing.topVariantCount, count);
+    existing.count += count;
+  }
+
+  return Array.from(merged.values())
+    .sort((a, b) => b.count - a.count || a.keyword.localeCompare(b.keyword, "pt-BR"))
+    .slice(0, KEYWORD_SIZE)
+    .map(({ keyword, count }) => ({ keyword, count }));
 }
 
 // Handler principal para a API
@@ -93,7 +160,7 @@ export default async function handler(
         byKeyword: {
           terms: {
             field: "keywords",
-            size: KEYWORD_SIZE,
+            size: KEYWORD_FETCH_SIZE,
             order: { _count: "desc" },
           },
         },
@@ -103,12 +170,9 @@ export default async function handler(
     // Obtém os buckets de palavras-chave
     const buckets = ((response.aggregations as any)?.byKeyword?.buckets as any[]) ?? [];
 
-    // Retorna os resultados
+    // Retorna os resultados (já agrupados: Educação ≈ educação)
     return res.status(200).json({
-      items: buckets.map((bucket) => ({
-        keyword: String(bucket.key_as_string ?? bucket.key),
-        count: bucket.doc_count,
-      })),
+      items: mergeKeywordBuckets(buckets),
     });
 
   } catch (error) {
