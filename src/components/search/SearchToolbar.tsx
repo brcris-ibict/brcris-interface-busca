@@ -113,7 +113,7 @@ export default function SearchToolbar({
           />
         </div>
         <div className={styles.toolbarControl}>
-          <DownloadModalTyped availableFormats={["csv", "ris"]} />
+          <DownloadModalTyped availableFormats={["csv", "json", "ris"]} />
         </div>
         <div className={styles.toolbarControl}>
           <reactSearchUi.Sorting

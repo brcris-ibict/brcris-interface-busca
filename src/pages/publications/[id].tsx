@@ -61,6 +61,9 @@ export default function PublicationDetailsPage() {
         conference: {
           raw: {},
         },
+        eventName: {
+          raw: {},
+        },
         course: {
           raw: {},
         },
