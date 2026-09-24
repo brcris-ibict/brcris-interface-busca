@@ -12,23 +12,6 @@ const KEYWORD_SIZE = 100;
 const KEYWORD_FETCH_SIZE = 400;
 const YEAR_FROM = "1960";
 
-const TYPES = [
-  "conference proceedings",
-  "journal article",
-  "article",
-  "book",
-  "book-chapter",
-  "editorial",
-  "dataset",
-  "erratum",
-  "Artigo",
-  "Artigo de Conferência",
-  "Capítulo de Livro",
-  "Conjunto de Dados",
-  "Livro",
-  "Preprint",
-];
-
 // Função auxiliar para tratar parâmetros da query string
 function param(value: string | string[] | undefined) {
   return typeof value === "string" ? value.trim() : "";
@@ -130,15 +113,9 @@ export default async function handler(
   // Obtém o ano atual
   const yearTo = String(new Date().getFullYear());
 
-  // Cria o array de filtros
+  // Cria o array de filtros (mesmo critério da API /publications)
   const filters: Record<string, unknown>[] = [
     { range: { publicationDate: { gte: YEAR_FROM, lte: yearTo } } },
-    {
-      bool: {
-        should: TYPES.map((value) => ({ term: { type: value } })),
-        minimum_should_match: 1,
-      },
-    },
   ];
 
   // Adiciona os filtros para a data, tipo, idioma e instituição

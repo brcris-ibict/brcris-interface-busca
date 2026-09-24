@@ -78,7 +78,14 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
 
   useEffect(() => {
     get(buildUrl(filters));
-  }, [filters, get]);
+  }, [
+    filters.publicationDate,
+    filters.type,
+    filters.language,
+    filters.institution,
+    get,
+    filters,
+  ]);
 
   // Obtém os itens
   const items = data?.items ?? [];
@@ -173,19 +180,19 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
           coordinateSystem: "none",
           silent: false,
           itemPayload: {
-            left: "1%",
-            right: "1%",
-            top: "1%",
-            bottom: "1%",
-            // diamante aproveita melhor o retângulo do que o círculo
-            shape: "diamond",
-            // 0° e 90°: legível e empacota melhor o espaço
-            rotationRange: [0, 90],
-            rotationStep: 90,
-            sizeRange: [18, 72],
-            gridSize: 5,
+            left: "4%",
+            right: "4%",
+            top: "4%",
+            bottom: "4%",
+            shape: "circle",
+            // só horizontal: evita pilha de palavras verticais nas bordas
+            rotationRange: [0, 0],
+            rotationStep: 0,
+            sizeRange: [16, 56],
+            gridSize: 8,
             shrinkToFit: true,
-            drawOutOfBound: true,
+            // false: não desenha fora da área (fim do texto cortado)
+            drawOutOfBound: false,
           },
           itemStyle: {
             fontFamily: '"rawline", helvetica, arial, sans-serif',

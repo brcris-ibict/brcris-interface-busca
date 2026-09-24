@@ -51,12 +51,25 @@ export default function JournalQuantifiersTable({ filters }: Props) {
   // Reseta a página quando os filtros mudam
   useEffect(() => {
     setPage(1);
-  }, [filters]);
+  }, [
+    filters.publicationDate,
+    filters.type,
+    filters.language,
+    filters.institution,
+  ]);
 
-  // Obtém os dados da API quando a página muda
+  // Obtém os dados da API quando filtros ou página mudam
   useEffect(() => {
     get(buildUrl(filters, page, PAGE_SIZE));
-  }, [filters, page, get]);
+  }, [
+    filters.publicationDate,
+    filters.type,
+    filters.language,
+    filters.institution,
+    page,
+    get,
+    filters,
+  ]);
 
   // Obtém os itens
   const items = data?.items ?? [];
