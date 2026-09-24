@@ -41,7 +41,7 @@ function percentOfTotal(count: number, total: number) {
 
 export default function TypeDistribution({
   data,
-  totalPublications,
+  totalPublications: _totalPublications,
   loading,
   error,
   height = 380,
@@ -74,6 +74,15 @@ export default function TypeDistribution({
 
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
+  const labelOutside = resolvedTheme === "dark" ? "#e5e7eb" : "#555555";
+  const labelInside =
+    resolvedTheme === "dark" ? "#e5e7eb" : "#1f2937";
+  const tooltipBg =
+    resolvedTheme === "dark"
+      ? "rgba(17, 24, 39, 0.96)"
+      : "rgba(255, 255, 255, 0.98)";
+  const tooltipBorder = resolvedTheme === "dark" ? "#374151" : "#e2e8f0";
+  const tooltipText = resolvedTheme === "dark" ? "#e5e7eb" : "#0f172a";
 
   // Responsável por construir a opção do gráfico, de acordo com o tipo de gráfico selecionado
   const option = useMemo<EChartsOption>(() => {
@@ -84,89 +93,100 @@ export default function TypeDistribution({
       },
     };
     const bucketsTotal = data.reduce((sum, item) => sum + item.count, 0);
-    const total = totalPublications ?? bucketsTotal;
-    const textMain = resolvedTheme === "dark" ? "#e5e7eb" : "#333333";
 
-    // Construção do gráfico de pizza
+    // Construção do gráfico de pizza (Tipologia documental)
     if (chartKind === "pie") {
+      const pieTotal = bucketsTotal > 0 ? bucketsTotal : 1;
+
       return {
         ...common,
         tooltip: {
           trigger: "item",
-          formatter: (params) => {
-            const item = params as {
-              name?: string;
-              value?: number;
-              data?: { percentOfUnique?: number };
-            };
-            const percent = item.data?.percentOfUnique ?? 0;
-            return `${item.name}: ${Number(item.value).toLocaleString("pt-BR")} (${percent}%)`;
+          backgroundColor: tooltipBg,
+          borderColor: tooltipBorder,
+          borderWidth: 1,
+          padding: [10, 12],
+          extraCssText:
+            "border-radius:10px;box-shadow:0 12px 32px rgba(15,23,42,0.28);",
+          textStyle: {
+            color: tooltipText,
+            fontFamily: '"rawline", helvetica, arial, sans-serif',
+            fontSize: 13,
+          },
+          formatter: (params: any) => {
+            const name = String(params?.name ?? "");
+            const value = Number(params?.value ?? 0);
+            const percent = Number(params?.data?.percentOfUnique ?? 0);
+            return `${name}: ${value.toLocaleString("pt-BR")} (${percent.toFixed(2)}%)`;
           },
         },
         legend: { show: false },
-        graphic: [
-          {
-            type: "text",
-            left: "center",
-            top: "42%",
-            style: {
-              text: total.toLocaleString("pt-BR"),
-              fill: textMain,
-              fontSize: 22,
-              fontWeight: 600,
-              fontFamily: '"rawline", helvetica, arial, sans-serif',
-              textAlign: "center",
-            },
-          },
-          {
-            type: "text",
-            left: "center",
-            top: "51%",
-            style: {
-              text: t("publications"),
-              fill: textMuted,
-              fontSize: 12,
-              fontFamily: '"rawline", helvetica, arial, sans-serif',
-              textAlign: "center",
-            },
-          },
-        ],
         series: [
           {
             type: "pie",
-            radius: ["48%", "68%"],
-            center: ["50%", "50%"],
-            padAngle: 1,
+            radius: "68%",
+            center: ["50%", "52%"],
+            padAngle: 0.6,
             avoidLabelOverlap: true,
             itemStyle: {
               borderWidth: 1,
             },
             label: {
               show: true,
-              formatter: (params) => {
-                const item = params as {
-                  name?: string;
-                  data?: { percentOfUnique?: number };
-                };
-                const percent = item.data?.percentOfUnique ?? 0;
-                return `${item.name}\n${percent}%`;
+              formatter: (params: any) => {
+                const name = String(params?.name ?? "");
+                const percent = Number(params?.data?.percentOfUnique ?? 0);
+                if (percent >= 3) {
+                  return `{name|${name}}\n{pct|${percent.toFixed(2)}%}`;
+                }
+                return `{nameSmall|${name}}\n{pctSmall|${percent.toFixed(2)}%}`;
               },
-              color: textMuted,
-              fontSize: 11,
-              lineHeight: 16,
+              rich: {
+                name: {
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: labelInside,
+                  lineHeight: 16,
+                  align: "center",
+                },
+                pct: {
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: labelInside,
+                  lineHeight: 18,
+                  align: "center",
+                },
+                nameSmall: {
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: labelOutside,
+                  lineHeight: 15,
+                },
+                pctSmall: {
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: labelOutside,
+                  lineHeight: 15,
+                },
+              },
             },
             labelLine: {
               show: true,
-              length: 10,
-              length2: 8,
+              length: 12,
+              length2: 10,
               lineStyle: { color: gridColor, width: 1 },
             },
+            labelLayout: { hideOverlap: true },
             data: data.map((item) => {
-              const style = getPublicationTypeStyle(item.type);
+              const style = getPublicationTypeStyle(item.type, resolvedTheme);
+              const percent = percentOfTotal(item.count, pieTotal);
               return {
                 name: t(item.type),
                 value: item.count,
-                percentOfUnique: percentOfTotal(item.count, total),
+                percentOfUnique: percent,
+                label: {
+                  position: percent >= 3 ? "inside" : "outside",
+                },
                 itemStyle: {
                   color: style.color,
                   borderColor: style.borderColor,
@@ -182,7 +202,14 @@ export default function TypeDistribution({
     // Construção do gráfico de barras
     return {
       ...common,
-      tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: { type: "shadow" },
+        backgroundColor: tooltipBg,
+        borderColor: tooltipBorder,
+        borderWidth: 1,
+        textStyle: { color: tooltipText },
+      },
       legend: { show: false },
       grid: {
         left: 8,
@@ -210,7 +237,7 @@ export default function TypeDistribution({
           type: "bar",
           data: data
             .map((item) => {
-              const style = getPublicationTypeStyle(item.type);
+              const style = getPublicationTypeStyle(item.type, resolvedTheme);
               return {
                 value: item.count,
                 itemStyle: {
@@ -234,13 +261,25 @@ export default function TypeDistribution({
         },
       ],
     };
-  }, [data, chartKind, textMuted, gridColor, resolvedTheme, t, totalPublications]);
+  }, [
+    data,
+    chartKind,
+    textMuted,
+    gridColor,
+    labelOutside,
+    labelInside,
+    tooltipBg,
+    tooltipBorder,
+    tooltipText,
+    resolvedTheme,
+    t,
+  ]);
 
   return (
     <div className="brcris-chart-card" style={{ height: `500px` }}>
       <div className="brcris-chart-card__header">
         <h2 className="brcris-chart-card__title">
-          {t("Publications by type composition")}
+          {t("Document typology")}
         </h2>
 
         <div className="brcris-chart-card__toggles" role="group">

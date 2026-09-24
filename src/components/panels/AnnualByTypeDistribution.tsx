@@ -138,7 +138,7 @@ export default function AnnualByTypeDistribution({
         },
       },
       series: typeNames.map((typeName) => {
-        const style = getPublicationTypeStyle(typeName);
+        const style = getPublicationTypeStyle(typeName, resolvedTheme);
         return {
           name: t(typeName),
           type: seriesType,
@@ -166,7 +166,7 @@ export default function AnnualByTypeDistribution({
         };
       }),
     };
-  }, [data, years, typeNames, chartKind, seriesType, textMuted, gridColor, t]);
+  }, [data, years, typeNames, chartKind, seriesType, textMuted, gridColor, resolvedTheme, t]);
 
   // Verifica se o gráfico está vazio
   const empty = !loading && !error && (data.length === 0 || typeNames.length === 0);

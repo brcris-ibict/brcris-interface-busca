@@ -37,7 +37,7 @@ export const PANEL_CHART_BORDERS = [
   "#bbbbbb",
 ];
 
-// É assim que controlamos a opacidade dos fills nos gráficos dos painéis
+// É assim que controlamos a opacidade dos fills no modo dark
 const PANEL_CHART_FILL_ALPHA = 0.28;
 
 // Aqui a gente gera as cores de fundo (usando o alpha de cima) a partir das bordas
@@ -60,23 +60,43 @@ export const PUBLICATION_TYPE_BORDERS: Record<string, string> = {
   Preprint: "#B5C0D6",
 };
 
-// Alpha fixo para preenchimento dos tipos de publicação mantemos os fills suaves
+// Alpha fixo para preenchimento dos tipos de publicação no modo dark
 const PUBLICATION_TYPE_FILL_ALPHA = 0.28;
 
-// Dá pra usar essa função pra pegar o estilo certo de cada tipo de publicação (cor de preenchimento e borda)
-export function getPublicationTypeStyle(type: string) {
+export type ChartColorMode = "light" | "dark";
+
+// Light: sólido (padrão Tipologia). Dark: fill suave com transparência.
+export function chartFillColor(hex: string, mode: ChartColorMode = "light") {
+  if (mode === "dark") {
+    return hexToRgba(hex, PANEL_CHART_FILL_ALPHA);
+  }
+  return hex;
+}
+
+// Dá pra usar essa função pra pegar o estilo certo de cada tipo de publicação
+export function getPublicationTypeStyle(
+  type: string,
+  mode: ChartColorMode = "light",
+) {
   const borderColor = PUBLICATION_TYPE_BORDERS[type] ?? "#999999";
   return {
-    color: hexToRgba(borderColor, PUBLICATION_TYPE_FILL_ALPHA),
+    color:
+      mode === "dark"
+        ? hexToRgba(borderColor, PUBLICATION_TYPE_FILL_ALPHA)
+        : borderColor,
     borderColor,
   };
 }
 
-// Mesma ideia, mas agora para gráficos que só têm "índice" (tipo idioma/instituição/etc.)
-export function getPanelSeriesStyle(index: number) {
+// Mesma ideia, mas agora para gráficos que só têm "índice" (idioma/instituição/etc.)
+export function getPanelSeriesStyle(
+  index: number,
+  mode: ChartColorMode = "light",
+) {
   const i = index % PANEL_CHART_BORDERS.length;
+  const borderColor = PANEL_CHART_BORDERS[i];
   return {
-    color: hexToRgba(PANEL_CHART_BORDERS[i], PANEL_CHART_FILL_ALPHA),
-    borderColor: PANEL_CHART_BORDERS[i],
+    color: chartFillColor(borderColor, mode),
+    borderColor,
   };
 }

@@ -9,8 +9,8 @@ import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
 import {
   PRIMARY_CHART_COLOR,
+  chartFillColor,
   getPanelSeriesStyle,
-  hexToRgba,
 } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
@@ -267,7 +267,7 @@ export default function LanguageDistribution({
                   },
                 };
               }
-              const style = getPanelSeriesStyle(index);
+              const style = getPanelSeriesStyle(index, resolvedTheme);
               return {
                 name: item.name,
                 value: item.value,
@@ -321,7 +321,7 @@ export default function LanguageDistribution({
           barMaxWidth: 44,
           barCategoryGap: "32%",
           itemStyle: {
-            color: hexToRgba(PRIMARY_CHART_COLOR, 0.28),
+            color: chartFillColor(PRIMARY_CHART_COLOR, resolvedTheme),
             borderColor: PRIMARY_CHART_COLOR,
             borderWidth: 1,
             borderRadius: 0,

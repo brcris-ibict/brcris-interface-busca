@@ -7,7 +7,10 @@ import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByYearPoint } from "../../types/PublicationsDashboard";
 import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
-import { PRIMARY_CHART_COLOR, hexToRgba } from "./publicationsChartConfig";
+import {
+  PRIMARY_CHART_COLOR,
+  chartFillColor,
+} from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
@@ -113,7 +116,7 @@ export default function AnnualDistribution({
           barMaxWidth: 48,
           barCategoryGap: "28%",
           itemStyle: {
-            color: hexToRgba(PRIMARY_CHART_COLOR, 0.2),
+            color: chartFillColor(PRIMARY_CHART_COLOR, resolvedTheme),
             borderColor: PRIMARY_CHART_COLOR,
             borderWidth: 1,
             borderRadius: 0,
@@ -127,7 +130,10 @@ export default function AnnualDistribution({
                 ...(chartKind === "area"
                   ? {
                       areaStyle: {
-                        color: hexToRgba(PRIMARY_CHART_COLOR, 0.28),
+                        color: chartFillColor(
+                          PRIMARY_CHART_COLOR,
+                          resolvedTheme,
+                        ),
                       },
                     }
                   : {}),
@@ -136,7 +142,7 @@ export default function AnnualDistribution({
         },
       ],
     }),
-    [data, chartKind, seriesType, textMuted, gridColor, t],
+    [data, chartKind, seriesType, textMuted, gridColor, resolvedTheme, t],
   );
 
   return (
