@@ -1,39 +1,57 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createElasticsearchClient } from "../../../services/ElasticsearchClient";
 import logger from "../../../services/Logger";
+import {
+  SERVER_PAGE_DEFAULT_SIZE,
+  SERVER_PAGE_MAX_SIZE,
+  SERVER_TERMS_FETCH_CAP,
+  navigableTotal,
+  parsePositiveInt,
+  termsFetchSize,
+} from "../../../lib/serverPagination";
 import type {
   PublicationsDashboardErrorResponse,
   PublicationsJournalQuantifiers,
 } from "../../../types/PublicationsDashboard";
 
 const client = createElasticsearchClient();
-const MAX_TITLES = 50;
-const DEFAULT_PAGE_SIZE = 10;
 const YEAR_FROM = "1960";
+// Página máxima possível com o cap de terms (ex.: 10000/10 = 1000)
+const MAX_PAGE = Math.ceil(SERVER_TERMS_FETCH_CAP / SERVER_PAGE_DEFAULT_SIZE);
+// Abaixo disso, 1 query com métricas aninhadas ainda é barato
+const SINGLE_QUERY_MAX_FETCH = 50;
 
 // Função auxiliar para tratar parâmetros da query string
 function param(value: string | string[] | undefined) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-// Função auxiliar para converter parâmetros em inteiros positivos
-function parsePositiveInt(
-  value: string | string[] | undefined,
-  fallback: number,
-  max: number,
-) {
-  const raw = typeof value === "string" ? Number(value) : NaN;
+// Sub-aggs: usadas na página (ou no terms curto da single-query)
+const PAGE_METRIC_AGGS = {
+  conferences: { cardinality: { field: "conference.id" } },
+  journals: { cardinality: { field: "journal.id" } },
+  authors: { cardinality: { field: "author.id" } },
+  sponsors: { cardinality: { field: "sponsorOrgUnit.id" } },
+};
 
-  if (!Number.isFinite(raw) || raw < 1) return fallback;
-
-  return Math.min(Math.floor(raw), max);
-
+function mapBucket(bucket: any, rank: number, metrics?: any) {
+  return {
+    rank,
+    title: String(bucket.key_as_string ?? bucket.key),
+    publications: bucket.doc_count,
+    conferences: (metrics ?? bucket).conferences?.value ?? 0,
+    journals: (metrics ?? bucket).journals?.value ?? 0,
+    authors: (metrics ?? bucket).authors?.value ?? 0,
+    sponsors: (metrics ?? bucket).sponsors?.value ?? 0,
+  };
 }
 
 // Handler principal para a API
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<PublicationsJournalQuantifiers | PublicationsDashboardErrorResponse>,
+  res: NextApiResponse<
+    PublicationsJournalQuantifiers | PublicationsDashboardErrorResponse
+  >,
 ) {
   // Verifica se o método da requisição é GET
   if (req.method !== "GET") {
@@ -57,12 +75,18 @@ export default async function handler(
   // Obtém a instituição da publicação
   const institution = param(req.query.institution);
   // Obtém a página
-  const page = parsePositiveInt(req.query.page, 1, 1000);
-  // Obtém o tamanho da página
+  const page = parsePositiveInt(req.query.page, 1, MAX_PAGE);
+  // Obtém o tamanho da página (UI / lote; distinto do cap de terms)
   const pageSize = parsePositiveInt(
     req.query.pageSize,
-    DEFAULT_PAGE_SIZE,
-    MAX_TITLES,
+    SERVER_PAGE_DEFAULT_SIZE,
+    SERVER_PAGE_MAX_SIZE,
+  );
+  // Total já conhecido pelo cliente (troca de página sem mudar filtro)
+  const knownTotal = parsePositiveInt(
+    req.query.knownTotal,
+    0,
+    SERVER_TERMS_FETCH_CAP,
   );
   const yearTo = String(new Date().getFullYear());
 
@@ -79,60 +103,147 @@ export default async function handler(
   }
 
   // terms aggregation não tem from/size: pedimos até o fim da página e fatiamos
-  const fetchSize = Math.min(page * pageSize, MAX_TITLES);
+  const fetchSize = termsFetchSize(page, pageSize);
   const start = (page - 1) * pageSize;
-
-  if (start >= MAX_TITLES) {
-    return res.status(200).json({
-      items: [],
-      page,
-      pageSize,
-      total: MAX_TITLES,
-    });
-  }
+  const query = { bool: { filter: filters } };
+  const needCardinality = knownTotal < 1;
 
   try {
-    const response = await client.search({
+    // Caminho rápido: páginas iniciais (fetchSize pequeno) → 1 round-trip
+    if (fetchSize <= SINGLE_QUERY_MAX_FETCH) {
+      const response = await client.search({
+        index,
+        size: 0,
+        track_total_hits: false,
+        query,
+        aggs: {
+          ...(needCardinality
+            ? {
+                titleCount: {
+                  cardinality: {
+                    field: "title",
+                    precision_threshold: 3000,
+                  },
+                },
+              }
+            : {}),
+          byTitle: {
+            terms: {
+              field: "title",
+              size: fetchSize,
+              order: { _count: "desc" },
+              shard_size: fetchSize,
+            },
+            aggs: PAGE_METRIC_AGGS,
+          },
+        },
+      });
+
+      const aggs = response.aggregations as any;
+      const total = needCardinality
+        ? navigableTotal(Number(aggs?.titleCount?.value ?? 0))
+        : knownTotal;
+
+      if (start >= total) {
+        return res.status(200).json({ items: [], page, pageSize, total });
+      }
+
+      const buckets = (aggs?.byTitle?.buckets as any[]) ?? [];
+      const pageBuckets = buckets.slice(start, start + pageSize);
+
+      return res.status(200).json({
+        items: pageBuckets.map((bucket, index) =>
+          mapBucket(bucket, start + index + 1),
+        ),
+        page,
+        pageSize,
+        total,
+      });
+    }
+
+    // Caminho profundo: ranking leve + métricas só da página
+    const rankResponse = await client.search({
       index,
       size: 0,
       track_total_hits: false,
-      query: { bool: { filter: filters } },
+      query,
       aggs: {
+        ...(needCardinality
+          ? {
+              titleCount: {
+                cardinality: {
+                  field: "title",
+                  precision_threshold: 3000,
+                },
+              },
+            }
+          : {}),
         byTitle: {
           terms: {
             field: "title",
             size: fetchSize,
             order: { _count: "desc" },
-          },
-          aggs: {
-            conferences: { cardinality: { field: "conference.id" } },
-            journals: { cardinality: { field: "journal.id" } },
-            authors: { cardinality: { field: "author.id" } },
-            sponsors: { cardinality: { field: "sponsorOrgUnit.id" } },
+            shard_size: fetchSize,
           },
         },
       },
     });
 
-    // Obtém os buckets de títulos
-    const buckets = ((response.aggregations as any)?.byTitle?.buckets as any[]) ?? [];
+    const rankAggs = rankResponse.aggregations as any;
+    const total = needCardinality
+      ? navigableTotal(Number(rankAggs?.titleCount?.value ?? 0))
+      : knownTotal;
 
-    // Obtém os buckets da página
+    if (start >= total) {
+      return res.status(200).json({ items: [], page, pageSize, total });
+    }
+
+    const buckets = (rankAggs?.byTitle?.buckets as any[]) ?? [];
     const pageBuckets = buckets.slice(start, start + pageSize);
+    const pageTitles = pageBuckets.map((bucket) =>
+      String(bucket.key_as_string ?? bucket.key),
+    );
 
-    // Se voltaram menos buckets que o pedido, total real = length; senão, teto MAX_TITLES
-    const total = buckets.length < fetchSize ? buckets.length : MAX_TITLES;
+    if (pageTitles.length === 0) {
+      return res.status(200).json({ items: [], page, pageSize, total });
+    }
+
+    const metricsResponse = await client.search({
+      index,
+      size: 0,
+      track_total_hits: false,
+      query,
+      aggs: {
+        byTitlePage: {
+          terms: {
+            field: "title",
+            include: pageTitles,
+            size: pageTitles.length,
+          },
+          aggs: PAGE_METRIC_AGGS,
+        },
+      },
+    });
+
+    const metricBuckets =
+      ((metricsResponse.aggregations as any)?.byTitlePage?.buckets as any[]) ??
+      [];
+    const metricsByTitle = new Map(
+      metricBuckets.map((bucket) => [
+        String(bucket.key_as_string ?? bucket.key),
+        bucket,
+      ]),
+    );
 
     return res.status(200).json({
-      items: pageBuckets.map((bucket, index) => ({
-        rank: start + index + 1,
-        title: String(bucket.key_as_string ?? bucket.key),
-        publications: bucket.doc_count,
-        conferences: bucket.conferences?.value ?? 0,
-        journals: bucket.journals?.value ?? 0,
-        authors: bucket.authors?.value ?? 0,
-        sponsors: bucket.sponsors?.value ?? 0,
-      })),
+      items: pageBuckets.map((bucket, index) => {
+        const title = String(bucket.key_as_string ?? bucket.key);
+        return mapBucket(
+          bucket,
+          start + index + 1,
+          metricsByTitle.get(title),
+        );
+      }),
       page,
       pageSize,
       total,

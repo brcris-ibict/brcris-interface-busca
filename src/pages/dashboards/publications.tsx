@@ -10,6 +10,7 @@ import LanguageDistribution from "../../components/panels/LanguageDistribution";
 import TopJournalsArticlesTable from "../../components/panels/TopJournalsArticlesTable";
 import AuthorsProductionsTable from "../../components/panels/AuthorsProductionsTable";
 import JournalQuantifiersTable from "../../components/panels/JournalQuantifiersTable";
+import PublicationsListTable from "../../components/panels/PublicationsListTable";
 import KeywordsHeatmap from "../../components/panels/KeywordsHeatmap";
 import TypeDistribution from "../../components/panels/TypeDistribution";
 import PublicationsBigNumbers from "../../components/panels/PublicationsBigNumbers";
@@ -151,11 +152,14 @@ export default function Publications() {
                   error={Boolean(error)}
                 />
               </div>
-              <div className="col-12">
+              <div className="col-12 col-lg-6">
                 <JournalQuantifiersTable filters={filters} />
               </div>
-              <div className="col-12">
+              <div className="col-12 col-lg-6">
                 <KeywordsHeatmap filters={filters} />
+              </div>
+              <div className="col-12">
+                <PublicationsListTable filters={filters} />
               </div>
             </div>
           </div>

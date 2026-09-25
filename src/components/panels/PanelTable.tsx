@@ -27,23 +27,26 @@ export type PanelTableColumn<T> = {
 
 // Props do componente
 type Props<T> = {
-  title: string;
-  caption: string;
-  items: T[];
-  columns: PanelTableColumn<T>[];
-  getRowKey: (row: T) => string;
-  loading: boolean;
-  error: boolean;
-  initialSortKey: string;
-  initialSortDirection?: PanelTableSortDirection;
-  pageSize?: number;
-  feedbackHeight?: number;
-  paginationMode?: "client" | "server";
-  page?: number;
-  totalItems?: number;
-  onPageChange?: (page: number) => void;
-  clientSort?: boolean;
-  exportFilename?: string;
+  title: string; // Título da tabela
+  caption: string; // Descrição da tabela
+  items: T[]; // Itens da tabela
+  columns: PanelTableColumn<T>[]; // Colunas da tabela
+  getRowKey: (row: T) => string; // Função para obter a chave de uma linha
+  loading: boolean; // Se true, a tabela está carregando
+  error: boolean; // Se true, a tabela está com erro
+  initialSortKey: string; // Chave da coluna para a ordenação inicial
+  initialSortDirection?: PanelTableSortDirection; // Direção da ordenação inicial
+  pageSize?: number; // Tamanho da página
+  feedbackHeight?: number; // Altura do feedback (ex.: 220px)
+  layout?: "metrics" | "metrics-compact" | "listing"; // Layout da tabela: "metrics" / "metrics-compact" / "listing"
+  paginationMode?: "client" | "server"; // Modo de paginação: "client" para paginação no cliente, "server" para paginação no servidor
+  page?: number; // Página atual
+  totalItems?: number; // Total de itens
+  maxNavigableItems?: number; // Máx. de itens navegáveis com from/size (ex.: 10000). Afeta só o salto de página.
+  onPageChange?: (page: number) => void; // Função para mudar a página
+  clientSort?: boolean; // Se true, a ordenação é feita no cliente (ex.: na interface do usuário)
+  exportFilename?: string; // Nome do arquivo para o export
+  fetchExportRows?: () => Promise<Record<string, string | number>[]>; // Tabela server-paginated: busca todas as linhas no export (não só a página)
 };
 
 // Função responsável por comparar dois valores em relação à direção de ordenação
@@ -76,33 +79,39 @@ export default function PanelTable<T>({
   initialSortDirection = "desc",
   pageSize = 10,
   feedbackHeight = 220,
+  layout = "metrics",
   paginationMode = "client",
   page: controlledPage,
   totalItems,
+  maxNavigableItems,
   onPageChange,
   clientSort = true,
   exportFilename,
+  fetchExportRows,
 }: Props<T>) {
-  const { t, i18n } = useTranslation("common");
-  const locale = i18n.language || "pt-BR";
-  const empty = !loading && !error && items.length === 0;
-  const isServer = paginationMode === "server";
+  const { t, i18n } = useTranslation("common"); // Idioma da aplicação
+  const locale = i18n.language || "pt-BR"; // Idioma da aplicação
+  const empty = !loading && !error && items.length === 0; 
+  const isServer = paginationMode === "server"; // Verifica se a paginação é no servidor
 
-  const [internalPage, setInternalPage] = useState(1);
+  const [internalPage, setInternalPage] = useState(1); // Página interna
   const [sortKey, setSortKey] = useState(initialSortKey);
-  const [sortDirection, setSortDirection] =
-    useState<PanelTableSortDirection>(initialSortDirection);
+  const [sortDirection, setSortDirection] = useState<PanelTableSortDirection>(initialSortDirection);
 
-  const page = isServer ? (controlledPage ?? 1) : internalPage;
+  const page = isServer ? (controlledPage ?? 1) : internalPage; // Página atual
 
+  // Efeito para reiniciar a página interna quando os itens ou os critérios de ordenação mudam
   useEffect(() => {
     if (!isServer) {
-      setInternalPage(1);
+      setInternalPage(1); // Reinicia a página interna para 1
     }
+
     setSortKey(initialSortKey);
     setSortDirection(initialSortDirection);
+
   }, [items, initialSortKey, initialSortDirection, isServer]);
 
+  // Efeito para ordenar os itens quando os critérios de ordenação mudam
   const sortedItems = useMemo(() => {
     if (!clientSort) return items;
 
@@ -117,6 +126,7 @@ export default function PanelTable<T>({
     return next;
   }, [items, columns, sortKey, sortDirection, clientSort]);
 
+  // Efeito para obter as colunas para o export
   const exportColumns = useMemo(
     () =>
       columns.map((column) => ({
@@ -126,6 +136,7 @@ export default function PanelTable<T>({
     [columns],
   );
 
+  // Efeito para obter as linhas para o export
   const exportRows = useMemo(
     () =>
       sortedItems.map((row) => {
@@ -138,18 +149,25 @@ export default function PanelTable<T>({
     [sortedItems, columns],
   );
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(
-      (isServer ? (totalItems ?? items.length) : sortedItems.length) / pageSize,
-    ),
+  // Total efetivo para navegação (respeita janela from/size do ES, se informada)
+  const effectiveTotal = Math.max(
+    0,
+    maxNavigableItems != null
+      ? Math.min(totalItems ?? items.length, maxNavigableItems)
+      : isServer ? (totalItems ?? items.length) : sortedItems.length, // Se estiver no modo server, usa o total de itens, se não, usa o total de itens ordenados
   );
 
+  // Efeito para obter o total de páginas
+  const totalPages = Math.max(1, Math.ceil(effectiveTotal / pageSize));
+
+  // Efeito para obter os itens da página atual
   const pageItems = useMemo(() => {
     if (isServer) return sortedItems;
 
     const start = (page - 1) * pageSize;
+
     return sortedItems.slice(start, start + pageSize);
+
   }, [sortedItems, page, pageSize, isServer]);
 
   // Obtém os números das páginas
@@ -214,6 +232,7 @@ export default function PanelTable<T>({
               filename={exportFilename}
               columns={exportColumns}
               rows={exportRows}
+              onExportCsv={fetchExportRows}
               disabled={loading || error || items.length === 0}
             />
           </div>
@@ -231,7 +250,15 @@ export default function PanelTable<T>({
         {!loading && !error && !empty ? (
           <>
             <div className="brcris-panel-table__scroll">
-              <table className="brcris-panel-table__table">
+              <table
+                className={
+                  layout === "listing"
+                    ? "brcris-panel-table__table is-listing"
+                    : layout === "metrics-compact"
+                      ? "brcris-panel-table__table is-metrics-compact"
+                      : "brcris-panel-table__table"
+                }
+              >
                 <thead>
                   <tr>
                     {columns.map((column) => {
@@ -368,13 +395,16 @@ export default function PanelTable<T>({
                         …
                       </span>
                     ) : null}
-                    <button
-                      type="button"
-                      className="brcris-panel-table__page-btn"
-                      onClick={() => goToPage(totalPages)}
-                    >
-                      {totalPages}
-                    </button>
+                    {/* Evita salto caro (ex.: página 1000) em rankings terms no ES */}
+                    {totalPages <= 100 ? (
+                      <button
+                        type="button"
+                        className="brcris-panel-table__page-btn"
+                        onClick={() => goToPage(totalPages)}
+                      >
+                        {totalPages}
+                      </button>
+                    ) : null}
                   </>
                 ) : null}
 

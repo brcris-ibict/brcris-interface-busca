@@ -1,3 +1,5 @@
+import type { ServerPaginatedResponse } from "../lib/serverPagination";
+
 export type PublicationsDashboardFilters = {
   publicationDate: string;
   type: string;
@@ -69,12 +71,22 @@ export type PublicationsJournalQuantifierPoint = {
   sponsors: number;
 };
 
-export type PublicationsJournalQuantifiers = {
-  items: PublicationsJournalQuantifierPoint[];
-  page: number;
-  pageSize: number;
-  total: number;
+export type PublicationsJournalQuantifiers =
+  ServerPaginatedResponse<PublicationsJournalQuantifierPoint>;
+
+export type PublicationsListItem = {
+  id: string;
+  title: string;
+  authors: string;
+  journal: string;
+  conference: string;
+  doi: string;
+  accessType: string;
+  funding: string;
 };
+
+export type PublicationsListResponse =
+  ServerPaginatedResponse<PublicationsListItem>;
 
 export type PublicationsKeywordPoint = {
   keyword: string;

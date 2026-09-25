@@ -2586,6 +2586,74 @@ h3.popover-header a {
   white-space: nowrap;
 }
 
+/* Quantificadores (col-lg-6): # estreita + métricas compactas */
+.brcris-panel-table__table.is-metrics-compact td:first-child,
+.brcris-panel-table__table.is-metrics-compact th:first-child {
+  width: 2.75rem;
+  max-width: 2.75rem;
+  padding-left: 0.35rem;
+  padding-right: 0.25rem;
+  text-align: center;
+}
+
+.brcris-panel-table__table.is-metrics-compact td:nth-child(2),
+.brcris-panel-table__table.is-metrics-compact th:nth-child(2) {
+  width: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brcris-panel-table__table.is-metrics-compact td.is-numeric,
+.brcris-panel-table__table.is-metrics-compact th.is-numeric {
+  width: 5.25rem;
+  padding-left: 0.35rem;
+  padding-right: 0.4rem;
+}
+
+/* Listagem com várias colunas de texto (ex.: publicações) */
+.brcris-panel-table__table.is-listing {
+  min-width: 70rem;
+}
+
+.brcris-panel-table__table.is-listing th,
+.brcris-panel-table__table.is-listing td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brcris-panel-table__table.is-listing td:first-child,
+.brcris-panel-table__table.is-listing th:first-child {
+  width: 22%;
+  max-width: 18rem;
+  color: inherit;
+}
+
+.brcris-panel-table__table.is-listing td:nth-child(2),
+.brcris-panel-table__table.is-listing th:nth-child(2) {
+  width: 18%;
+}
+
+.brcris-panel-table__table.is-listing td:nth-child(3),
+.brcris-panel-table__table.is-listing th:nth-child(3),
+.brcris-panel-table__table.is-listing td:nth-child(4),
+.brcris-panel-table__table.is-listing th:nth-child(4) {
+  width: 12%;
+}
+
+.brcris-panel-table__table.is-listing td:nth-child(5),
+.brcris-panel-table__table.is-listing th:nth-child(5) {
+  width: 12%;
+}
+
+.brcris-panel-table__table.is-listing td:nth-child(6),
+.brcris-panel-table__table.is-listing th:nth-child(6),
+.brcris-panel-table__table.is-listing td:nth-child(7),
+.brcris-panel-table__table.is-listing th:nth-child(7) {
+  width: 10%;
+}
+
 .brcris-panel-table__pagination {
   display: flex;
   align-items: center;
