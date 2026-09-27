@@ -368,5 +368,10 @@
   "Reset chart items": "Voltar ao início",
   "Showing chart items of total": "Exibindo {{visible}} de {{total}}",
   "Apply filters": "Aplicar",
-  "Open filters": "Abrir filtros"
+  "Open filters": "Abrir filtros",
+  "Ibict on X (formerly Twitter) (opens in a new tab)": "X (antigo Twitter) do Ibict (abre em nova aba)",
+  "Ibict on Instagram (opens in a new tab)": "Instagram do Ibict (abre em nova aba)",
+  "Ibict on LinkedIn (opens in a new tab)": "LinkedIn do Ibict (abre em nova aba)",
+  "Ibict on YouTube (opens in a new tab)": "YouTube do Ibict (abre em nova aba)",
+  "Ibict on Facebook (opens in a new tab)": "Facebook do Ibict (abre em nova aba)"
 }
