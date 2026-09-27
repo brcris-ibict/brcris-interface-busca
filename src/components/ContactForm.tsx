@@ -70,10 +70,14 @@ function ContactForm() {
           }}
         >
           <div className="col-sm-12">
+            <label htmlFor="contact-name" className={style.fieldLabel}>
+              {t("Name")}
+            </label>
             <input
+              id="contact-name"
+              name="name"
               className="form-control search-box"
               type="text"
-              placeholder={`${t("Name")}`}
               required
               value={name}
               onChange={(event) => {
@@ -83,10 +87,14 @@ function ContactForm() {
           </div>
 
           <div className="col-sm-12 my-3">
+            <label htmlFor="contact-email" className={style.fieldLabel}>
+              {t("Email")}
+            </label>
             <input
+              id="contact-email"
+              name="email"
               className="form-control search-box"
               type="email"
-              placeholder={`${t("Email")}`}
               required
               value={email}
               onChange={(event) => {
@@ -96,10 +104,14 @@ function ContactForm() {
           </div>
 
           <div className="col-sm-12">
+            <label htmlFor="contact-message" className={style.fieldLabel}>
+              {t("Message")}
+            </label>
             <textarea
+              id="contact-message"
+              name="message"
               className="form-control search-box"
               rows={6}
-              placeholder={`${t("Message")}`}
               required
               value={message}
               onChange={(event) => {
