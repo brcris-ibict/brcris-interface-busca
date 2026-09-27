@@ -131,12 +131,13 @@ function Footer() {
           href="https://www.gov.br/ibict/pt-br"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={t("Visit the Ibict website (opens in a new tab)")}
         >
           <picture>
             <img
               src={withBasePath("/logos/logo-periodo-defeso-transparente.svg")}
               className="logo-rodape logo-periodo-defeso"
-              alt="Logo do IBICT - período de defeso"
+              alt=""
             />
           </picture>
         </a>
