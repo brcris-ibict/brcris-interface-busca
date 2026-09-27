@@ -262,9 +262,14 @@ main {
   border-radius: 0 24px 24px 0;
 }
 
+.form-search input:focus,
 .form-search input:focus-visible,
+.form-search select:focus,
 .form-search select:focus-visible {
-  outline: none;
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  position: relative;
+  z-index: 1;
 }
 
 .search-button {
