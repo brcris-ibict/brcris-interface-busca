@@ -76,6 +76,7 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
     chartRef.current = chart;
   }, []);
 
+  // Carrega os dados
   useEffect(() => {
     get(buildUrl(filters));
   }, [
@@ -90,6 +91,7 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
   // Obtém os itens
   const items = data?.items ?? [];
 
+  // Linhas para exportação
   const exportRows = useMemo(
     () =>
       items.map((item) => ({
@@ -99,6 +101,7 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
     [items],
   );
 
+  // Colunas para exportação
   const exportColumns = useMemo(
     () => [
       { key: "keyword", header: t("Keywords") },
@@ -227,13 +230,9 @@ export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
             columns={exportColumns}
             rows={exportRows}
             disabled={loading || Boolean(error) || items.length === 0}
-            getImageDataUrl={() =>
-              chartRef.current?.getDataURL({
-                type: "png",
-                pixelRatio: 2,
-                backgroundColor: isDark ? "#111827" : "#ffffff",
-              })
-            }
+            getChart={() => chartRef.current}
+            imageBackgroundColor={isDark ? "#111827" : "#ffffff"}
+            imageTitle={t("Keywords heatmap")}
           />
         </div>
       </div>

@@ -6,23 +6,28 @@ import type { ECharts, EChartsOption } from "echarts";
 type Props = {
   option: EChartsOption;
   height?: number;
+  renderer?: "canvas" | "svg";
   onChartReady?: (chart: ECharts | null) => void;
 };
 
 export default function EChart({
   option,
   height = 360,
+  renderer = "svg",
   onChartReady,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const onReadyRef = useRef(onChartReady);
   onReadyRef.current = onChartReady;
+  const optionRef = useRef(option);
+  optionRef.current = option;
 
-  // Responsável por inicializar o gráfico
+  // Responsável por inicializar o gráfico (recria se o renderer mudar)
   useEffect(() => {
     if (!ref.current) return;
 
-    const chart = echarts.init(ref.current);
+    const chart = echarts.init(ref.current, undefined, { renderer });
+    chart.setOption(optionRef.current, true);
     onReadyRef.current?.(chart);
 
     const onResize = () => chart.resize();
@@ -33,7 +38,7 @@ export default function EChart({
       onReadyRef.current?.(null);
       chart.dispose();
     };
-  }, []);
+  }, [renderer]);
 
   // Responsável por atualizar o gráfico quando o option mudar
   useEffect(() => {

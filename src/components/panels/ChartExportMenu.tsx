@@ -1,9 +1,11 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "next-i18next";
+import type { ECharts } from "echarts";
 import { Download, FileSpreadsheet, Image, LoaderCircle } from "lucide-react";
 import {
   downloadCsv,
   downloadDataUrl,
+  renderChartPng,
   type ChartExportColumn,
 } from "./chartExport";
 
@@ -13,7 +15,9 @@ type Props = {
   rows: Record<string, string | number>[];
   // Se informado, o CSV busca todas as linhas (ex.: tabela server-paginated)
   onExportCsv?: () => Promise<Record<string, string | number>[]>;
-  getImageDataUrl?: () => string | null | undefined;
+  getChart?: () => ECharts | null | undefined;
+  imageBackgroundColor?: string;
+  imageTitle?: string;
   disabled?: boolean;
 };
 
@@ -22,7 +26,9 @@ export default function ChartExportMenu({
   columns,
   rows,
   onExportCsv,
-  getImageDataUrl,
+  getChart,
+  imageBackgroundColor = "#ffffff",
+  imageTitle,
   disabled = false,
 }: Props) {
   const { t } = useTranslation("common");
@@ -85,12 +91,11 @@ export default function ChartExportMenu({
   }
 
   // Função auxiliar para baixar a imagem
-  function handleImage() {
-    if (!canExport || !getImageDataUrl) return;
-    const dataUrl = getImageDataUrl();
+  async function handleImage() {
+    const chart = getChart?.();
+    if (!canExport || !chart) return;
 
-    if (!dataUrl) return;
-
+    const dataUrl = await renderChartPng(chart, imageBackgroundColor, imageTitle);
     downloadDataUrl(filename, dataUrl);
     setOpen(false);
   }
@@ -149,13 +154,15 @@ export default function ChartExportMenu({
             </span>
           </button>
 
-          {getImageDataUrl ? (
+          {getChart ? (
             <button
               type="button"
               role="menuitem"
               className="brcris-chart-export__item"
               disabled={!canExport || exporting}
-              onClick={handleImage}
+              onClick={() => {
+                void handleImage();
+              }}
             >
               <Image size={16} aria-hidden />
               <span>{t("Export chart image")}</span>

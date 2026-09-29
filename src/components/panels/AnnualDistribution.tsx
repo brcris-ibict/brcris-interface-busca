@@ -171,13 +171,8 @@ export default function AnnualDistribution({
             columns={exportColumns}
             rows={exportRows}
             disabled={loading || error || data.length === 0}
-            getImageDataUrl={() =>
-              chartRef.current?.getDataURL({
-                type: "png",
-                pixelRatio: 2,
-                backgroundColor: "#ffffff",
-              })
-            }
+            getChart={() => chartRef.current}
+            imageTitle={t("Annual publications by type")}
           />
         </div>
       </div>

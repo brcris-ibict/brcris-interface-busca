@@ -65,6 +65,7 @@ export default function AnnualByTypeDistribution({
     return Array.from(names);
   }, [data]);
 
+  // Linhas para exportação
   const exportRows = useMemo(
     () =>
       data.flatMap((point) =>
@@ -77,6 +78,7 @@ export default function AnnualByTypeDistribution({
     [data],
   );
 
+  // Colunas para exportação
   const exportColumns = useMemo(
     () => [
       { key: "year", header: t("Year") },
@@ -198,13 +200,8 @@ export default function AnnualByTypeDistribution({
             columns={exportColumns}
             rows={exportRows}
             disabled={loading || error || empty}
-            getImageDataUrl={() =>
-              chartRef.current?.getDataURL({
-                type: "png",
-                pixelRatio: 2,
-                backgroundColor: "#ffffff",
-              })
-            }
+            getChart={() => chartRef.current}
+            imageTitle={t("Annual distribution by type")}
           />
         </div>
       </div>

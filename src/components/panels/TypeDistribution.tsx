@@ -75,12 +75,8 @@ export default function TypeDistribution({
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
   const labelOutside = resolvedTheme === "dark" ? "#e5e7eb" : "#555555";
-  const labelInside =
-    resolvedTheme === "dark" ? "#e5e7eb" : "#1f2937";
-  const tooltipBg =
-    resolvedTheme === "dark"
-      ? "rgba(17, 24, 39, 0.96)"
-      : "rgba(255, 255, 255, 0.98)";
+  const labelInside = resolvedTheme === "dark" ? "#e5e7eb" : "#1f2937";
+  const tooltipBg = resolvedTheme === "dark" ? "rgba(17, 24, 39, 0.96)" : "rgba(255, 255, 255, 0.98)";
   const tooltipBorder = resolvedTheme === "dark" ? "#374151" : "#e2e8f0";
   const tooltipText = resolvedTheme === "dark" ? "#e5e7eb" : "#0f172a";
 
@@ -106,8 +102,7 @@ export default function TypeDistribution({
           borderColor: tooltipBorder,
           borderWidth: 1,
           padding: [10, 12],
-          extraCssText:
-            "border-radius:10px;box-shadow:0 12px 32px rgba(15,23,42,0.28);",
+          extraCssText: "border-radius:10px;box-shadow:0 12px 32px rgba(15,23,42,0.28);",
           textStyle: {
             color: tooltipText,
             fontFamily: '"rawline", helvetica, arial, sans-serif',
@@ -117,7 +112,9 @@ export default function TypeDistribution({
             const name = String(params?.name ?? "");
             const value = Number(params?.value ?? 0);
             const percent = Number(params?.data?.percentOfUnique ?? 0);
+
             return `${name}: ${value.toLocaleString("pt-BR")} (${percent.toFixed(2)}%)`;
+         
           },
         },
         legend: { show: false },
@@ -136,10 +133,13 @@ export default function TypeDistribution({
               formatter: (params: any) => {
                 const name = String(params?.name ?? "");
                 const percent = Number(params?.data?.percentOfUnique ?? 0);
+
                 if (percent >= 3) {
                   return `{name|${name}}\n{pct|${percent.toFixed(2)}%}`;
                 }
+
                 return `{nameSmall|${name}}\n{pctSmall|${percent.toFixed(2)}%}`;
+
               },
               rich: {
                 name: {
@@ -180,6 +180,7 @@ export default function TypeDistribution({
             data: data.map((item) => {
               const style = getPublicationTypeStyle(item.type, resolvedTheme);
               const percent = percentOfTotal(item.count, pieTotal);
+
               return {
                 name: t(item.type),
                 value: item.count,
@@ -193,6 +194,7 @@ export default function TypeDistribution({
                   borderWidth: 1,
                 },
               };
+
             }),
           },
         ],
@@ -301,13 +303,8 @@ export default function TypeDistribution({
             columns={exportColumns}
             rows={exportRows}
             disabled={loading || error || data.length === 0}
-            getImageDataUrl={() =>
-              chartRef.current?.getDataURL({
-                type: "png",
-                pixelRatio: 2,
-                backgroundColor: "#ffffff",
-              })
-            }
+            getChart={() => chartRef.current}
+            imageTitle={t("Document typology")}
           />
         </div>
       </div>

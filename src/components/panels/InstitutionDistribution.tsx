@@ -402,13 +402,8 @@ export default function InstitutionDistribution({
             columns={exportColumns}
             rows={exportRows}
             disabled={loading || error || !hasChartData}
-            getImageDataUrl={() =>
-              chartRef.current?.getDataURL({
-                type: "png",
-                pixelRatio: 2,
-                backgroundColor: "#ffffff",
-              })
-            }
+            getChart={() => chartRef.current}
+            imageTitle={t("Publications by institution composition")}
           />
         </div>
       </div>
