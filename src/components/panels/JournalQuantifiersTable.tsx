@@ -33,12 +33,14 @@ function buildUrl(
   page: number,
   pageSize: number,
   knownTotal?: number,
+  search?: string,
 ) {
   const params = buildServerPageSearchParams(
     filters,
     page,
     pageSize,
     knownTotal,
+    { q: search },
   );
   return withBasePath(`/api/dashboard/journal-quantifiers?${params.toString()}`);
 }
@@ -62,14 +64,22 @@ export default function JournalQuantifiersTable({ filters, onLoadingChange }: Pr
   // Obtém o tradutor
   const { t } = useTranslation("common");
   // Obtém os dados da API
-  const { data, loading, error, get } =
-    useRequest<PublicationsJournalQuantifiers>();
+  const { data, loading, error, get } = useRequest<PublicationsJournalQuantifiers>();
   // Reporta ao pai só o carregamento vindo de troca de filtro
   useFilterLoadingReport(filters, loading, onLoadingChange);
   // Estado para a página
   const [page, setPage] = useState(1);
   // Total da última resposta com filtros atuais (evita cardinality a cada página)
   const knownTotalRef = useRef(0);
+  // Termo de busca aplicado (mantido ao trocar filtros globais)
+  const [search, setSearch] = useState("");
+
+  // Nova busca: volta para a página 1 e recalcula o total (cardinality)
+  const handleSearch = useCallback((term: string) => {
+    knownTotalRef.current = 0;
+    setPage(1);
+    setSearch(term);
+  }, []);
 
   // Reseta a página quando os filtros mudam
   useEffect(() => {
@@ -82,19 +92,17 @@ export default function JournalQuantifiersTable({ filters, onLoadingChange }: Pr
     filters.institution,
   ]);
 
-  // Obtém os dados da API quando filtros ou página mudam
+  // Obtém os dados da API quando filtros, página ou busca mudam
   useEffect(() => {
-    const knownTotal =
-      page > 1 && knownTotalRef.current > 0
-        ? knownTotalRef.current
-        : undefined;
-    get(buildUrl(filters, page, PAGE_SIZE, knownTotal));
+    const knownTotal = page > 1 && knownTotalRef.current > 0 ? knownTotalRef.current : undefined;
+    get(buildUrl(filters, page, PAGE_SIZE, knownTotal, search));
   }, [
     filters.publicationDate,
     filters.type,
     filters.language,
     filters.institution,
     page,
+    search,
     get,
     filters,
   ]);
@@ -109,9 +117,7 @@ export default function JournalQuantifiersTable({ filters, onLoadingChange }: Pr
   }
 
   // Obtém as colunas da tabela
-  const columns = useMemo<
-    PanelTableColumn<PublicationsJournalQuantifierPoint>[]
-  >(
+  const columns = useMemo<PanelTableColumn<PublicationsJournalQuantifierPoint>[]>(
     () => [
       {
         key: "rank",
@@ -185,6 +191,7 @@ export default function JournalQuantifiersTable({ filters, onLoadingChange }: Pr
           exportPage > 1 && exportKnownTotal > 0
             ? exportKnownTotal
             : undefined,
+          search,
         ),
         { cache: "no-store" },
       );
@@ -211,7 +218,7 @@ export default function JournalQuantifiersTable({ filters, onLoadingChange }: Pr
     }
 
     return rows.slice(0, SERVER_EXPORT_MAX_ROWS);
-  }, [filters, columns]);
+  }, [filters, columns, search]);
 
   return (
     <PanelTable
@@ -234,6 +241,11 @@ export default function JournalQuantifiersTable({ filters, onLoadingChange }: Pr
       fetchExportRows={fetchExportRows}
       layout="metrics-compact"
       feedbackHeight={420}
+      searchable
+      searchMode="server"
+      searchValue={search}
+      onSearch={handleSearch}
+      searchPlaceholder={t("Search placeholder titles")}
     />
   );
 }

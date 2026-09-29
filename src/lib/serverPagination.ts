@@ -40,6 +40,7 @@ export function buildServerPageSearchParams(
   page: number,
   pageSize: number,
   knownTotal?: number,
+  extra?: Record<string, string | undefined | null>, // Ex.: { q: termo de busca }
 ) {
   const params = new URLSearchParams();
 
@@ -53,6 +54,10 @@ export function buildServerPageSearchParams(
   if (knownTotal && knownTotal > 0) {
     params.set("knownTotal", String(knownTotal));
   }
+
+  Object.entries(extra ?? {}).forEach(([field, value]) => {
+    if (value) params.set(field, value);
+  });
 
   return params;
 }

@@ -65,6 +65,8 @@ export default function AuthorsProductionsTable({
       initialSortKey="count"
       initialSortDirection="desc"
       exportFilename="autores"
+      searchable
+      searchPlaceholder={t("Search placeholder authors")}
     />
   );
 }

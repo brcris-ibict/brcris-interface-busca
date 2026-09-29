@@ -6,9 +6,12 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
 import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
+import PanelTableSearch from "./PanelTableSearch";
+import { highlightSegments, matchesSearch } from "../../lib/textSearch";
 
 // Tipos de ordenação
 export type PanelTableSortDirection = "asc" | "desc";
@@ -47,7 +50,29 @@ type Props<T> = {
   clientSort?: boolean; // Se true, a ordenação é feita no cliente (ex.: na interface do usuário)
   exportFilename?: string; // Nome do arquivo para o export
   fetchExportRows?: () => Promise<Record<string, string | number>[]>; // Tabela server-paginated: busca todas as linhas no export (não só a página)
+  searchable?: boolean; // Se true, exibe a busca por palavra-chave no cabeçalho
+  searchMode?: "client" | "server"; // "client" filtra em memória; "server" delega ao pai via onSearch (default = paginationMode)
+  searchValue?: string; // Termo aplicado (controlado; obrigatório no modo server)
+  onSearch?: (term: string) => void; // Chamado ao pesquisar/limpar (modo server: o pai refaz o fetch e volta à página 1)
+  searchPlaceholder?: string; // Placeholder contextual do campo de busca
+  searchKeys?: string[]; // Modo client: colunas usadas no filtro (default = colunas de texto)
 };
+
+// Destaca o termo buscado dentro do texto da célula
+function renderHighlight(text: string, term: string): ReactNode {
+  const segments = highlightSegments(text, term);
+  if (segments.length === 1 && !segments[0].match) return text;
+
+  return segments.map((segment, index) =>
+    segment.match ? (
+      <mark key={index} className="brcris-panel-table__highlight">
+        {segment.text}
+      </mark>
+    ) : (
+      <span key={index}>{segment.text}</span>
+    ),
+  );
+}
 
 // Função responsável por comparar dois valores em relação à direção de ordenação
 function compareValues(
@@ -88,15 +113,24 @@ export default function PanelTable<T>({
   clientSort = true,
   exportFilename,
   fetchExportRows,
+  searchable = false,
+  searchMode,
+  searchValue,
+  onSearch,
+  searchPlaceholder,
+  searchKeys,
 }: Props<T>) {
   const { t, i18n } = useTranslation("common"); // Idioma da aplicação
   const locale = i18n.language || "pt-BR"; // Idioma da aplicação
-  const empty = !loading && !error && items.length === 0; 
   const isServer = paginationMode === "server"; // Verifica se a paginação é no servidor
+  const isServerSearch = (searchMode ?? paginationMode) === "server"; // Busca delegada ao pai (ex.: Elasticsearch)
 
   const [internalPage, setInternalPage] = useState(1); // Página interna
   const [sortKey, setSortKey] = useState(initialSortKey);
   const [sortDirection, setSortDirection] = useState<PanelTableSortDirection>(initialSortDirection);
+  const [internalSearch, setInternalSearch] = useState(""); // Termo aplicado no modo client não controlado
+  const activeSearch = searchable ? (searchValue ?? internalSearch).trim() : "";
+  const hasActiveSearch = activeSearch.length > 0;
 
   const page = isServer ? (controlledPage ?? 1) : internalPage; // Página atual
 
@@ -111,20 +145,52 @@ export default function PanelTable<T>({
 
   }, [items, initialSortKey, initialSortDirection, isServer]);
 
+  // Colunas de texto consideradas na busca/destaque (numéricas ficam de fora)
+  const searchColumnKeys = useMemo(
+    () =>
+      new Set(
+        columns
+          .filter((column) =>
+            searchKeys
+              ? searchKeys.includes(column.key)
+              : column.align !== "right" && column.sortAs !== "number",
+          )
+          .map((column) => column.key),
+      ),
+    [columns, searchKeys],
+  );
+
+  // Modo client: filtra em memória antes de ordenar/paginar
+  const filteredItems = useMemo(() => {
+    if (!hasActiveSearch || isServerSearch) return items;
+
+    return items.filter((row) =>
+      matchesSearch(
+        columns
+          .filter((column) => searchColumnKeys.has(column.key))
+          .map((column) => String(column.accessor(row)))
+          .join(" "),
+        activeSearch,
+      ),
+    );
+  }, [items, columns, searchColumnKeys, activeSearch, hasActiveSearch, isServerSearch]);
+
+  const empty = !loading && !error && filteredItems.length === 0;
+
   // Efeito para ordenar os itens quando os critérios de ordenação mudam
   const sortedItems = useMemo(() => {
-    if (!clientSort) return items;
+    if (!clientSort) return filteredItems;
 
     const column = columns.find((item) => item.key === sortKey);
-    if (!column) return items;
+    if (!column) return filteredItems;
 
-    const next = [...items];
+    const next = [...filteredItems];
     next.sort((a, b) =>
       compareValues(column.accessor(a), column.accessor(b), sortDirection),
     );
 
     return next;
-  }, [items, columns, sortKey, sortDirection, clientSort]);
+  }, [filteredItems, columns, sortKey, sortDirection, clientSort]);
 
   // Efeito para obter as colunas para o export
   const exportColumns = useMemo(
@@ -192,6 +258,26 @@ export default function PanelTable<T>({
     setInternalPage(next);
   }
 
+  // Aplica/limpa a busca; no modo client volta para a página 1
+  function handleSearch(term: string) {
+    if (!isServerSearch) {
+      if (searchValue === undefined) setInternalSearch(term);
+      setInternalPage(1);
+    }
+    onSearch?.(term);
+  }
+
+  // Resumo da busca ativa (chip + anúncio para leitor de tela)
+  const searchTotal = isServerSearch
+    ? (totalItems ?? items.length)
+    : filteredItems.length;
+  const searchSummary = hasActiveSearch
+    ? t("Search results for", {
+        term: activeSearch,
+        totalLabel: loading ? "…" : searchTotal.toLocaleString(locale),
+      })
+    : "";
+
   function handleSort(column: PanelTableColumn<T>) {
     // Se não estiver no modo client ou a coluna não for sortável, retorna
     if (!clientSort || column.sortable === false) return;
@@ -224,17 +310,42 @@ export default function PanelTable<T>({
         <div className="brcris-panel-table__heading">
           <h3 className="brcris-chart-card__title">{title}</h3>
           <p className="brcris-panel-table__caption">{caption}</p>
+          {hasActiveSearch ? (
+            <div className="brcris-panel-table__search-chip">
+              <span>{searchSummary}</span>
+              <button
+                type="button"
+                aria-label={t("Clear search")}
+                title={t("Clear search")}
+                onClick={() => handleSearch("")}
+              >
+                <X size={12} aria-hidden />
+              </button>
+            </div>
+          ) : null}
+          <span className="visually-hidden" aria-live="polite">
+            {hasActiveSearch && !loading ? searchSummary : ""}
+          </span>
         </div>
 
-        {exportFilename ? (
+        {exportFilename || searchable ? (
           <div className="brcris-chart-card__toggles" role="group">
-            <ChartExportMenu
-              filename={exportFilename}
-              columns={exportColumns}
-              rows={exportRows}
-              onExportCsv={fetchExportRows}
-              disabled={loading || error || items.length === 0}
-            />
+            {searchable ? (
+              <PanelTableSearch
+                value={activeSearch}
+                onSearch={handleSearch}
+                placeholder={searchPlaceholder}
+              />
+            ) : null}
+            {exportFilename ? (
+              <ChartExportMenu
+                filename={exportFilename}
+                columns={exportColumns}
+                rows={exportRows}
+                onExportCsv={fetchExportRows}
+                disabled={loading || error || filteredItems.length === 0}
+              />
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -245,6 +356,22 @@ export default function PanelTable<T>({
           loading={loading}
           error={error}
           empty={empty}
+          emptyMessage={
+            hasActiveSearch
+              ? t("No results for term", { term: activeSearch })
+              : undefined
+          }
+          emptyAction={
+            hasActiveSearch ? (
+              <button
+                type="button"
+                className="brcris-chart-card__feedback-action"
+                onClick={() => handleSearch("")}
+              >
+                {t("Clear search")}
+              </button>
+            ) : undefined
+          }
         />
 
         {!loading && !error && !empty ? (
@@ -322,7 +449,9 @@ export default function PanelTable<T>({
                           column.align === "right" ? "is-numeric" : undefined;
                         const content = column.format
                           ? column.format(value, row, locale)
-                          : value;
+                          : hasActiveSearch && searchColumnKeys.has(column.key)
+                            ? renderHighlight(String(value), activeSearch)
+                            : value;
                         const cellTitle = column.title
                           ? column.title(row)
                           : undefined;

@@ -30,12 +30,14 @@ function buildUrl(
   page: number,
   pageSize: number,
   knownTotal?: number,
+  search?: string,
 ) {
   const params = buildServerPageSearchParams(
     filters,
     page,
     pageSize,
     knownTotal,
+    { q: search },
   );
   return withBasePath(`/api/dashboard/publication-list?${params.toString()}`);
 }
@@ -63,6 +65,15 @@ export default function PublicationsListTable({ filters, onLoadingChange }: Prop
   useFilterLoadingReport(filters, loading, onLoadingChange);
   const [page, setPage] = useState(1);
   const knownTotalRef = useRef(0);
+  // Termo de busca aplicado (mantido ao trocar filtros globais)
+  const [search, setSearch] = useState("");
+
+  // Nova busca: volta para a página 1 e recalcula o total
+  const handleSearch = useCallback((term: string) => {
+    knownTotalRef.current = 0;
+    setPage(1);
+    setSearch(term);
+  }, []);
 
   // Efeito para reiniciar a página e o total conhecido quando os filtros mudam
   useEffect(() => {
@@ -78,7 +89,7 @@ export default function PublicationsListTable({ filters, onLoadingChange }: Prop
   // Efeito para obter os itens da página atual
   useEffect(() => {
     const knownTotal = page > 1 && knownTotalRef.current > 0 ? knownTotalRef.current : undefined;
-    get(buildUrl(filters, page, PAGE_SIZE, knownTotal));
+    get(buildUrl(filters, page, PAGE_SIZE, knownTotal, search));
 
   }, [
     filters.publicationDate,
@@ -86,6 +97,7 @@ export default function PublicationsListTable({ filters, onLoadingChange }: Prop
     filters.language,
     filters.institution,
     page,
+    search,
     get,
     filters,
   ]);
@@ -172,6 +184,7 @@ export default function PublicationsListTable({ filters, onLoadingChange }: Prop
           exportPage,
           SERVER_EXPORT_PAGE_SIZE,
           exportPage > 1 && exportKnownTotal > 0 ? exportKnownTotal : undefined,
+          search,
         ),
         { cache: "no-store" },
       ); // Faz a requisição para a API de listagem de publicações
@@ -197,7 +210,7 @@ export default function PublicationsListTable({ filters, onLoadingChange }: Prop
     }
 
     return rows.slice(0, SERVER_EXPORT_MAX_ROWS);
-  }, [filters, columns]);
+  }, [filters, columns, search]);
 
   return (
     <PanelTable
@@ -221,6 +234,11 @@ export default function PublicationsListTable({ filters, onLoadingChange }: Prop
       fetchExportRows={fetchExportRows}
       feedbackHeight={280}
       layout="listing"
+      searchable
+      searchMode="server"
+      searchValue={search}
+      onSearch={handleSearch}
+      searchPlaceholder={t("Search placeholder publications")}
     />
   );
 }

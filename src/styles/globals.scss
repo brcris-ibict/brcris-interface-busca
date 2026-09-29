@@ -2497,6 +2497,226 @@ h3.popover-header a {
   line-height: 1.3;
 }
 
+// Busca por palavra-chave das tabelas (lupa → popover, mesmo padrão do menu de exportar)
+.brcris-table-search__toggle.has-value {
+  position: relative;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.brcris-table-search__toggle.has-value::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--bg-card);
+  border-radius: 50%;
+  background: var(--primary-color);
+}
+
+.brcris-table-search__popover {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 20;
+  width: min(24rem, calc(100vw - 2.5rem));
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--border-radius) - 0.2rem);
+  background: var(--bg-card);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+  animation: brcris-table-search-in 0.16s ease-out;
+}
+
+.brcris-table-search__popover .brcris-chart-export__title {
+  display: block;
+}
+
+.brcris-table-search__field {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 2.25rem;
+  padding: 0 0.25rem 0 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--border-radius) - 0.35rem);
+  background: var(--bg);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.brcris-table-search__field:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(2, 132, 160, 0.12);
+}
+
+.brcris-table-search__icon {
+  flex-shrink: 0;
+  color: var(--primary-color);
+}
+
+.brcris-table-search__input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 0.25rem;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 0.82rem;
+}
+
+.brcris-table-search__input::placeholder {
+  color: var(--text-secondary-color);
+  opacity: 0.8;
+}
+
+.brcris-table-search__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary-color);
+  cursor: pointer;
+}
+
+.brcris-table-search__clear:hover {
+  background: var(--bg-hover);
+  color: var(--primary-color);
+}
+
+.brcris-table-search__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.brcris-table-search__hint {
+  min-width: 0;
+  color: var(--text-secondary-color);
+  font-size: 0.7rem;
+}
+
+.brcris-table-search__submit {
+  flex-shrink: 0;
+  height: 1.85rem;
+  padding: 0 0.9rem;
+  border: 0;
+  border-radius: calc(var(--border-radius) - 0.4rem);
+  background: var(--primary-color);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.brcris-table-search__submit:hover:not(:disabled) {
+  background: var(--secondary-color);
+}
+
+// Sobrescreve o button[disabled] global (fundo azul com !important)
+.brcris-table-search__submit:disabled,
+.brcris-table-search__submit:disabled:hover {
+  background: var(--bg-muted) !important;
+  border-color: transparent !important;
+  color: var(--text-secondary-color);
+  opacity: 1 !important;
+  cursor: not-allowed;
+}
+
+@keyframes brcris-table-search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.brcris-panel-table__search-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 100%;
+  margin: 0.4rem 0 0 12px;
+  padding: 0.15rem 0.25rem 0.15rem 0.6rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 999px;
+  background: var(--bg-hover);
+  color: var(--primary-color);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.brcris-panel-table__search-chip span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brcris-panel-table__search-chip button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.brcris-panel-table__search-chip button:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+.brcris-panel-table__highlight {
+  padding: 0 0.1em;
+  border-radius: 3px;
+  background: rgba(14, 165, 183, 0.22);
+  color: inherit;
+  font-weight: 600;
+}
+
+.brcris-chart-card__feedback-action {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primary-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.brcris-chart-card__feedback-action:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brcris-table-search__popover {
+    animation: none;
+  }
+}
+
 .brcris-panel-table__body {
   position: relative;
 }

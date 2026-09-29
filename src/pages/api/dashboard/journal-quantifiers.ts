@@ -9,6 +9,7 @@ import {
   parsePositiveInt,
   termsFetchSize,
 } from "../../../lib/serverPagination";
+import { SEARCH_MAX_LENGTH, SEARCH_MIN_LENGTH } from "../../../lib/textSearch";
 import type {
   PublicationsDashboardErrorResponse,
   PublicationsJournalQuantifiers,
@@ -20,6 +21,8 @@ const YEAR_FROM = "1960";
 const MAX_PAGE = Math.ceil(SERVER_TERMS_FETCH_CAP / SERVER_PAGE_DEFAULT_SIZE);
 // Abaixo disso, 1 query com métricas aninhadas ainda é barato
 const SINGLE_QUERY_MAX_FETCH = 50;
+// Busca textual só no título: a tabela agrupa por title (keyword); o texto analisado fica em title_text
+const SEARCH_FIELDS = ["title_text"] as const;
 
 // Função auxiliar para tratar parâmetros da query string
 function param(value: string | string[] | undefined) {
@@ -74,6 +77,14 @@ export default async function handler(
   const language = param(req.query.language);
   // Obtém a instituição da publicação
   const institution = param(req.query.institution);
+  // Termo de busca textual (q): abaixo do mínimo é ignorado
+  const rawSearch = param(req.query.q);
+  if (rawSearch.length > SEARCH_MAX_LENGTH) {
+    return res.status(400).json({
+      error: `Busca muito longa (max ${SEARCH_MAX_LENGTH} caracteres).`,
+    });
+  }
+  const search = rawSearch.length >= SEARCH_MIN_LENGTH ? rawSearch : "";
   // Obtém a página
   const page = parsePositiveInt(req.query.page, 1, MAX_PAGE);
   // Obtém o tamanho da página (UI / lote; distinto do cap de terms)
@@ -105,7 +116,26 @@ export default async function handler(
   // terms aggregation não tem from/size: pedimos até o fim da página e fatiamos
   const fetchSize = termsFetchSize(page, pageSize);
   const start = (page - 1) * pageSize;
-  const query = { bool: { filter: filters } };
+  // Filtra os documentos ANTES de agrupar: ranking, total e métricas já saem restritos à busca
+  const query = {
+    bool: {
+      filter: filters,
+      ...(search
+        ? {
+            must: [
+              {
+                simple_query_string: {
+                  query: search,
+                  fields: [...SEARCH_FIELDS],
+                  default_operator: "and" as const,
+                  lenient: true,
+                },
+              },
+            ],
+          }
+        : {}),
+    },
+  };
   const needCardinality = knownTotal < 1;
 
   try {
@@ -249,6 +279,7 @@ export default async function handler(
       total,
     });
   } catch (error) {
+    logger.error(`[journal-quantifiers] falha na consulta (q="${search}")`);
     logger.error(error);
     return res.status(500).json({ error: "Falha ao carregar o painel." });
   }

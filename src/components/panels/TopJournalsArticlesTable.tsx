@@ -81,6 +81,8 @@ export default function TopJournalsArticlesTable({
       initialSortKey="count"
       initialSortDirection="desc"
       exportFilename="veiculos-de-publicacao"
+      searchable
+      searchPlaceholder={t("Search placeholder journals")}
     />
   );
 }

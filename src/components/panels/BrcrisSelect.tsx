@@ -7,18 +7,12 @@ import {
 } from "react";
 import { useTranslation } from "next-i18next";
 import { Check, ChevronDown, Search } from "lucide-react";
+import { normalizeSearch } from "../../lib/textSearch";
 
 export type BrcrisSelectOption = {
   value: string;
   label: string;
 };
-
-function normalizeSearch(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-}
 
 type Props = {
   id: string;

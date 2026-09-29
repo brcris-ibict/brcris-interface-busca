@@ -7,6 +7,7 @@ import {
   SERVER_RESULT_WINDOW,
   parsePositiveInt,
 } from "../../../lib/serverPagination";
+import { SEARCH_MAX_LENGTH, SEARCH_MIN_LENGTH } from "../../../lib/textSearch";
 import type {
   PublicationsDashboardErrorResponse,
   PublicationsDashboardFilters,
@@ -28,6 +29,18 @@ const SOURCE_FIELDS = [
   "sponsorOrgUnit",
 ] as const;
 
+// Campos da busca textual. title/author.name são keyword (usados em aggs);
+// o texto analisado fica em *_text (mesmo usado pela busca do portal em configs/Publications.ts).
+// keywords/journal.title/conference.name são keyword: só casam com o valor exato (bônus de relevância).
+const SEARCH_FIELDS = [
+  "title_text^3",
+  "keywords^2",
+  "author.name_text",
+  "journal.title",
+  "conference.name",
+  "doi",
+] as const;
+
 // Página máxima dentro da janela from+size do ES
 const MAX_PAGE = Math.ceil(SERVER_RESULT_WINDOW / SERVER_PAGE_DEFAULT_SIZE);
 
@@ -47,7 +60,7 @@ function getFilters(req: NextApiRequest): PublicationsDashboardFilters {
 }
 
 // Função auxiliar para construir a query do Elasticsearch
-function buildQuery(filters: PublicationsDashboardFilters) {
+function buildQuery(filters: PublicationsDashboardFilters, search = "") {
   const yearTo = String(new Date().getFullYear());
   const filterClauses: Record<string, unknown>[] = [
     {
@@ -72,7 +85,23 @@ function buildQuery(filters: PublicationsDashboardFilters) {
     });
   }
 
-  return { bool: { filter: filterClauses } };
+  const bool: Record<string, unknown> = { filter: filterClauses };
+
+  // simple_query_string não quebra com sintaxe inválida digitada pelo usuário
+  if (search) {
+    bool.must = [
+      {
+        simple_query_string: {
+          query: search,
+          fields: [...SEARCH_FIELDS],
+          default_operator: "and",
+          lenient: true,
+        },
+      },
+    ];
+  }
+
+  return { bool };
 }
 
 // Função auxiliar para ler um campo do source
@@ -167,6 +196,14 @@ export default async function handler(
   }
 
   const filters = getFilters(req);
+  // Termo de busca textual (q): abaixo do mínimo é ignorado
+  const rawSearch = param(req.query.q);
+  if (rawSearch.length > SEARCH_MAX_LENGTH) {
+    return res.status(400).json({
+      error: `Busca muito longa (max ${SEARCH_MAX_LENGTH} caracteres).`,
+    });
+  }
+  const search = rawSearch.length >= SEARCH_MIN_LENGTH ? rawSearch : "";
   const page = parsePositiveInt(req.query.page, 1, MAX_PAGE);
   const pageSize = parsePositiveInt(
     req.query.pageSize,
@@ -198,12 +235,19 @@ export default async function handler(
       // Mesmo critério do painel / BigNumber
       track_total_hits: knownTotal < 1 ? true : false,
       _source: [...SOURCE_FIELDS],
-      query: buildQuery(filters),
+      query: buildQuery(filters, search),
       // Sem _id (proibido/instável no ES moderno). _doc = barato e estável na página.
-      sort: [
-        { publicationDate: { order: "desc", unmapped_type: "keyword" } },
-        { _doc: { order: "asc" } },
-      ],
+      // Com busca: relevância primeiro, depois as mais recentes.
+      sort: search
+        ? [
+            { _score: { order: "desc" } },
+            { publicationDate: { order: "desc", unmapped_type: "keyword" } },
+            { _doc: { order: "asc" } },
+          ]
+        : [
+            { publicationDate: { order: "desc", unmapped_type: "keyword" } },
+            { _doc: { order: "asc" } },
+          ],
     });
 
     const rawTotal = response.hits.total;
@@ -220,6 +264,7 @@ export default async function handler(
       total, // total real filtrado → UI: ceil(total / pageSize)
     });
   } catch (error) {
+    logger.error(`[publication-list] falha na consulta (q="${search}")`);
     logger.error(error);
     
     return res.status(500).json({ error: "Falha ao carregar o painel." });
