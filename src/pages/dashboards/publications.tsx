@@ -2,7 +2,7 @@ import type { GetStaticProps } from "next";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AnnualByTypeDistribution from "../../components/panels/AnnualByTypeDistribution";
 import AnnualDistribution from "../../components/panels/AnnualDistribution";
 import InstitutionDistribution from "../../components/panels/InstitutionDistribution";
@@ -65,6 +65,18 @@ export default function Publications() {
 
   const filterOptions = data?.filterOptions ?? EMPTY_FILTER_OPTIONS;
 
+  // Carregamento dos painéis com fetch próprio (só troca de filtro, não paginação)
+  const [panelsLoading, setPanelsLoading] = useState<Record<string, boolean>>({});
+
+  const setPanelLoading = useCallback((panel: string, isLoading: boolean) => {
+    setPanelsLoading((prev) =>
+      prev[panel] === isLoading ? prev : { ...prev, [panel]: isLoading },
+    );
+  }, []);
+
+  // Bloqueia os filtros enquanto houver dados sendo processados
+  const filtersLocked = loading || Object.values(panelsLoading).some(Boolean);
+
   return (
     <>
       <Head>
@@ -81,6 +93,7 @@ export default function Publications() {
                   value={filters}
                   options={filterOptions}
                   onChange={setFilters}
+                  disabled={filtersLocked}
                 />
               }
             />
@@ -153,13 +166,22 @@ export default function Publications() {
                 />
               </div>
               <div className="col-12 col-lg-6">
-                <JournalQuantifiersTable filters={filters} />
+                <JournalQuantifiersTable
+                  filters={filters}
+                  onLoadingChange={(isLoading) => setPanelLoading("quantifiers", isLoading)}
+                />
               </div>
               <div className="col-12 col-lg-6">
-                <KeywordsHeatmap filters={filters} />
+                <KeywordsHeatmap
+                  filters={filters}
+                  onLoadingChange={(isLoading) => setPanelLoading("keywords", isLoading)}
+                />
               </div>
               <div className="col-12">
-                <PublicationsListTable filters={filters} />
+                <PublicationsListTable
+                  filters={filters}
+                  onLoadingChange={(isLoading) => setPanelLoading("listing", isLoading)}
+                />
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "next-i18next";
 import useRequest from "../../hooks/useRequest";
+import useFilterLoadingReport from "../../hooks/useFilterLoadingReport";
 import { withBasePath } from "../../lib/basePath";
 import {
   SERVER_EXPORT_MAX_ROWS,
@@ -16,6 +17,7 @@ import PanelTable, { type PanelTableColumn } from "./PanelTable";
 
 type Props = {
   filters: PublicationsDashboardFilters;
+  onLoadingChange?: (loading: boolean) => void;
 };
 
 const PAGE_SIZE = 17; // Número de itens por página
@@ -56,12 +58,14 @@ function toExportRows(
 }
 
 // Componente principal
-export default function JournalQuantifiersTable({ filters }: Props) {
+export default function JournalQuantifiersTable({ filters, onLoadingChange }: Props) {
   // Obtém o tradutor
   const { t } = useTranslation("common");
   // Obtém os dados da API
   const { data, loading, error, get } =
     useRequest<PublicationsJournalQuantifiers>();
+  // Reporta ao pai só o carregamento vindo de troca de filtro
+  useFilterLoadingReport(filters, loading, onLoadingChange);
   // Estado para a página
   const [page, setPage] = useState(1);
   // Total da última resposta com filtros atuais (evita cardinality a cada página)

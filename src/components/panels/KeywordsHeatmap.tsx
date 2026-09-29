@@ -4,6 +4,7 @@ import type { ECharts, EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
 import { useTheme } from "../../contexts/ThemeContext";
 import useRequest from "../../hooks/useRequest";
+import useFilterLoadingReport from "../../hooks/useFilterLoadingReport";
 import { withBasePath } from "../../lib/basePath";
 import type { PublicationsDashboardFilters, PublicationsKeywordHeatmap } from "../../types/PublicationsDashboard";
 import ChartExportMenu from "./ChartExportMenu";
@@ -17,6 +18,7 @@ const EChart = dynamic(() => import("./WordCloudEChart"), { ssr: false });
 type Props = {
   filters: PublicationsDashboardFilters;
   height?: number;
+  onLoadingChange?: (loading: boolean) => void;
 };
 
 // Paleta harmônica em torno do teal BrCris + tons complementares suaves.
@@ -66,10 +68,12 @@ function formatCount(value: number, locale: string) {
   return new Intl.NumberFormat(locale).format(value);
 }
 
-export default function KeywordsHeatmap({ filters, height = 520 }: Props) {
+export default function KeywordsHeatmap({ filters, height = 520, onLoadingChange }: Props) {
   const { t, i18n } = useTranslation("common");
   const { resolvedTheme } = useTheme();
   const { data, loading, error, get } = useRequest<PublicationsKeywordHeatmap>();
+  // Reporta ao pai só o carregamento vindo de troca de filtro
+  useFilterLoadingReport(filters, loading, onLoadingChange);
   const chartRef = useRef<ECharts | null>(null);
 
   const handleChartReady = useCallback((chart: ECharts | null) => {

@@ -26,6 +26,7 @@ type Props = {
   value: string;
   options: BrcrisSelectOption[];
   onChange: (value: string) => void;
+  disabled?: boolean;
 };
 
 export default function BrcrisSelect({
@@ -34,6 +35,7 @@ export default function BrcrisSelect({
   value,
   options,
   onChange,
+  disabled = false,
 }: Props) {
   const { t } = useTranslation("common");
   const rootRef = useRef<HTMLDivElement>(null);
@@ -78,6 +80,11 @@ export default function BrcrisSelect({
 
   }, [open]);
 
+  // Fecha o menu se o campo for desabilitado com ele aberto
+  useEffect(() => {
+    if (disabled) setOpen(false);
+  }, [disabled]);
+
   const selectOption = (nextValue: string) => {
     onChange(nextValue);
     setOpen(false);
@@ -85,6 +92,8 @@ export default function BrcrisSelect({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+
     if (!open) {
       if (
         event.key === "ArrowDown" ||
@@ -134,7 +143,7 @@ export default function BrcrisSelect({
 
   return (
     <div
-      className={`brcris-field brcris-select ${open ? "is-open" : ""}`}
+      className={`brcris-field brcris-select ${open ? "is-open" : ""}${disabled ? " is-disabled" : ""}`}
       ref={rootRef}
       onKeyDown={handleKeyDown}
     >
@@ -145,7 +154,12 @@ export default function BrcrisSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={`${id}-listbox`}
-        onClick={() => setOpen((prev) => !prev)}
+        aria-disabled={disabled}
+        disabled={disabled}
+        onClick={() => {
+          if (disabled) return;
+          setOpen((prev) => !prev);
+        }}
       >
         <span className="brcris-select__value">{selectedLabel}</span>
         <ChevronDown size={16} className="brcris-select__chevron" />

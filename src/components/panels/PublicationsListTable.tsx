@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "next-i18next";
 import useRequest from "../../hooks/useRequest";
+import useFilterLoadingReport from "../../hooks/useFilterLoadingReport";
 import { withBasePath } from "../../lib/basePath";
 import {
   SERVER_EXPORT_MAX_ROWS,
@@ -18,6 +19,7 @@ import PanelTable, { type PanelTableColumn } from "./PanelTable";
 
 type Props = {
   filters: PublicationsDashboardFilters;
+  onLoadingChange?: (loading: boolean) => void;
 };
 
 const PAGE_SIZE = SERVER_PAGE_DEFAULT_SIZE;
@@ -53,10 +55,12 @@ function toExportRows(
 }
 
 // Componente para exibir a tabela de listagem de publicações
-export default function PublicationsListTable({ filters }: Props) {
+export default function PublicationsListTable({ filters, onLoadingChange }: Props) {
   const { t, i18n } = useTranslation("common");
   const locale = i18n.language || "pt-BR";
   const { data, loading, error, get } = useRequest<PublicationsListResponse>();
+  // Reporta ao pai só o carregamento vindo de troca de filtro
+  useFilterLoadingReport(filters, loading, onLoadingChange);
   const [page, setPage] = useState(1);
   const knownTotalRef = useRef(0);
 

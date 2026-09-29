@@ -1899,6 +1899,19 @@ h3.popover-header a {
   border-color: var(--secondary-color);
 }
 
+// Sobrescreve o button[disabled] global (fundo azul com !important)
+.brcris-select .brcris-field__control:disabled,
+.brcris-select .brcris-field__control:disabled:hover {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  opacity: 1 !important;
+  cursor: not-allowed;
+}
+
+.brcris-select.is-disabled {
+  opacity: 0.55;
+}
+
 .brcris-field__control:focus,
 .brcris-select.is-open .brcris-field__control {
   outline: none;
