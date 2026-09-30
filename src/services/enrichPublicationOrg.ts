@@ -55,7 +55,7 @@ export async function fetchOrgRorById(
       const source = hit._source as OrgSource;
       const ror = firstNonEmpty(source.rorid);
       if (!ror) continue;
-      rorByOrgId.set(hit._id, ror);
+      if (hit._id) rorByOrgId.set(hit._id, ror);
       const sourceId = Array.isArray(source.id) ? source.id[0] : source.id;
       if (sourceId) rorByOrgId.set(sourceId, ror);
     }
