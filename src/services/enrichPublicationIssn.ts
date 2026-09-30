@@ -92,7 +92,7 @@ export async function fetchJournalIdentifiersById(
       if (!identifiers.issn && !identifiers.issn_l && !identifiers.eissn) {
         continue;
       }
-      byJournalId.set(hit._id, identifiers);
+      if (hit._id) byJournalId.set(hit._id, identifiers);
       const sourceId = Array.isArray(source.id) ? source.id[0] : source.id;
       if (sourceId) byJournalId.set(sourceId, identifiers);
     }

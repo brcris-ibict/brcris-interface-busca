@@ -166,7 +166,7 @@ export async function fetchPersonCsvFieldsById(
           .join("|"),
         affiliation_ror: "",
       };
-      byPersonId.set(hit._id, fields);
+      if (hit._id) byPersonId.set(hit._id, fields);
       if (sourceId) byPersonId.set(String(sourceId), fields);
     }
   }
