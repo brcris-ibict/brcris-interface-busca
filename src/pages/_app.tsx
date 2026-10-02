@@ -3,6 +3,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { appWithTranslation } from "next-i18next";
 import { useEffect } from "react";
 import Analytics from "../components/analytics";
@@ -11,10 +12,16 @@ import { ThemeProvider } from "../contexts/ThemeContext";
 import "../styles/globals.scss";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const { locale } = useRouter();
+
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     require("bootstrap/dist/js/bootstrap.bundle.min.js");
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = locale || "pt-BR";
+  }, [locale]);
   return (
     <>
       <Head>

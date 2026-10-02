@@ -7,10 +7,6 @@ import {
   shouldExcludeOrgLibraries,
   stripExcludeLibrariesFilter,
 } from "../../lib/orgunitSearchQuery";
-import {
-  excludePublicationsWithMultipleTypes,
-  isPublicationIndex,
-} from "../../lib/publicationSearchQuery";
 import ElasticsearchQueryBuilder from "../../services/ElasticsearchQueryBuilder";
 import { createSearchUiTransporter } from "../../services/ElasticsearchSearchUiTransporter";
 import logger from "../../services/Logger";
@@ -39,12 +35,6 @@ function builConnector(index: string) {
         ) as estypes.QueryDslQueryContainer;
         console.log("fullQuery", JSON.stringify(fullQuery));
         interceptedRequestBody.query = fullQuery;
-      }
-
-      if (isPublicationIndex(index)) {
-        interceptedRequestBody.query = excludePublicationsWithMultipleTypes(
-          interceptedRequestBody.query,
-        );
       }
 
       if (isOrgUnitIndex(index)) {

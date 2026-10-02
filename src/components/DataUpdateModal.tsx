@@ -12,6 +12,7 @@ interface UpdateModalProps {
 export default function DataUpdateModal({ width }: UpdateModalProps) {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
+  const updateDate = "07/2026";
 
   return (
     <>
@@ -20,12 +21,15 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
         type="button"
         onClick={() => setOpen(true)}
         style={{ width }}
+        aria-label={t("Update: {{date}}, view data sources and collection dates", {
+          date: updateDate,
+        })}
       >
         <span className={styles.updateTriggerContent}>
-          <DatabaseBackup size={20} strokeWidth={1.8} />
+          <DatabaseBackup size={20} strokeWidth={1.8} aria-hidden="true" />
 
           <span className={styles.updateTriggerText}>
-            <strong>{t("Update")}:</strong> {"07/2026"}
+            <strong>{t("Update")}:</strong> {updateDate}
           </span>
         </span>
 
@@ -33,6 +37,7 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
           size={18}
           strokeWidth={2}
           className={styles.updateTriggerChevron}
+          aria-hidden="true"
         />
       </button>
 
@@ -54,7 +59,7 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
                   </h2>
 
                   <p className={styles.modalSubtitle}>
-                    {t("Update")}: {"07/2026"}
+                    {t("Update")}: {updateDate}
                   </p>
                 </div>
               </div>

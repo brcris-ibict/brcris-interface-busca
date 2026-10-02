@@ -1,7 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createElasticsearchClient } from "../../../services/ElasticsearchClient";
 import logger from "../../../services/Logger";
-import { fetchJournalIssnById } from "../../../services/enrichPublicationIssn";
+import {
+  fetchJournalIdentifiersById,
+  type JournalIdentifiers,
+} from "../../../services/enrichPublicationIssn";
 import type { PublicationsDashboardErrorResponse, PublicationsDashboardFilters, PublicationsDashboardResponse } from "../../../types/PublicationsDashboard";
 
 const client = createElasticsearchClient();
@@ -399,10 +402,10 @@ export default async function handler(
       .map(journalIdOf)
       .filter(Boolean);
 
-    let issnByJournalId = new Map<string, string>();
+    let identifiersByJournalId = new Map<string, JournalIdentifiers>();
     if (process.env.INDEX_JOURNAL && missingJournalIds.length > 0) {
       try {
-        issnByJournalId = await fetchJournalIssnById(
+        identifiersByJournalId = await fetchJournalIdentifiersById(
           client,
           process.env.INDEX_JOURNAL,
           missingJournalIds,
@@ -413,14 +416,23 @@ export default async function handler(
       }
     }
 
+    // Os identificadores do índice de revistas vêm separados por "|"
+    const issnFromJournalIndex = (bucket: JournalBucket) => {
+      const ids = identifiersByJournalId.get(journalIdOf(bucket));
+      if (!ids) return "";
+      const values = [ids.issn, ids.eissn, ids.issn_l]
+        .flatMap((value) => value.split("|"))
+        .map((value) => value.trim())
+        .filter(Boolean);
+      return [...new Set(values)].join(", ");
+    };
+
     const topJournalsArticles = {
       totalArticles,
       items: topJournalBuckets.map((bucket, index) => ({
         rank: index + 1,
         journal: getBucketKey(bucket),
-        issn:
-          issnFromArticles(bucket) ||
-          (issnByJournalId.get(journalIdOf(bucket)) ?? "").split(",").join(", "),
+        issn: issnFromArticles(bucket) || issnFromJournalIndex(bucket),
         count: bucket.doc_count,
         share: totalArticles > 0 ? Number(((bucket.doc_count / totalArticles) * 100).toFixed(1)) : 0,
       })),

@@ -1,7 +1,8 @@
 import {
   formatFirstPublicationValue,
-  formatPublicationType,
+  formatPublicationTypesDisplay,
   formatPublicationYear,
+  getPublicationEventNames,
   normalizeText,
 } from "../../../utils/Utils";
 import {
@@ -70,8 +71,20 @@ export default function SearchTableCell({
   if (entityKey === "publications" && fieldKey === "type") {
     const raw = result.type?.raw;
     if (raw === null || raw === undefined) return "-";
-    const formatted = formatPublicationType(raw);
+    const formatted = formatPublicationTypesDisplay(raw);
     return formatted || "-";
+  }
+
+  if (entityKey === "publications" && fieldKey === "conference") {
+    const names = getPublicationEventNames(result.conference?.raw, undefined);
+    if (names.length === 0) return "-";
+    return names.map((name) => normalizeText(name)).join(", ");
+  }
+
+  if (entityKey === "publications" && fieldKey === "eventName") {
+    const names = getPublicationEventNames(undefined, result.eventName?.raw);
+    if (names.length === 0) return "-";
+    return names.map((name) => normalizeText(name)).join(", ");
   }
 
   if (

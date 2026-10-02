@@ -15,37 +15,102 @@ export const csvOptions: CsvOptions = {
   eol: "\r\n",
 };
 
-function escapeCsvCell(value: string): string {
+export function escapeCsvCell(value: string): string {
   return value.replaceAll(";", ",");
 }
 
-function entityLabel(item: object): string {
+export function sanitizeExportText(value: string): string {
+  return value
+    .replace(/\s+/g, " ")
+    .replace(/^[,;|\s]+|[,;|\s]+$/g, "")
+    .replace(/,\s*,+/g, ",")
+    .replace(/\s*,\s*/g, ", ")
+    .trim();
+}
+
+export function entityLabel(item: object): string {
   const rec = item as { name?: unknown; title?: unknown };
   const raw = rec.name ?? rec.title;
   if (Array.isArray(raw)) {
-    return raw
-      .map((part) => String(part ?? "").trim())
-      .filter(Boolean)
-      .join(", ");
+    return sanitizeExportText(
+      raw
+        .map((part) => String(part ?? "").trim())
+        .filter(Boolean)
+        .join(", "),
+    );
   }
-  return String(raw ?? "").trim();
+  return sanitizeExportText(String(raw ?? "").trim());
 }
 
-function formatAuthorNames(value: unknown): string {
+function normalizeAuthorName(item: unknown): string {
+  const label =
+    typeof item === "object" && item !== null
+      ? entityLabel(item)
+      : String(item ?? "").trim();
+  return label.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function getAuthorId(item: unknown): string {
+  if (typeof item === "object" && item !== null) {
+    return firstId((item as { id?: unknown }).id);
+  }
+  return "";
+}
+
+export function dedupePublicationAuthors(
+  source: Record<string, unknown>,
+): void {
+  const author = source.author;
+  if (author == null) return;
+  const list = Array.isArray(author) ? author : [author];
+  const seenIds = new Set<string>();
+  const preferred = new Map<string, { item: unknown; index: number }>();
+  const nameless: Array<{ item: unknown; index: number }> = [];
+
+  for (let index = 0; index < list.length; index++) {
+    const item = list[index];
+    const id = getAuthorId(item);
+    if (id) {
+      if (seenIds.has(id)) continue;
+      seenIds.add(id);
+    }
+
+    const name = normalizeAuthorName(item);
+    if (!name) {
+      nameless.push({ item, index });
+      continue;
+    }
+
+    const current = preferred.get(name);
+    if (!current) {
+      preferred.set(name, { item, index });
+      continue;
+    }
+    if (!getAuthorId(current.item) && id) {
+      preferred.set(name, { item, index });
+    }
+  }
+
+  source.author = [...preferred.values(), ...nameless]
+    .sort((a, b) => a.index - b.index)
+    .map((entry) => entry.item);
+}
+
+export function formatAuthorNames(value: unknown): string {
   const list = Array.isArray(value) ? value : value ? [value] : [];
   return list
     .map((item) => {
       if (typeof item === "object" && item !== null) {
         return entityLabel(item);
       }
-      return String(item ?? "").trim();
+      return sanitizeExportText(String(item ?? "").trim());
     })
     .filter(Boolean)
     .map(escapeCsvCell)
     .join(",");
 }
 
-function firstId(value: unknown): string {
+export function firstId(value: unknown): string {
   if (Array.isArray(value)) {
     for (const item of value) {
       const text = String(item ?? "").trim();
@@ -56,12 +121,26 @@ function firstId(value: unknown): string {
   return String(value ?? "").trim();
 }
 
-function formatEntityIds(value: unknown): string {
+export function formatEntityIds(value: unknown): string {
   const list = Array.isArray(value) ? value : value ? [value] : [];
   return list
     .map((item) => {
       if (typeof item === "object" && item !== null) {
         return firstId((item as { id?: unknown }).id);
+      }
+      return firstId(item);
+    })
+    .filter(Boolean)
+    .map(escapeCsvCell)
+    .join(",");
+}
+
+export function formatCourseDegrees(value: unknown): string {
+  const list = Array.isArray(value) ? value : value ? [value] : [];
+  return list
+    .map((item) => {
+      if (typeof item === "object" && item !== null) {
+        return firstId((item as { degree?: unknown }).degree);
       }
       return firstId(item);
     })
@@ -80,14 +159,23 @@ function formatCsvValue(
   if (header === "type") {
     return escapeCsvCell(formatPublicationType(source[header]));
   }
-  if (header === "author") {
-    return formatAuthorNames(source.author);
+  if (header === "author" || header === "coadvisor") {
+    return formatAuthorNames(source[header]);
   }
   if (header === "author_id") {
     return formatEntityIds(source.author);
   }
   if (header === "journal_id") {
     return formatEntityIds(source.journal);
+  }
+  if (header === "sponsorOrgUnit_id") {
+    return formatEntityIds(source.sponsorOrgUnit);
+  }
+  if (header === "course_id") {
+    return formatEntityIds(source.course);
+  }
+  if (header === "course_degree") {
+    return formatCourseDegrees(source.course);
   }
   const value = source[header];
   if (Array.isArray(value)) {
@@ -102,8 +190,38 @@ function formatCsvValue(
   return String(value).replaceAll(";", ",");
 }
 
+export function formatEntityLabels(value: unknown): string {
+  const list = Array.isArray(value) ? value : value ? [value] : [];
+  return list
+    .map((item) => {
+      if (typeof item === "object" && item !== null) {
+        return entityLabel(item);
+      }
+      return sanitizeExportText(String(item ?? "").trim());
+    })
+    .filter(Boolean)
+    .map(escapeCsvCell)
+    .join("|");
+}
+
+export function formatScalarList(value: unknown): string {
+  const list = Array.isArray(value) ? value : value ? [value] : [];
+  return list
+    .map((item) => sanitizeExportText(String(item ?? "").trim()))
+    .filter(Boolean)
+    .map(escapeCsvCell)
+    .join("|");
+}
+
+export function getAuthorItems(source: Record<string, unknown>): unknown[] {
+  const author = source.author;
+  if (author == null) return [];
+  return Array.isArray(author) ? author : [author];
+}
+
 export function jsonToCsv(jsonData: object, headers: string[]): string {
   const source = jsonData as Record<string, unknown>;
+  dedupePublicationAuthors(source);
   const values = headers.map((header) => formatCsvValue(header, source));
   return values.join(csvOptions.delimiter);
 }

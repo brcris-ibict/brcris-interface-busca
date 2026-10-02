@@ -192,7 +192,9 @@ export default function App() {
                 gap: "12px",
               }}
             >
-              <Link href="/about">{t("Learn more")}</Link>
+              <Link href="/about" aria-label={t("Learn more about BrCris")}>
+                {t("Learn more")}
+              </Link>
               <DataUpdateModal />
             </div>
           </div>

@@ -1,11 +1,12 @@
 import type { ResultViewProps } from "@elastic/react-search-ui-views";
 import {
-  formatPublicationType,
+  formatPublicationTypesDisplay,
   formatPublicationYear,
+  getPublicationEventNames,
   normalizeText,
 } from "../../../utils/Utils";
 import { withBasePath } from "../../lib/basePath";
-import type { Author, Conference, OrgUnit } from "../../types/Entities";
+import type { Author, OrgUnit } from "../../types/Entities";
 import { useDisplayFieldVisibility } from "./DisplayFieldsContext";
 
 const CustomResultViewPublications = ({
@@ -41,10 +42,16 @@ const CustomResultViewPublications = ({
               </span>
             ))}
           {isVisible("conference") &&
-            result.conference?.raw?.map((conference: Conference) =>
-              conference.name?.map((name: string) => (
-                <span key={name}>{normalizeText(name)}</span>
-              )),
+            getPublicationEventNames(result.conference?.raw, undefined).map(
+              (name) => (
+                <span key={`conference-${name}`}>{normalizeText(name)}</span>
+              ),
+            )}
+          {isVisible("eventName") &&
+            getPublicationEventNames(undefined, result.eventName?.raw).map(
+              (name) => (
+                <span key={`eventName-${name}`}>{normalizeText(name)}</span>
+              ),
             )}
           {isVisible("sponsorOrgUnit") &&
             result.sponsorOrgUnit?.raw?.map((org: OrgUnit) => (
@@ -54,7 +61,9 @@ const CustomResultViewPublications = ({
             <span>{formatPublicationYear(result.publicationDate.raw)}</span>
           )}
           {isVisible("type") && result.type?.raw && (
-            <span>{normalizeText(formatPublicationType(result.type.raw))}</span>
+            <span>
+              {normalizeText(formatPublicationTypesDisplay(result.type.raw))}
+            </span>
           )}
         </div>
       </a>

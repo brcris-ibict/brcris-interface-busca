@@ -4,8 +4,10 @@ import { useTranslation } from "next-i18next";
 import {
   _normalizeScientificTitle,
   formatFirstPublicationValue,
-  formatPublicationType,
+  formatPublicationTypesDisplay,
   formatPublicationYear,
+  getPublicationEventNames,
+  getPublicationTypes,
   normalizeDoiList,
   normalizeText,
 } from "../../../utils/Utils";
@@ -76,7 +78,29 @@ export default function PublicationDetails() {
     return doiList.length > 0 ? `https://doi.org/${doiList[0]}` : "";
   })();
 
-  const publicationType = formatPublicationType(result?.type?.raw);
+  const publicationTypes = getPublicationTypes(result?.type?.raw);
+  const publicationTypeLabel = formatPublicationTypesDisplay(result?.type?.raw);
+  const isThesis = publicationTypes.some((type) => {
+    const normalized = type.toLowerCase();
+    return (
+      normalized === "doctoral thesis" ||
+      normalized === "master thesis" ||
+      normalized === "tese" ||
+      normalized === "dissertação" ||
+      normalized === "dissertacao"
+    );
+  });
+  const isConferenceProceedings = publicationTypes.some(
+    (type) => type.toLowerCase() === "conference proceedings",
+  );
+  const conferenceNames = getPublicationEventNames(
+    result?.conference?.raw,
+    undefined,
+  );
+  const eventNames = getPublicationEventNames(
+    undefined,
+    result?.eventName?.raw,
+  );
 
   if (isLoading || !wasSearched) {
     return <Loader />;
@@ -219,18 +243,15 @@ export default function PublicationDetails() {
               label={t("Year")}
               value={formatPublicationYear(result.publicationDate?.raw)}
             />
-            <ShowItem label={t("Type")} value={publicationType} />
+            <ShowItem label={t("Type")} value={publicationTypeLabel} />
             {result.orgunit === undefined &&
             result.service === undefined &&
             result.journal === undefined ? null : (
               <li>
                 <span className="sui-result__key">
-                  {publicationType === "doctoral thesis" ||
-                  publicationType === "master thesis"
+                  {isThesis || isConferenceProceedings
                     ? `${t("Organization")}`
-                    : publicationType === "conference proceedings"
-                      ? `${t("Organization")}`
-                      : `${t("Journals")}`}
+                    : `${t("Journals")}`}
                 </span>
 
                 <span>
@@ -336,13 +357,19 @@ export default function PublicationDetails() {
                 />
               )}
 
-            {result.conference?.raw?.length > 0 && (
+            {conferenceNames.length > 0 && (
               <ShowItem
                 label={t("Conference")}
-                value={result.conference.raw.map((conference: any) => (
-                  <span key={conference.id}>
-                    {normalizeText(conference.name)}
-                  </span>
+                value={conferenceNames.map((name) => (
+                  <span key={`conference-${name}`}>{normalizeText(name)}</span>
+                ))}
+              />
+            )}
+            {eventNames.length > 0 && (
+              <ShowItem
+                label={t("Event name")}
+                value={eventNames.map((name) => (
+                  <span key={`eventName-${name}`}>{normalizeText(name)}</span>
                 ))}
               />
             )}

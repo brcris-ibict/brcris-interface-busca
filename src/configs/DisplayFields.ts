@@ -11,6 +11,7 @@ export const DISPLAY_FIELDS_BY_ENTITY: Record<string, DisplayField[]> = {
     { key: "author", label: "Author", default: true },
     { key: "journal", label: "Journal", default: true },
     { key: "conference", label: "Conference", default: true },
+    { key: "eventName", label: "Event name", default: true },
     { key: "sponsorOrgUnit", label: "Organization", default: false },
     { key: "publicationDate", label: "Publication date", default: true },
     { key: "type", label: "Type", default: false },

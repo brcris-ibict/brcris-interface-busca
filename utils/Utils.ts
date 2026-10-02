@@ -57,6 +57,14 @@ export function getLattesIdentifier(lattesId?: string[]) {
   return lattesId[0].split("::").pop() ?? null;
 }
 
+export function normalizeLattesId(value: unknown): string {
+  const list = Array.isArray(value) ? value : value == null || value === "" ? [] : [value];
+  const strings = list
+    .map((item) => String(item ?? "").trim())
+    .filter(Boolean);
+  return getLattesIdentifier(strings) || "";
+}
+
 export function detectBioLanguage(text: string): "pt" | "en" {
   const ptHits = (
     text.match(
@@ -238,8 +246,8 @@ export function normalizeText(text: any): string {
   });
 }
 
-export function formatPublicationYear(value: unknown): string {
-  if (value === null || value === undefined) return "";
+export function getPublicationYears(value: unknown): number[] {
+  if (value === null || value === undefined) return [];
 
   const MIN_YEAR = 1600;
   const MAX_YEAR = 2100;
@@ -288,6 +296,13 @@ export function formatPublicationYear(value: unknown): string {
     years.push(...extractYears(clean));
   }
 
+  return years;
+}
+
+export function formatPublicationYear(value: unknown): string {
+  if (value === null || value === undefined) return "";
+
+  const years = getPublicationYears(value);
   if (years.length > 0) {
     return String(Math.max(...years));
   }
@@ -296,14 +311,31 @@ export function formatPublicationYear(value: unknown): string {
   return fallback;
 }
 
+export function formatPublicationYearsExplicit(value: unknown): string {
+  return [...new Set(getPublicationYears(value))]
+    .sort((a, b) => a - b)
+    .join("|");
+}
+
 export function getPublicationTypes(type: unknown): string[] {
   if (type == null || type === "") {
     return [];
   }
   const values = Array.isArray(type) ? type : [type];
-  return [
-    ...new Set(values.map((item) => String(item).trim()).filter(Boolean)),
-  ];
+  const parts: string[] = [];
+  for (const item of values) {
+    const text = String(item ?? "").trim();
+    if (!text) continue;
+    if (text.includes(",")) {
+      for (const part of text.split(",")) {
+        const trimmed = part.trim();
+        if (trimmed) parts.push(trimmed);
+      }
+      continue;
+    }
+    parts.push(text);
+  }
+  return [...new Set(parts)];
 }
 
 export function hasMultiplePublicationTypes(type: unknown): boolean {
@@ -312,6 +344,48 @@ export function hasMultiplePublicationTypes(type: unknown): boolean {
 
 export function formatPublicationType(type: unknown): string {
   return getPublicationTypes(type)[0] ?? "";
+}
+
+export function formatPublicationTypesExplicit(type: unknown): string {
+  return getPublicationTypes(type).join("|");
+}
+
+export function formatPublicationTypesDisplay(type: unknown): string {
+  return getPublicationTypes(type).join(" | ");
+}
+
+function asValueList(value: unknown): unknown[] {
+  if (value == null || value === "") return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+export function getPublicationEventNames(
+  conference: unknown,
+  eventName: unknown,
+): string[] {
+  const names: string[] = [];
+  for (const item of asValueList(conference)) {
+    if (typeof item === "string") {
+      const text = item.trim();
+      if (text) names.push(text);
+      continue;
+    }
+    if (item && typeof item === "object") {
+      const name = (item as { name?: unknown }).name;
+      for (const part of asValueList(name)) {
+        const text = String(part ?? "").trim();
+        if (text) names.push(text);
+      }
+    }
+  }
+  if (names.length > 0) return [...new Set(names)];
+  return [
+    ...new Set(
+      asValueList(eventName)
+        .map((item) => String(item ?? "").trim())
+        .filter(Boolean),
+    ),
+  ];
 }
 
 export function formatFirstPublicationValue(value: unknown): string {

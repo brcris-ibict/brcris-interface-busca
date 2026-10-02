@@ -1,6 +1,12 @@
 .contact {
   color: var(--text-color);
 }
+
+.fieldLabel {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
 .contactUs {
   display: flex;
   justify-content: center;

@@ -58,11 +58,28 @@ const DownloadModal = ({
   // @ts-expect-error
   const resultFields = Object.keys(result_fields);
 
+  function getIndexName() {
+    // remove a / do início da string
+    return router.pathname.slice(1);
+  }
+
+  function getDownloadLink(file: any) {
+    return withBasePath(
+      `/api/download?fileName=${file}&indexName=${getIndexName()}`,
+    );
+  }
+
   const hasMultipleFormats = formats.length > 1;
   const buttonLabel = hasMultipleFormats
     ? t("Export") || "Export"
     : t(formats[0]);
   const isSmallExport = totalResults <= 1000;
+  const indexName = getIndexName();
+  const isPublicationsExport = indexName === "publications";
+  const generationDate = new Date().toLocaleString(
+    router.locale === "en" ? "en-US" : "pt-BR",
+    { dateStyle: "short", timeStyle: "short" },
+  );
 
   async function handleDownload() {
     try {
@@ -148,17 +165,6 @@ const DownloadModal = ({
     setCaptcha(value);
   };
 
-  function getIndexName() {
-    // remove a / do início da string
-    return router.pathname.slice(1);
-  }
-
-  function getDownloadLink(file: any) {
-    return withBasePath(
-      `/api/download?fileName=${file}&indexName=${getIndexName()}`,
-    );
-  }
-
   return (
     <>
       <button
@@ -198,6 +204,24 @@ const DownloadModal = ({
                 </option>
               ))}
             </select>
+          </div>
+          <div className="mb-3 text-muted small">
+            <p className="mb-1">
+              {t("Export generation date", { date: generationDate })}
+            </p>
+            <p className="mb-1">{t("Export license")}</p>
+            {isPublicationsExport && selectedFormat === "csv" && (
+              <p className="mb-0">{t("Publications CSV zip contents")}</p>
+            )}
+            {isPublicationsExport && selectedFormat === "json" && (
+              <p className="mb-0">{t("Publications JSON zip contents")}</p>
+            )}
+            {isPublicationsExport && selectedFormat === "ris" && (
+              <p className="mb-0">{t("Publications RIS zip contents")}</p>
+            )}
+            {!isPublicationsExport && (
+              <p className="mb-0">{t("Generic export zip contents")}</p>
+            )}
           </div>
           {downloadLink && (
             <a href={downloadLink} target="_blank" rel="noreferrer">
