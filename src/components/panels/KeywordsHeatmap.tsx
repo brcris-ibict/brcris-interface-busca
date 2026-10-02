@@ -220,7 +220,7 @@ export default function KeywordsHeatmap({ filters, height = 520, onLoadingChange
   }, [items, locale, textMuted, tooltipBg, tooltipBorder, tooltipText, t]);
 
   return (
-    <div className="brcris-chart-card brcris-keywords-cloud">
+    <div className="brcris-chart-card brcris-keywords-cloud h-100">
       <div className="brcris-chart-card__header brcris-keywords-cloud__header">
         <div className="brcris-keywords-cloud__heading">
           <h2 className="brcris-chart-card__title">{t("Keywords heatmap")}</h2>

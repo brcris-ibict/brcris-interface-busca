@@ -9,7 +9,7 @@ import InstitutionDistribution from "../../components/panels/InstitutionDistribu
 import LanguageDistribution from "../../components/panels/LanguageDistribution";
 import TopJournalsArticlesTable from "../../components/panels/TopJournalsArticlesTable";
 import AuthorsProductionsTable from "../../components/panels/AuthorsProductionsTable";
-import JournalQuantifiersTable from "../../components/panels/JournalQuantifiersTable";
+// import JournalQuantifiersTable from "../../components/panels/JournalQuantifiersTable";
 import PublicationsListTable from "../../components/panels/PublicationsListTable";
 import KeywordsHeatmap from "../../components/panels/KeywordsHeatmap";
 import TypeDistribution from "../../components/panels/TypeDistribution";
@@ -135,7 +135,7 @@ export default function Publications() {
                   error={Boolean(error)}
                 />
               </div>
-              <div className="col-12 col-lg-4">
+              <div className="col-12 col-lg-6">
                 <TypeDistribution
                   data={data?.byType ?? []}
                   totalPublications={data?.total}
@@ -143,7 +143,7 @@ export default function Publications() {
                   error={Boolean(error)}
                 />
               </div>
-              <div className="col-12 col-lg-4">
+              <div className="col-12 col-lg-6">
                 <LanguageDistribution
                   data={data?.byLanguage ?? []}
                   totalPublications={data?.total}
@@ -154,7 +154,7 @@ export default function Publications() {
                   error={Boolean(error)}
                 />
               </div>
-              <div className="col-12 col-lg-4">
+              <div className="col-12 col-lg-6">
                 <InstitutionDistribution
                   data={data?.byInstitution ?? []}
                   totalPublications={data?.total}
@@ -165,15 +165,18 @@ export default function Publications() {
                   error={Boolean(error)}
                 />
               </div>
+              {/*
               <div className="col-12 col-lg-6">
                 <JournalQuantifiersTable
                   filters={filters}
                   onLoadingChange={(isLoading) => setPanelLoading("quantifiers", isLoading)}
                 />
               </div>
+              */}
               <div className="col-12 col-lg-6">
                 <KeywordsHeatmap
                   filters={filters}
+                  height={400}
                   onLoadingChange={(isLoading) => setPanelLoading("keywords", isLoading)}
                 />
               </div>

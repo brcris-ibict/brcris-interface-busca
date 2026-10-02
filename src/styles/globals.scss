@@ -2755,7 +2755,7 @@ h3.popover-header a {
 .brcris-panel-table__sort-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: inherit;
+  justify-content: space-between;
   gap: 0.3rem;
   width: 100%;
   min-width: 0;
@@ -2787,7 +2787,7 @@ h3.popover-header a {
 }
 
 .brcris-panel-table__table th.is-numeric .brcris-panel-table__sort-btn {
-  justify-content: flex-end;
+  flex-direction: row-reverse;
 }
 
 .brcris-panel-table__table tbody tr:nth-child(even) {

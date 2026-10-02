@@ -47,7 +47,7 @@ const BAR_ROW_HEIGHT = 52;
 const PAGE_SIZE = 10;
 
 // Limite de caracteres para o nome da instituição
-const LABEL_MAX_CHARS = 32;
+const LABEL_MAX_CHARS = 44;
 
 // Limite de itens para o gráfico de pizza
 const PIE_SLICE_LIMIT = 10;
@@ -269,8 +269,8 @@ export default function InstitutionDistribution({
                 return `${shortenLabel(String(item.name ?? ""))}\n${item.percent}%`;
               },
               color: textMuted,
-              fontSize: 11,
-              lineHeight: 16,
+              fontSize: 13,
+              lineHeight: 18,
             },
             labelLine: {
               show: true,
@@ -324,7 +324,7 @@ export default function InstitutionDistribution({
       },
       legend: { show: false },
       grid: {
-        left: 200,
+        left: 300,
         right: 72,
         top: 12,
         bottom: 12,
@@ -344,10 +344,10 @@ export default function InstitutionDistribution({
         axisTick: { show: false },
         axisLabel: {
           color: textMuted,
-          fontSize: 12,
-          lineHeight: 16,
+          fontSize: 13,
+          lineHeight: 18,
           margin: 8,
-          width: 180,
+          width: 280,
           overflow: "truncate",
         },
       },
@@ -377,7 +377,7 @@ export default function InstitutionDistribution({
   }, [data, visibleData, chartKind, textMuted, gridColor, resolvedTheme, t, totalPublications, publicationsWithoutInstitution]);
 
   return (
-    <div className="brcris-chart-card" style={{ height: `500px` }}>
+    <div className="brcris-chart-card h-100" style={{ minHeight: 500 }}>
       <div className="brcris-chart-card__header">
         <h2 className="brcris-chart-card__title">
           {t("Publications by institution composition")}

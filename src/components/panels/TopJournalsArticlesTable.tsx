@@ -49,6 +49,13 @@ export default function TopJournalsArticlesTable({
         title: (row) => row.journal,
       },
       {
+        key: "issn",
+        header: "ISSN",
+        accessor: (row) => row.issn,
+        sortAs: "text",
+        format: (value) => (value ? String(value) : "—"),
+      },
+      {
         key: "count",
         header: t("Productions"),
         accessor: (row) => row.count,

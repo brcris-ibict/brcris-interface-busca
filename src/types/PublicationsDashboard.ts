@@ -42,6 +42,7 @@ export type PublicationsAnnualByTypePoint = {
 export type PublicationsTopJournalPoint = {
   rank: number;
   journal: string;
+  issn: string;
   count: number;
   share: number;
 };
