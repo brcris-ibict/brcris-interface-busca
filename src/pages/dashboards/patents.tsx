@@ -12,20 +12,20 @@ export const getStaticProps: GetStaticProps<Props> = async ({ locale }) => ({
   },
 });
 
-export default function PublicationsDashboard() {
+export default function PatentsDashboard() {
   const { t } = useTranslation("common");
   return (
     <>
       <Head>
-        <title>{`BrCris - ${t("Publications dashboard")}`}</title>
+        <title>{`BrCris - ${t("Patents dashboard")}`}</title>
       </Head>
       <div className="page-search">
         <div className="App">
           <div className="container page">
             <div className="page-title">
-              <h1>{t("Publications dashboard")}</h1>
+              <h1>{t("Patents dashboard")}</h1>
             </div>
-            <Iframe url="https://dashboardbrcris.ibict.br/app/dashboards#/view/2976eb17-79ce-4a75-9289-46cd56d32cdc?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))" />
+            <Iframe url="https://dashboardbrcris.ibict.br/app/dashboards#/view/c7064872-f597-4e43-9634-7d76b7c0f0cd?embed=true&_g=(filters%3A!()%2CrefreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-15m%2Cto%3Anow))" />
           </div>
         </div>
       </div>
