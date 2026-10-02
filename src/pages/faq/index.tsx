@@ -66,7 +66,7 @@ export default function FaqPage() {
           </div>
         </div>
       </header>
-      <main className="container">
+      <div className="container">
         <h2 id="about" className="h4">
           1. {t("About BrCris")}
         </h2>
@@ -436,7 +436,7 @@ export default function FaqPage() {
             {t("Back to top")}
           </a>
         </p>
-      </main>
+      </div>
 
       <footer className="border-top py-4">
         <div

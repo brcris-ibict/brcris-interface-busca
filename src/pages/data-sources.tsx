@@ -26,7 +26,7 @@ export default function DataSourceInfo() {
               {t("Information about data sources")}
             </h1>
           </div>
-          <main>
+          <div>
             <h2>{t("User Profile Description")}</h2>
             <p>
               {t(
@@ -80,7 +80,7 @@ export default function DataSourceInfo() {
                 "Data extracted from curriculums registered on the Lattes Platform, OpenAlex, Capes Open Data, and OasisBr",
               )}
             </p>
-          </main>
+          </div>
         </div>
       </div>
     </>
