@@ -18,6 +18,13 @@ type BoolShouldType = {
 
 type MatchClause = string | { query: string; fuzziness?: string };
 
+const FIELD = String.raw`[^():]*[^():\s][^():]*`;
+const VALUE = String.raw`[^()]*[^()\s][^()]*`;
+const CLAUSE = String.raw`\(${FIELD}:${VALUE}\)`;
+const ADVANCED_QUERY = new RegExp(
+  String.raw`^\s*${CLAUSE}(?:\s*(?:AND NOT|AND|OR)\s*${CLAUSE})*\s*$`,
+);
+
 function parseSearchValue(raw: string): {
   matchType: "match" | "match_phrase";
   matchValue: MatchClause;
@@ -48,6 +55,14 @@ function parseSearchValue(raw: string): {
   };
 }
 
+function splitClause(clause: string): [string, string] {
+  const separator = clause.indexOf(":");
+  return [
+    clause.slice(0, separator).trim(),
+    clause.slice(separator + 1).trim(),
+  ];
+}
+
 class ElasticsearchQueryBuilder {
   private queryBase: BoolType = {
     bool: {
@@ -63,17 +78,27 @@ class ElasticsearchQueryBuilder {
     if (!searchTerm) {
       return this.queryBase;
     }
-    if (searchTerm.indexOf("(") < 0) {
-      searchTerm = `(all:${searchTerm})`;
-    }
     const input = untranslatedFieldsNames(searchTerm);
+    if (ADVANCED_QUERY.test(input)) {
+      this.fillAdvancedQuery(input, allFields);
+    } else {
+      allFields.forEach((field) => {
+        this.fillQuery("OR", field, searchTerm.trim(), []);
+      });
+    }
+    if (this.queryBase.bool?.should?.length > 0) {
+      this.queryBase.bool.minimum_should_match = 1;
+    }
+    return this.queryBase;
+  }
 
+  private fillAdvancedQuery(input: string, allFields: string[]) {
     const items = input.split(")");
     items.pop();
     for (let index = 0; index < items.length; index++) {
       const [operator, query] = items[index].split("(");
       if (index === 0) {
-        const [field, value] = query.split(":");
+        const [field, value] = splitClause(query);
         if (field === this.ALL_FIELDS) {
           allFields.forEach((field) => {
             this.fillQuery("OR", field, value, []);
@@ -90,14 +115,10 @@ class ElasticsearchQueryBuilder {
           this.fillQuery(nextOperator, field, value, []);
         }
       } else {
-        const [field, value] = query.split(":");
+        const [field, value] = splitClause(query);
         this.fillQuery(operator, field, value, allFields);
       }
     }
-    if (this.queryBase.bool?.should?.length > 0) {
-      this.queryBase.bool.minimum_should_match = 1;
-    }
-    return this.queryBase;
   }
 
   private fillQuery(

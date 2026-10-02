@@ -72,7 +72,17 @@ class APIConnector {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ requestState, queryConfig }),
     });
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        results: [],
+        totalResults: 0,
+        totalPages: 0,
+        facets: {},
+        error: data.error ?? "Invalid search query",
+      };
+    }
 
     // this.saveToCache(key, data);
     return data;
