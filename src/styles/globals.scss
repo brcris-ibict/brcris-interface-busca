@@ -170,6 +170,32 @@ main {
   min-height: calc(100vh - 250px);
 }
 
+#main-content:focus {
+  outline: none;
+}
+
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1100;
+  padding: 10px 16px;
+  border-radius: var(--border-radius);
+  background-color: var(--primary-color);
+  color: var(--brand-contrast);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 3px solid var(--text-color);
+  outline-offset: 2px;
+  color: var(--brand-contrast);
+}
+
 .navbar-toggler {
   border-color: var(--border-color) !important;
 }

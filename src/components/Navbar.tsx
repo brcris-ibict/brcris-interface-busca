@@ -36,6 +36,12 @@ function Navbar() {
     ) : (
       <Laptop size={18} />
     );
+  const themeLabel =
+    themePreference === "dark"
+      ? "Dark"
+      : themePreference === "light"
+        ? "Light"
+        : "System";
 
   const changeTo = (lang: string) => lang;
   const isNavItemActive = (href: string) =>
@@ -150,20 +156,12 @@ function Navbar() {
                   <button
                     type="button"
                     className="nav-link theme-toggle-button"
-                    aria-label={t(`Theme mode: ${themePreference}`)}
+                    aria-label={t(`${themeLabel}, interface theme`)}
                     title={t("Theme mode")}
                   >
                     {themeIcon}
                     <span>{t("Theme")}</span>
-                    <span className="theme-toggle-value">
-                      {t(
-                        themePreference === "system"
-                          ? "System"
-                          : themePreference === "dark"
-                            ? "Dark"
-                            : "Light",
-                      )}
-                    </span>
+                    <span className="theme-toggle-value">{t(themeLabel)}</span>
                     <svg
                       height="20"
                       width="20"

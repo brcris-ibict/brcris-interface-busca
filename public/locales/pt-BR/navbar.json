@@ -16,10 +16,11 @@
   "Light": "Claro",
   "Dark": "Escuro",
   "Theme mode": "Modo de tema",
-  "Theme mode: system": "Modo de tema: sistema",
-  "Theme mode: light": "Modo de tema: claro",
-  "Theme mode: dark": "Modo de tema: escuro",
+  "System, interface theme": "Sistema, tema da interface",
+  "Light, interface theme": "Claro, tema da interface",
+  "Dark, interface theme": "Escuro, tema da interface",
   "Switch to dark mode": "Ativar modo escuro",
   "Switch to light mode": "Ativar modo claro",
-  "Publications": "Publicações"
+  "Publications": "Publicações",
+  "Skip to main content": "Pular para o conteúdo principal"
 }
