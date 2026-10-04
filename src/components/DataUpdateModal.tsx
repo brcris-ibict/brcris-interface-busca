@@ -12,7 +12,7 @@ interface UpdateModalProps {
 export default function DataUpdateModal({ width }: UpdateModalProps) {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
-  const updateDate = "07/2026";
+  const updateDate = "10/2026";
 
   return (
     <>
@@ -85,7 +85,7 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
 
                 <span>
                   <strong>{t("Last load in BrCris")}:</strong>{" "}
-                  {t("july of 2026")}
+                  {t("october of 2026")}
                 </span>
               </div>
 
