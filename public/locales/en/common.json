@@ -397,5 +397,16 @@
   "Update: {{date}}, view data sources and collection dates": "Update: {{date}}, view data sources and collection dates",
   "Learn more about BrCris": "Learn more about BrCris",
   "Visit the Ibict website (opens in a new tab)": "Visit the Ibict website (opens in a new tab)",
-  "Email": "Email"
+  "Email": "Email",
+  "Team size distribution": "Team size distribution",
+  "Team size caption": "Authors identified in BrCris per publication",
+  "Team size": "Team size",
+  "Team size 1": "1 author",
+  "Team size 2": "2 authors",
+  "Team size 3-5": "3–5 authors",
+  "Team size 6-10": "6–10 authors",
+  "Team size 11+": "11+ authors",
+  "Without authorship": "No authorship informed",
+  "Share of publications with authors (%)": "Share of publications with authors (%)"
 }
+

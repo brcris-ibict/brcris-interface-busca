@@ -98,6 +98,21 @@ export type PublicationsKeywordHeatmap = {
   items: PublicationsKeywordPoint[];
 };
 
+export type PublicationsTeamSizeBand = "1" | "2" | "3-5" | "6-10" | "11+";
+
+export type PublicationsTeamSizePoint = {
+  band: PublicationsTeamSizeBand;
+  count: number;
+};
+
+export type PublicationsTeamSize = {
+  total: number;
+  withAuthors: number;
+  withoutAuthors: number;
+  bands: PublicationsTeamSizePoint[];
+  sampled: boolean;
+};
+
 export type PublicationsDashboardSummary = {
   total: number;
   lastYear: string;

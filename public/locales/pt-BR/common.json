@@ -400,5 +400,16 @@
   "Update: {{date}}, view data sources and collection dates": "Atualização: {{date}}, ver fontes e datas de coleta",
   "Learn more about BrCris": "Saiba mais sobre o BrCris",
   "Visit the Ibict website (opens in a new tab)": "Acessar o site do Ibict (abre em nova aba)",
-  "Email": "E-mail"
+  "Email": "E-mail",
+  "Team size distribution": "Distribuição do tamanho das equipes",
+  "Team size caption": "Autores identificados no BrCris por publicação",
+  "Team size": "Tamanho da equipe",
+  "Team size 1": "1 autor",
+  "Team size 2": "2 autores",
+  "Team size 3-5": "3–5 autores",
+  "Team size 6-10": "6–10 autores",
+  "Team size 11+": "11+ autores",
+  "Without authorship": "Sem autoria informada",
+  "Share of publications with authors (%)": "Publicações com autoria informada (%)"
 }
+

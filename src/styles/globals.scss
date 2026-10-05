@@ -2966,3 +2966,21 @@ h3.popover-header a {
   color: var(--text-secondary-color);
   font-size: 0.72rem;
 }
+
+// Tamanho das equipes de autoria
+.brcris-team-size__header {
+  align-items: flex-start;
+}
+
+.brcris-team-size__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.brcris-team-size__caption {
+  margin: 0 0 0 12px;
+  font-size: 0.75rem;
+  color: var(--text-secondary-color);
+}

@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-relation-metamodel>
+	<entities>
+		<entity name="Person">
+			<field name="identifier.brcris"/> <!-- será o lattes (sem url) com md5 -->
+			<field name="identifier.lattes"/> <!-- sem url e único-->
+			<field name="identifier.lattesShort"/> <!-- sem url e único-->
+			<field name="identifier.cpf"/>
+			<field name="identifier.email" description="identificador único e-mail"/> <!-- se houver, verificar se é válido (@)-->
+			<field name="identifier.orcid"/> <!-- sem url, único, validado com hifens e checando o digito verificador -->
+			<field name="identifier.researcherID"/>
+			<field name="identifier.scopusAuthorID"/>
+			<field name="identifier.cienciaID"/>
+			<field name="identifier.capes"/> <!-- id numérico -->
+			<field name="identifier.openalex"/> <!-- alfanumérico, sem url, único -->
+			<field name="identifier.dark"/>
+			<field name="identifier.other"/>
+			<field name="name" description="nome da pessoa"/> <!-- usar o do nome do currículo (com maior grau de confiança) -->
+			<field name="alternateName"/>
+			<field name="citationName"/> <!-- usar os nomes de citaçoes do currículo (com maior grau de confiança) -->
+			<field name="gender"/>
+			<field name="birthDate"/>
+			<field name="birthCountry"/> <!-- validar na lista de autoridade de país -->
+			<field name="birthState"/> <!-- validar na lista de autoridade de estado -->
+			<field name="birthCity"/> <!-- validar na lista de autoridade de cidade -->
+			<field name="nationality"/> 
+			<field name="researchArea"/> <!-- nao precisa validar na lista de autoridade, mas deve ser captalizado corretamente. Deve concatenar toda a árvore em uma estrutura de diretorios. Ex.: Grande Area / Area / Sub-area / Especialidade -->
+			<field name="fone" description="telefone"/> <!-- do endereço profissional, mas individualizado -->
+			<field name="personalURL"/> <!-- do endereço profissional, mas individualizado. Checar se é uma url -->
+			<field name="miniBiography"/> <!-- somente PT-BR -->
+		</entity>
+		<entity name="OrgUnit">
+			<field name="identifier.brcris" description="MD5 do id devolvido pela API do Rene"/>
+			<field name="identifier.brcrisName"/>
+			<field name="identifier.ror"/>
+			<field name="identifier.grid"/>
+			<field name="identifier.isni"/>
+			<field name="identifier.wikidata"/>
+			<field name="identifier.fundref"/>
+			<field name="identifier.orgref"/>
+			<field name="identifier.cnpj"/>
+			<field name="identifier.cnpq"/>
+			<field name="identifier.capes"/>
+			<field name="identifier.mec"/>
+			<field name="identifier.inep" description="Identificador do INEP"/>
+			<field name="identifier.ci"/>
+			<field name="identifier.scopus"/>
+			<field name="identifier.ringgo"/>
+			<field name="identifier.other"/>
+			<field name="type"/>
+			<field name="juridicNature" description="Natureza Organizacional"/>
+			<field name="acronym" description="Sigla da organização"/>
+			<field name="name" description="nome da organização"/>
+			<field name="electronicAddress"/>
+			<field name="latitude"/>
+			<field name="longitude"/>
+			<field name="address"/>
+			<field name="cep"/>
+			<field name="city"/><!-- validar na lista de autoridade de cidades se o país for Brasil -->
+			<field name="neighborhood"/>
+			<field name="state"/><!-- validar na lista de autoridade de estados se o país for Brasil -->
+			<field name="country"/> <!-- validar na lista de autoridade de país -->
+			<field name="phone"/>
+			<field name="websiteUrl" description="Site da organização"/> <!-- checar se é uma url -->
+		</entity>
+		<entity name="Publication">
+			<field name="identifier.brcris" description="hash gerado com título + ano de publicação + tipo"/>
+			<field name="identifier.doi" description="id doi"/>
+			<field name="identifier.capes" description="id capes"/>
+			<field name="identifier.bdtd"/>
+			<field name="identifier.oasisbr"/>
+			<field name="identifier.handle"/>
+			<field name="identifier.pmcid"/>
+			<field name="identifier.isi-number"/>
+			<field name="identifier.scp-number"/>
+			<field name="identifier.issn"/>
+			<field name="identifier.isbn"/>
+			<field name="identifier.dark"/>
+			<field name="identifier.other"/>
+			<field name="type"/> <!-- validar na lista de autoridade de tipos e gravar no idima PT (anteriormente era no coar)-->
+			<field name="language"/> <!-- validar na lista de autoridade de idiomas e gravar no idima PT -->
+			<field name="title"/> <!-- testar api de padronizacao do Rene -->
+			<field name="subtitle"/>
+			<field name="alternativeTitle"/>
+			<field name="defenceDay"/> <!-- somente ano -->
+			<field name="publicationDate"/> <!-- somente ano -->
+			<field name="degreeDate"/>
+			<field name="number"/>
+			<field name="volume"/>
+			<field name="issue"/>
+			<field name="series"/>
+			<field name="edition"/>
+			<field name="startPage"/>
+			<field name="endPage"/>
+			<field name="author"/>
+			<field name="advisor"/>
+			<field name="coadvisor"/>
+			<field name="referee"/> <!-- banca -->
+			<field name="researchArea.cnpq" description="CNPq vocabullary code"/> <!-- nao precisa validar na lista de autoridade, mas deve ser captalizado corretamente. Deve concatenar toda a árvore em uma estrutura de diretorios. Ex.: Grande Area / Area / Sub-area / Especialidade -->
+			<field name="researchArea.capes" description="CAPES vocabullary code"/> <!-- nao precisa validar na lista de autoridade, mas deve ser captalizado corretamente. Deve concatenar toda a árvore em uma estrutura de diretorios. Ex.: Grande Area / Area / Sub-area / Especialidade -->
+			<field name="researchArea.other" description="Other vocabullary code"/> <!-- nao precisa validar na lista de autoridade, mas deve ser captalizado corretamente. Deve concatenar toda a árvore em uma estrutura de diretorios. Ex.: Grande Area / Area / Sub-area / Especialidade -->
+			<field name="resourceUrl"/> <!-- Checar se é uma url -->
+			<field name="rights"/>
+			<field name="license"/>
+			<field name="keyword"/> <!-- testar api de padronizacao do Rene -->
+			<field name="abstract"/>
+			<field name="status"/>
+			<field name="coverage"/>
+			<field name="references"/>
+			<field name="accessType" description="COAR Rights Types"/> <!-- validar na lista de autoridade de tipos de acesso (baseado no coar) e gravar no idima PT -->
+			<field name="eventName"/> <!-- caso seja uma publicacao em anais de eventos -->
+		</entity>
+		<entity name="Journal">
+			<field name="identifier.issn" description="ISSN"/> <!-- Usar o padrao XXXX-XXXX -->
+			<field name="identifier.issn_l" description="ISSN-L"/> <!-- Usar o padrao XXXX-XXXX -->
+			<field name="identifier.openalex" description="Identificação da revista na OpenAlex"/>
+			<field name="identifier.brcris" description="Identificação da revista no padrão do BrCris (hash do ISSN)"/>
+			<field name="title" description="título da revista"/> <!-- testar api de padronizacao do Rene?? -->
+			<field name="publisher" description="Quem publica a revista"/> <!-- testar api de padronizacao do Rene?? -->
+			<field name="websiteURL" description="url da revista"/>
+			<field name="isOa" description="Verifica se a revista é Oa (True ou False)"/>
+			<field name="isInDoaj" description="Verifica se a revista está no Doaj (True ou False)"/>
+			<field name="apcCost" description="Taxa de Processamento de Artigos">
+				<field name="apcAmount" description="Valor da revista (APC)"/>
+				<field name="apcCurrency" description="Moeda do APC"/>
+			</field>
+			<field name="countryCode" description="Código do país"/>
+			<field name="type" description="Tipo de publicação"/>
+			<field name="assessmentArea" description="Área da Revista"/>
+			<field name="qualis" description="Qualis da Revista"/>
+			<field name="keywords" description="Palavras chave "/> <!-- testar api de padronizacao do Rene?? -->
+			<field name="2yr_mean_citedness" description="média de citação"/>
+			<field name="h_index" description="índice h"/>
+			<field name="i10_index" description="índice i10"/>
+			<field name="googleH5" description="Google Scholar H5"/>
+		</entity>
+		<entity name="Course">
+			<field name="identifier.brcris"/> <!-- hash de nome do curso + nome da instituicao (md5) -->
+			<field name="identifier.capes"/>
+			<field name="identifier.mec"/>
+			<field name="identifier.inep"/>
+			<field name="identifier.cnpq"/>
+			<field name="identifier.other"/>
+			<field name="name"/> <!-- testar api de padronizacao do Rene?? -->
+			<field name="degree" description="gradutation, specialization, master, doctoral, posDoctoral, fullProfessor"/><!-- validar na lista de autoridade de graus e gravar no idima PT -->
+			<field name="type" description="Academic/Professional"/> <!-- validar na lista de autoridade de tipo (Academico ou Profissional) e gravar no idima PT -->
+			<field name="startDate"/> <!-- somente ano -->
+			<field name="endDate"/> <!-- somente ano -->
+		</entity>
+		<entity name="Program">
+			<field name="identifier.brcris"/> <!-- hash de nome do programa + nome da instituicao (md5) -->
+			<field name="identifier.capes" description="Capes Id"/>
+			<field name="identifier.cnpq" description="CNPq Id"/>
+			<field name="name" description="Program Name"/> <!-- testar api de padronizacao do Rene?? -->
+			<field name="researchArea.capes" description="capes vocabulary"/> <!-- nao precisa validar na lista de autoridade, mas deve ser captalizado corretamente. Deve concatenar toda a árvore em uma estrutura de diretorios. Ex.: Grande Area / Area / Sub-area / Especialidade -->
+			<field name="researchArea.cnpq" description="cnpq vocabulary"/> <!-- nao precisa validar na lista de autoridade, mas deve ser captalizado corretamente. Deve concatenar toda a árvore em uma estrutura de diretorios. Ex.: Grande Area / Area / Sub-area / Especialidade -->
+			<field name="evaluationArea" description="cnpq vocabulary"/> <!-- nao precisa validar na lista de autoridade, mas deve ser captalizado corretamente. Deve concatenar toda a árvore em uma estrutura de diretorios. Ex.: Grande Area / Area / Sub-area / Especialidade -->
+			<field name="phone"/>
+			<field name="email"/> <!-- se houver, verificar se é válido (@)-->
+			<field name="websiteUrl"/> <!-- Checar se é uma url -->
+		</entity>
+		<entity name="Patent"> <!-- conferir com o Raulivan -->
+			<field name="identifier.brcris" description="Identificador da patente no formado do BrCris "/> <!-- hash gerado com titulo + ano -->
+			<field name="identifier.lattes" description="Identificador da patente registrado no currículo Lattes"/>
+			<field name="identifier.espacenet" description="Identificação da patente na Expacenet"/>
+			<field name="resourceUrl" description="URL da patente"/>
+			<field name="kindCode" description="Código de publicação da patente Ex.: A, B1, C1 etc."/>
+			<field name="title" description="Título da patente"/><!-- testar api de padronizacao do Rene?? -->
+			<field name="depositDate" description="Data de depósito da patente"/> <!-- data completa padrao pt-br -->
+			<field name="publicationDate" description="Data de publicação da patente"/> <!-- data completa padrao pt-br -->
+			<field name="countryCode" description="Código do país de depósito da patente"/>
+			<field name="inventor" description="Nome do inventor da patente"/>
+			<field name="applicant"  description="Nome do depositante da patente"/>
+			<field name="classification.ipc" description="Classificação IPC recebida pela patente">
+				<field name="sequence" description="Ordem das classificações"/>
+				<field name="text" description="Código completo da classificação"/>
+				<field name="section" description="Seção (Parte do código da classificação)"/>
+				<field name="class" description="Classe (Parte do código da classificação)"/>
+				<field name="subclass"  description="Sub-classe (Parte do código da classificação)"/>
+				<field name="group" description="Grupo (Parte do código da classificação)"/>
+				<field name="subgroup"  description="Sub-grupo (Parte do código da classificação)"/>
+			</field>
+			<field name="classification.cpc" description="Classificação CPC recebida pela patente">
+				<field name="sequence"  description="Ordem das classificações"/>
+				<field name="text" description="Código completo da classificação"/>
+			</field>
+			<field name="abstract"  description="Resumo da patente"/>
+			<field name="originatesFrom" description="Código da Família da patente, conforme organização definida pela Espacenet"/>
+			<field name="alternateIdentifier" description="Códigos alternativos de identificação da Patente">
+				<field name="status"  description="Status do número de identificação"/>
+				<field name="format" description="Formato atribuído a numeração, conforme padrão da Espacenet"/>
+				<field name="country" description="País de depósito da patente"/>
+				<field name="number" description="Número de identificação da patente "/>
+				<field name="kind" description="Código de publicação da patente Ex.: A, B1, C1 etc."/>
+			</field>
+		</entity>
+		<entity name="Software">
+			<field name="identifier.brcris" description="Identificador do software no formado do BrCris"/> <!-- hash gerado com titulo + ano -->
+			<field name="identifier.inpi" description="Número de registro no INPI"/>
+			<field name="title" description="titulo do software"/>
+			<field name="releaseYear" description="Ano do software"/>
+			<field name="language" description="Idioma do Software"/><!-- validar na lista de autoridade de idiomas e gravar no idima PT -->
+			<field name="registrationCountry" description="Pais de registro"/><!-- validar na lista de autoridade de países -->
+			<field name="kind" description="Natureza do software"/><!-- validar na lista de autoridade de tipo de software -->
+			<field name="environment" description="Ambiente do Software"/>
+			<field name="availability" description="Disponibilidade do Software"/>
+			<field name="description" description="A finalidade do software"/>
+			<field name="fundingInstitution" description="instituição financiadora"/><!-- validar na api de orgunit do rene -->
+			<field name="platform" description="Plataforma do Software"/>
+			<field name="knowledgeAreas" description="áreas de conhecimento do software"/><!-- nao precisa validar na lista de autoridade, mas deve ser captalizado corretamente. Deve concatenar toda a árvore em uma estrutura de diretorios. Ex.: Grande Area / Area / Sub-area / Especialidade -->
+			<field name="creator" description="Nome dos criadores do software"/>
+			<field name="additionalInformation" description="Informações adicionais"/>
+			<field name="keyword" description="Palavras chave"/> <!-- somente capitalizar e remover duplicadas -->
+			<field name="activitySector" description="Setor de Atividade"/>
+			<field name="depositDate" description="Data de registro do software"/> <!-- dd/mm/yyyy -->
+			<field name="concessionDate" description="Data de publicação do registro do software"/> <!-- dd/mm/yyyy -->
+			<field name="registrationInstitution" description="Instituição de registro"/><!-- validar na api de orgunit do rene -->
+			<field name="urlINPI" description="URL do software no INPI"/><!-- verificar se é url válida -->
+			<field name="owner" description="Proprietário do software"/>
+		</entity>
+		<entity name="Project"> <!-- Não atualizado nessa versão (03/10/2025) -->
+			<field name="identifier.proccessNumber"/>
+			<field name="identifier.brcris" description="Indentificador gerado no padrão adotado pelo BrCris"/>
+			<field name="type" description="Descrição do tipo do projeto"/>
+			<field name="acronym" description="Siglas de identificação do projeto"/>
+			<field name="title" description="Título do projeto"/>
+			<field name="startDate" description="Data de início do projeto"/>
+			<field name="endDate" description="Data de término do projeto"/>
+			<field name="subject" description="Assunto do projeto"/>
+			<field name="keyword" description="Palavras chave"/>
+			<field name="researchAreas" description="áreas de pesquisa"/>
+			<field name="researchAreas.cnpq" description="áreas de pesquisa CNPQ"/>
+			<field name="abstract" description="Resumo do projeto"/>
+			<field name="status" description="Situação do projeto"/>
+		</entity>
+		<entity name="Funding"> <!-- Não atualizado nessa versão (03/10/2025) -->
+			<field name="identifier.brcris"/>
+			<field name="type"/>
+			<field name="acronym"/>
+			<field name="name"/>
+			<field name="amount"/>
+			<field name="description"/>
+			<field name="subject"/>
+			<field name="keyword"/>
+			<field name="duration"/>
+			<field name="OAMandate">
+				<field name="mandated" description="campo mandated aninhado dentro de OAMandate"/>
+				<field name="uri" description="campo uri aninhado dentro de OAMandate"/>
+			</field>
+		</entity>
+		<entity name="Event"> <!-- Não considerado nessa versão (03/10/2025). Será usado o campo eventName em publication -->
+			<field name="identifier.brcris"/>
+			<field name="internalIdentifier"/>
+			<field name="type"/>
+			<field name="acronym"/>
+			<field name="name"/>
+			<field name="place">
+				<field name="location" description="campo location aninhado dentro de place"/>
+				<field name="city" description="campo city aninhado dentro de place"/>
+				<field name="state" description="campo state aninhado dentro de place"/>
+				<field name="country" description="campo country aninhado dentro de place"/>
+			</field>
+			<field name="startDate"/>
+			<field name="endDate"/>
+			<field name="description"/>
+			<field name="subject"/>
+		</entity>
+		<!-- Não considerado nessa versão (03/10/2025) -->
+		<!--
+		<entity name="Community">
+			<field name="identifier.brcris" description="identificador baseado apenas no nome"/>
+			<field name="name"/>
+			<field name="description"/>
+		</entity>
+		<entity name="ClassificationSchema">
+			<field name="identifier.brcris" description="identificador baseado apenas no nome"/>
+			<field name="acronym" description="sigla do schema definida no brcris"/>
+			<field name="name"/>
+			<field name="description"/>
+		</entity>
+		<entity name="Concept">
+			<field name="identifier.brcris" description="baseado na sigla do schema + nome"/>
+			<field name="identifier.class" description="identificador do conceito no esquema classificatório de origem"/>
+			<field name="name"/>
+			<field name="description"/>
+		</entity>
+		-->
+		<entity name="ResearchGroup">
+			<field name="identifier.brcris" description="baseado no nome do grupo + ano de criação"/>
+			<field name="identifier.dgp" description="codigo do dgp do grupo no CNPq"/>
+			<field name="name" description="nome do grupo"/> <!-- somente capitalizar e remover duplicadas -->
+			<field name="description" description="resumo informado do grupo"/>
+			<field name="status" />
+			<field name="creationYear" description="ano de criação do grupo"/>
+			<field name="URL" description="URL de acesso ao grupo"/>
+			<field name="researchLine" description="nome da linha de pesquisa do grupo (pode-se ter várias)"/> <!-- somente capitalizar e remover duplicadas -->
+			<field name="keyword" description="palavras chaves informadas do grupo (pode-se ter várias)"/> <!-- somente capitalizar e remover duplicadas -->
+            <field name="knowledgeArea" description="área de conhecimento do grupo(pode-se ter várias)"/> <!-- nao precisa validar na lista de autoridade, mas deve ser captalizado corretamente. Deve concatenar toda a árvore em uma estrutura de diretorios. Ex.: Grande Area / Area / Sub-area / Especialidade -->
+			<field name="applicationSector" description="setor de aplicação do grupo (pode-se ter várias)"/><!-- somente capitalizar e remover duplicadas -->
+			<field name="equipment" description="equipamentos que estão associados ao grupo"/><!-- somente capitalizar e remover duplicadas -->
+			<field name="software" description="softwares que estão disponíveis ao grupo"/><!-- somente capitalizar e remover duplicadas -->
+		</entity>
+	</entities>
+	<relations>
+		<!--
+		<relation name="Class" description="The concepts defined on a classification schema" fromEntity="ClassificationSchema" toEntity="Concept"/>
+		<relation name="ClassSynonym" description="Equivalence between concepts among different schemas" fromEntity="Concept" toEntity="Concept"/>
+		<relation name="ClassParenthood" description="The parenthood between concepts" fromEntity="Concept" toEntity="Concept"/>
+		<relation name="JournalArea" description="Journal Knowledge Areas" fromEntity="Journal" toEntity="Concept"/>
+		<relation name="PublicationSubject" description="Publication Knowledge Areas" fromEntity="Publication" toEntity="Concept"/>
+		<relation name="PersonKnowledgeArea" description="Person Knowledge Areas" fromEntity="Person" toEntity="Concept"/>
+		<relation name="ProgramArea" description="Program Knowledge Areas" fromEntity="Program" toEntity="Concept"/>
+		-->
+		<relation name="Affiliation" description="Is a relation beteween Person and OrgUnit" fromEntity="OrgUnit" toEntity="Person"/>
+		<relation name="LeaderResearchGroup" description="Is a relation between the Leader Person and ResearchGroup" fromEntity="Person" toEntity="ResearchGroup">
+			<field name="scholarshipHolder" description="Indicates if the member is a scholarship holder"/>
+		</relation>
+		<relation name="IsUnitOf" description="The unit related to an organization." fromEntity="OrgUnit" toEntity="OrgUnit"/>
+		<relation name="OrgUnitProgram" description="The program related to an organization." fromEntity="OrgUnit" toEntity="Program"/>
+		<relation name="OrgUnitProject" description="Is a relation beteween Project and OrgUnit." fromEntity="OrgUnit" toEntity="Project"/>
+		<relation name="ThesisSponsorship" description="Is a relation beteween a publication of type thesis and a sponsor OrgUnit." fromEntity="OrgUnit" toEntity="Publication"/>
+		<relation name="CourseOrgUnit" description="The OrgUnit(s) that provided the Course." fromEntity="OrgUnit" toEntity="Course"/>
+		<relation name="LeaderResearchGroupOrgUnit" description="The OrgUnit(s) that provided the ResearchGroup leader." fromEntity="OrgUnit" toEntity="ResearchGroup"/>
+		<relation name="PartnerResearchGroupOrgUnit" description="The OrgUnits(s) that have Partner with the ResearchGroups" fromEntity="OrgUnit" toEntity="ResearchGroup"/>
+<!-- 		<relation name="ResearchGroupArea" description="Research Group Knowledge Areas" fromEntity="ResearchGroup" toEntity="Concept"/> -->
+		<relation name="MemberResearchGroup" description="Is a relation between Person and ResearchGroup" fromEntity="Person" toEntity="ResearchGroup">
+			<field name="role" description="Indicate the rold of the member"/>
+			<field name="scholarshipHolder" description="Indicates if the member is a scholarship holder"/>
+		</relation>
+		<relation name="Authorship" description="The author of this content or rating." fromEntity="Publication" toEntity="Person">
+			<attributes>
+				<field name="order" description="If the Person is the 1st, 2st, etc author"/>
+				<field name="role" description="If the Person has an specific role in the production of the content"/>
+				<field name="affiliation" description="An organization such as a school, NGO, corporation, club, etc. - The name of the item."/>
+				<field name="cnpqCodOrgUnit" description="OrgUnit code provided by CNPq"/>
+			</attributes>
+		</relation>
+		<relation name="Adivisoring" description="The advisor of this content or rating." fromEntity="Publication" toEntity="Person">
+			<attributes>
+				<field name="order" description="If the Person is the 1st, 2st, etc advisor"/>
+				<field name="affiliation" description="An organization such as a school, NGO, corporation, club, etc. - The name of the item."/>
+				<field name="cnpqCodOrgUnit" description="OrgUnit code provided by CNPq"/>
+			</attributes>
+		</relation>
+		<relation name="CoAdivisoring" description="The coadvisor of this content or rating." fromEntity="Publication" toEntity="Person">
+			<attributes>
+				<field name="order" description="If the Person is the 1st, 2st, etc coadvisor"/>
+				<field name="affiliation" description="An organization such as a school, NGO, corporation, club, etc. - The name of the item."/>
+				<field name="cnpqCodOrgUnit" description="OrgUnit code provided by CNPq"/>
+			</attributes>
+		</relation>
+		<relation name="Referee" description="The advisor of this content or rating." fromEntity="Publication" toEntity="Person">
+			<attributes>
+				<field name="order" description="If the Person is the 1st, 2st, etc referee"/>
+				<field name="affiliation" description="An organization such as a school, NGO, corporation, club, etc. - The name of the item."/>
+				<field name="cnpqCodOrgUnit" description="OrgUnit code provided by CNPq"/>
+			</attributes>
+		</relation>
+		<relation name="PublisherJournal" description="The editor of this content or rating." fromEntity="Publication" toEntity="Journal"/>
+<!-- 		<relation name="Publisher" description="The editor of this content or rating." fromEntity="Publication" toEntity="Service"/> -->
+		<relation name="PartOf" description="The publisher of this content or rating." fromEntity="Publication" toEntity="Publication"/>
+		<relation name="ProgramThesis" description="Is a relation beteween two publications." fromEntity="Publication" toEntity="Program"/>
+		<relation name="PublicationEvent" description="" fromEntity="Publication" toEntity="Event"/>
+<!-- 		<relation name="ServiceOrgUnit" description="The publication (thesis) related to an program." fromEntity="Service" toEntity="OrgUnit"/> -->
+		<relation name="JournalOrgUnit" description="The OrgUnit that publishes the Journal." fromEntity="Journal" toEntity="OrgUnit"/>
+<!-- 		<relation name="Editoring" description="The Course that is associated with a thesis (publication)." fromEntity="Service" toEntity="Person"> -->
+<!-- 			<attributes> -->
+<!-- 				<field name="affiliation" description="An organization such as a school, NGO, corporation, club, etc. - The name of the item."/> -->
+<!-- 				<field name="cnpqCodOrgUnit" description="OrgUnit code provided by CNPq"/> -->
+<!-- 			</attributes> -->
+<!-- 		</relation> -->
+		<relation name="CourseThesis" description="Is a relation beteween Patent and Person." fromEntity="Course" toEntity="Publication"/>
+		<relation name="Inventor" description="Is a relation related to an Person of Patent." fromEntity="Patent" toEntity="Person"/>
+		<relation name="Depositor" description="Is a relation related to an Person of Patent." fromEntity="Patent" toEntity="Person"/>
+		<relation name="Applicant" description="Is a relation related to an OrgUnit of Patent." fromEntity="Patent" toEntity="OrgUnit"/>
+		<relation name="Creator" description="Is a relation related to an Person of Software." fromEntity="Software" toEntity="Person"/>
+		<relation name="IsProgramOf" description="Is a relation beteween a research group (considered as an OrgUnit) and a member." fromEntity="Program" toEntity="Course"/>
+		
+		<relation name="ProjectMembership" description="Relacionamento entre o projeto e os membros do projeto" fromEntity="Project" toEntity="Person">
+			<attributes>
+				<field name="role" description="Função do integrante no projeto"/> 
+				<field name="startDate" description="Início de participação no projeto"/> 
+				<field name="endDate" description="Termino de participação no projeto"/>
+			</attributes>
+		</relation>
+		
+		<relation name="ResearchGroupMembership" description="Is a relation beteween a project team and a funding." fromEntity="OrgUnit" toEntity="Person">
+			<attributes>
+				<field name="role" description="the role of the member. Ex.: leader, researcher, assistant, etc."/>
+				<field name="startDate" description="the date he/she became a member of the research group"/>
+				<field name="endDate" description="the date e/she left the research group"/>
+				<field name="affiliation" description="An organization such as a school, NGO, corporation, club, etc. - The name of the item."/>
+			</attributes>
+		</relation>
+		<relation name="TeamMembership" description="The program related to an Course." fromEntity="Project" toEntity="Person"/>
+		<relation name="FundedBy" description="Is a relation beteween two Funding." fromEntity="Project" toEntity="Funding"/>
+		<relation name="SubFunding" description="Is a relation related to an OrgUnit of Service." fromEntity="Funding" toEntity="Funding"/>
+<!-- 		<relation name="OrgUnitCommunity" description="" fromEntity="Community" toEntity="OrgUnit"/> -->
+<!-- 		<relation name="PublicationCommunity" description="" fromEntity="Community" toEntity="Publication"/> -->
+<!-- 		<relation name="ServiceCommunity" description="" fromEntity="Community" toEntity="Service"/> -->
+<!-- 		<relation name="CourseCommunity" description="" fromEntity="Community" toEntity="Course"/> -->
+<!-- 		<relation name="PatentCommunity" description="" fromEntity="Community" toEntity="Patent"/> -->
+<!-- 		<relation name="ProgramCommunity" description="" fromEntity="Community" toEntity="Program"/> -->
+<!-- 		<relation name="ProjectCommunity" description="" fromEntity="Community" toEntity="Project"/> -->
+<!-- 		<relation name="FundingCommunity" description="" fromEntity="Community" toEntity="Funding"/> -->
+<!-- 		<relation name="PersonCommunity" description="" fromEntity="Community" toEntity="Person"/> -->
+<!-- 		<relation name="EventCommunity" description="" fromEntity="Community" toEntity="Event"/> -->
+<!-- 		<relation name="JournalCommunity" description="" fromEntity="Community" toEntity="Journal"/> -->
+	</relations>
+</entity-relation-metamodel>

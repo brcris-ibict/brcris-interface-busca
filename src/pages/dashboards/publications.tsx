@@ -12,6 +12,7 @@ import AuthorsProductionsTable from "../../components/panels/AuthorsProductionsT
 // import JournalQuantifiersTable from "../../components/panels/JournalQuantifiersTable";
 import PublicationsListTable from "../../components/panels/PublicationsListTable";
 import KeywordsHeatmap from "../../components/panels/KeywordsHeatmap";
+import AuthorshipTeamSize from "../../components/panels/AuthorshipTeamSize";
 import TypeDistribution from "../../components/panels/TypeDistribution";
 import PublicationsBigNumbers from "../../components/panels/PublicationsBigNumbers";
 import PublicationsFilters from "../../components/panels/PublicationsFilters";
@@ -174,9 +175,14 @@ export default function Publications() {
               </div>
               */}
               <div className="col-12 col-lg-6">
+                <AuthorshipTeamSize
+                  filters={filters}
+                  onLoadingChange={(isLoading) => setPanelLoading("teamSize", isLoading)}
+                />
+              </div>
+              <div className="col-12">
                 <KeywordsHeatmap
                   filters={filters}
-                  height={400}
                   onLoadingChange={(isLoading) => setPanelLoading("keywords", isLoading)}
                 />
               </div>
