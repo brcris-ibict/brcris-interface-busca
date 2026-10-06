@@ -13,6 +13,7 @@ import AuthorsProductionsTable from "../../components/panels/AuthorsProductionsT
 import PublicationsListTable from "../../components/panels/PublicationsListTable";
 import KeywordsHeatmap from "../../components/panels/KeywordsHeatmap";
 import AuthorshipTeamSize from "../../components/panels/AuthorshipTeamSize";
+import KnowledgeAreasTreemap from "../../components/panels/KnowledgeAreasTreemap";
 import TypeDistribution from "../../components/panels/TypeDistribution";
 import PublicationsBigNumbers from "../../components/panels/PublicationsBigNumbers";
 import PublicationsFilters from "../../components/panels/PublicationsFilters";
@@ -180,9 +181,16 @@ export default function Publications() {
                   onLoadingChange={(isLoading) => setPanelLoading("teamSize", isLoading)}
                 />
               </div>
-              <div className="col-12">
+              <div className="col-12 col-lg-6">
+                <KnowledgeAreasTreemap
+                  filters={filters}
+                  onLoadingChange={(isLoading) => setPanelLoading("knowledgeAreas", isLoading)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
                 <KeywordsHeatmap
                   filters={filters}
+                  height={460}
                   onLoadingChange={(isLoading) => setPanelLoading("keywords", isLoading)}
                 />
               </div>
