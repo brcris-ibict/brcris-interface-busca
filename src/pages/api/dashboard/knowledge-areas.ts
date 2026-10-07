@@ -1,11 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../../services/ElasticsearchClient";
 import logger from "../../../services/Logger";
-import {
-  FACT_DIMENSIONS,
-  getKnowledgeAreasSnapshot,
-  type FilterKey,
-  type KnowledgeAreasSnapshot,
-} from "../../../services/knowledgeAreasSnapshot";
 import type {
   KnowledgeAreaItem,
   KnowledgeAreasErrorResponse,
@@ -13,13 +8,25 @@ import type {
 } from "../../../types/KnowledgeAreas";
 import type { PublicationsDashboardFilters } from "../../../types/PublicationsDashboard";
 
+const client = createElasticsearchClient();
 const PATH_SEPARATOR = " / ";
-const MAX_FILTER_LENGTH = 200;
+const PATH_TERMS_SIZE = 5000;
+const MAX_AREAS = 100;
 const OTHER_THRESHOLD_SHARE = 0.015;
 const OTHER_KEY = "__other__";
-const ALL = 0;
+const CACHE_TTL_MS = 10 * 60 * 1000;
+// Painel interativo: melhor falhar rápido do que segurar a tela por minutos
+const QUERY_OPTIONS = { requestTimeout: 30000, maxRetries: 1 };
+const MAX_FILTER_LENGTH = 200;
+const CACHE_MAX_ENTRIES = 500;
 const FILTER_KEYS: FilterKey[] = ["publicationDate", "type", "language", "institution"];
-const RESULT_CACHE_SIZE = 500;
+// O cadastro de pesquisadores não tem idioma das publicações
+const UNSUPPORTED_FILTERS: FilterKey[] = ["language"];
+
+type FilterKey = keyof PublicationsDashboardFilters;
+
+// Dados do índice de pessoas mudam pouco; evita repetir as consultas a cada clique
+const cache = new Map<string, { expiresAt: number; value: KnowledgeAreasResponse }>();
 
 class InvalidKnowledgeAreaRequestError extends Error {}
 
@@ -28,19 +35,13 @@ type Bucket = {
   doc_count: number;
 };
 
-type LevelResult = {
-  totalWithArea: number;
-  buckets: Bucket[];
-  unsupportedFilter: FilterKey | null;
+type PathAggregations = {
+  paths?: { buckets?: Bucket[] };
 };
 
-type SnapshotIndexes = {
-  lookups: Map<string, Map<string, number>>;
-  results: Map<string, LevelResult>;
+type AreaFilterAggregations = {
+  areas?: { buckets?: Record<string, { doc_count: number }> };
 };
-
-// Por snapshot: dicionários como Map (busca direta) e cache das somas já feitas
-const snapshotIndexes = new WeakMap<KnowledgeAreasSnapshot, SnapshotIndexes>();
 
 function readSingle(value: string | string[] | undefined, name: string): string {
   if (value === undefined) return "";
@@ -68,84 +69,76 @@ function readRequest(req: NextApiRequest) {
   return { parent: area || null, filters };
 }
 
-function getIndexes(snapshot: KnowledgeAreasSnapshot): SnapshotIndexes {
-  let indexes = snapshotIndexes.get(snapshot);
-  if (!indexes) {
-    const lookups = new Map(
-      Object.entries(snapshot.dictionaries).map(([name, values]) => [
-        name,
-        new Map(values.map((value, index) => [value, index])),
-      ]),
-    );
-    indexes = { lookups, results: new Map() };
-    snapshotIndexes.set(snapshot, indexes);
+// Pesquisador entra se tiver ao menos uma publicação no ano/tipo e afiliação na instituição
+function filterClauses(filters: PublicationsDashboardFilters) {
+  const clauses: object[] = [];
+  if (filters.publicationDate) {
+    clauses.push({
+      bool: {
+        should: [
+          { term: { "authorOf.year": filters.publicationDate } },
+          { prefix: { "authorOf.publicationDate": filters.publicationDate } },
+        ],
+        minimum_should_match: 1,
+      },
+    });
   }
-  return indexes;
+  if (filters.type) clauses.push({ term: { "authorOf.type": filters.type } });
+  if (filters.institution) clauses.push({ term: { "affiliation.name": filters.institution } });
+  return clauses;
 }
 
-function remember(results: Map<string, LevelResult>, key: string, value: LevelResult) {
-  if (results.size >= RESULT_CACHE_SIZE) results.clear();
-  results.set(key, value);
-  return value;
+function levelQuery(parent: string | null, filters: PublicationsDashboardFilters) {
+  const level = parent
+    ? { prefix: { researchArea: `${parent}${PATH_SEPARATOR}` } }
+    : { exists: { field: "researchArea" } };
+  return { bool: { filter: [level, ...filterClauses(filters)] } };
 }
 
-function sumLevel(
-  snapshot: KnowledgeAreasSnapshot,
+// Caminho exato ou qualquer descendente: a pessoa conta uma vez por área
+function pathClause(path: string) {
+  return {
+    bool: {
+      should: [
+        { term: { researchArea: path } },
+        { prefix: { researchArea: `${path}${PATH_SEPARATOR}` } },
+      ],
+      minimum_should_match: 1,
+    },
+  };
+}
+
+// Sem runtime field: lista os caminhos indexados e extrai os nomes do nível no Node
+async function listCandidateNames(
+  index: string,
   parent: string | null,
   filters: PublicationsDashboardFilters,
-): LevelResult {
-  const { lookups, results } = getIndexes(snapshot);
-  const cacheKey = JSON.stringify([parent, filters]);
-  const cached = results.get(cacheKey);
-  if (cached) return cached;
+): Promise<string[]> {
+  const response = await client.search(
+    {
+      index,
+      size: 0,
+      query: levelQuery(parent, filters),
+      aggs: { paths: { terms: { field: "researchArea", size: PATH_TERMS_SIZE } } },
+    },
+    QUERY_OPTIONS,
+  );
 
-  const empty = (unsupportedFilter: FilterKey | null = null) =>
-    remember(results, cacheKey, { totalWithArea: 0, buckets: [], unsupportedFilter });
-
-  // Multivaloradas sem filtro usam a linha "*" para não contar a mesma publicação várias vezes
-  const required: { column: number; value: number }[] = [];
-  for (let column = 2; column < snapshot.dimensions.length; column++) {
-    const key = snapshot.dimensions[column] as FilterKey;
-    const config = FACT_DIMENSIONS.find((dim) => dim.key === key);
-    const filterValue = filters[key];
-    if (filterValue) {
-      const value = lookups.get(key)?.get(filterValue);
-      if (value === undefined) return empty(config?.limit ? key : null);
-      required.push({ column, value });
-    } else if (config?.multi) {
-      required.push({ column, value: ALL });
-    }
+  const buckets = (response.aggregations as PathAggregations | undefined)?.paths?.buckets ?? [];
+  const depth = parent ? 1 : 0;
+  const weights = new Map<string, number>();
+  for (const bucket of buckets) {
+    const parts = bucket.key.split(PATH_SEPARATOR).map((part) => part.trim());
+    if (parent && parts[0] !== parent) continue;
+    const name = parts[depth];
+    if (!name) continue;
+    weights.set(name, (weights.get(name) ?? 0) + bucket.doc_count);
   }
 
-  const parentIndex = parent ? lookups.get("grandeArea")?.get(parent) : ALL;
-  if (parentIndex === undefined) return empty();
-
-  const names = parent ? snapshot.dictionaries.area : snapshot.dictionaries.grandeArea;
-  const countColumn = snapshot.dimensions.length;
-  const sums = new Map<number, number>();
-  let totalWithArea = 0;
-
-  for (const row of snapshot.rows) {
-    if (!required.every(({ column, value }) => row[column] === value)) continue;
-    const [g, a] = row;
-    const count = row[countColumn];
-    if (parent) {
-      if (g !== parentIndex) continue;
-      if (a === ALL) totalWithArea += count;
-      else sums.set(a, (sums.get(a) ?? 0) + count);
-    } else {
-      if (a !== ALL) continue;
-      if (g === ALL) totalWithArea += count;
-      else sums.set(g, (sums.get(g) ?? 0) + count);
-    }
-  }
-
-  const buckets = [...sums]
-    .map(([index, count]) => ({ key: names[index], doc_count: count }))
-    .filter((bucket) => bucket.doc_count > 0)
-    .sort((a, b) => b.doc_count - a.doc_count);
-
-  return remember(results, cacheKey, { totalWithArea, buckets, unsupportedFilter: null });
+  return [...weights.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, MAX_AREAS)
+    .map(([name]) => name);
 }
 
 function groupSmallItems(buckets: Bucket[], total: number): KnowledgeAreaItem[] {
@@ -173,6 +166,57 @@ function groupSmallItems(buckets: Bucket[], total: number): KnowledgeAreaItem[] 
   return items;
 }
 
+async function fetchLevel(
+  index: string,
+  parent: string | null,
+  filters: PublicationsDashboardFilters,
+): Promise<KnowledgeAreasResponse> {
+  const level = parent ? 2 : 1;
+  const ignoredFilters = UNSUPPORTED_FILTERS.filter((key) => filters[key]);
+  const names = await listCandidateNames(index, parent, filters);
+  if (names.length === 0) {
+    return { level, parent, totalWithArea: 0, ignoredFilters, items: [] };
+  }
+
+  const response = await client.search(
+    {
+      index,
+      size: 0,
+      track_total_hits: true,
+      query: levelQuery(parent, filters),
+      aggs: {
+        areas: {
+          filters: {
+            filters: Object.fromEntries(
+              names.map((name) => [
+                name,
+                pathClause(parent ? `${parent}${PATH_SEPARATOR}${name}` : name),
+              ]),
+            ),
+          },
+        },
+      },
+    },
+    QUERY_OPTIONS,
+  );
+
+  const totalHits = response.hits.total;
+  const totalWithArea = typeof totalHits === "number" ? totalHits : (totalHits?.value ?? 0);
+  const aggs = response.aggregations as AreaFilterAggregations | undefined;
+  const buckets = Object.entries(aggs?.areas?.buckets ?? {})
+    .map(([key, value]) => ({ key, doc_count: value.doc_count }))
+    .filter((bucket) => bucket.doc_count > 0)
+    .sort((a, b) => b.doc_count - a.doc_count);
+
+  return {
+    level,
+    parent,
+    totalWithArea,
+    ignoredFilters,
+    items: groupSmallItems(buckets, totalWithArea),
+  };
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<KnowledgeAreasResponse | KnowledgeAreasErrorResponse>,
@@ -182,9 +226,8 @@ export default async function handler(
     return res.status(405).json({ error: "Metodo nao permitido." });
   }
 
-  const personIndex = process.env.INDEX_PERSON;
-  const publicationIndex = process.env.INDEX_PUBLICATION;
-  if (!personIndex || !publicationIndex) {
+  const index = process.env.INDEX_PERSON;
+  if (!index) {
     return res.status(500).json({ error: "Servico indisponivel." });
   }
 
@@ -198,35 +241,18 @@ export default async function handler(
     throw error;
   }
   const { parent, filters } = request;
-  const level = parent ? 2 : 1;
+
+  const cacheKey = JSON.stringify([parent, filters]);
+  const cached = cache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    return res.status(200).json(cached.value);
+  }
 
   try {
-    const result = await getKnowledgeAreasSnapshot(personIndex, publicationIndex);
-    if (result.status === "building") {
-      return res.status(202).json({
-        status: "building",
-        level,
-        parent,
-        totalWithArea: 0,
-        generatedAt: null,
-        unsupportedFilter: null,
-        items: [],
-      });
-    }
-    if (result.status === "failed") {
-      return res.status(503).json({ error: "Falha ao preparar os dados do painel." });
-    }
-
-    const sum = sumLevel(result.snapshot, parent, filters);
-    return res.status(200).json({
-      status: result.status,
-      level,
-      parent,
-      totalWithArea: sum.totalWithArea,
-      generatedAt: result.snapshot.generatedAt,
-      unsupportedFilter: sum.unsupportedFilter,
-      items: groupSmallItems(sum.buckets, sum.totalWithArea),
-    });
+    const value = await fetchLevel(index, parent, filters);
+    if (cache.size >= CACHE_MAX_ENTRIES) cache.clear();
+    cache.set(cacheKey, { expiresAt: Date.now() + CACHE_TTL_MS, value });
+    return res.status(200).json(value);
   } catch (error) {
     logger.error("[knowledge-areas] falha na consulta");
     logger.error(error);

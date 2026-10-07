@@ -184,13 +184,14 @@ export default function Publications() {
               <div className="col-12 col-lg-6">
                 <KnowledgeAreasTreemap
                   filters={filters}
+                  height={460}
                   onLoadingChange={(isLoading) => setPanelLoading("knowledgeAreas", isLoading)}
                 />
               </div>
               <div className="col-12 col-lg-6">
                 <KeywordsHeatmap
                   filters={filters}
-                  height={460}
+                  height={500}
                   onLoadingChange={(isLoading) => setPanelLoading("keywords", isLoading)}
                 />
               </div>

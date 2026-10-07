@@ -3,7 +3,7 @@ import type { KeyboardEvent } from "react";
 import { useTranslation } from "next-i18next";
 import type { ECharts, EChartsOption, TreemapSeriesOption } from "echarts";
 import dynamic from "next/dynamic";
-import { ArrowLeft, CheckCircle2, LayoutGrid, List, LoaderCircle } from "lucide-react";
+import { ArrowLeft, Info, LayoutGrid, List } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import useRequest from "../../hooks/useRequest";
 import useFilterLoadingReport from "../../hooks/useFilterLoadingReport";
@@ -57,10 +57,8 @@ const DARK_TEXT = "#1f2937";
 const MIN_FULL_LABEL_SHARE = 4;
 const MAX_TOOLTIP_GROUPED = 8;
 const MOBILE_QUERY = "(max-width: 575.98px)";
-const BUILD_POLL_MS = 30000;
-const UPDATING_POLL_MS = 20000;
-const UPDATED_BADGE_MS = 4000;
 
+// TODO: Implementar a URL para a API de áreas de conhecimento
 function buildUrl(parent: string | null, filters: PublicationsDashboardFilters) {
   const params = new URLSearchParams();
   if (parent) params.set("area", parent);
@@ -68,7 +66,9 @@ function buildUrl(parent: string | null, filters: PublicationsDashboardFilters) 
     if (value) params.set(field, value);
   });
   const query = params.toString();
+
   return withBasePath(`/api/dashboard/knowledge-areas${query ? `?${query}` : ""}`);
+
 }
 
 // Hash estável: grandes áreas fora do mapa mantêm a mesma cor entre os níveis
@@ -76,14 +76,20 @@ function colorFor(name: string) {
   if (MAJOR_AREA_COLORS[name]) return MAJOR_AREA_COLORS[name];
   let hash = 0;
   for (const char of name) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+
   return FALLBACK_COLORS[hash % FALLBACK_COLORS.length];
+
 }
 
+// TODO: Implementar a função para converter o hex para canais
 function toChannels(hex: string) {
   const value = parseInt(hex.replace("#", ""), 16);
+
   return [(value >> 16) & 255, (value >> 8) & 255, value & 255];
+
 }
 
+// TODO: Implementar a função para criar uma cor mais clara ou mais escura
 function tint(hex: string, ratio: number) {
   return `#${toChannels(hex)
     .map((channel) => Math.round(channel + (255 - channel) * ratio))
@@ -94,9 +100,13 @@ function tint(hex: string, ratio: number) {
 function relativeLuminance(hex: string) {
   const [r, g, b] = toChannels(hex).map((channel) => {
     const c = channel / 255;
+
     return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+
   });
+
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
 }
 
 function readableTextColor(backgroundHex: string) {
@@ -132,11 +142,18 @@ function useMediaQuery(query: string) {
   useEffect(() => {
     const media = window.matchMedia(query);
     const update = () => setMatches(media.matches);
+
     update();
+
     media.addEventListener("change", update);
+
     return () => media.removeEventListener("change", update);
+
+
   }, [query]);
+
   return matches;
+
 }
 
 export default function KnowledgeAreasTreemap({ filters, height = 380, onLoadingChange }: Props) {
@@ -178,53 +195,7 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
   const levelParent = data?.parent ?? null;
   const hasData = items.length > 0;
   const isReady = !loading && !error && hasData;
-  // Servidor calcula os dados em segundo plano após uma atualização da base
-  const isBuilding = data?.status === "building" && !error;
-  const isUpdating = data?.status === "updating" && !error;
   const levelLabel = levelParent ?? t("Major areas");
-
-  useEffect(() => {
-    if (!isBuilding || loading) return;
-    const timer = window.setTimeout(() => get(buildUrl(parent, filters)), BUILD_POLL_MS);
-    return () => window.clearTimeout(timer);
-  }, [isBuilding, loading, parent, filters, get]);
-
-  const [justUpdated, setJustUpdated] = useState(false);
-
-  // Versão nova em background: consulta silenciosa para não esconder o gráfico nem travar filtros
-  useEffect(() => {
-    if (!isUpdating || loading) return;
-    let cancelled = false;
-    const timer = window.setInterval(async () => {
-      try {
-        const response = await fetch(buildUrl(parent, filters));
-        if (!response.ok) return;
-        const next = (await response.json()) as KnowledgeAreasResponse;
-        if (cancelled || next.status === "updating") return;
-        get(buildUrl(parent, filters));
-        setJustUpdated(true);
-      } catch {
-        // Falha pontual: tenta de novo no próximo ciclo
-      }
-    }, UPDATING_POLL_MS);
-    return () => {
-      cancelled = true;
-      window.clearInterval(timer);
-    };
-  }, [isUpdating, loading, parent, filters, get]);
-
-  useEffect(() => {
-    if (!justUpdated) return;
-    const timer = window.setTimeout(() => setJustUpdated(false), UPDATED_BADGE_MS);
-    return () => window.clearTimeout(timer);
-  }, [justUpdated]);
-
-  const updatingTitle =
-    isUpdating && data?.generatedAt
-      ? t("Knowledge areas updating", {
-          date: new Intl.DateTimeFormat(locale).format(new Date(data.generatedAt)),
-        })
-      : undefined;
 
   const displayName = useCallback(
     (item: KnowledgeAreaItem) => (item.isOther ? t("Other areas") : item.name),
@@ -348,7 +319,7 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
         formatter: (params: unknown) => {
           const item = (params as { data?: TreemapDatum }).data;
           if (!item) return "";
-          const count = `${formatCount(item.value, locale)} ${t("publications")} · ${formatPercent(
+          const count = `${formatCount(item.value, locale)} ${t("researchers")} · ${formatPercent(
             share(item.value, totalWithArea),
             locale,
           )}%`;
@@ -414,8 +385,8 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
     () => [
       { key: "majorArea", header: t("Major area") },
       { key: "area", header: t("Area") },
-      { key: "publications", header: t("Publications") },
-      { key: "share", header: t("Share of level publications (%)") },
+      { key: "researchers", header: t("Researchers") },
+      { key: "share", header: t("Share of level researchers (%)") },
     ],
     [t],
   );
@@ -423,52 +394,38 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
   const exportRows = useMemo(
     () =>
       items.map((item) => {
-        const name = item.isOther
-          ? `${t("Other areas")} (${item.groupedNames.join("; ")})`
-          : item.name;
+        const name = item.isOther ? `${t("Other areas")} (${item.groupedNames.join("; ")})` : item.name;
         return {
           majorArea: levelParent ?? name,
           area: levelParent ? name : "",
-          publications: item.count,
+          researchers: item.count,
           share: Number(share(item.count, totalWithArea).toFixed(1)),
         };
       }),
     [items, levelParent, totalWithArea, t],
   );
 
-  const exportFilename = levelParent
-    ? `areas-conhecimento-${slugify(levelParent)}`
-    : "areas-conhecimento-grandes-areas";
+  const exportFilename = levelParent ? `areas-conhecimento-${slugify(levelParent)}` : "areas-conhecimento-grandes-areas";
 
   return (
     <div
       className="brcris-chart-card brcris-knowledge-areas h-100"
-      style={{ minHeight: 500 }}
       onKeyDown={handleKeyDown}
     >
       <div className="brcris-chart-card__header brcris-knowledge-areas__header">
         <div className="brcris-knowledge-areas__heading">
           <h2 className="brcris-chart-card__title">{t("Knowledge areas")}</h2>
           <p className="brcris-knowledge-areas__caption">{t("Knowledge areas caption")}</p>
+          {data?.ignoredFilters?.includes("language") ? (
+            <span className="brcris-knowledge-areas__badge" title={t("Knowledge areas language ignored")}>
+              <Info size={13} aria-hidden="true" />
+              {t("Language filter not applied")}
+              <span className="brcris-knowledge-areas__sr-only">. {t("Knowledge areas language ignored")}</span>
+            </span>
+          ) : null}
         </div>
 
         <div className="brcris-chart-card__toggles" role="group" aria-label={t("Knowledge areas")}>
-          {isUpdating ? (
-            <span
-              className="brcris-update-badge"
-              role="status"
-              title={updatingTitle}
-              aria-label={updatingTitle}
-            >
-              <LoaderCircle className="brcris-chart-card__spinner" size={14} aria-hidden="true" />
-              <span className="brcris-update-badge__text">{t("Knowledge areas updating badge")}</span>
-            </span>
-          ) : justUpdated ? (
-            <span className="brcris-update-badge is-done" role="status">
-              <CheckCircle2 size={14} aria-hidden="true" />
-              <span className="brcris-update-badge__text">{t("Knowledge areas updated badge")}</span>
-            </span>
-          ) : null}
           {VIEW_TOGGLES.map(({ view: toggleView, Icon, labelKey }) => (
             <button
               key={toggleView}
@@ -487,8 +444,6 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
             columns={exportColumns}
             rows={exportRows}
             disabled={loading || Boolean(error) || !hasData}
-            getChart={() => (view === "map" ? chartRef.current : null)}
-            imageTitle={`${t("Knowledge areas")} — ${levelLabel}`}
           />
         </div>
       </div>
@@ -534,20 +489,12 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
       </p>
 
       <div className="brcris-chart-card__body" aria-busy={loading}>
-        {isBuilding ? (
-          <div className="brcris-chart-card__feedback" style={{ height }} role="status" aria-live="polite">
-            <LoaderCircle className="brcris-chart-card__spinner" size={24} aria-hidden="true" />
-            <span>{t("Knowledge areas building")}</span>
-          </div>
-        ) : (
-          <ChartFeedback
-            height={height}
-            loading={loading}
-            error={Boolean(error)}
-            empty={!loading && !error && !hasData}
-            emptyMessage={data?.unsupportedFilter ? t("Knowledge areas institution unavailable") : undefined}
-          />
-        )}
+        <ChartFeedback
+          height={height}
+          loading={loading}
+          error={Boolean(error)}
+          empty={!loading && !error && !hasData}
+        />
 
         {isReady ? (
           <div key={levelParent ?? "root"} className="brcris-knowledge-areas__stage">
@@ -614,15 +561,8 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
           </div>
         ) : null}
 
-        {isReady ? (
-          <p className="brcris-knowledge-areas__note">
-            {t("Knowledge areas note")}
-            {data?.generatedAt
-              ? ` ${t(isUpdating ? "Knowledge areas updating" : "Updated on", {
-                  date: new Intl.DateTimeFormat(locale).format(new Date(data.generatedAt)),
-                })}`
-              : null}
-          </p>
+        {isReady && (filters.publicationDate || filters.type || filters.institution) ? (
+          <p className="brcris-knowledge-areas__note">{t("Knowledge areas filters note")}</p>
         ) : null}
       </div>
     </div>
