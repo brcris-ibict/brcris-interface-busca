@@ -12,8 +12,6 @@ import type { KnowledgeAreaItem, KnowledgeAreasResponse } from "../../types/Know
 import type { PublicationsDashboardFilters } from "../../types/PublicationsDashboard";
 import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
-import { hexToRgba } from "./publicationsChartConfig";
-
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
 type Props = {
@@ -54,6 +52,8 @@ const MAJOR_AREA_COLORS: Record<string, string> = {
 const FALLBACK_COLORS = ["#0072B2", "#009E73", "#E69F00", "#CC79A7", "#D55E00", "#56B4E9", "#882255", "#B8A000"];
 const OTHER_COLOR = "#9CA3AF";
 const DARK_TEXT = "#1f2937";
+// Fundo do card no tema escuro (--bg-card); o treemap ignora a transparência da cor
+const DARK_CARD_BG = "#171b22";
 const MIN_FULL_LABEL_SHARE = 4;
 const MAX_TOOLTIP_GROUPED = 8;
 const MOBILE_QUERY = "(max-width: 575.98px)";
@@ -93,6 +93,15 @@ function toChannels(hex: string) {
 function tint(hex: string, ratio: number) {
   return `#${toChannels(hex)
     .map((channel) => Math.round(channel + (255 - channel) * ratio))
+    .map((channel) => channel.toString(16).padStart(2, "0"))
+    .join("")}`;
+}
+
+// Simula a cor translúcida sobre o fundo escuro do card
+function overDark(hex: string, alpha: number) {
+  const background = toChannels(DARK_CARD_BG);
+  return `#${toChannels(hex)
+    .map((channel, i) => Math.round(background[i] + (channel - background[i]) * alpha))
     .map((channel) => channel.toString(16).padStart(2, "0"))
     .join("")}`;
 }
@@ -255,8 +264,8 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
     (item: KnowledgeAreaItem, index: number): AreaStyle => {
       if (item.isOther) {
         return isDark
-          ? { fill: hexToRgba(OTHER_COLOR, 0.22), border: OTHER_COLOR, text: "#f3f4f6" }
-          : { fill: tint(OTHER_COLOR, 0.7), border: OTHER_COLOR, text: DARK_TEXT };
+          ? { fill: overDark(OTHER_COLOR, 0.28), border: OTHER_COLOR, text: "#f3f4f6" }
+          : { fill: OTHER_COLOR, border: OTHER_COLOR, text: readableTextColor(OTHER_COLOR) };
       }
 
       const base = levelParent ? colorFor(levelParent) : colorFor(item.name);
@@ -264,13 +273,16 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
       // Nível 2: tom mais forte para as áreas maiores (itens já vêm ordenados por volume)
       const position = levelParent ? index / Math.max(regularCount - 1, 1) : 0;
 
+      // Mesmo padrão dos outros painéis: cor cheia no claro, translúcida no escuro
       if (isDark) {
-        const alpha = levelParent ? 0.6 - 0.42 * position : 0.34;
-        return { fill: hexToRgba(base, alpha), border: tint(base, 0.3), text: "#f3f4f6" };
+        const alpha = levelParent ? 0.45 - 0.25 * position : 0.28;
+        return { fill: overDark(base, alpha), border: base, text: "#f3f4f6" };
       }
 
-      const fill = tint(base, levelParent ? 0.3 + 0.5 * position : 0.7);
+      const fill = levelParent ? tint(base, 0.45 * position) : base;
+
       return { fill, border: base, text: readableTextColor(fill) };
+
     },
     [isDark, items, levelParent],
   );
@@ -346,7 +358,7 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
           nodeClick: false,
           breadcrumb: { show: false },
           cursor: level === 1 ? "pointer" : "default",
-          itemStyle: { gapWidth: 3, borderWidth: 1, borderRadius: 4 },
+          itemStyle: { gapWidth: 3, borderWidth: 1, borderRadius: 4, borderColor: "transparent" },
           label: {
             show: true,
             overflow: "break",
