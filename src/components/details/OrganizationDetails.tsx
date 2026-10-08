@@ -42,7 +42,8 @@ export default function OrganizationDetails() {
 
   const members = result?.member?.raw || [];
   const memberIds = members.map((m: any) => m.id);
-  const { data: personData } = usePersonIdentifiers(memberIds);
+  const { data: personData, loading: identifiersLoading } =
+    usePersonIdentifiers(memberIds);
   const personMap = new Map((personData || []).map((p: any) => [p.id, p]));
   const membersCsvData = members.map((member: any) => {
     const extra = personMap.get(member.id);
@@ -115,16 +116,25 @@ export default function OrganizationDetails() {
             <li>
               <div className="d-flex justify-content-between align-items-center">
                 <span className="sui-result__key">{t("Member")}</span>
-                {/* @ts-ignore */}
-
-                <CSVLink
-                  data={membersCsvData}
-                  headers={membersCsvHeaders}
-                  filename={`membros-${result.name?.raw ?? "organizacao"}.csv`}
-                  className="btn btn-primary btn-sm"
-                >
-                  ⬇ {t("Export csv")}
-                </CSVLink>
+                {identifiersLoading ? (
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    disabled
+                  >
+                    {t("Loading dashboard data")}
+                  </button>
+                ) : (
+                  /* @ts-ignore */
+                  <CSVLink
+                    data={membersCsvData}
+                    headers={membersCsvHeaders}
+                    filename={`membros-${result.name?.raw ?? "organizacao"}.csv`}
+                    className="btn btn-primary btn-sm"
+                  >
+                    ⬇ {t("Export csv")}
+                  </CSVLink>
+                )}
               </div>{" "}
               <ExpandableContent
                 items={[...result.member.raw].sort((a: any, b: any) =>
