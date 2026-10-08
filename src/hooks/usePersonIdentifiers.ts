@@ -9,39 +9,48 @@ type PersonIdentifiers = {
 
 export function usePersonIdentifiers(ids: string[]) {
   const [data, setData] = useState<PersonIdentifiers[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const idsKey = ids.join(",");
+  const [settledKey, setSettledKey] = useState("");
+  const idsKey = ids.filter(Boolean).join(",");
+  const loading = idsKey !== "" && settledKey !== idsKey;
 
   useEffect(() => {
-    if (!ids || ids.length === 0) return;
+    if (!idsKey) {
+      setData([]);
+      setSettledKey("");
+      return;
+    }
+
+    const controller = new AbortController();
 
     const fetchPersons = async () => {
-      setLoading(true);
-
       try {
         const res = await fetch(withBasePath("/api/consulta-autores"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ ids }),
+          body: JSON.stringify({ ids: idsKey.split(",") }),
+          signal: controller.signal,
         });
 
         const json = await res.json();
 
-        if (res.ok) {
+        if (res.ok && Array.isArray(json)) {
           setData(json);
         }
       } catch (err) {
+        if (controller.signal.aborted) return;
         console.error("Erro ao buscar person:", err);
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setSettledKey(idsKey);
+        }
       }
     };
 
     fetchPersons();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => controller.abort();
   }, [idsKey]);
 
   return { data, loading };
