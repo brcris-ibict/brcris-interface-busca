@@ -75,12 +75,22 @@ export default function App() {
   ];
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const skipInitialSearchFocus = useRef(true);
   const [term, setTerm] = useState("");
   const [docsCount, setDocsCount] = useState("");
   const [indexLabel, setIndexLabel] = useState(indexes[0].label);
 
   useEffect(() => {
-    inputRef?.current?.focus();
+    if (skipInitialSearchFocus.current) {
+      skipInitialSearchFocus.current = false;
+      window.setTimeout(() => {
+        if (document.activeElement === inputRef.current) {
+          inputRef.current?.blur();
+        }
+      }, 0);
+    } else {
+      inputRef.current?.focus();
+    }
 
     localStorage.removeItem(indexLabel);
 
@@ -143,7 +153,6 @@ export default function App() {
                 id="home-search"
                 ref={inputRef}
                 name="q"
-                autoFocus
                 type="search"
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
