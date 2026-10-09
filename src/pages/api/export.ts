@@ -41,6 +41,7 @@ import {
   buildPublicationRecord,
   collectPublicationOrgIds,
   csvHeaderLine,
+  EXPORT_PROFILE_ID,
   toPublicationJsonRecord,
   upsertPersonsFromSource,
 } from "../../services/publicationCsvProfile";
@@ -95,7 +96,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
         resultFields,
         typeArq,
         includeId: true,
-        csvProfile: "epic-v13",
+        csvProfile: EXPORT_PROFILE_ID,
       }),
     );
     const zipFilePath = `${process.env.DOWNLOAD_FOLDER_PATH}/${typeArq}${fileName}.zip`;
