@@ -174,23 +174,39 @@ main {
   outline: none;
 }
 
+.skip-target {
+  scroll-margin-top: 130px;
+  outline: 3px solid var(--primary-color);
+  outline-offset: 8px;
+  border-radius: 12px;
+}
+
 .skip-link {
-  position: absolute;
+  position: fixed;
   top: 8px;
   left: 8px;
-  z-index: 1100;
+  z-index: 10000;
   padding: 10px 16px;
   border-radius: var(--border-radius);
   background-color: var(--primary-color);
   color: var(--brand-contrast);
   font-weight: 600;
   text-decoration: none;
-  transform: translateY(-200%);
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .skip-link:focus,
 .skip-link:focus-visible {
-  transform: translateY(0);
+  clip: auto;
+  clip-path: none;
+  width: auto;
+  height: auto;
+  overflow: visible;
   outline: 3px solid var(--text-color);
   outline-offset: 2px;
   color: var(--brand-contrast);
