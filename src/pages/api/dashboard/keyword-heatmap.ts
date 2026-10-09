@@ -1,16 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createElasticsearchClient } from "../../../services/ElasticsearchClient";
 import logger from "../../../services/Logger";
-import type {
-  PublicationsDashboardErrorResponse,
-  PublicationsKeywordHeatmap,
-} from "../../../types/PublicationsDashboard";
+import { buildPublicationFilterClauses, buildPublicationSearchClause } from "../../../lib/publicationSearch";
+import type { PublicationsDashboardErrorResponse, PublicationsDashboardFilters, PublicationsKeywordHeatmap } from "../../../types/PublicationsDashboard";
 
 const client = createElasticsearchClient();
 const KEYWORD_SIZE = 100;
 // Busca folga no ES para, após unificar variantes, ainda sobrar o top N
 const KEYWORD_FETCH_SIZE = 400;
 const YEAR_FROM = "1960";
+// Recontagem em lotes paralelos: uma consulta única com 100 buscas estoura o timeout
+const RECOUNT_BATCH_SIZE = 25;
+const RECOUNT_OPTIONS = { requestTimeout: 120000, maxRetries: 0 };
 
 // Função auxiliar para tratar parâmetros da query string
 function param(value: string | string[] | undefined) {
@@ -36,16 +37,12 @@ function pickDisplayLabel(current: string, candidate: string, currentCount: numb
   const candidateScore = Number(/[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(candidate));
 
   return candidateScore > currentScore ? candidate : current;
+
 }
 
 // Agrupa buckets equivalentes semanticamente (ex.: Educação / educação)
-function mergeKeywordBuckets(
-  buckets: { key?: unknown; key_as_string?: unknown; doc_count?: number }[],
-) {
-  const merged = new Map<
-    string,
-    { keyword: string; count: number; topVariantCount: number }
-  >();
+function mergeKeywordBuckets(buckets: { key?: unknown; key_as_string?: unknown; doc_count?: number }[]) {
+  const merged = new Map<string,{ keyword: string; count: number; topVariantCount: number }>();
 
   for (const bucket of buckets) {
     const raw = String(bucket.key_as_string ?? bucket.key ?? "").trim();
@@ -80,6 +77,62 @@ function mergeKeywordBuckets(
     .sort((a, b) => b.count - a.count || a.keyword.localeCompare(b.keyword, "pt-BR"))
     .slice(0, KEYWORD_SIZE)
     .map(({ keyword, count }) => ({ keyword, count }));
+}
+
+// Conta um lote de palavras com a mesma busca da tabela "Listagem das Publicações"
+async function countBatch(
+  index: string,
+  filters: PublicationsDashboardFilters,
+  keywords: string[],
+) {
+  const response = await client.search(
+    {
+      index,
+      size: 0,
+      track_total_hits: false,
+      query: { bool: { filter: buildPublicationFilterClauses(filters) } },
+      aggs: {
+        byKeyword: {
+          filters: {
+            filters: Object.fromEntries(
+              keywords.map((keyword, position) => [
+                String(position),
+                buildPublicationSearchClause(keyword),
+              ]),
+            ),
+          },
+        },
+      },
+    },
+    RECOUNT_OPTIONS,
+  );
+
+  const buckets = ((response.aggregations as any)?.byKeyword?.buckets ?? {}) as Record<string,{ doc_count?: number }>;
+
+  return keywords.map((keyword, position) => ({
+    keyword,
+    count: Number(buckets[String(position)]?.doc_count ?? 0),
+  }));
+}
+
+// Mesma contagem que a tabela mostra ao buscar cada palavra
+async function countLikePublicationList(
+  index: string,
+  filters: PublicationsDashboardFilters,
+  keywords: string[],
+) {
+  const batches: string[][] = [];
+  for (let start = 0; start < keywords.length; start += RECOUNT_BATCH_SIZE) {
+    batches.push(keywords.slice(start, start + RECOUNT_BATCH_SIZE));
+  }
+
+  const counts = (
+    await Promise.all(batches.map((batch) => countBatch(index, filters, batch)))
+  ).flat();
+
+  return counts
+    .filter((item) => item.count > 0)
+    .sort((a, b) => b.count - a.count || a.keyword.localeCompare(b.keyword, "pt-BR"));
 }
 
 // Handler principal para a API
@@ -147,10 +200,17 @@ export default async function handler(
     // Obtém os buckets de palavras-chave
     const buckets = ((response.aggregations as any)?.byKeyword?.buckets as any[]) ?? [];
 
-    // Retorna os resultados (já agrupados: Educação ≈ educação)
-    return res.status(200).json({
-      items: mergeKeywordBuckets(buckets),
-    });
+    // Mesmas palavras de antes; o número passa a ser o que a tabela mostra ao buscar cada uma
+    const words = mergeKeywordBuckets(buckets).map((item) => item.keyword);
+    const startedAt = Date.now();
+    const items = await countLikePublicationList(
+      index,
+      { publicationDate, type, language, institution },
+      words,
+    );
+    logger.info(`[keyword-heatmap] recontagem ${Date.now() - startedAt}ms (${words.length} palavras)`);
+
+    return res.status(200).json({ items });
 
   } catch (error) {
     logger.error(error);

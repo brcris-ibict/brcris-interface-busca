@@ -308,7 +308,7 @@ export default function PanelTable<T>({
     <div className="brcris-chart-card brcris-panel-table">
       <div className="brcris-panel-table__header">
         <div className="brcris-panel-table__heading">
-          <h3 className="brcris-chart-card__title">{title}</h3>
+          <h2 className="brcris-chart-card__title">{title}</h2>
           <p className="brcris-panel-table__caption">{caption}</p>
           {hasActiveSearch ? (
             <div className="brcris-panel-table__search-chip">

@@ -8,6 +8,7 @@ import {
   parsePositiveInt,
 } from "../../../lib/serverPagination";
 import { SEARCH_MAX_LENGTH, SEARCH_MIN_LENGTH } from "../../../lib/textSearch";
+import { buildPublicationQuery } from "../../../lib/publicationSearch";
 import type {
   PublicationsDashboardErrorResponse,
   PublicationsDashboardFilters,
@@ -16,7 +17,6 @@ import type {
 } from "../../../types/PublicationsDashboard";
 
 const client = createElasticsearchClient();
-const YEAR_FROM = 1960;
 
 // Campos do documento ES para o source
 const SOURCE_FIELDS = [
@@ -27,18 +27,6 @@ const SOURCE_FIELDS = [
   "doi",
   "accessType",
   "sponsorOrgUnit",
-] as const;
-
-// Campos da busca textual. title/author.name são keyword (usados em aggs);
-// o texto analisado fica em *_text (mesmo usado pela busca do portal em configs/Publications.ts).
-// keywords/journal.title/conference.name são keyword: só casam com o valor exato (bônus de relevância).
-const SEARCH_FIELDS = [
-  "title_text^3",
-  "keywords^2",
-  "author.name_text",
-  "journal.title",
-  "conference.name",
-  "doi",
 ] as const;
 
 // Página máxima dentro da janela from+size do ES
@@ -57,51 +45,6 @@ function getFilters(req: NextApiRequest): PublicationsDashboardFilters {
     language: param(req.query.language),
     institution: param(req.query.institution),
   };
-}
-
-// Função auxiliar para construir a query do Elasticsearch
-function buildQuery(filters: PublicationsDashboardFilters, search = "") {
-  const yearTo = String(new Date().getFullYear());
-  const filterClauses: Record<string, unknown>[] = [
-    {
-      range: {
-        publicationDate: { gte: String(YEAR_FROM), lte: yearTo },
-      },
-    },
-  ];
-
-  if (filters.publicationDate) {
-    filterClauses.push({ term: { publicationDate: filters.publicationDate } });
-  }
-  if (filters.type) {
-    filterClauses.push({ term: { type: filters.type } });
-  }
-  if (filters.language) {
-    filterClauses.push({ term: { language: filters.language } });
-  }
-  if (filters.institution) {
-    filterClauses.push({
-      term: { "sponsorOrgUnit.name": filters.institution },
-    });
-  }
-
-  const bool: Record<string, unknown> = { filter: filterClauses };
-
-  // simple_query_string não quebra com sintaxe inválida digitada pelo usuário
-  if (search) {
-    bool.must = [
-      {
-        simple_query_string: {
-          query: search,
-          fields: [...SEARCH_FIELDS],
-          default_operator: "and",
-          lenient: true,
-        },
-      },
-    ];
-  }
-
-  return { bool };
 }
 
 // Função auxiliar para ler um campo do source
@@ -235,7 +178,7 @@ export default async function handler(
       // Mesmo critério do painel / BigNumber
       track_total_hits: knownTotal < 1 ? true : false,
       _source: [...SOURCE_FIELDS],
-      query: buildQuery(filters, search),
+      query: buildPublicationQuery(filters, search),
       // Sem _id (proibido/instável no ES moderno). _doc = barato e estável na página.
       // Com busca: relevância primeiro, depois as mais recentes.
       sort: search

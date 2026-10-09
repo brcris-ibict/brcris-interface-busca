@@ -2149,18 +2149,20 @@ h3.popover-header a {
     color 0.2s ease;
 }
 
-.brcris-chart-export > button:hover,
-.brcris-chart-export > button.is-active {
+.brcris-chart-export > button:hover:not(:disabled),
+.brcris-chart-export > button.is-active:not(:disabled) {
   border-color: var(--primary-color);
   background: var(--bg-hover);
   color: var(--primary-color);
 }
 
-.brcris-chart-export > button:disabled {
-  opacity: 1;
-  border-color: var(--border-color);
-  background: var(--bg);
-  color: var(--text-secondary-color, #64748b);
+// Sobrescreve o button[disabled] global (fundo azul com !important)
+.brcris-chart-export > button:disabled,
+.brcris-chart-export > button:disabled:hover {
+  opacity: 1 !important;
+  border-color: var(--border-color) !important;
+  background: var(--bg-muted) !important;
+  color: var(--text-secondary-color);
   cursor: not-allowed;
 }
 
@@ -2421,12 +2423,10 @@ h3.popover-header a {
 
 .brcris-bignumber__title {
   margin: 0;
-  color: var(--text-secondary-color);
-  font-size: 0.68rem;
-  font-weight: 600;
   letter-spacing: 0.03em;
-  line-height: 1.3;
-  text-transform: uppercase;
+  line-height: 1;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
 .brcris-bignumber__icon {
@@ -2451,7 +2451,7 @@ h3.popover-header a {
   position: relative;
   z-index: 1;
   margin: 0.45rem 0 0.3rem;
-  color: var(--text-color);
+  color: var(--primary-color);
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.01em;

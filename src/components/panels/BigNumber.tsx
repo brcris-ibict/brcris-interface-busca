@@ -34,7 +34,7 @@ export default function BigNumber({
       aria-live="polite"
     >
       <div className="brcris-bignumber__top">
-        <h6 className="brcris-bignumber__title">{title}</h6>
+        <h2 className="brcris-bignumber__title">{title}</h2>
         <span className="brcris-bignumber__icon" aria-hidden="true">
           <Icon size={18} strokeWidth={2} />
         </span>
