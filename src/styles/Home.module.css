@@ -22,10 +22,21 @@
   gap: 20px;
 }
 
-.home h1 {
+.home h2 {
   text-align: center;
   margin-bottom: 1rem;
   font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+.home .brandTitle {
+  position: relative;
+  margin: 0;
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .graph {

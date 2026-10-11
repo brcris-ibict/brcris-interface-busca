@@ -111,13 +111,14 @@ export default function App() {
       </Head>
 
       <div className={`container ${styles.home}`}>
+        <h1 className={styles.brandTitle}>{t("BrCris")}</h1>
+
         <div className="search-card">
-          <h1>
+          <h2>
             {t(
               "Search in the Brazilian Scientific Research Information Ecosystem",
-            )}{" "}
-            (BrCris)
-          </h1>
+            )}
+          </h2>
 
           <form
             className="form-search"
@@ -183,8 +184,6 @@ export default function App() {
           </div>
 
           <div className={styles.info}>
-            <h1>{t("BrCris")}</h1>
-
             <p className="card-text text-left">
               {t(
                 "The Brazilian Scientific Research Information Ecosystem, BrCris, is an aggregator platform that allows retrieving, certifying and visualizing data and information related to the various actors who work in scientific research in the Brazilian context.",
