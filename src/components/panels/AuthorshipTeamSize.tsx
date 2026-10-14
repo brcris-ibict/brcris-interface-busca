@@ -14,7 +14,12 @@ import type {
 } from "../../types/PublicationsDashboard";
 import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
-import { PRIMARY_CHART_COLOR, chartFillColor, hexToRgba } from "./publicationsChartConfig";
+import {
+  PRIMARY_CHART_COLOR,
+  chartFillColor,
+  getSequentialSliceStyle,
+  sequentialLabelColor,
+} from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
@@ -42,26 +47,6 @@ const TOGGLES: {
   { kind: "pie", Icon: ChartPie, labelKey: "Chart pie" },
   { kind: "bar", Icon: ChartBar, labelKey: "Chart horizontal bars" },
 ];
-
-// Faixas são ordinais: escala sequencial do tom primário (mais escuro = equipe menor)
-const TEAM_BAND_COLORS: Record<PublicationsTeamSizeBand, string> = {
-  "1": "#015a6e",
-  "2": "#0284a0",
-  "3-5": "#22a7c2",
-  "6-10": "#6ec8da",
-  "11+": "#b5e3ec",
-};
-
-// Dark: mesmo padrão dos outros painéis (fill translúcido + borda sólida);
-// a ordem das faixas aparece pela intensidade do preenchimento
-const DARK_PIE_BORDER = "#67c5d8";
-const DARK_PIE_FILL_ALPHA: Record<PublicationsTeamSizeBand, number> = {
-  "1": 0.55,
-  "2": 0.42,
-  "3-5": 0.3,
-  "6-10": 0.2,
-  "11+": 0.12,
-};
 
 const MIN_INSIDE_PIE_LABEL_SHARE = 3;
 
@@ -177,11 +162,10 @@ export default function AuthorshipTeamSize({ filters, height = 410, onLoadingCha
             data: bands.map((band, index) => {
               const percent = share(band.count, withAuthors);
               const isInside = percent >= MIN_INSIDE_PIE_LABEL_SHARE;
-              const isLightSlice = band.band === "6-10" || band.band === "11+";
-              const labelColor = isDark
-                ? "#e5e7eb"
-                : isInside && !isLightSlice
-                  ? "#ffffff"
+              const labelColor = isInside
+                ? sequentialLabelColor(resolvedTheme)
+                : isDark
+                  ? "#e5e7eb"
                   : "#1f2937";
               return {
                 name: labels[index],
@@ -190,17 +174,7 @@ export default function AuthorshipTeamSize({ filters, height = 410, onLoadingCha
                   position: isInside ? "inside" : "outside",
                   color: labelColor,
                 },
-                itemStyle: isDark
-                  ? {
-                      color: hexToRgba(DARK_PIE_BORDER, DARK_PIE_FILL_ALPHA[band.band]),
-                      borderColor: DARK_PIE_BORDER,
-                      borderWidth: 1,
-                    }
-                  : {
-                      color: TEAM_BAND_COLORS[band.band],
-                      borderColor: "#ffffff",
-                      borderWidth: 1,
-                    },
+                itemStyle: getSequentialSliceStyle(index, bands.length, resolvedTheme),
               };
             }),
           },

@@ -7,7 +7,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByTypePoint } from "../../types/PublicationsDashboard";
 import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
-import { getPublicationTypeStyle } from "./publicationsChartConfig";
+import { getSequentialSliceStyle, sequentialLabelColor } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
 
@@ -75,7 +75,7 @@ export default function TypeDistribution({
   const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
   const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
   const labelOutside = resolvedTheme === "dark" ? "#e5e7eb" : "#555555";
-  const labelInside = resolvedTheme === "dark" ? "#e5e7eb" : "#1f2937";
+  const labelInside = sequentialLabelColor(resolvedTheme);
   const tooltipBg = resolvedTheme === "dark" ? "rgba(17, 24, 39, 0.96)" : "rgba(255, 255, 255, 0.98)";
   const tooltipBorder = resolvedTheme === "dark" ? "#374151" : "#e2e8f0";
   const tooltipText = resolvedTheme === "dark" ? "#e5e7eb" : "#0f172a";
@@ -177,8 +177,8 @@ export default function TypeDistribution({
               lineStyle: { color: gridColor, width: 1 },
             },
             labelLayout: { hideOverlap: true },
-            data: data.map((item) => {
-              const style = getPublicationTypeStyle(item.type, resolvedTheme);
+            data: data.map((item, index) => {
+              const style = getSequentialSliceStyle(index, data.length, resolvedTheme);
               const percent = percentOfTotal(item.count, pieTotal);
 
               return {
@@ -188,11 +188,7 @@ export default function TypeDistribution({
                 label: {
                   position: percent >= 3 ? "inside" : "outside",
                 },
-                itemStyle: {
-                  color: style.color,
-                  borderColor: style.borderColor,
-                  borderWidth: 1,
-                },
+                itemStyle: style,
               };
 
             }),
@@ -238,18 +234,13 @@ export default function TypeDistribution({
         {
           type: "bar",
           data: data
-            .map((item) => {
-              const style = getPublicationTypeStyle(item.type, resolvedTheme);
-              return {
-                value: item.count,
-                itemStyle: {
-                  color: style.color,
-                  borderColor: style.borderColor,
-                  borderWidth: 1,
-                  borderRadius: 0,
-                },
-              };
-            })
+            .map((item, index) => ({
+              value: item.count,
+              itemStyle: {
+                color: getSequentialSliceStyle(index, data.length, resolvedTheme).color,
+                borderRadius: 0,
+              },
+            }))
             .reverse(),
           barMaxWidth: 32,
           barCategoryGap: "22%",

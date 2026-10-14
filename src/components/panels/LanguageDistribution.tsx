@@ -10,7 +10,8 @@ import ChartFeedback from "./ChartFeedback";
 import {
   PRIMARY_CHART_COLOR,
   chartFillColor,
-  getPanelSeriesStyle,
+  MISSING_SLICE_COLOR,
+  getSequentialSliceStyle,
 } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
@@ -181,7 +182,7 @@ export default function LanguageDistribution({
     // Construção do gráfico de pizza
     if (chartKind === "pie") {
       const withoutLanguageLabel = t("Without linked language");
-      const withoutLanguageColor = resolvedTheme === "dark" ? "#6b7280" : "#9ca3af";
+      const withoutLanguageColor = MISSING_SLICE_COLOR[resolvedTheme];
       const { series: pieSeriesData, total } = buildLanguagePieSeries(
         data,
         (language) => t(language),
@@ -267,15 +268,10 @@ export default function LanguageDistribution({
                   },
                 };
               }
-              const style = getPanelSeriesStyle(index, resolvedTheme);
               return {
                 name: item.name,
                 value: item.value,
-                itemStyle: {
-                  color: style.color,
-                  borderColor: style.borderColor,
-                  borderWidth: 1,
-                },
+                itemStyle: getSequentialSliceStyle(index, pieSeriesData.length, resolvedTheme),
               };
             }),
           },

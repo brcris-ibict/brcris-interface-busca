@@ -80,10 +80,7 @@ export function getPublicationTypeStyle(
 ) {
   const borderColor = PUBLICATION_TYPE_BORDERS[type] ?? "#999999";
   return {
-    color:
-      mode === "dark"
-        ? hexToRgba(borderColor, PUBLICATION_TYPE_FILL_ALPHA)
-        : borderColor,
+    color: mode === "dark" ? hexToRgba(borderColor, PUBLICATION_TYPE_FILL_ALPHA) : borderColor,
     borderColor,
   };
 }
@@ -100,3 +97,48 @@ export function getPanelSeriesStyle(
     borderColor,
   };
 }
+
+// Escala sequencial monocromática (tom primário) para roscas/pizzas: só a intensidade varia.
+// Extremos mantêm ≥ 3:1 com o fundo do card (WCAG 1.4.11) e ≥ 4,5:1 com o texto dentro da fatia.
+const SEQUENTIAL_SCALE: Record<ChartColorMode, { from: string; to: string; text: string; separator: string }> = {
+  light: { from: "#013640", to: "#0a7f98", text: "#ffffff", separator: "#fefefe" },
+  dark: { from: "#d4f1f7", to: "#1497b1", text: "#111827", separator: "#171b22" },
+};
+
+function mixHex(from: string, to: string, amount: number) {
+  const start = parseInt(from.replace("#", ""), 16);
+  const end = parseInt(to.replace("#", ""), 16);
+  const channel = (shift: number) => {
+    const a = (start >> shift) & 255;
+    const b = (end >> shift) & 255;
+    return Math.round(a + (b - a) * amount)
+      .toString(16)
+      .padStart(2, "0");
+  };
+  return `#${channel(16)}${channel(8)}${channel(0)}`;
+}
+
+// Primeira fatia (maior valor/primeira faixa) = tom mais intenso
+export function getSequentialSliceStyle(
+  index: number,
+  total: number,
+  mode: ChartColorMode = "light",
+) {
+  const scale = SEQUENTIAL_SCALE[mode];
+  const amount = total > 1 ? Math.min(index, total - 1) / (total - 1) : 0;
+  return {
+    color: mixHex(scale.from, scale.to, amount),
+    borderColor: scale.separator,
+    borderWidth: 2,
+  };
+}
+
+export function sequentialLabelColor(mode: ChartColorMode = "light") {
+  return SEQUENTIAL_SCALE[mode].text;
+}
+
+// "Sem idioma"/"Sem instituição": cinza neutro fora da escala, com ≥ 3:1 no fundo
+export const MISSING_SLICE_COLOR: Record<ChartColorMode, string> = {
+  light: "#6b7280",
+  dark: "#9ca3af",
+};

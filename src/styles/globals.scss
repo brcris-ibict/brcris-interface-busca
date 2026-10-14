@@ -2,6 +2,9 @@
 
 :root {
   --primary-color: #0284a0;
+  --heading-color: #015a6e;
+  --title-color: #1f2937;
+  --subtitle-color: #374151;
   --secondary-color: #0ea5b7;
   --text-color: #333333;
   --text-secondary-color: #555555;
@@ -51,6 +54,9 @@
 
 :root[data-theme="dark"] {
   --primary-color: #0399b6;
+  --heading-color: #0399b6;
+  --title-color: #e5e7eb;
+  --subtitle-color: #a1a1aa;
   --secondary-color: #3a8899;
   --text-color: #e5e7eb;
   --text-secondary-color: #a1a1aa;
@@ -130,7 +136,7 @@ h2 {
 h1 {
   position: relative;
   font-size: 1.25rem;
-  color: var(--primary-color);
+  color: var(--heading-color);
 }
 
 a {
@@ -1884,7 +1890,7 @@ h3.popover-header a {
 .brcris-page-header__subtitle {
   margin: -0.5rem 0 0;
   text-align: left;
-  color: var(--bs-dark-text-emphasis);
+  color: var(--subtitle-color);
   font-size: 0.85rem;
   font-weight: 500;
 }
@@ -2101,7 +2107,7 @@ h3.popover-header a {
 
 .brcris-chart-card__title {
   margin: 0 0 0 12px;
-  color: var(--bs-gray);
+  color: var(--title-color);
   font-size: 0.85rem;
   font-weight: 600;
   line-height: 1.3;
@@ -2329,7 +2335,7 @@ h3.popover-header a {
 
 .brcris-keywords-cloud__caption {
   margin: 0 0 0 12px;
-  color: var(--text-secondary-color, #64748b);
+  color: var(--subtitle-color);
   font-size: 0.75rem;
   line-height: 1.4;
   max-width: 42rem;
@@ -2438,11 +2444,12 @@ h3.popover-header a {
 }
 
 .brcris-bignumber__title {
-  margin: 0;
+  margin: 0 0 10px;
+  color: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
   letter-spacing: 0.03em;
   line-height: 1;
-  font-weight: 700;
-  margin-bottom: 10px;
 }
 
 .brcris-bignumber__icon {
@@ -2482,7 +2489,7 @@ h3.popover-header a {
   align-items: center;
   gap: 0.4rem;
   margin: auto 0 0;
-  color: var(--text-secondary-color);
+  color: var(--subtitle-color);
   font-size: 0.75rem;
   line-height: 1.3;
 }
@@ -2544,7 +2551,7 @@ h3.popover-header a {
 
 .brcris-panel-table__caption {
   margin: 0.2rem 0 0 12px;
-  color: var(--text-secondary-color);
+  color: var(--subtitle-color);
   font-size: 0.75rem;
   line-height: 1.3;
 }
@@ -2839,7 +2846,7 @@ h3.popover-header a {
 }
 
 .brcris-panel-table__table th.is-numeric .brcris-panel-table__sort-btn {
-  flex-direction: row-reverse;
+  justify-content: flex-end;
 }
 
 .brcris-panel-table__table tbody tr:nth-child(even) {
@@ -2865,7 +2872,8 @@ h3.popover-header a {
   color: var(--text-secondary-color);
 }
 
-.brcris-panel-table__table td:nth-child(2) {
+// Uma linha por célula: mantém a mesma altura de linha entre tabelas lado a lado
+.brcris-panel-table__table td {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2998,7 +3006,7 @@ h3.popover-header a {
 .brcris-team-size__caption {
   margin: 0 0 0 12px;
   font-size: 0.75rem;
-  color: var(--text-secondary-color);
+  color: var(--subtitle-color);
 }
 
 .brcris-knowledge-areas__header {
@@ -3015,7 +3023,7 @@ h3.popover-header a {
 .brcris-knowledge-areas__caption {
   margin: 0 0 0 12px;
   font-size: 0.75rem;
-  color: var(--text-secondary-color);
+  color: var(--subtitle-color);
 }
 
 .brcris-knowledge-areas__badge {

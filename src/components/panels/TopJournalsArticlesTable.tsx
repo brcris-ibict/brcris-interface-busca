@@ -54,6 +54,7 @@ export default function TopJournalsArticlesTable({
         accessor: (row) => row.issn,
         sortAs: "text",
         format: (value) => (value ? String(value) : "—"),
+        title: (row) => row.issn,
       },
       {
         key: "count",
@@ -69,8 +70,7 @@ export default function TopJournalsArticlesTable({
         accessor: (row) => row.share,
         align: "right",
         sortAs: "number",
-        format: (value, _row, locale) =>
-          `${formatShare(Number(value), locale)}%`,
+        format: (value, _row, locale) => `${formatShare(Number(value), locale)}%`,
       },
     ],
     [t],
