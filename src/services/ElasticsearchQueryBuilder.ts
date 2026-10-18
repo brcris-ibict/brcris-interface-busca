@@ -82,8 +82,16 @@ class ElasticsearchQueryBuilder {
     if (ADVANCED_QUERY.test(input)) {
       this.fillAdvancedQuery(input, allFields);
     } else {
+      const sanitized = searchTerm.trim();
+      const cleaned = sanitized.replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+      const queryTerm = cleaned.length > 0 ? cleaned : sanitized;
+
+      if (!queryTerm) {
+        return this.queryBase;
+      }
+
       allFields.forEach((field) => {
-        this.fillQuery("OR", field, searchTerm.trim(), []);
+        this.fillQuery("OR", field, queryTerm, []);
       });
     }
     if (this.queryBase.bool?.should?.length > 0) {
