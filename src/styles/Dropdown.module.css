@@ -55,6 +55,6 @@
 
 .flexCenter {
   display: flex;
-  color: var(--primary-color);
+  color: inherit;
   align-items: center;
 }
