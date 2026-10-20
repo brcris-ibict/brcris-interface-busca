@@ -195,7 +195,7 @@ main {
   padding: 10px 16px;
   border-radius: var(--border-radius);
   background-color: var(--primary-color);
-  color: var(--brand-contrast);
+  color: #ffffff;
   font-weight: 600;
   text-decoration: none;
   clip: rect(0 0 0 0);
@@ -215,7 +215,8 @@ main {
   overflow: visible;
   outline: 3px solid var(--text-color);
   outline-offset: 2px;
-  color: var(--brand-contrast);
+  background-color: #01586b;
+  color: #ffffff;
 }
 
 .navbar-toggler {
@@ -1620,6 +1621,49 @@ h3.popover-header a {
   align-items: baseline;
   padding-top: 8px !important;
   background-color: var(--bg);
+
+  .nav-link {
+    color: #01586b;
+    font-weight: 500;
+
+    &:hover,
+    &:focus {
+      color: #0284a0;
+      text-decoration: underline;
+    }
+
+    &.active {
+      color: #01586b !important;
+      font-weight: 700;
+    }
+  }
+
+  .theme-toggle-button {
+    color: #01586b;
+
+    .theme-toggle-value {
+      font-weight: 600;
+    }
+  }
+}
+
+:root[data-theme="dark"] .navbar {
+  .nav-link {
+    color: #67c5d8;
+
+    &:hover,
+    &:focus {
+      color: #d7c2ff;
+    }
+
+    &.active {
+      color: #67c5d8 !important;
+    }
+  }
+
+  .theme-toggle-button {
+    color: #67c5d8;
+  }
 }
 
 .actions-wrap {
@@ -3228,5 +3272,70 @@ h3.popover-header a {
   .brcris-knowledge-areas__stage,
   .brcris-knowledge-areas__back {
     animation: none;
+  }
+}
+
+#btnToggle.btn-outline-secondary {
+  color: #01586b;
+  border-color: #01586b;
+  font-weight: 500;
+
+  &:hover,
+  &:focus {
+    background-color: #01586b;
+    border-color: #01586b;
+    color: #ffffff;
+  }
+}
+
+:root[data-theme="dark"] #btnToggle.btn-outline-secondary {
+  color: #67c5d8;
+  border-color: #67c5d8;
+
+  &:hover,
+  &:focus {
+    background-color: #67c5d8;
+    border-color: #67c5d8;
+    color: #0f1115;
+  }
+}
+
+a.btn-link[href="#top"] {
+  color: #01586b;
+  font-weight: 600;
+  text-decoration: underline;
+
+  &:hover,
+  &:focus {
+    color: #0284a0;
+  }
+}
+
+:root[data-theme="dark"] a.btn-link[href="#top"] {
+  color: #67c5d8;
+
+  &:hover,
+  &:focus {
+    color: #d7c2ff;
+  }
+}
+
+footer .container a[href="https://brcris.ibict.br/"] {
+  color: #01586b;
+  font-weight: 600;
+  text-decoration: underline;
+
+  &:hover,
+  &:focus {
+    color: #0284a0;
+  }
+}
+
+:root[data-theme="dark"] footer .container a[href="https://brcris.ibict.br/"] {
+  color: #67c5d8;
+
+  &:hover,
+  &:focus {
+    color: #d7c2ff;
   }
 }
