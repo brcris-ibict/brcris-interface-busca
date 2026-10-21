@@ -1861,7 +1861,7 @@ h3.popover-header a {
 }
 
 .brcris-page-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   overflow: visible;
 }
 
@@ -1949,6 +1949,7 @@ h3.popover-header a {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.75rem;
+  min-height: 2.75rem;
 }
 
 .brcris-filters__fields .brcris-field {
@@ -1963,6 +1964,10 @@ h3.popover-header a {
 
   .brcris-filters__fields {
     justify-content: stretch;
+  }
+
+  .brcris-filters__fields:empty {
+    display: none;
   }
 
   .brcris-filters__fields .brcris-field {
