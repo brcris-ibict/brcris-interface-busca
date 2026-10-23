@@ -3,6 +3,10 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect, useState } from "react";
+import NationalityDistribution from "../../components/panels/NationalityDistribution";
+import KnowledgeAreasTreemap from "../../components/panels/KnowledgeAreasTreemap";
+import TypeDistribution from "../../components/panels/TypeDistribution";
+import AffiliationDistributionTable from "../../components/panels/AffiliationDistributionTable";
 import PageHeader from "../../components/panels/PageHeader";
 import PeopleBigNumbers from "../../components/panels/PeopleBigNumbers";
 import PeopleFilters from "../../components/panels/PeopleFilters";
@@ -68,6 +72,41 @@ export default function PeopleDashboard() {
               loading={loading}
               error={Boolean(error)}
             />
+
+            <div className="row g-3">
+              <div className="col-12 col-lg-6">
+                <NationalityDistribution
+                  data={data?.byNationality ?? []}
+                  totalResearchers={data?.summary.total}
+                  researchersWithoutNationality={
+                    data?.researchersWithoutNationality ?? 0
+                  }
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <KnowledgeAreasTreemap
+                  filters={filters as any}
+                  height={460}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <TypeDistribution
+                  data={data?.byPublicationType ?? []}
+                  totalPublications={data?.summary.withPublications}
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <AffiliationDistributionTable
+                  data={data?.byAffiliation ?? []}
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

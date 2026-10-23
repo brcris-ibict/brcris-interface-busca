@@ -236,6 +236,8 @@
   "Researchers with publications": "With publications",
   "Researchers with publications count": "{{value}} researchers with at least one publication",
   "Distinct affiliations": "Distinct affiliations",
+  "Researchers by nationality": "Researchers by nationality",
+  "Without nationality": "No nationality informed",
   "Researchers in research groups": "In research groups",
   "Research group members and leaders": "{{members}} researchers, {{leaders}} of them leaders",
   "Breadcrumb panels": "Indicators",
@@ -439,5 +441,8 @@
   "Share of level researchers (%)": "Researchers in level (%)",
   "Language filter not applied": "Language filter not applied",
   "Knowledge areas language ignored": "The researcher registry has no publication language; this chart ignores that filter.",
-  "Knowledge areas filters note": "With filters, it counts researchers with at least one publication in the chosen year and type and affiliated with the selected institution."
+  "Knowledge areas filters note": "With filters, it counts researchers with at least one publication in the chosen year and type and affiliated with the selected institution.",
+  "Distribution of researchers by affiliations": "Distribution of researchers by affiliations",
+  "Researchers distribution by affiliation": "Affiliations and number of linked researchers",
+  "Search by affiliation": "Search by affiliation..."
 }

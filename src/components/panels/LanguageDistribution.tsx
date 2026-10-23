@@ -39,10 +39,8 @@ type Props = {
   height?: number;
 };
 
-// Altura das linhas do gráfico de barras
-// Existe porque o gráfico de barras é scrollável
-// Está relacionada a função handleLoadMore
-const BAR_ROW_HEIGHT = 52;
+// Dez barras cabem sem scroll; ao carregar mais, o gráfico ultrapassa a área e rola.
+const BAR_ROW_HEIGHT = 36;
 
 // Quantidade de itens visíveis por página
 const PAGE_SIZE = 10;
@@ -314,7 +312,7 @@ export default function LanguageDistribution({
         {
           type: "bar",
           data: chartData.map((item) => item.count).reverse(),
-          barMaxWidth: 44,
+          barMaxWidth: 30,
           barCategoryGap: "32%",
           itemStyle: {
             color: chartFillColor(PRIMARY_CHART_COLOR, resolvedTheme),

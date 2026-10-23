@@ -12,8 +12,29 @@ export type PeopleDashboardSummary = {
   groupLeaders: number;
 };
 
+export type PeopleByNationalityPoint = {
+  nationality: string;
+  count: number;
+};
+
+export type PublicationsByTypePoint = {
+  type: string;
+  count: number;
+};
+
+export type PeopleByAffiliationPoint = {
+  rank: number;
+  affiliation: string;
+  count: number;
+  share: number;
+};
+
 export type PeopleDashboardResponse = {
   summary: PeopleDashboardSummary;
+  byNationality: PeopleByNationalityPoint[];
+  researchersWithoutNationality: number;
+  byPublicationType: PublicationsByTypePoint[];
+  byAffiliation: PeopleByAffiliationPoint[];
 };
 
 export type PeopleDashboardErrorResponse = {

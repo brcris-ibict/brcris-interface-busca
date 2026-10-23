@@ -167,6 +167,8 @@
   "Researchers with publications": "Com produção",
   "Researchers with publications count": "{{value}} pesquisadores com ao menos uma publicação",
   "Distinct affiliations": "Afiliações distintas",
+  "Researchers by nationality": "Pesquisadores por nacionalidade",
+  "Without nationality": "Sem nacionalidade informada",
   "Researchers in research groups": "Em grupos de pesquisa",
   "Research group members and leaders": "{{members}} pesquisadores, dos quais {{leaders}} são líderes",
   "Breadcrumb panels": "Indicadores",
@@ -442,5 +444,8 @@
   "Share of level researchers (%)": "Pesquisadores do nível (%)",
   "Language filter not applied": "Filtro de idioma não aplicado",
   "Knowledge areas language ignored": "O cadastro de pesquisadores não informa o idioma das publicações; este gráfico ignora esse filtro.",
-  "Knowledge areas filters note": "Com filtros, conta pesquisadores com ao menos uma publicação no ano e tipo escolhidos e afiliados à instituição selecionada."
+  "Knowledge areas filters note": "Com filtros, conta pesquisadores com ao menos uma publicação no ano e tipo escolhidos e afiliados à instituição selecionada.",
+  "Distribution of researchers by affiliations": "Distribuição de pesquisadores por afiliações",
+  "Researchers distribution by affiliation": "Afiliações e quantidade de pesquisadores vinculados",
+  "Search by affiliation": "Buscar por afiliação..."
 }

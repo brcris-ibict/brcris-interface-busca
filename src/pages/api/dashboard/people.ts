@@ -18,7 +18,16 @@ type DocCountAggregation = {
   doc_count?: number;
 };
 
+type TermBucket = {
+  key: string | number;
+  doc_count: number;
+};
+
 type PeopleAggregations = {
+  by_nationality?: { buckets?: TermBucket[] };
+  without_nationality?: DocCountAggregation;
+  by_publication_type?: { buckets?: TermBucket[] };
+  by_affiliation?: { buckets?: TermBucket[] };
   with_orcid?: DocCountAggregation;
   with_publications?: DocCountAggregation;
   institutions?: { value?: number };
@@ -114,20 +123,57 @@ export default async function handler(
           },
         },
         group_leaders: { filter: { exists: { field: "leaderOf" } } },
+        // doc_count conta pesquisadores; cardinality em name subconta homônimos
+        by_nationality: {
+          terms: { field: "nationality", size: 200, order: { _count: "desc" } },
+        },
+        without_nationality: { missing: { field: "nationality" } },
+        by_publication_type: {
+          terms: { field: "authorOf.type", size: 50, order: { _count: "desc" } },
+        },
+        by_affiliation: {
+          terms: { field: "affiliation.name", size: 10000, order: { _count: "desc" } },
+        },
       },
     });
 
     const aggregations = response.aggregations as PeopleAggregations | undefined;
+    const total = getTotal(response.hits?.total);
 
     return res.status(200).json({
       summary: {
-        total: getTotal(response.hits?.total),
+        total,
         withOrcid: aggregations?.with_orcid?.doc_count ?? 0,
         withPublications: aggregations?.with_publications?.doc_count ?? 0,
         institutionsCount: aggregations?.institutions?.value ?? 0,
         inResearchGroup: aggregations?.in_research_group?.doc_count ?? 0,
         groupLeaders: aggregations?.group_leaders?.doc_count ?? 0,
       },
+      byNationality: (aggregations?.by_nationality?.buckets ?? [])
+        .map((bucket) => ({
+          nationality: String(bucket.key).trim(),
+          count: bucket.doc_count,
+        }))
+        .filter((item) => item.nationality),
+      researchersWithoutNationality: aggregations?.without_nationality?.doc_count ?? 0,
+      byPublicationType: (aggregations?.by_publication_type?.buckets ?? [])
+        .map((bucket) => ({
+          type: String(bucket.key).trim(),
+          count: bucket.doc_count,
+        }))
+        .filter((item) => item.type),
+      byAffiliation: (aggregations?.by_affiliation?.buckets ?? [])
+        .map((bucket, index) => {
+          const count = bucket.doc_count;
+          const share = total > 0 ? Number(((count / total) * 100).toFixed(2)) : 0;
+          return {
+            rank: index + 1,
+            affiliation: String(bucket.key).trim(),
+            count,
+            share,
+          };
+        })
+        .filter((item) => item.affiliation),
     });
   } catch (error: unknown) {
     if (error instanceof InvalidDashboardRequestError) {
