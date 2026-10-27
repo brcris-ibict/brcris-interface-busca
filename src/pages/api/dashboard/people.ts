@@ -28,6 +28,8 @@ type PeopleAggregations = {
   without_nationality?: DocCountAggregation;
   by_publication_type?: { buckets?: TermBucket[] };
   by_affiliation?: { buckets?: TermBucket[] };
+  by_year?: { buckets?: TermBucket[] };
+  identifiers?: { buckets?: Record<string, DocCountAggregation> };
   with_orcid?: DocCountAggregation;
   with_publications?: DocCountAggregation;
   institutions?: { value?: number };
@@ -134,11 +136,50 @@ export default async function handler(
         by_affiliation: {
           terms: { field: "affiliation.name", size: 10000, order: { _count: "desc" } },
         },
+        // authorOf.year está mapeado mas vazio; o ano vem em publicationDate ("YYYY")
+        by_year: {
+          terms: { field: "authorOf.publicationDate", size: 300, order: { _key: "asc" } },
+        },
+        identifiers: {
+          filters: {
+            filters: {
+              both: {
+                bool: {
+                  filter: [
+                    { exists: { field: "orcid" } },
+                    { exists: { field: "lattesId" } },
+                  ],
+                },
+              },
+              orcidOnly: {
+                bool: {
+                  filter: [{ exists: { field: "orcid" } }],
+                  must_not: [{ exists: { field: "lattesId" } }],
+                },
+              },
+              lattesOnly: {
+                bool: {
+                  filter: [{ exists: { field: "lattesId" } }],
+                  must_not: [{ exists: { field: "orcid" } }],
+                },
+              },
+              none: {
+                bool: {
+                  must_not: [
+                    { exists: { field: "orcid" } },
+                    { exists: { field: "lattesId" } },
+                  ],
+                },
+              },
+            },
+          },
+        },
       },
     });
 
     const aggregations = response.aggregations as PeopleAggregations | undefined;
     const total = getTotal(response.hits?.total);
+    const identifierBuckets = aggregations?.identifiers?.buckets ?? {};
 
     return res.status(200).json({
       summary: {
@@ -174,6 +215,28 @@ export default async function handler(
           };
         })
         .filter((item) => item.affiliation),
+      identifiers: {
+        both: identifierBuckets.both?.doc_count ?? 0,
+        orcidOnly: identifierBuckets.orcidOnly?.doc_count ?? 0,
+        lattesOnly: identifierBuckets.lattesOnly?.doc_count ?? 0,
+        none: identifierBuckets.none?.doc_count ?? 0,
+      },
+      activeResearchersByYear: (aggregations?.by_year?.buckets ?? [])
+        .map((bucket) => ({
+          year: String(bucket.key).trim(),
+          count: bucket.doc_count,
+        }))
+        .filter((item) => {
+          const numericYear = Number(item.year);
+          const currentYear = new Date().getFullYear();
+          return (
+            !Number.isNaN(numericYear) &&
+            numericYear >= 1960 &&
+            numericYear <= currentYear + 1 &&
+            item.count > 0
+          );
+        })
+        .sort((a, b) => Number(a.year) - Number(b.year)),
     });
   } catch (error: unknown) {
     if (error instanceof InvalidDashboardRequestError) {

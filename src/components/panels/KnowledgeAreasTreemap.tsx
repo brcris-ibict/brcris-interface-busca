@@ -33,23 +33,34 @@ type TreemapDatum = {
 
 type AreaStyle = { fill: string; border: string; text: string };
 
+import { BRCRIS_PALETTE } from "../../../utils/Utils";
+
 const VIEW_TOGGLES: { view: View; Icon: typeof LayoutGrid; labelKey: string }[] = [
   { view: "map", Icon: LayoutGrid, labelKey: "Map view" },
   { view: "list", Icon: List, labelKey: "List view" },
 ];
 
-// Paleta Okabe-Ito (segura para daltonismo); amarelo escurecido para a borda aparecer no fundo claro
+// Paleta oficial brCris e tons harmônicos para as 8 Grandes Áreas do CNPq
 const MAJOR_AREA_COLORS: Record<string, string> = {
-  "Ciências Exatas e da Terra": "#0072B2",
-  "Ciências Biológicas": "#009E73",
-  Engenharias: "#56B4E9",
-  "Ciências da Saúde": "#E69F00",
-  "Ciências Agrárias": "#B8A000",
-  "Ciências Sociais Aplicadas": "#CC79A7",
-  "Ciências Humanas": "#D55E00",
-  "Linguística, Letras e Artes": "#882255",
+  "Ciências Exatas e da Terra": BRCRIS_PALETTE.primary,   // #0284A0
+  "Ciências Biológicas": "#0d9488",                      // Teal harmônico
+  Engenharias: BRCRIS_PALETTE.darkBlue,                  // #071D41
+  "Ciências da Saúde": "#38bdf8",                        // Sky blue harmônico
+  "Ciências Agrárias": "#10b981",                        // Verde esmeralda
+  "Ciências Sociais Aplicadas": "#6366f1",               // Indigo
+  "Ciências Humanas": "#8B5CF6",                         // Violeta harmônico com lavender
+  "Linguística, Letras e Artes": "#EC4899",              // Pink harmônico com #FFD6E7
 };
-const FALLBACK_COLORS = ["#0072B2", "#009E73", "#E69F00", "#CC79A7", "#D55E00", "#56B4E9", "#882255", "#B8A000"];
+const FALLBACK_COLORS = [
+  BRCRIS_PALETTE.primary,
+  "#0d9488",
+  BRCRIS_PALETTE.darkBlue,
+  "#38bdf8",
+  "#10b981",
+  "#6366f1",
+  "#8B5CF6",
+  "#EC4899",
+];
 const OTHER_COLOR = "#9CA3AF";
 const DARK_TEXT = "#1f2937";
 // Fundo do card no tema escuro (--bg-card); o treemap ignora a transparência da cor
@@ -211,16 +222,33 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
     [t],
   );
 
+  const PATH_SEPARATOR = " / ";
+  const parentParts = useMemo(
+    () => (parent ? parent.split(PATH_SEPARATOR).map((p) => p.trim()) : []),
+    [parent],
+  );
+
   const openArea = useCallback((name: string) => {
-    pendingFocusRef.current = { parent: name, target: null };
-    setParent(name);
-  }, []);
+    const nextParent = parent ? `${parent}${PATH_SEPARATOR}${name}` : name;
+    pendingFocusRef.current = { parent: nextParent, target: null };
+    setParent(nextParent);
+  }, [parent]);
+
+  const goBackTo = useCallback((index: number) => {
+    if (index < 0) {
+      pendingFocusRef.current = { parent: null, target: parentParts[0] ?? null };
+      setParent(null);
+      return;
+    }
+    const nextParent = parentParts.slice(0, index + 1).join(PATH_SEPARATOR);
+    pendingFocusRef.current = { parent: nextParent, target: parentParts[index + 1] ?? null };
+    setParent(nextParent);
+  }, [parentParts]);
 
   const goBack = useCallback(() => {
     if (!parent) return;
-    pendingFocusRef.current = { parent: null, target: parent };
-    setParent(null);
-  }, [parent]);
+    goBackTo(parentParts.length - 2);
+  }, [parent, goBackTo, parentParts.length]);
 
   // Só move o foco quando o nível pedido terminou de carregar
   useEffect(() => {
@@ -243,14 +271,14 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
     if (!chart) return;
     const handleClick = (params: unknown) => {
       const item = (params as { data?: TreemapDatum }).data;
-      if (!item || item.isOther || parent) return;
+      if (!item || item.isOther) return;
       openArea(item.name);
     };
     chart.on("click", handleClick);
     return () => {
       chart.off("click", handleClick);
     };
-  }, [chart, parent, openArea]);
+  }, [chart, openArea]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (!parent) return;
@@ -342,7 +370,7 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
               total: item.groupedNames.length,
             })}<br/>${names}${more}`;
           }
-          const hint = level === 1 ? `<br/><em>${t("Click to see areas")}</em>` : "";
+          const hint = !item.isOther ? `<br/><em>${t("Click to see areas")}</em>` : "";
           return `<strong>${item.name}</strong><br/>${count}${hint}`;
         },
       },
@@ -357,7 +385,7 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
           roam: false,
           nodeClick: false,
           breadcrumb: { show: false },
-          cursor: level === 1 ? "pointer" : "default",
+          cursor: "pointer",
           itemStyle: { gapWidth: 3, borderWidth: 1, borderRadius: 4, borderColor: "transparent" },
           label: {
             show: true,
@@ -389,7 +417,6 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
     locale,
     t,
     totalWithArea,
-    level,
     levelLabel,
   ]);
 
@@ -476,7 +503,7 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
           <ol className="brcris-knowledge-areas__breadcrumb">
             <li>
               {parent ? (
-                <button type="button" onClick={goBack}>
+                <button type="button" onClick={() => goBackTo(-1)}>
                   {t("Major areas")}
                 </button>
               ) : (
@@ -485,13 +512,22 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
                 </span>
               )}
             </li>
-            {parent ? (
-              <li>
-                <span ref={currentLevelRef} tabIndex={-1} aria-current="page">
-                  {parent}
-                </span>
-              </li>
-            ) : null}
+            {parentParts.map((part, index) => {
+              const isLast = index === parentParts.length - 1;
+              return (
+                <li key={index}>
+                  {isLast ? (
+                    <span ref={currentLevelRef} tabIndex={-1} aria-current="page">
+                      {part}
+                    </span>
+                  ) : (
+                    <button type="button" onClick={() => goBackTo(index)}>
+                      {part}
+                    </button>
+                  )}
+                </li>
+              );
+            })}
           </ol>
         </nav>
       </div>
@@ -523,7 +559,7 @@ export default function KnowledgeAreasTreemap({ filters, height = 380, onLoading
                   const style = styleFor(item, index);
                   const pct = share(item.count, totalWithArea);
                   const name = displayName(item);
-                  const canOpen = level === 1 && !item.isOther;
+                  const canOpen = !item.isOther;
                   const content = (
                     <>
                       <span

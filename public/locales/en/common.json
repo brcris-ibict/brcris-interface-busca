@@ -444,5 +444,21 @@
   "Knowledge areas filters note": "With filters, it counts researchers with at least one publication in the chosen year and type and affiliated with the selected institution.",
   "Distribution of researchers by affiliations": "Distribution of researchers by affiliations",
   "Researchers distribution by affiliation": "Affiliations and number of linked researchers",
-  "Search by affiliation": "Search by affiliation..."
+  "Search by affiliation": "Search by affiliation...",
+  "Institutional specialization": "Institutional specialization (affiliation × major area)",
+  "Institutional specialization caption": "Number of researchers from each institution in each major knowledge area (CNPq), among the institutions with the most researchers.",
+  "Identifiers matrix": "Identifiers matrix (ORCID × Lattes)",
+  "Identifiers matrix caption": "Researchers registered with ORCID, with Lattes, with both, or with neither identifier.",
+  "With ORCID": "With ORCID",
+  "Without ORCID": "Without ORCID",
+  "With Lattes": "With Lattes",
+  "Without Lattes": "Without Lattes",
+  "Active researchers by year": "Active researchers by year",
+  "Active researchers caption": "Researchers with at least one publication in the respective year",
+  "Publishers listing": "Publishers list",
+  "Publishers listing caption": "{{totalLabel}} researchers with at least one publication, in alphabetical order · {{pageSize}} per page · {{pagesLabel}} pages",
+  "Search by researcher name": "Search by researcher name...",
+  "Main affiliation": "Main affiliation",
+  "Last publication": "Last publication",
+  "First publication": "First publication"
 }

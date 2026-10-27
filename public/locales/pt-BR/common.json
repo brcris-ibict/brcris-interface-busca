@@ -447,5 +447,21 @@
   "Knowledge areas filters note": "Com filtros, conta pesquisadores com ao menos uma publicação no ano e tipo escolhidos e afiliados à instituição selecionada.",
   "Distribution of researchers by affiliations": "Distribuição de pesquisadores por afiliações",
   "Researchers distribution by affiliation": "Afiliações e quantidade de pesquisadores vinculados",
-  "Search by affiliation": "Buscar por afiliação..."
+  "Search by affiliation": "Buscar por afiliação...",
+  "Institutional specialization": "Especialização institucional (afiliação × grande área)",
+  "Institutional specialization caption": "Quantidade de pesquisadores de cada instituição em cada grande área do conhecimento (CNPq), entre as instituições com mais pesquisadores.",
+  "Identifiers matrix": "Matriz de identificadores (ORCID × Lattes)",
+  "Identifiers matrix caption": "Pesquisadores cadastrados com ORCID, com Lattes, com ambos ou sem nenhum dos dois identificadores.",
+  "With ORCID": "Com ORCID",
+  "Without ORCID": "Sem ORCID",
+  "With Lattes": "Com Lattes",
+  "Without Lattes": "Sem Lattes",
+  "Active researchers by year": "Pesquisadores ativos por ano",
+  "Active researchers caption": "Pesquisadores com ao menos uma publicação no respectivo ano",
+  "Publishers listing": "Lista de publicadores",
+  "Publishers listing caption": "{{totalLabel}} pesquisadores com ao menos uma publicação, em ordem alfabética · {{pageSize}} por página · {{pagesLabel}} páginas",
+  "Search by researcher name": "Buscar por nome do pesquisador...",
+  "Main affiliation": "Afiliação principal",
+  "Last publication": "Última publicação",
+  "First publication": "Primeira publicação"
 }

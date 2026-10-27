@@ -1,16 +1,17 @@
 /**
  * Configurações de cores e estilos para os gráficos dos painéis
- *
- * Este arquivo contém funções e constantes para controlar cores e estilos dos gráficos dos painéis.
- *
- * As cores são usadas para definir as bordas e preenchimentos dos gráficos, e as funções
- * permitem personalizar esses estilos para diferentes tipos de dados.
- *
- * As constantes são usadas para definir as cores das bordas e preenchimentos dos gráficos,
- * e as funções são usadas para gerar as cores de fundo a partir das bordas.
+ * Paleta oficial brCris: #0284A0, #071D41, #FFD6E7, #D9D2FF, #CFE7FF
  */
 
-export const PRIMARY_CHART_COLOR = "#0284a0";
+export const BRCRIS_PALETTE = {
+  primary: "#0284A0",
+  darkBlue: "#071D41",
+  pink: "#FFD6E7",
+  lavender: "#D9D2FF",
+  softBlue: "#CFE7FF",
+} as const;
+
+export const PRIMARY_CHART_COLOR = BRCRIS_PALETTE.primary;
 
 // Função utilitária para transformar uma cor hex em rgba, útil para brincar com transparência nos gráficos
 export function hexToRgba(hex: string, alpha: number) {
@@ -22,18 +23,15 @@ export function hexToRgba(hex: string, alpha: number) {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
-// Essas são as cores das bordas usadas nos gráficos dos painéis (por exemplo, idioma, instituição, etc.)
-// A ordem e as repetições ajudam na variedade visual dos gráficos que podem ter mais fatias/barras do que cores únicas
+// Cores de bordas/séries para gráficos categóricos (nacionalidade, instituição, idioma)
 export const PANEL_CHART_BORDERS = [
-  "#67c5d8",
-  "#6c757d",
+  BRCRIS_PALETTE.primary, // #0284A0
+  BRCRIS_PALETTE.darkBlue, // #071D41
+  "#8E7DFF", // Variante de borda do lavender #D9D2FF
+  "#E07A9F", // Variante de borda do pink #FFD6E7
+  "#4A90E2", // Variante de borda do softBlue #CFE7FF
   "#0ea5b7",
-  "#bbbbbb",
-  "#0284a0",
-  "#04132a",
-  "#67c5d8",
   "#6c757d",
-  "#0ea5b7",
   "#bbbbbb",
 ];
 
@@ -48,7 +46,18 @@ export const PANEL_CHART_FILLS = PANEL_CHART_BORDERS.map((color) =>
 // Por compatibilidade: ainda tem gráfico que lê essa constante antiga
 export const PANEL_CHART_COLORS = PANEL_CHART_FILLS;
 
-// As cores das bordas dos tipos de publicação, pra ficarem iguais à página de pessoas
+// Cores dos tipos de publicação alinhadas com a paleta brCris e com PersonProduction.tsx
+export const PUBLICATION_TYPE_COLORS: Record<string, string> = {
+  Artigo: BRCRIS_PALETTE.lavender, // #D9D2FF
+  "Artigo de Conferência": BRCRIS_PALETTE.pink, // #FFD6E7
+  "Capítulo de Livro": BRCRIS_PALETTE.softBlue, // #CFE7FF
+  Livro: "#D7F5E3",
+  Dissertação: "#FFF0C2",
+  Tese: "#FFE3C8",
+  "Conjunto de Dados": "#CFF5F6",
+  Preprint: "#E3E7F0",
+};
+
 export const PUBLICATION_TYPE_BORDERS: Record<string, string> = {
   Artigo: "#B8A9FF",
   "Artigo de Conferência": "#FF9FC5",
@@ -79,8 +88,9 @@ export function getPublicationTypeStyle(
   mode: ChartColorMode = "light",
 ) {
   const borderColor = PUBLICATION_TYPE_BORDERS[type] ?? "#999999";
+  const lightColor = PUBLICATION_TYPE_COLORS[type] ?? borderColor;
   return {
-    color: mode === "dark" ? hexToRgba(borderColor, PUBLICATION_TYPE_FILL_ALPHA) : borderColor,
+    color: mode === "dark" ? hexToRgba(borderColor, PUBLICATION_TYPE_FILL_ALPHA) : lightColor,
     borderColor,
   };
 }
@@ -98,10 +108,9 @@ export function getPanelSeriesStyle(
   };
 }
 
-// Escala sequencial monocromática (tom primário) para roscas/pizzas: só a intensidade varia.
-// Extremos mantêm ≥ 3:1 com o fundo do card (WCAG 1.4.11) e ≥ 4,5:1 com o texto dentro da fatia.
+// Escala sequencial calibrada entre o azul escuro brCris (#071D41) e o tom primário (#0284A0)
 const SEQUENTIAL_SCALE: Record<ChartColorMode, { from: string; to: string; text: string; separator: string }> = {
-  light: { from: "#013640", to: "#0a7f98", text: "#ffffff", separator: "#fefefe" },
+  light: { from: BRCRIS_PALETTE.darkBlue, to: BRCRIS_PALETTE.primary, text: "#ffffff", separator: "#fefefe" },
   dark: { from: "#d4f1f7", to: "#1497b1", text: "#111827", separator: "#171b22" },
 };
 

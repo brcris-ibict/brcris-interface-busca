@@ -7,6 +7,10 @@ import NationalityDistribution from "../../components/panels/NationalityDistribu
 import KnowledgeAreasTreemap from "../../components/panels/KnowledgeAreasTreemap";
 import TypeDistribution from "../../components/panels/TypeDistribution";
 import AffiliationDistributionTable from "../../components/panels/AffiliationDistributionTable";
+import SpecializationHeatmap from "../../components/panels/SpecializationHeatmap";
+import IdentifiersMatrix from "../../components/panels/IdentifiersMatrix";
+import ActiveResearchersByYear from "../../components/panels/ActiveResearchersByYear";
+import PublishersListTable from "../../components/panels/PublishersListTable";
 import PageHeader from "../../components/panels/PageHeader";
 import PeopleBigNumbers from "../../components/panels/PeopleBigNumbers";
 import PeopleFilters from "../../components/panels/PeopleFilters";
@@ -105,6 +109,30 @@ export default function PeopleDashboard() {
                   loading={loading}
                   error={Boolean(error)}
                 />
+              </div>
+              <div className="col-12">
+                <SpecializationHeatmap
+                  filters={filters}
+                  height={500}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <IdentifiersMatrix
+                  data={data?.identifiers}
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <ActiveResearchersByYear
+                  data={data?.activeResearchersByYear ?? []}
+                  loading={loading}
+                  error={Boolean(error)}
+                  height={380}
+                />
+              </div>
+              <div className="col-12">
+                <PublishersListTable />
               </div>
             </div>
           </div>

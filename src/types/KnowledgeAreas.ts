@@ -8,7 +8,7 @@ export type KnowledgeAreaItem = {
 };
 
 export type KnowledgeAreasResponse = {
-  level: 1 | 2;
+  level: number;
   parent: string | null;
   totalWithArea: number;
   // Filtros ativos que o cadastro de pesquisadores não permite aplicar (ex.: idioma)

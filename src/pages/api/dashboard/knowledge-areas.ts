@@ -57,9 +57,6 @@ function readSingle(value: string | string[] | undefined, name: string): string 
 
 function readRequest(req: NextApiRequest) {
   const area = readSingle(req.query.area, "area");
-  if (area.includes(PATH_SEPARATOR)) {
-    throw new InvalidKnowledgeAreaRequestError("Informe apenas a grande area.");
-  }
   const filters = Object.fromEntries(
     FILTER_KEYS.map((key) => [key, readSingle(req.query[key], key)]),
   ) as PublicationsDashboardFilters;
@@ -125,11 +122,16 @@ async function listCandidateNames(
   );
 
   const buckets = (response.aggregations as PathAggregations | undefined)?.paths?.buckets ?? [];
-  const depth = parent ? 1 : 0;
+  const parentParts = parent ? parent.split(PATH_SEPARATOR).map((p) => p.trim()) : [];
+  const depth = parentParts.length;
   const weights = new Map<string, number>();
+
   for (const bucket of buckets) {
     const parts = bucket.key.split(PATH_SEPARATOR).map((part) => part.trim());
-    if (parent && parts[0] !== parent) continue;
+    if (parent) {
+      const matchesParent = parentParts.every((p, idx) => parts[idx] === p);
+      if (!matchesParent) continue;
+    }
     const name = parts[depth];
     if (!name) continue;
     weights.set(name, (weights.get(name) ?? 0) + bucket.doc_count);
@@ -171,7 +173,8 @@ async function fetchLevel(
   parent: string | null,
   filters: PublicationsDashboardFilters,
 ): Promise<KnowledgeAreasResponse> {
-  const level = parent ? 2 : 1;
+  const parentParts = parent ? parent.split(PATH_SEPARATOR).map((p) => p.trim()) : [];
+  const level = parentParts.length + 1;
   const ignoredFilters = UNSUPPORTED_FILTERS.filter((key) => filters[key]);
   const names = await listCandidateNames(index, parent, filters);
   if (names.length === 0) {
