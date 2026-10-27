@@ -240,8 +240,13 @@ function VisGraph() {
     const indexesName = nodes.map((node) => node.index);
     ElasticSearchStatsService(indexesName)
       .then((res) => {
-        localStorage.setItem("indexesStats", JSON.stringify(res));
-        setIndexesStats(res);
+        const stats = Array.isArray(res)
+          ? res
+          : res && typeof res === "object" && "index" in res
+            ? [res]
+            : [];
+        localStorage.setItem("indexesStats", JSON.stringify(stats));
+        setIndexesStats(stats);
       })
       .catch((err) => {
         console.error(err);
@@ -249,10 +254,11 @@ function VisGraph() {
   }, []);
 
   useEffect(() => {
+    const stats = Array.isArray(indexesStats) ? indexesStats : [];
     const newNodes: IndexNode[] = [];
     // const maxSizeOfNode = Math.max(...indexesStats.map((item) => item['docs.count']));
     for (let i = 0; i < nodes.length; i++) {
-      const indexStat = indexesStats.find(
+      const indexStat = stats.find(
         (item) => item.index === nodes[i].index,
       );
       if (indexStat) {

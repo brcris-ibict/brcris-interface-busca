@@ -41,8 +41,20 @@ import {
   buildPublicationRecord,
   collectPublicationOrgIds,
   csvHeaderLine,
+  EXPORT_PROFILE_ID,
+  toPublicationJsonRecord,
   upsertPersonsFromSource,
 } from "../../services/publicationCsvProfile";
+import {
+  PUBLICATION_JSONLD_CONTEXT,
+  buildDcatJsonLd,
+  buildDuplicatesCsv,
+  buildDuplicatesJson,
+  buildQualityCsv,
+  buildQualityJson,
+  createQualityAccumulator,
+  publicationJsonLdNode,
+} from "../../services/publicationExportExtras";
 import logger from "../../services/Logger";
 import { googleCaptchaValidation } from "./googleCaptchaValidation";
 import { sendMail } from "./sendMail";
@@ -84,7 +96,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
         resultFields,
         typeArq,
         includeId: true,
-        csvProfile: "epic-v13",
+        csvProfile: EXPORT_PROFILE_ID,
       }),
     );
     const zipFilePath = `${process.env.DOWNLOAD_FOLDER_PATH}/${typeArq}${fileName}.zip`;
@@ -294,9 +306,16 @@ async function writePublicationExportFiles(
   const personsPath = zipFilePath.replace(".zip", `-persons.${extension}`);
   const publicationsStream = fs.createWriteStream(publicationsPath);
   const authorshipsStream = fs.createWriteStream(authorshipsPath);
+  const jsonLdPath = zipFilePath.replace(".zip", "-publications.jsonld");
+  const jsonLdStream = fs.createWriteStream(jsonLdPath);
   const persons: Map<string, PersonCsvFields> = new Map();
+  const quality = createQualityAccumulator();
   let firstPublication = true;
   let firstAuthorship = true;
+  let firstJsonLd = true;
+  jsonLdStream.write(
+    `{"@context":${JSON.stringify(PUBLICATION_JSONLD_CONTEXT)},"@graph":[`,
+  );
 
   if (format === "csv") {
     publicationsStream.write(csvHeaderLine(PUBLICATION_CSV_HEADERS));
@@ -353,13 +372,25 @@ async function writePublicationExportFiles(
       }
       applyJournalIdentifiers(source, identifiersByJournalId);
       upsertPersonsFromSource(source, peopleById, persons);
+      const flat = buildPublicationRecord(source, rorByOrgId, hit._id);
+      const jsonRecord = toPublicationJsonRecord(flat);
+      const authorshipRows = buildAuthorshipRecords(
+        source,
+        peopleById,
+        hit._id,
+      );
+      quality.addPublication(flat);
+      for (const row of authorshipRows) quality.addAuthorship(row);
+      if (!firstJsonLd) jsonLdStream.write(",");
+      firstJsonLd = false;
+      jsonLdStream.write(
+        JSON.stringify(publicationJsonLdNode(jsonRecord, authorshipRows)),
+      );
       if (format === "json") {
         if (!firstPublication) publicationsStream.write(",");
         firstPublication = false;
-        publicationsStream.write(
-          JSON.stringify(buildPublicationRecord(source, rorByOrgId, hit._id)),
-        );
-        for (const row of buildAuthorshipRecords(source, peopleById, hit._id)) {
+        publicationsStream.write(JSON.stringify(jsonRecord));
+        for (const row of authorshipRows) {
           if (!firstAuthorship) authorshipsStream.write(",");
           firstAuthorship = false;
           authorshipsStream.write(JSON.stringify(row));
@@ -390,8 +421,10 @@ async function writePublicationExportFiles(
       publicationsStream.write("]");
       authorshipsStream.write("]");
     }
+    jsonLdStream.write("]}");
     await endWriteStream(publicationsStream);
     await endWriteStream(authorshipsStream);
+    await endWriteStream(jsonLdStream);
 
     const personsStream = fs.createWriteStream(personsPath);
     if (format === "json") {
@@ -436,6 +469,27 @@ async function writePublicationExportFiles(
         : buildProvenanceCsv(generatedAt),
       "utf8",
     );
+    const duplicatesPath = zipFilePath.replace(
+      ".zip",
+      `-duplicates.${extension}`,
+    );
+    const qualityPath = zipFilePath.replace(".zip", `-quality.${extension}`);
+    const dcatPath = zipFilePath.replace(".zip", "-dcat.jsonld");
+    fs.writeFileSync(
+      duplicatesPath,
+      format === "json"
+        ? buildDuplicatesJson(quality.duplicates())
+        : buildDuplicatesCsv(quality.duplicates()),
+      "utf8",
+    );
+    fs.writeFileSync(
+      qualityPath,
+      format === "json"
+        ? buildQualityJson(quality.metrics())
+        : buildQualityCsv(quality.metrics()),
+      "utf8",
+    );
+    fs.writeFileSync(dcatPath, buildDcatJsonLd(generatedAt), "utf8");
 
     return [
       { path: publicationsPath, name: `publications.${extension}` },
@@ -443,10 +497,15 @@ async function writePublicationExportFiles(
       { path: personsPath, name: `persons.${extension}` },
       { path: dictionaryPath, name: `dictionary.${extension}` },
       { path: provenancePath, name: `provenance.${extension}` },
+      { path: duplicatesPath, name: `duplicates.${extension}` },
+      { path: qualityPath, name: `quality.${extension}` },
+      { path: jsonLdPath, name: "publications.jsonld" },
+      { path: dcatPath, name: "dcat.jsonld" },
     ];
   } catch (err) {
     publicationsStream.destroy();
     authorshipsStream.destroy();
+    jsonLdStream.destroy();
     throw err;
   }
 }

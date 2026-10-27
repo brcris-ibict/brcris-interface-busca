@@ -75,12 +75,22 @@ export default function App() {
   ];
 
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const skipInitialSearchFocus = useRef(true);
   const [term, setTerm] = useState("");
   const [docsCount, setDocsCount] = useState("");
   const [indexLabel, setIndexLabel] = useState(indexes[0].label);
 
   useEffect(() => {
-    inputRef?.current?.focus();
+    if (skipInitialSearchFocus.current) {
+      skipInitialSearchFocus.current = false;
+      window.setTimeout(() => {
+        if (document.activeElement === inputRef.current) {
+          inputRef.current?.blur();
+        }
+      }, 0);
+    } else {
+      inputRef.current?.focus();
+    }
 
     localStorage.removeItem(indexLabel);
 
@@ -101,13 +111,14 @@ export default function App() {
       </Head>
 
       <div className={`container ${styles.home}`}>
+        <h1 className={styles.brandTitle}>{t("BrCris")}</h1>
+
         <div className="search-card">
-          <h1>
+          <h2>
             {t(
               "Search in the Brazilian Scientific Research Information Ecosystem",
-            )}{" "}
-            (BrCris)
-          </h1>
+            )}
+          </h2>
 
           <form
             className="form-search"
@@ -143,7 +154,6 @@ export default function App() {
                 id="home-search"
                 ref={inputRef}
                 name="q"
-                autoFocus
                 type="search"
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
@@ -174,8 +184,6 @@ export default function App() {
           </div>
 
           <div className={styles.info}>
-            <h1>{t("BrCris")}</h1>
-
             <p className="card-text text-left">
               {t(
                 "The Brazilian Scientific Research Information Ecosystem, BrCris, is an aggregator platform that allows retrieving, certifying and visualizing data and information related to the various actors who work in scientific research in the Brazilian context.",
