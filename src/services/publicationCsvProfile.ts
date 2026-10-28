@@ -1,7 +1,8 @@
 ﻿import {
-  formatPublicationTypesExplicit,
   formatPublicationYearsExplicit,
+  getPublicationTypes,
 } from "../../utils/Utils";
+import { mapTypeToCoar } from "./publicationCoar";
 import type { PersonCsvFields } from "./enrichPublicationOrcid";
 import { emptyPersonFields } from "./enrichPublicationOrcid";
 import { collectOrgIds, mapOrgRors } from "./enrichPublicationOrg";
@@ -17,6 +18,8 @@ import {
   getAuthorItems,
 } from "./JsonToCsv";
 
+export const EXPORT_PROFILE_ID = "epic-v14";
+
 export const PUBLICATION_CSV_HEADERS = [
   "id",
   "brcrisId",
@@ -30,6 +33,7 @@ export const PUBLICATION_CSV_HEADERS = [
   "keywords",
   "publicationDate",
   "type",
+  "type_coar",
   "journal",
   "journal_id",
   "issn",
@@ -111,7 +115,7 @@ function isThesisOrDissertation(types: string): boolean {
     const normalized = item.trim().toLowerCase();
     return (
       normalized === "tese" ||
-      normalized === "dissertaÃ§Ã£o" ||
+      normalized === "dissertação" ||
       normalized === "dissertacao" ||
       normalized === "doctoral thesis" ||
       normalized === "master thesis" ||
@@ -150,6 +154,15 @@ export type PublicationRecord = Record<
   string
 >;
 
+export type PublicationJsonRecord = Omit<
+  PublicationRecord,
+  "publicationDate" | "type" | "type_coar"
+> & {
+  publicationDate: string[];
+  type: string[];
+  type_coar: string[];
+};
+
 export type AuthorshipRecord = {
   publication_id: string;
   position: number;
@@ -168,7 +181,8 @@ export function buildPublicationRecord(
   rorByOrgId: Map<string, string>,
   fallbackId?: string,
 ): PublicationRecord {
-  const types = formatPublicationTypesExplicit(source.type);
+  const typeList = getPublicationTypes(source.type);
+  const types = typeList.join("|");
   const thesis = isThesisOrDissertation(types);
   const orgNames = formatEntityLabels(source.sponsorOrgUnit);
   const orgIds = formatEntityIds(source.sponsorOrgUnit);
@@ -189,6 +203,7 @@ export function buildPublicationRecord(
       formatPublicationYearsExplicit(source.publicationDate) ||
       formatScalarList(source.publicationDate),
     type: types,
+    type_coar: typeList.map((type) => mapTypeToCoar(type)).filter(Boolean).join("|"),
     journal: formatEntityLabels(source.journal),
     journal_id: formatEntityIds(source.journal),
     issn: formatScalarList(source.issn),
@@ -211,6 +226,22 @@ export function buildPublicationRecord(
     degreeDate: formatScalarList(source.degreeDate),
     isbn: formatScalarList(source.isbn),
     license: formatScalarList(source.license),
+  };
+}
+
+function splitList(value: string): string[] {
+  return value ? value.split("|") : [];
+}
+
+export function toPublicationJsonRecord(
+  record: PublicationRecord,
+): PublicationJsonRecord {
+  const type = splitList(record.type);
+  return {
+    ...record,
+    publicationDate: splitList(record.publicationDate),
+    type,
+    type_coar: type.map((item) => mapTypeToCoar(item)),
   };
 }
 
@@ -252,14 +283,14 @@ export function buildAuthorshipRecords(
     });
   };
 
-  getAuthorItems(source).forEach((item, index) => {
+  getAuthorItems(source).forEach((item) => {
     const personId = agentId(item);
     const person = personId ? peopleById.get(personId) : undefined;
     const name = person?.name || agentName(item);
     if (!name && !personId) return;
     rows.push({
       publication_id: pubId,
-      position: index + 1,
+      position: rows.length + 1,
       person_id: personId,
       name,
       orcid: person?.orcid || "",
@@ -364,8 +395,9 @@ const DICTIONARY_ROWS: DictionaryRow[] = [
   { file: "publications.csv", field: "abstract", meaning: "Resumo", format: "string", obligation: "recomendado", cardinality: "0..n |", authority: "BrCris" },
   { file: "publications.csv", field: "language", meaning: "Idioma", format: "string", obligation: "recomendado", cardinality: "0..n |", authority: "BrCris" },
   { file: "publications.csv", field: "keywords", meaning: "Palavras-chave", format: "string", obligation: "recomendado", cardinality: "0..n |", authority: "BrCris" },
-  { file: "publications.csv", field: "publicationDate", meaning: "Ano(s) de publicacao sem eleger um unico", format: "YYYY", obligation: "recomendado", cardinality: "0..n |", authority: "BrCris; nao distingue online vs impresso" },
-  { file: "publications.csv", field: "type", meaning: "Tipo documental; registro com tipo composto nao e excluido", format: "string", obligation: "recomendado", cardinality: "0..n |", authority: "BrCris (nao mapeado para COAR nesta versao)" },
+  { file: "publications.csv", field: "publicationDate", meaning: "Ano(s) de publicacao sem eleger um unico. CSV separa por |. JSON usa lista", format: "YYYY", obligation: "recomendado", cardinality: "0..n", authority: "BrCris; nao distingue online vs impresso" },
+  { file: "publications.csv", field: "type", meaning: "Tipo documental BrCris. CSV separa por |. JSON usa lista", format: "string", obligation: "recomendado", cardinality: "0..n", authority: "BrCris" },
+  { file: "publications.csv", field: "type_coar", meaning: "URI COAR do tipo. CSV traz so os mapeados, na ordem de type. JSON alinha com type e deixa vazio quando nao ha mapa", format: "URI", obligation: "recomendado", cardinality: "0..n", authority: "COAR Resource Type Vocabulary" },
   { file: "publications.csv", field: "journal", meaning: "Titulo do periodico", format: "string", obligation: "condicional", cardinality: "0..n |", authority: "indice de periodicos BrCris" },
   { file: "publications.csv", field: "journal_id", meaning: "Identificador do periodico", format: "string", obligation: "condicional", cardinality: "0..n |", authority: "BrCris" },
   { file: "publications.csv", field: "issn", meaning: "ISSN impresso quando distinguivel; senao ISSN do periodico", format: "ISSN", obligation: "recomendado", cardinality: "0..n |", authority: "ISSN International Centre; join no indice de periodicos" },
@@ -407,6 +439,13 @@ const DICTIONARY_ROWS: DictionaryRow[] = [
   { file: "persons.csv", field: "affiliation", meaning: "Afiliacao atual da pessoa", format: "string", obligation: "recomendado", cardinality: "0..n |", authority: "BrCris; nao temporal" },
   { file: "persons.csv", field: "affiliation_id", meaning: "Id da instituicao de afiliacao atual", format: "string", obligation: "recomendado", cardinality: "0..n |", authority: "BrCris" },
   { file: "persons.csv", field: "affiliation_ror", meaning: "ROR da afiliacao atual", format: "ROR", obligation: "recomendado", cardinality: "0..n |", authority: "ROR" },
+  { file: "duplicates.csv", field: "publication_id", meaning: "Publicacao candidata a duplicata dentro desta exportacao", format: "string", obligation: "obrigatorio", cardinality: "1", authority: "BrCris" },
+  { file: "duplicates.csv", field: "match", meaning: "Criterio do grupo: title ou doi", format: "enum", obligation: "obrigatorio", cardinality: "1", authority: "BrCris" },
+  { file: "duplicates.csv", field: "key", meaning: "Titulo normalizado ou DOI que formou o grupo", format: "string", obligation: "obrigatorio", cardinality: "1", authority: "BrCris" },
+  { file: "duplicates.csv", field: "group_size", meaning: "Quantidade de publicacoes no grupo. Nao funde registros nem registra versao", format: "inteiro", obligation: "obrigatorio", cardinality: "1", authority: "BrCris" },
+  { file: "quality.csv", field: "metric", meaning: "Nome da metrica de qualidade desta exportacao", format: "string", obligation: "obrigatorio", cardinality: "1", authority: "BrCris" },
+  { file: "quality.csv", field: "value", meaning: "Contagem ou cobertura no formato parte/total", format: "string", obligation: "obrigatorio", cardinality: "1", authority: "BrCris" },
+  { file: "quality.csv", field: "meaning", meaning: "O que a metrica mede", format: "string", obligation: "obrigatorio", cardinality: "1", authority: "BrCris" },
 ];
 
 function dictionaryRowsForFormat(
@@ -460,9 +499,9 @@ function provenanceEntries(generatedAt: string, dictionaryFile: string) {
   return [
     ["generated_at", generatedAt],
     ["source", "BrCris / IBICT"],
-    ["export_profile", "epic-v13"],
+    ["export_profile", EXPORT_PROFILE_ID],
     ["license", "CC BY-ND 3.0"],
-    ["formats", "csv|json"],
+    ["formats", "csv|json|jsonld"],
     ["multi_value_separator", "|"],
     ["empty_value", "Celula vazia = sem valor; nao preenche placeholder"],
     [
@@ -471,7 +510,7 @@ function provenanceEntries(generatedAt: string, dictionaryFile: string) {
     ],
     [
       "not_in_index",
-      "Fora do CSV por cobertura 0: handleId, capesId, bdtdId, program, researchArea, rights, eissn, conference. Tambem fora do escopo: banca, afiliacao temporal, edicao/local de evento, versoes/duplicatas, COAR, DCAT/PROV-O, JSON-LD/RDF",
+      "Fora do CSV por cobertura 0: conference, handleId, capesId, bdtdId, program, researchArea, rights, eissn. Tambem fora do escopo: banca, afiliacao temporal, edicao/local de evento e relacao de versao. duplicates marca candidatos por titulo ou DOI, sem fundir registros",
     ],
   ] as const;
 }

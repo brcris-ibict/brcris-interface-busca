@@ -60,13 +60,14 @@ function Navbar() {
             className="navbar-brand"
             href="https://www.gov.br/ibict/pt-br"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
+            aria-label={t("Visit the Ibict website (opens in a new tab)")}
           >
             <picture className="navbar-logo">
               <img
                 className="img-fluid ibict"
                 src={ibictLogoSrc}
-                alt="logo do ibict"
+                alt=""
               />
             </picture>
           </a>
