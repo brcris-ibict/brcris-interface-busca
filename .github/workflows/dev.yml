@@ -29,6 +29,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          check-latest: true
 
       - name: Run deploy
         run: sh scripts/deploy.sh
