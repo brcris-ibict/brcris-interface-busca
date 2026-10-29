@@ -22,6 +22,11 @@
   border-color: var(--border-dark-color);
 }
 
+.updateTrigger:focus-visible {
+  outline: 2px solid #01586b;
+  outline-offset: 3px;
+}
+
 .updateTriggerContent {
   display: flex;
   align-items: center;
@@ -31,7 +36,7 @@
 
 .updateTriggerContent svg {
   flex-shrink: 0;
-  color: var(--contact-accent);
+  color: #01586b;
 }
 
 .updateTriggerText {
@@ -43,13 +48,23 @@
 }
 
 .updateTriggerText strong {
-  color: var(--contact-accent);
+  color: #01586b;
   font-weight: 700;
 }
 
 .updateTriggerChevron {
   flex-shrink: 0;
-  color: var(--contact-accent);
+  color: #01586b;
+}
+
+:global(:root[data-theme="dark"]) .updateTrigger:focus-visible {
+  outline-color: #67c5d8;
+}
+
+:global(:root[data-theme="dark"]) .updateTriggerContent svg,
+:global(:root[data-theme="dark"]) .updateTriggerText strong,
+:global(:root[data-theme="dark"]) .updateTriggerChevron {
+  color: #67c5d8;
 }
 
 .modalBackdrop {

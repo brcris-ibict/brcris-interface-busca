@@ -200,7 +200,11 @@ export default function App() {
                 gap: "12px",
               }}
             >
-              <Link href="/about" aria-label={t("Learn more about BrCris")}>
+              <Link
+                className={styles.moreLink}
+                href="/about"
+                aria-label={t("Learn more about BrCris")}
+              >
                 {t("Learn more")}
               </Link>
               <DataUpdateModal />
