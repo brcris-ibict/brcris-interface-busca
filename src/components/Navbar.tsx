@@ -102,7 +102,7 @@ function Navbar() {
               const isActive = isNavItemActive(href);
 
               return (
-                <li className="nav-item me-2" role="presentation" key={href}>
+                <li className="nav-item me-2" key={href}>
                   <Link
                     href={href}
                     className={getNavLinkClassName(href)}
@@ -113,7 +113,7 @@ function Navbar() {
                 </li>
               );
             })}
-            <li className="nav-item me-2" role="presentation">
+            <li className="nav-item me-2">
               <div className={dropdownStyle.dropdown}>
                 <div className={dropdownStyle.flexCenter}>
                   <a href="#" className="nav-link d-flex align-items-center">
@@ -151,7 +151,7 @@ function Navbar() {
                 </div>
               </div>
             </li>
-            <li className="nav-item me-2" role="presentation">
+            <li className="nav-item me-2">
               <div className={dropdownStyle.dropdown}>
                 <div className={dropdownStyle.flexCenter}>
                   <button
