@@ -113,7 +113,7 @@ export default function Dashboards() {
               </Link>
             </div>
             <div className="card text-center p-2">
-              <Link href="/dashboards/programs">
+              <Link href="/dashboards/software">
                 <h2>{t("Software")}</h2>
                 <FileCode width={128} height={128} />
                 <div className="card-body">

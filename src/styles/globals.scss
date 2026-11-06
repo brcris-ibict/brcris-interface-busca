@@ -3357,6 +3357,15 @@ h3.popover-header a {
     height: 100%;
     border-radius: inherit;
   }
+
+  &.is-stacked {
+    display: flex;
+    gap: 1px;
+
+    span {
+      border-radius: 0;
+    }
+  }
 }
 
 .brcris-knowledge-areas__note {
