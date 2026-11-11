@@ -18,7 +18,7 @@ O BrCris (Ecossistema de Informação da Pesquisa Científica Brasileira) é uma
 ## 📦 Instalação e Configuração
 
 Pré-requisitos
-Certifique-se de ter o Node.js e o Yarn instalados em sua máquina.
+Certifique-se de ter o Node.js e o npm instalados em sua máquina.
 
 Clone o repositório:
 
@@ -30,7 +30,7 @@ Instale as dependências:
 
 ```bash
 cd brcris-interface-busca
-yarn install
+npm ci
 ```
 
 Crie um arquivo .env na raiz do projeto e configure as variáveis de ambiente necessárias de acordo com o .env.example.
@@ -38,7 +38,7 @@ Crie um arquivo .env na raiz do projeto e configure as variáveis de ambiente ne
 Inicie o servidor de desenvolvimento:
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 Acesse o projeto em http://localhost:3000.
