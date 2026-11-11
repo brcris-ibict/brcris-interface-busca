@@ -1,15 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "next-i18next";
-import type { EChartsOption } from "echarts";
+import type { ECharts, EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
 import { ChartBar, ChartPie, Plus, RotateCcw } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByLanguagePoint } from "../../types/PublicationsDashboard";
+import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
 import {
   PRIMARY_CHART_COLOR,
-  getPanelSeriesStyle,
-  hexToRgba,
+  chartFillColor,
+  MISSING_SLICE_COLOR,
+  getSequentialSliceStyle,
 } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
@@ -37,10 +39,8 @@ type Props = {
   height?: number;
 };
 
-// Altura das linhas do gráfico de barras
-// Existe porque o gráfico de barras é scrollável
-// Está relacionada a função handleLoadMore
-const BAR_ROW_HEIGHT = 52;
+// Dez barras cabem sem scroll; ao carregar mais, o gráfico ultrapassa a área e rola.
+const BAR_ROW_HEIGHT = 36;
 
 // Quantidade de itens visíveis por página
 const PAGE_SIZE = 10;
@@ -105,6 +105,33 @@ export default function LanguageDistribution({
   const { resolvedTheme } = useTheme();
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const chartRef = useRef<ECharts | null>(null);
+
+  const handleChartReady = useCallback((chart: ECharts | null) => {
+    chartRef.current = chart;
+  }, []);
+
+  const exportRows = useMemo(() => {
+    const rows = data.map((item) => ({
+      language: item.language,
+      count: item.count,
+    }));
+    if (publicationsWithoutLanguage > 0) {
+      rows.push({
+        language: t("Without linked language"),
+        count: publicationsWithoutLanguage,
+      });
+    }
+    return rows;
+  }, [data, publicationsWithoutLanguage, t]);
+
+  const exportColumns = useMemo(
+    () => [
+      { key: "language", header: t("Language") },
+      { key: "count", header: t("Publications") },
+    ],
+    [t],
+  );
 
   // Atualiza a quantidade de itens visíveis quando os dados mudam
   useEffect(() => {
@@ -153,7 +180,7 @@ export default function LanguageDistribution({
     // Construção do gráfico de pizza
     if (chartKind === "pie") {
       const withoutLanguageLabel = t("Without linked language");
-      const withoutLanguageColor = resolvedTheme === "dark" ? "#6b7280" : "#9ca3af";
+      const withoutLanguageColor = MISSING_SLICE_COLOR[resolvedTheme];
       const { series: pieSeriesData, total } = buildLanguagePieSeries(
         data,
         (language) => t(language),
@@ -239,15 +266,10 @@ export default function LanguageDistribution({
                   },
                 };
               }
-              const style = getPanelSeriesStyle(index);
               return {
                 name: item.name,
                 value: item.value,
-                itemStyle: {
-                  color: style.color,
-                  borderColor: style.borderColor,
-                  borderWidth: 1,
-                },
+                itemStyle: getSequentialSliceStyle(index, pieSeriesData.length, resolvedTheme),
               };
             }),
           },
@@ -290,10 +312,10 @@ export default function LanguageDistribution({
         {
           type: "bar",
           data: chartData.map((item) => item.count).reverse(),
-          barMaxWidth: 44,
+          barMaxWidth: 30,
           barCategoryGap: "32%",
           itemStyle: {
-            color: hexToRgba(PRIMARY_CHART_COLOR, 0.28),
+            color: chartFillColor(PRIMARY_CHART_COLOR, resolvedTheme),
             borderColor: PRIMARY_CHART_COLOR,
             borderWidth: 1,
             borderRadius: 0,
@@ -333,6 +355,14 @@ export default function LanguageDistribution({
               <Icon size={18} />
             </button>
           ))}
+          <ChartExportMenu
+            filename="publicacoes-por-idioma"
+            columns={exportColumns}
+            rows={exportRows}
+            disabled={loading || error || !hasChartData}
+            getChart={() => chartRef.current}
+            imageTitle={t("Publications by language composition")}
+          />
         </div>
       </div>
 
@@ -356,6 +386,7 @@ export default function LanguageDistribution({
               key={chartKind === "bar" ? `bar-${visibleCount}` : "pie"}
               option={option}
               height={chartKind === "bar" ? barChartHeight : height}
+              onChartReady={handleChartReady}
             />
           </div>
         ) : null}

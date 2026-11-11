@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { CircleAlert, LoaderCircle } from "lucide-react";
 import { useTranslation } from "next-i18next";
 
@@ -6,6 +7,8 @@ type Props = {
   loading: boolean;
   error: boolean;
   empty: boolean;
+  emptyMessage?: string; // Substitui a mensagem padrão de vazio (ex.: busca sem resultado)
+  emptyAction?: ReactNode; // Ação exibida no estado vazio (ex.: "Limpar busca")
 };
 
 export default function ChartFeedback({
@@ -13,6 +16,8 @@ export default function ChartFeedback({
   loading,
   error,
   empty,
+  emptyMessage,
+  emptyAction,
 }: Props) {
   const { t } = useTranslation("common");
 
@@ -22,7 +27,7 @@ export default function ChartFeedback({
     ? t("Loading dashboard data")
     : error
       ? t("Unable to load dashboard data")
-      : t("No data for selected filters");
+      : emptyMessage ?? t("No data for selected filters");
 
   return (
     <div
@@ -37,6 +42,7 @@ export default function ChartFeedback({
         <CircleAlert size={24} />
       )}
       <span>{message}</span>
+      {!loading && !error && emptyAction ? emptyAction : null}
     </div>
   );
 }

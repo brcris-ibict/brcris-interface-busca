@@ -1,0 +1,198 @@
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useTranslation } from "next-i18next";
+import type { ECharts, EChartsOption } from "echarts";
+import dynamic from "next/dynamic";
+import { BarChart3, ChartArea, LineChart } from "lucide-react";
+import { useTheme } from "../../contexts/ThemeContext";
+import type { ActiveResearchersByYearPoint } from "../../types/PeopleDashboard";
+import ChartExportMenu from "./ChartExportMenu";
+import ChartFeedback from "./ChartFeedback";
+import {
+  PRIMARY_CHART_COLOR,
+  chartFillColor,
+} from "./publicationsChartConfig";
+
+const EChart = dynamic(() => import("./EChart"), { ssr: false });
+
+type ChartKind = "bar" | "line" | "area";
+
+const TOGGLES: {
+  kind: ChartKind;
+  Icon: typeof BarChart3;
+  labelKey: string;
+}[] = [
+  { kind: "bar", Icon: BarChart3, labelKey: "Chart bars" },
+  { kind: "line", Icon: LineChart, labelKey: "Chart lines" },
+  { kind: "area", Icon: ChartArea, labelKey: "Chart area" },
+];
+
+type Props = {
+  data: ActiveResearchersByYearPoint[];
+  loading: boolean;
+  error: boolean;
+  height?: number;
+};
+
+export default function ActiveResearchersByYear({
+  data,
+  loading,
+  error,
+  height = 360,
+}: Props) {
+  const { t } = useTranslation("common");
+  const { resolvedTheme } = useTheme();
+  const [chartKind, setChartKind] = useState<ChartKind>("area");
+  const chartRef = useRef<ECharts | null>(null);
+
+  const handleChartReady = useCallback((chart: ECharts | null) => {
+    chartRef.current = chart;
+  }, []);
+
+  const exportRows = useMemo(
+    () =>
+      data.map((point) => ({
+        year: point.year,
+        count: point.count,
+      })),
+    [data],
+  );
+
+  const exportColumns = useMemo(
+    () => [
+      { key: "year", header: t("Year") },
+      { key: "count", header: t("Researchers") },
+    ],
+    [t],
+  );
+
+  const textMuted = resolvedTheme === "dark" ? "#a1a1aa" : "#555555";
+  const gridColor = resolvedTheme === "dark" ? "#2f3542" : "#e5e7eb";
+  const seriesType = chartKind === "area" ? "line" : chartKind;
+
+  const option = useMemo<EChartsOption>(
+    () => ({
+      color: [PRIMARY_CHART_COLOR],
+      textStyle: {
+        fontFamily: '"rawline", helvetica, arial, sans-serif',
+        color: textMuted,
+      },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: { type: chartKind === "bar" ? "shadow" : "line" },
+      },
+      legend: { show: false },
+      grid: {
+        left: 16,
+        right: 16,
+        top: 16,
+        bottom: 24,
+        containLabel: true,
+      },
+      xAxis: {
+        type: "category",
+        data: data.map((point) => point.year),
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: { color: textMuted, fontSize: 12 },
+      },
+      yAxis: {
+        type: "value",
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: { color: textMuted, fontSize: 12 },
+        splitLine: {
+          lineStyle: { color: gridColor, type: "solid", width: 1 },
+        },
+      },
+      series: [
+        {
+          name: t("Researchers"),
+          type: seriesType,
+          data: data.map((point) => point.count),
+          barMaxWidth: 48,
+          barCategoryGap: "28%",
+          itemStyle: {
+            color: chartFillColor(PRIMARY_CHART_COLOR, resolvedTheme),
+            borderColor: PRIMARY_CHART_COLOR,
+            borderWidth: 1,
+            borderRadius: 0,
+          },
+          ...(chartKind === "line" || chartKind === "area"
+            ? {
+                smooth: false,
+                symbol: "circle",
+                symbolSize: 6,
+                lineStyle: { color: PRIMARY_CHART_COLOR, width: 2 },
+                ...(chartKind === "area"
+                  ? {
+                      areaStyle: {
+                        color: chartFillColor(
+                          PRIMARY_CHART_COLOR,
+                          resolvedTheme,
+                        ),
+                      },
+                    }
+                  : {}),
+              }
+            : {}),
+        },
+      ],
+    }),
+    [data, chartKind, seriesType, textMuted, gridColor, resolvedTheme, t],
+  );
+
+  return (
+    <div className="brcris-chart-card">
+      <div className="brcris-chart-card__header">
+        <div className="brcris-knowledge-areas__heading">
+          <h2 className="brcris-chart-card__title">
+            {t("Active researchers by year")}
+          </h2>
+          <p className="brcris-knowledge-areas__caption">
+            {t("Active researchers caption")}
+          </p>
+        </div>
+
+        <div className="brcris-chart-card__toggles" role="group">
+          {TOGGLES.map(({ kind, Icon, labelKey }) => (
+            <button
+              key={kind}
+              type="button"
+              className={chartKind === kind ? "is-active" : undefined}
+              title={t(labelKey)}
+              aria-label={t(labelKey)}
+              aria-pressed={chartKind === kind}
+              onClick={() => setChartKind(kind)}
+            >
+              <Icon size={18} />
+            </button>
+          ))}
+          <ChartExportMenu
+            filename="pesquisadores-ativos-por-ano"
+            columns={exportColumns}
+            rows={exportRows}
+            disabled={loading || error || data.length === 0}
+            getChart={() => chartRef.current}
+            imageTitle={t("Active researchers by year")}
+          />
+        </div>
+      </div>
+
+      <div className="brcris-chart-card__body" aria-busy={loading}>
+        <ChartFeedback
+          height={height}
+          loading={loading}
+          error={error}
+          empty={data.length === 0}
+        />
+        {!loading && !error && data.length > 0 ? (
+          <EChart
+            option={option}
+            height={height}
+            onChartReady={handleChartReady}
+          />
+        ) : null}
+      </div>
+    </div>
+  );
+}

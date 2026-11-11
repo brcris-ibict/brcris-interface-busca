@@ -1,6 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createElasticsearchClient } from "../../../services/ElasticsearchClient";
 import logger from "../../../services/Logger";
+import {
+  fetchJournalIdentifiersById,
+  type JournalIdentifiers,
+} from "../../../services/enrichPublicationIssn";
 import type { PublicationsDashboardErrorResponse, PublicationsDashboardFilters, PublicationsDashboardResponse } from "../../../types/PublicationsDashboard";
 
 const client = createElasticsearchClient();
@@ -28,6 +32,11 @@ type AnnualByTypeBucket = TermBucket & {
   byType?: TermsAggregation;
 };
 
+type JournalBucket = TermBucket & {
+  issn?: TermsAggregation;
+  journalId?: TermsAggregation;
+};
+
 type DashboardAggregations = {
   annual?: TermsAggregation;
   annualByType?: {
@@ -41,7 +50,7 @@ type DashboardAggregations = {
   publicationsWithoutLanguage?: { doc_count?: number };
   topJournalsArticles?: {
     doc_count?: number;
-    byJournal?: TermsAggregation;
+    byJournal?: { buckets?: JournalBucket[] };
   };
   topAuthors?: TermsAggregation;
   filterOptions?: {
@@ -277,6 +286,10 @@ export default async function handler(
                 size: 10000,
                 order: { _count: "desc" },
               },
+              aggs: {
+                issn: { terms: { field: "issn", size: 2 } },
+                journalId: { terms: { field: "journal.id", size: 1 } },
+              },
             },
           },
         },
@@ -373,14 +386,53 @@ export default async function handler(
     const predominant = byType[0];
     const predominantTypeShare = predominant && predominant.count > 0 ? Number(((predominant.count / total) * 100).toFixed(1)) : 0;
 
-    const topJournalBuckets = getBuckets(aggregations?.topJournalsArticles?.byJournal);
+    const topJournalBuckets = aggregations?.topJournalsArticles?.byJournal?.buckets ?? [];
     const totalArticles = aggregations?.topJournalsArticles?.doc_count ?? 0;
+
+    const issnFromArticles = (bucket: JournalBucket) =>
+      getBuckets(bucket.issn).map(getBucketKey).join(", ");
+    const journalIdOf = (bucket: JournalBucket) => {
+      const first = getBuckets(bucket.journalId)[0];
+      return first ? getBucketKey(first) : "";
+    };
+
+    // Só consulta o índice de revistas para quem não trouxe ISSN nos artigos
+    const missingJournalIds = topJournalBuckets
+      .filter((bucket) => !issnFromArticles(bucket))
+      .map(journalIdOf)
+      .filter(Boolean);
+
+    let identifiersByJournalId = new Map<string, JournalIdentifiers>();
+    if (process.env.INDEX_JOURNAL && missingJournalIds.length > 0) {
+      try {
+        identifiersByJournalId = await fetchJournalIdentifiersById(
+          client,
+          process.env.INDEX_JOURNAL,
+          missingJournalIds,
+        );
+      } catch (issnError) {
+        logger.error("[dashboard/publications] falha ao buscar ISSN no índice de revistas");
+        logger.error(issnError);
+      }
+    }
+
+    // Os identificadores do índice de revistas vêm separados por "|"
+    const issnFromJournalIndex = (bucket: JournalBucket) => {
+      const ids = identifiersByJournalId.get(journalIdOf(bucket));
+      if (!ids) return "";
+      const values = [ids.issn, ids.eissn, ids.issn_l]
+        .flatMap((value) => value.split("|"))
+        .map((value) => value.trim())
+        .filter(Boolean);
+      return [...new Set(values)].join(", ");
+    };
 
     const topJournalsArticles = {
       totalArticles,
       items: topJournalBuckets.map((bucket, index) => ({
         rank: index + 1,
         journal: getBucketKey(bucket),
+        issn: issnFromArticles(bucket) || issnFromJournalIndex(bucket),
         count: bucket.doc_count,
         share: totalArticles > 0 ? Number(((bucket.doc_count / totalArticles) * 100).toFixed(1)) : 0,
       })),

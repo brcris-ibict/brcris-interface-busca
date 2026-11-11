@@ -2,6 +2,9 @@
 
 :root {
   --primary-color: #0284a0;
+  --heading-color: #015a6e;
+  --title-color: #1f2937;
+  --subtitle-color: #374151;
   --secondary-color: #0ea5b7;
   --text-color: #333333;
   --text-secondary-color: #555555;
@@ -51,6 +54,9 @@
 
 :root[data-theme="dark"] {
   --primary-color: #0399b6;
+  --heading-color: #0399b6;
+  --title-color: #e5e7eb;
+  --subtitle-color: #a1a1aa;
   --secondary-color: #3a8899;
   --text-color: #e5e7eb;
   --text-secondary-color: #a1a1aa;
@@ -130,7 +136,7 @@ h2 {
 h1 {
   position: relative;
   font-size: 1.25rem;
-  color: var(--primary-color);
+  color: var(--heading-color);
 }
 
 a {
@@ -1942,7 +1948,7 @@ h3.popover-header a {
 }
 
 .brcris-page-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   overflow: visible;
 }
 
@@ -2040,7 +2046,7 @@ h3.popover-header a {
 .brcris-page-header__subtitle {
   margin: -0.5rem 0 0;
   text-align: left;
-  color: var(--bs-dark-text-emphasis);
+  color: var(--subtitle-color);
   font-size: 0.85rem;
   font-weight: 500;
 }
@@ -2055,6 +2061,7 @@ h3.popover-header a {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.75rem;
+  min-height: 2.75rem;
 }
 
 .brcris-filters__fields .brcris-field {
@@ -2069,6 +2076,10 @@ h3.popover-header a {
 
   .brcris-filters__fields {
     justify-content: stretch;
+  }
+
+  .brcris-filters__fields:empty {
+    display: none;
   }
 
   .brcris-filters__fields .brcris-field {
@@ -2105,6 +2116,19 @@ h3.popover-header a {
 
 .brcris-field__control:hover {
   border-color: var(--secondary-color);
+}
+
+// Sobrescreve o button[disabled] global (fundo azul com !important)
+.brcris-select .brcris-field__control:disabled,
+.brcris-select .brcris-field__control:disabled:hover {
+  background: var(--bg-card) !important;
+  border-color: var(--border-color) !important;
+  opacity: 1 !important;
+  cursor: not-allowed;
+}
+
+.brcris-select.is-disabled {
+  opacity: 0.55;
 }
 
 .brcris-field__control:focus,
@@ -2244,7 +2268,7 @@ h3.popover-header a {
 
 .brcris-chart-card__title {
   margin: 0 0 0 12px;
-  color: var(--bs-gray);
+  color: var(--title-color);
   font-size: 0.85rem;
   font-weight: 600;
   line-height: 1.3;
@@ -2256,7 +2280,7 @@ h3.popover-header a {
   gap: 0.35rem;
 }
 
-.brcris-chart-card__toggles button {
+.brcris-chart-card__toggles > button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2274,15 +2298,108 @@ h3.popover-header a {
     color 0.2s ease;
 }
 
-.brcris-chart-card__toggles button:hover {
+.brcris-chart-card__toggles > button:hover {
   border-color: var(--secondary-color);
   color: var(--primary-color);
 }
 
-.brcris-chart-card__toggles button.is-active {
+.brcris-chart-card__toggles > button.is-active {
   border-color: var(--primary-color);
   background: var(--bg-hover);
   color: var(--primary-color);
+}
+
+.brcris-chart-export {
+  position: relative;
+  display: inline-flex;
+}
+
+.brcris-chart-export > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--border-radius) - 0.35rem);
+  background: var(--bg);
+  color: var(--icon-muted);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.brcris-chart-export > button:hover:not(:disabled),
+.brcris-chart-export > button.is-active:not(:disabled) {
+  border-color: var(--primary-color);
+  background: var(--bg-hover);
+  color: var(--primary-color);
+}
+
+// Sobrescreve o button[disabled] global (fundo azul com !important)
+.brcris-chart-export > button:disabled,
+.brcris-chart-export > button:disabled:hover {
+  opacity: 1 !important;
+  border-color: var(--border-color) !important;
+  background: var(--bg-muted) !important;
+  color: var(--text-secondary-color);
+  cursor: not-allowed;
+}
+
+.brcris-chart-export__menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 20;
+  min-width: 13.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--border-radius) - 0.2rem);
+  background: var(--bg-card);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+}
+
+.brcris-chart-export__title {
+  margin: 0 0 0.35rem;
+  padding: 0.15rem 0.4rem;
+  color: var(--text-secondary-color);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.brcris-chart-export__item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.55rem;
+  width: 100%;
+  min-width: 12rem;
+  height: auto;
+  padding: 0.55rem 0.6rem;
+  border: 0;
+  border-radius: calc(var(--border-radius) - 0.35rem);
+  background: transparent;
+  color: var(--bs-gray, #4b5563);
+  font-size: 0.85rem;
+  line-height: 1.3;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.brcris-chart-export__item:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--primary-color);
+}
+
+.brcris-chart-export__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .brcris-chart-card__body {
@@ -2364,6 +2481,40 @@ h3.popover-header a {
 .brcris-chart-card__meta {
   color: var(--text-secondary-color);
   font-size: 0.75rem;
+}
+
+.brcris-keywords-cloud__header {
+  align-items: flex-start;
+}
+
+.brcris-keywords-cloud__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.brcris-keywords-cloud__caption {
+  margin: 0 0 0 12px;
+  color: var(--subtitle-color);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  max-width: 42rem;
+}
+
+.brcris-keywords-cloud__canvas {
+  position: relative;
+  border-radius: calc(var(--border-radius) - 0.15rem);
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      120% 90% at 50% 42%,
+      color-mix(in srgb, var(--primary-color, #0284a0) 8%, transparent) 0%,
+      transparent 62%
+    ),
+    color-mix(in srgb, var(--bg) 78%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border-color, #e2e8f0) 70%, transparent);
 }
 
 .brcris-chart-card__feedback {
@@ -2454,13 +2605,12 @@ h3.popover-header a {
 }
 
 .brcris-bignumber__title {
-  margin: 0;
-  color: var(--text-secondary-color);
-  font-size: 0.68rem;
-  font-weight: 600;
+  margin: 0 0 10px;
+  color: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
   letter-spacing: 0.03em;
-  line-height: 1.3;
-  text-transform: uppercase;
+  line-height: 1;
 }
 
 .brcris-bignumber__icon {
@@ -2485,7 +2635,7 @@ h3.popover-header a {
   position: relative;
   z-index: 1;
   margin: 0.45rem 0 0.3rem;
-  color: var(--text-color);
+  color: var(--primary-color);
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -2500,7 +2650,7 @@ h3.popover-header a {
   align-items: center;
   gap: 0.4rem;
   margin: auto 0 0;
-  color: var(--text-secondary-color);
+  color: var(--subtitle-color);
   font-size: 0.75rem;
   line-height: 1.3;
 }
@@ -2544,15 +2694,247 @@ h3.popover-header a {
   }
 }
 
+.brcris-chart-card.brcris-panel-table {
+  padding: 0.75rem 0.85rem 0.65rem;
+}
+
 .brcris-panel-table__header {
-  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.45rem;
+}
+
+.brcris-panel-table__heading {
+  min-width: 0;
 }
 
 .brcris-panel-table__caption {
-  margin: 0.35rem 0 0 12px;
-  color: var(--text-secondary-color);
+  margin: 0.2rem 0 0 12px;
+  color: var(--subtitle-color);
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+// Busca por palavra-chave das tabelas (lupa → popover, mesmo padrão do menu de exportar)
+.brcris-table-search__toggle.has-value {
+  position: relative;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.brcris-table-search__toggle.has-value::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--bg-card);
+  border-radius: 50%;
+  background: var(--primary-color);
+}
+
+.brcris-table-search__popover {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 20;
+  width: min(24rem, calc(100vw - 2.5rem));
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--border-radius) - 0.2rem);
+  background: var(--bg-card);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+  animation: brcris-table-search-in 0.16s ease-out;
+}
+
+.brcris-table-search__popover .brcris-chart-export__title {
+  display: block;
+}
+
+.brcris-table-search__field {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 2.25rem;
+  padding: 0 0.25rem 0 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: calc(var(--border-radius) - 0.35rem);
+  background: var(--bg);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.brcris-table-search__field:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(2, 132, 160, 0.12);
+}
+
+.brcris-table-search__icon {
+  flex-shrink: 0;
+  color: var(--primary-color);
+}
+
+.brcris-table-search__input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 0.25rem;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-color);
   font-size: 0.82rem;
-  line-height: 1.35;
+}
+
+.brcris-table-search__input::placeholder {
+  color: var(--text-secondary-color);
+  opacity: 0.8;
+}
+
+.brcris-table-search__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary-color);
+  cursor: pointer;
+}
+
+.brcris-table-search__clear:hover {
+  background: var(--bg-hover);
+  color: var(--primary-color);
+}
+
+.brcris-table-search__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.brcris-table-search__hint {
+  min-width: 0;
+  color: var(--text-secondary-color);
+  font-size: 0.7rem;
+}
+
+.brcris-table-search__submit {
+  flex-shrink: 0;
+  height: 1.85rem;
+  padding: 0 0.9rem;
+  border: 0;
+  border-radius: calc(var(--border-radius) - 0.4rem);
+  background: var(--primary-color);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.brcris-table-search__submit:hover:not(:disabled) {
+  background: var(--secondary-color);
+}
+
+// Sobrescreve o button[disabled] global (fundo azul com !important)
+.brcris-table-search__submit:disabled,
+.brcris-table-search__submit:disabled:hover {
+  background: var(--bg-muted) !important;
+  border-color: transparent !important;
+  color: var(--text-secondary-color);
+  opacity: 1 !important;
+  cursor: not-allowed;
+}
+
+@keyframes brcris-table-search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.brcris-panel-table__search-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 100%;
+  margin: 0.4rem 0 0 12px;
+  padding: 0.15rem 0.25rem 0.15rem 0.6rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 999px;
+  background: var(--bg-hover);
+  color: var(--primary-color);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.brcris-panel-table__search-chip span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brcris-panel-table__search-chip button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.brcris-panel-table__search-chip button:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+.brcris-panel-table__highlight {
+  padding: 0 0.1em;
+  border-radius: 3px;
+  background: rgba(14, 165, 183, 0.22);
+  color: inherit;
+  font-weight: 600;
+}
+
+.brcris-chart-card__feedback-action {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primary-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.brcris-chart-card__feedback-action:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brcris-table-search__popover {
+    animation: none;
+  }
 }
 
 .brcris-panel-table__body {
@@ -2566,23 +2948,66 @@ h3.popover-header a {
 
 .brcris-panel-table__table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.25;
 }
 
 .brcris-panel-table__table th,
 .brcris-panel-table__table td {
-  padding: 0.65rem 0.75rem;
+  padding: 0.35rem 0.55rem;
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }
 
 .brcris-panel-table__table th {
   color: var(--text-secondary-color);
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
   text-align: left;
+  text-transform: none;
   background: var(--table-header-bg);
+  overflow: visible;
+}
+
+.brcris-panel-table__sort-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.3rem;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-align: inherit;
+  cursor: pointer;
+}
+
+.brcris-panel-table__sort-btn span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brcris-panel-table__sort-btn svg {
+  flex-shrink: 0;
+}
+
+.brcris-panel-table__sort-btn:hover,
+.brcris-panel-table__sort-btn.is-active {
+  color: var(--primary-color);
+}
+
+.brcris-panel-table__table th.is-numeric .brcris-panel-table__sort-btn {
+  justify-content: flex-end;
 }
 
 .brcris-panel-table__table tbody tr:nth-child(even) {
@@ -2595,13 +3020,92 @@ h3.popover-header a {
 
 .brcris-panel-table__table td.is-numeric,
 .brcris-panel-table__table th.is-numeric {
+  width: 7.25rem;
   text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.brcris-panel-table__table td:first-child,
+.brcris-panel-table__table th:first-child {
+  width: 5.5rem;
+  white-space: nowrap;
+  color: var(--text-secondary-color);
+}
+
+// Uma linha por célula: mantém a mesma altura de linha entre tabelas lado a lado
+.brcris-panel-table__table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.brcris-panel-table__table td:first-child {
-  width: 4.5rem;
+/* Quantificadores (col-lg-6): # estreita + métricas compactas */
+.brcris-panel-table__table.is-metrics-compact td:first-child,
+.brcris-panel-table__table.is-metrics-compact th:first-child {
+  width: 2.75rem;
+  max-width: 2.75rem;
+  padding-left: 0.35rem;
+  padding-right: 0.25rem;
+  text-align: center;
+}
+
+.brcris-panel-table__table.is-metrics-compact td:nth-child(2),
+.brcris-panel-table__table.is-metrics-compact th:nth-child(2) {
+  width: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.brcris-panel-table__table.is-metrics-compact td.is-numeric,
+.brcris-panel-table__table.is-metrics-compact th.is-numeric {
+  width: 5.25rem;
+  padding-left: 0.35rem;
+  padding-right: 0.4rem;
+}
+
+/* Listagem com várias colunas de texto (ex.: publicações) */
+.brcris-panel-table__table.is-listing {
+  min-width: 70rem;
+}
+
+.brcris-panel-table__table.is-listing th,
+.brcris-panel-table__table.is-listing td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brcris-panel-table__table.is-listing td:first-child,
+.brcris-panel-table__table.is-listing th:first-child {
+  width: 22%;
+  max-width: 18rem;
+  color: inherit;
+}
+
+.brcris-panel-table__table.is-listing td:nth-child(2),
+.brcris-panel-table__table.is-listing th:nth-child(2) {
+  width: 18%;
+}
+
+.brcris-panel-table__table.is-listing td:nth-child(3),
+.brcris-panel-table__table.is-listing th:nth-child(3),
+.brcris-panel-table__table.is-listing td:nth-child(4),
+.brcris-panel-table__table.is-listing th:nth-child(4) {
+  width: 12%;
+}
+
+.brcris-panel-table__table.is-listing td:nth-child(5),
+.brcris-panel-table__table.is-listing th:nth-child(5) {
+  width: 12%;
+}
+
+.brcris-panel-table__table.is-listing td:nth-child(6),
+.brcris-panel-table__table.is-listing th:nth-child(6),
+.brcris-panel-table__table.is-listing td:nth-child(7),
+.brcris-panel-table__table.is-listing th:nth-child(7) {
+  width: 10%;
 }
 
 .brcris-panel-table__pagination {
@@ -2609,22 +3113,22 @@ h3.popover-header a {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.35rem;
-  padding: 0.75rem 0 0.15rem;
+  gap: 0.25rem;
+  padding: 0.5rem 0 0;
 }
 
 .brcris-panel-table__page-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2rem;
-  height: 2rem;
-  padding: 0 0.4rem;
+  min-width: 1.7rem;
+  height: 1.7rem;
+  padding: 0 0.3rem;
   border: 1px solid var(--border-color);
   border-radius: calc(var(--border-radius) - 0.35rem);
   background: var(--bg);
   color: var(--text-secondary-color);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   cursor: pointer;
 }
 
@@ -2645,7 +3149,256 @@ h3.popover-header a {
 
 .brcris-panel-table__page-ellipsis {
   color: var(--text-secondary-color);
+  font-size: 0.72rem;
+}
+
+// Tamanho das equipes de autoria
+.brcris-team-size__header {
+  align-items: flex-start;
+}
+
+.brcris-team-size__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.brcris-team-size__caption {
+  margin: 0 0 0 12px;
+  font-size: 0.75rem;
+  color: var(--subtitle-color);
+}
+
+.brcris-knowledge-areas__header {
+  align-items: flex-start;
+}
+
+.brcris-knowledge-areas__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.brcris-knowledge-areas__caption {
+  margin: 0 0 0 12px;
+  font-size: 0.75rem;
+  color: var(--subtitle-color);
+}
+
+.brcris-knowledge-areas__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  align-self: flex-start;
+  margin-left: 12px;
+  padding: 0.1rem 0.5rem;
+  border: 1px dashed currentColor;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  color: var(--text-secondary-color);
+  cursor: help;
+}
+
+.brcris-knowledge-areas__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 34px;
+  margin-bottom: 0.5rem;
+}
+
+.brcris-knowledge-areas__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary-color);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+  animation: brcris-knowledge-areas-back-in 200ms ease-out;
+
+  &:hover {
+    background: rgba(2, 132, 160, 0.1);
+    color: #0284a0;
+  }
+}
+
+@keyframes brcris-knowledge-areas-back-in {
+  from {
+    opacity: 0;
+    transform: translateX(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.brcris-knowledge-areas__breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   font-size: 0.8rem;
+
+  li + li::before {
+    content: "›";
+    margin: 0 0.4rem;
+    color: var(--text-secondary-color);
+  }
+
+  button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #0284a0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  [aria-current="page"] {
+    font-weight: 600;
+  }
+}
+
+.brcris-knowledge-areas__stage {
+  animation: brcris-knowledge-areas-enter 280ms ease-out;
+}
+
+@keyframes brcris-knowledge-areas-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.brcris-knowledge-areas__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.brcris-knowledge-areas__row {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "swatch name meta"
+    "bar bar bar";
+  align-items: center;
+  column-gap: 0.5rem;
+  row-gap: 0.3rem;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+
+  &:not(.is-static):hover {
+    border-color: var(--border-color, #d1d5db);
+    background: rgba(2, 132, 160, 0.06);
+  }
+}
+
+.brcris-knowledge-areas__swatch {
+  grid-area: swatch;
+  width: 14px;
+  height: 14px;
+  border: 2px solid;
+  border-radius: 3px;
+}
+
+.brcris-knowledge-areas__row-name {
+  grid-area: name;
+  overflow: hidden;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.brcris-knowledge-areas__row-meta {
+  grid-area: meta;
+  font-size: 0.78rem;
+  color: var(--text-secondary-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.brcris-knowledge-areas__bar {
+  grid-area: bar;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(127, 127, 127, 0.15);
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+  }
+
+  &.is-stacked {
+    display: flex;
+    gap: 1px;
+
+    span {
+      border-radius: 0;
+    }
+  }
+}
+
+.brcris-knowledge-areas__note {
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  color: var(--text-secondary-color);
+}
+
+.brcris-knowledge-areas__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.brcris-knowledge-areas {
+  button:focus-visible,
+  [tabindex="-1"]:focus-visible {
+    outline: 2px solid #0284a0;
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brcris-knowledge-areas__stage,
+  .brcris-knowledge-areas__back {
+    animation: none;
+  }
 }
 
 #btnToggle.btn-outline-secondary {

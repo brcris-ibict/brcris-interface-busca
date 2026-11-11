@@ -1,3 +1,5 @@
+import type { ServerPaginatedResponse } from "../lib/serverPagination";
+
 export type PublicationsDashboardFilters = {
   publicationDate: string;
   type: string;
@@ -40,6 +42,7 @@ export type PublicationsAnnualByTypePoint = {
 export type PublicationsTopJournalPoint = {
   rank: number;
   journal: string;
+  issn: string;
   count: number;
   share: number;
 };
@@ -57,6 +60,57 @@ export type PublicationsAuthorPoint = {
 
 export type PublicationsAuthors = {
   items: PublicationsAuthorPoint[];
+};
+
+export type PublicationsJournalQuantifierPoint = {
+  rank: number;
+  title: string;
+  publications: number;
+  conferences: number;
+  journals: number;
+  authors: number;
+  sponsors: number;
+};
+
+export type PublicationsJournalQuantifiers =
+  ServerPaginatedResponse<PublicationsJournalQuantifierPoint>;
+
+export type PublicationsListItem = {
+  id: string;
+  title: string;
+  authors: string;
+  journal: string;
+  conference: string;
+  doi: string;
+  accessType: string;
+  funding: string;
+};
+
+export type PublicationsListResponse =
+  ServerPaginatedResponse<PublicationsListItem>;
+
+export type PublicationsKeywordPoint = {
+  keyword: string;
+  count: number;
+};
+
+export type PublicationsKeywordHeatmap = {
+  items: PublicationsKeywordPoint[];
+};
+
+export type PublicationsTeamSizeBand = "1" | "2" | "3-5" | "6-10" | "11+";
+
+export type PublicationsTeamSizePoint = {
+  band: PublicationsTeamSizeBand;
+  count: number;
+};
+
+export type PublicationsTeamSize = {
+  total: number;
+  withAuthors: number;
+  withoutAuthors: number;
+  bands: PublicationsTeamSizePoint[];
+  sampled: boolean;
 };
 
 export type PublicationsDashboardSummary = {

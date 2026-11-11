@@ -1,6 +1,14 @@
 import { formatAcronym } from "./ptAcronyms";
 import { restorePtAccents } from "./ptAccentMap";
 
+export const BRCRIS_PALETTE = {
+  primary: "#0284A0",
+  darkBlue: "#071D41",
+  pink: "#FFD6E7",
+  lavender: "#D9D2FF",
+  softBlue: "#CFE7FF",
+} as const;
+
 export const CHART_BACKGROUD_COLORS = [
   "rgba(255,0,0, 0.2)",
   "rgba(54, 162, 235, 0.2)",

@@ -1,16 +1,17 @@
 /**
  * Configurações de cores e estilos para os gráficos dos painéis
- *
- * Este arquivo contém funções e constantes para controlar cores e estilos dos gráficos dos painéis.
- *
- * As cores são usadas para definir as bordas e preenchimentos dos gráficos, e as funções
- * permitem personalizar esses estilos para diferentes tipos de dados.
- *
- * As constantes são usadas para definir as cores das bordas e preenchimentos dos gráficos,
- * e as funções são usadas para gerar as cores de fundo a partir das bordas.
+ * Paleta oficial brCris: #0284A0, #071D41, #FFD6E7, #D9D2FF, #CFE7FF
  */
 
-export const PRIMARY_CHART_COLOR = "#0284a0";
+export const BRCRIS_PALETTE = {
+  primary: "#0284A0",
+  darkBlue: "#071D41",
+  pink: "#FFD6E7",
+  lavender: "#D9D2FF",
+  softBlue: "#CFE7FF",
+} as const;
+
+export const PRIMARY_CHART_COLOR = BRCRIS_PALETTE.primary;
 
 // Função utilitária para transformar uma cor hex em rgba, útil para brincar com transparência nos gráficos
 export function hexToRgba(hex: string, alpha: number) {
@@ -22,22 +23,19 @@ export function hexToRgba(hex: string, alpha: number) {
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 }
 
-// Essas são as cores das bordas usadas nos gráficos dos painéis (por exemplo, idioma, instituição, etc.)
-// A ordem e as repetições ajudam na variedade visual dos gráficos que podem ter mais fatias/barras do que cores únicas
+// Cores de bordas/séries para gráficos categóricos (nacionalidade, instituição, idioma)
 export const PANEL_CHART_BORDERS = [
-  "#67c5d8",
-  "#6c757d",
+  BRCRIS_PALETTE.primary, // #0284A0
+  BRCRIS_PALETTE.darkBlue, // #071D41
+  "#8E7DFF", // Variante de borda do lavender #D9D2FF
+  "#E07A9F", // Variante de borda do pink #FFD6E7
+  "#4A90E2", // Variante de borda do softBlue #CFE7FF
   "#0ea5b7",
-  "#bbbbbb",
-  "#0284a0",
-  "#04132a",
-  "#67c5d8",
   "#6c757d",
-  "#0ea5b7",
   "#bbbbbb",
 ];
 
-// É assim que controlamos a opacidade dos fills nos gráficos dos painéis
+// É assim que controlamos a opacidade dos fills no modo dark
 const PANEL_CHART_FILL_ALPHA = 0.28;
 
 // Aqui a gente gera as cores de fundo (usando o alpha de cima) a partir das bordas
@@ -48,7 +46,18 @@ export const PANEL_CHART_FILLS = PANEL_CHART_BORDERS.map((color) =>
 // Por compatibilidade: ainda tem gráfico que lê essa constante antiga
 export const PANEL_CHART_COLORS = PANEL_CHART_FILLS;
 
-// As cores das bordas dos tipos de publicação, pra ficarem iguais à página de pessoas
+// Cores dos tipos de publicação alinhadas com a paleta brCris e com PersonProduction.tsx
+export const PUBLICATION_TYPE_COLORS: Record<string, string> = {
+  Artigo: BRCRIS_PALETTE.lavender, // #D9D2FF
+  "Artigo de Conferência": BRCRIS_PALETTE.pink, // #FFD6E7
+  "Capítulo de Livro": BRCRIS_PALETTE.softBlue, // #CFE7FF
+  Livro: "#D7F5E3",
+  Dissertação: "#FFF0C2",
+  Tese: "#FFE3C8",
+  "Conjunto de Dados": "#CFF5F6",
+  Preprint: "#E3E7F0",
+};
+
 export const PUBLICATION_TYPE_BORDERS: Record<string, string> = {
   Artigo: "#B8A9FF",
   "Artigo de Conferência": "#FF9FC5",
@@ -60,23 +69,85 @@ export const PUBLICATION_TYPE_BORDERS: Record<string, string> = {
   Preprint: "#B5C0D6",
 };
 
-// Alpha fixo para preenchimento dos tipos de publicação mantemos os fills suaves
+// Alpha fixo para preenchimento dos tipos de publicação no modo dark
 const PUBLICATION_TYPE_FILL_ALPHA = 0.28;
 
-// Dá pra usar essa função pra pegar o estilo certo de cada tipo de publicação (cor de preenchimento e borda)
-export function getPublicationTypeStyle(type: string) {
+export type ChartColorMode = "light" | "dark";
+
+// Light: sólido (padrão Tipologia). Dark: fill suave com transparência.
+export function chartFillColor(hex: string, mode: ChartColorMode = "light") {
+  if (mode === "dark") {
+    return hexToRgba(hex, PANEL_CHART_FILL_ALPHA);
+  }
+  return hex;
+}
+
+// Dá pra usar essa função pra pegar o estilo certo de cada tipo de publicação
+export function getPublicationTypeStyle(
+  type: string,
+  mode: ChartColorMode = "light",
+) {
   const borderColor = PUBLICATION_TYPE_BORDERS[type] ?? "#999999";
+  const lightColor = PUBLICATION_TYPE_COLORS[type] ?? borderColor;
   return {
-    color: hexToRgba(borderColor, PUBLICATION_TYPE_FILL_ALPHA),
+    color: mode === "dark" ? hexToRgba(borderColor, PUBLICATION_TYPE_FILL_ALPHA) : lightColor,
     borderColor,
   };
 }
 
-// Mesma ideia, mas agora para gráficos que só têm "índice" (tipo idioma/instituição/etc.)
-export function getPanelSeriesStyle(index: number) {
+// Mesma ideia, mas agora para gráficos que só têm "índice" (idioma/instituição/etc.)
+export function getPanelSeriesStyle(
+  index: number,
+  mode: ChartColorMode = "light",
+) {
   const i = index % PANEL_CHART_BORDERS.length;
+  const borderColor = PANEL_CHART_BORDERS[i];
   return {
-    color: hexToRgba(PANEL_CHART_BORDERS[i], PANEL_CHART_FILL_ALPHA),
-    borderColor: PANEL_CHART_BORDERS[i],
+    color: chartFillColor(borderColor, mode),
+    borderColor,
   };
 }
+
+// Escala sequencial calibrada entre o azul escuro brCris (#071D41) e o tom primário (#0284A0)
+const SEQUENTIAL_SCALE: Record<ChartColorMode, { from: string; to: string; text: string; separator: string }> = {
+  light: { from: BRCRIS_PALETTE.darkBlue, to: BRCRIS_PALETTE.primary, text: "#ffffff", separator: "#fefefe" },
+  dark: { from: "#d4f1f7", to: "#1497b1", text: "#111827", separator: "#171b22" },
+};
+
+function mixHex(from: string, to: string, amount: number) {
+  const start = parseInt(from.replace("#", ""), 16);
+  const end = parseInt(to.replace("#", ""), 16);
+  const channel = (shift: number) => {
+    const a = (start >> shift) & 255;
+    const b = (end >> shift) & 255;
+    return Math.round(a + (b - a) * amount)
+      .toString(16)
+      .padStart(2, "0");
+  };
+  return `#${channel(16)}${channel(8)}${channel(0)}`;
+}
+
+// Primeira fatia (maior valor/primeira faixa) = tom mais intenso
+export function getSequentialSliceStyle(
+  index: number,
+  total: number,
+  mode: ChartColorMode = "light",
+) {
+  const scale = SEQUENTIAL_SCALE[mode];
+  const amount = total > 1 ? Math.min(index, total - 1) / (total - 1) : 0;
+  return {
+    color: mixHex(scale.from, scale.to, amount),
+    borderColor: scale.separator,
+    borderWidth: 2,
+  };
+}
+
+export function sequentialLabelColor(mode: ChartColorMode = "light") {
+  return SEQUENTIAL_SCALE[mode].text;
+}
+
+// "Sem idioma"/"Sem instituição": cinza neutro fora da escala, com ≥ 3:1 no fundo
+export const MISSING_SLICE_COLOR: Record<ChartColorMode, string> = {
+  light: "#6b7280",
+  dark: "#9ca3af",
+};

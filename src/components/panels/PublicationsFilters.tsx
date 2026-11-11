@@ -9,12 +9,14 @@ type Props = {
   value: PublicationsDashboardFilters;
   options: PublicationsDashboardFilterOptions;
   onChange: (filters: PublicationsDashboardFilters) => void;
+  disabled?: boolean;
 };
 
 export default function PublicationsFilters({
   value,
   options,
   onChange,
+  disabled = false,
 }: Props) {
   const { t } = useTranslation("common");
 
@@ -33,6 +35,7 @@ export default function PublicationsFilters({
           label={t("Year")}
           value={value.publicationDate}
           onChange={(value) => handleChange("publicationDate", value)}
+          disabled={disabled}
           options={[
             { value: "", label: t("All") },
             ...options.publicationDates.map((year) => ({
@@ -47,6 +50,7 @@ export default function PublicationsFilters({
           label={t("Publication type")}
           value={value.type}
           onChange={(value) => handleChange("type", value)}
+          disabled={disabled}
           options={[
             { value: "", label: t("All") },
             ...options.types.map((type) => ({
@@ -61,6 +65,7 @@ export default function PublicationsFilters({
           label={t("Language")}
           value={value.language}
           onChange={(value) => handleChange("language", value)}
+          disabled={disabled}
           options={[
             { value: "", label: t("All") },
             ...options.languages.map((language) => ({
@@ -75,6 +80,7 @@ export default function PublicationsFilters({
           label={t("Institution")}
           value={value.institution}
           onChange={(value) => handleChange("institution", value)}
+          disabled={disabled}
           options={[
             { value: "", label: t("All") },
             ...options.institutions.map((institution) => ({

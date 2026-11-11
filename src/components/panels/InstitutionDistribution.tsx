@@ -1,15 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "next-i18next";
-import type { EChartsOption } from "echarts";
+import type { ECharts, EChartsOption } from "echarts";
 import dynamic from "next/dynamic";
 import { ChartBar, ChartPie, Plus, RotateCcw } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import type { PublicationsByInstitutionPoint } from "../../types/PublicationsDashboard";
+import ChartExportMenu from "./ChartExportMenu";
 import ChartFeedback from "./ChartFeedback";
 import {
   PRIMARY_CHART_COLOR,
-  getPanelSeriesStyle,
-  hexToRgba,
+  chartFillColor,
+  MISSING_SLICE_COLOR,
+  getSequentialSliceStyle,
 } from "./publicationsChartConfig";
 
 const EChart = dynamic(() => import("./EChart"), { ssr: false });
@@ -37,16 +39,14 @@ type Props = {
   height?: number;
 };
 
-// Altura das linhas do gráfico de barras
-// Existe porque o gráfico de barras é scrollável
-// Está relacionada a função handleLoadMore
-const BAR_ROW_HEIGHT = 52;
+// Dez barras cabem sem scroll; ao carregar mais, o gráfico ultrapassa a área e rola.
+const BAR_ROW_HEIGHT = 36;
 
 // Quantidade de itens visíveis por página
 const PAGE_SIZE = 10;
 
 // Limite de caracteres para o nome da instituição
-const LABEL_MAX_CHARS = 32;
+const LABEL_MAX_CHARS = 44;
 
 // Limite de itens para o gráfico de pizza
 const PIE_SLICE_LIMIT = 10;
@@ -128,6 +128,33 @@ export default function InstitutionDistribution({
   const { resolvedTheme } = useTheme();
   const [chartKind, setChartKind] = useState<ChartKind>("bar");
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const chartRef = useRef<ECharts | null>(null);
+
+  const handleChartReady = useCallback((chart: ECharts | null) => {
+    chartRef.current = chart;
+  }, []);
+
+  const exportRows = useMemo(() => {
+    const rows = data.map((item) => ({
+      institution: item.institution,
+      count: item.count,
+    }));
+    if (publicationsWithoutInstitution > 0) {
+      rows.push({
+        institution: t("Without linked institution"),
+        count: publicationsWithoutInstitution,
+      });
+    }
+    return rows;
+  }, [data, publicationsWithoutInstitution, t]);
+
+  const exportColumns = useMemo(
+    () => [
+      { key: "institution", header: t("Institution") },
+      { key: "count", header: t("Publications") },
+    ],
+    [t],
+  );
 
   // Atualiza a quantidade de itens visíveis quando os dados mudam
   useEffect(() => {
@@ -170,7 +197,7 @@ export default function InstitutionDistribution({
     };
     const chartData = visibleData;
     const textMain = resolvedTheme === "dark" ? "#e5e7eb" : "#333333";
-    const withoutInstitutionColor = resolvedTheme === "dark" ? "#6b7280" : "#9ca3af";
+    const withoutInstitutionColor = MISSING_SLICE_COLOR[resolvedTheme];
 
     // Construção do gráfico de pizza
     if (chartKind === "pie") {
@@ -241,8 +268,8 @@ export default function InstitutionDistribution({
                 return `${shortenLabel(String(item.name ?? ""))}\n${item.percent}%`;
               },
               color: textMuted,
-              fontSize: 11,
-              lineHeight: 16,
+              fontSize: 13,
+              lineHeight: 18,
             },
             labelLine: {
               show: true,
@@ -262,15 +289,10 @@ export default function InstitutionDistribution({
                   },
                 };
               }
-              const style = getPanelSeriesStyle(index);
               return {
                 name: item.name,
                 value: item.value,
-                itemStyle: {
-                  color: style.color,
-                  borderColor: style.borderColor,
-                  borderWidth: 1,
-                },
+                itemStyle: getSequentialSliceStyle(index, pieSeriesData.length, resolvedTheme),
               };
             }),
           },
@@ -296,7 +318,7 @@ export default function InstitutionDistribution({
       },
       legend: { show: false },
       grid: {
-        left: 200,
+        left: 300,
         right: 72,
         top: 12,
         bottom: 12,
@@ -316,10 +338,10 @@ export default function InstitutionDistribution({
         axisTick: { show: false },
         axisLabel: {
           color: textMuted,
-          fontSize: 12,
-          lineHeight: 16,
+          fontSize: 13,
+          lineHeight: 18,
           margin: 8,
-          width: 180,
+          width: 280,
           overflow: "truncate",
         },
       },
@@ -327,10 +349,10 @@ export default function InstitutionDistribution({
         {
           type: "bar",
           data: chartData.map((item) => item.count).reverse(),
-          barMaxWidth: 44,
+          barMaxWidth: 30,
           barCategoryGap: "32%",
           itemStyle: {
-            color: hexToRgba(PRIMARY_CHART_COLOR, 0.28),
+            color: chartFillColor(PRIMARY_CHART_COLOR, resolvedTheme),
             borderColor: PRIMARY_CHART_COLOR,
             borderWidth: 1,
             borderRadius: 0,
@@ -349,7 +371,7 @@ export default function InstitutionDistribution({
   }, [data, visibleData, chartKind, textMuted, gridColor, resolvedTheme, t, totalPublications, publicationsWithoutInstitution]);
 
   return (
-    <div className="brcris-chart-card" style={{ height: `500px` }}>
+    <div className="brcris-chart-card h-100" style={{ minHeight: 500 }}>
       <div className="brcris-chart-card__header">
         <h2 className="brcris-chart-card__title">
           {t("Publications by institution composition")}
@@ -369,6 +391,14 @@ export default function InstitutionDistribution({
               <Icon size={18} />
             </button>
           ))}
+          <ChartExportMenu
+            filename="publicacoes-por-instituicao"
+            columns={exportColumns}
+            rows={exportRows}
+            disabled={loading || error || !hasChartData}
+            getChart={() => chartRef.current}
+            imageTitle={t("Publications by institution composition")}
+          />
         </div>
       </div>
 
@@ -392,6 +422,7 @@ export default function InstitutionDistribution({
               key={chartKind === "bar" ? `bar-${visibleCount}` : "pie"}
               option={option}
               height={chartKind === "bar" ? barChartHeight : height}
+              onChartReady={handleChartReady}
             />
           </div>
         ) : null}

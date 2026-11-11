@@ -2,13 +2,18 @@ import type { GetStaticProps } from "next";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AnnualByTypeDistribution from "../../components/panels/AnnualByTypeDistribution";
 import AnnualDistribution from "../../components/panels/AnnualDistribution";
 import InstitutionDistribution from "../../components/panels/InstitutionDistribution";
 import LanguageDistribution from "../../components/panels/LanguageDistribution";
 import TopJournalsArticlesTable from "../../components/panels/TopJournalsArticlesTable";
 import AuthorsProductionsTable from "../../components/panels/AuthorsProductionsTable";
+// import JournalQuantifiersTable from "../../components/panels/JournalQuantifiersTable";
+import PublicationsListTable from "../../components/panels/PublicationsListTable";
+import KeywordsHeatmap from "../../components/panels/KeywordsHeatmap";
+import AuthorshipTeamSize from "../../components/panels/AuthorshipTeamSize";
+import KnowledgeAreasTreemap from "../../components/panels/KnowledgeAreasTreemap";
 import TypeDistribution from "../../components/panels/TypeDistribution";
 import PublicationsBigNumbers from "../../components/panels/PublicationsBigNumbers";
 import PublicationsFilters from "../../components/panels/PublicationsFilters";
@@ -62,6 +67,18 @@ export default function Publications() {
 
   const filterOptions = data?.filterOptions ?? EMPTY_FILTER_OPTIONS;
 
+  // Carregamento dos painéis com fetch próprio (só troca de filtro, não paginação)
+  const [panelsLoading, setPanelsLoading] = useState<Record<string, boolean>>({});
+
+  const setPanelLoading = useCallback((panel: string, isLoading: boolean) => {
+    setPanelsLoading((prev) =>
+      prev[panel] === isLoading ? prev : { ...prev, [panel]: isLoading },
+    );
+  }, []);
+
+  // Bloqueia os filtros enquanto houver dados sendo processados
+  const filtersLocked = loading || Object.values(panelsLoading).some(Boolean);
+
   return (
     <>
       <Head>
@@ -78,6 +95,7 @@ export default function Publications() {
                   value={filters}
                   options={filterOptions}
                   onChange={setFilters}
+                  disabled={filtersLocked}
                 />
               }
             />
@@ -105,36 +123,6 @@ export default function Publications() {
                   height={280}
                 />
               </div>
-              <div className="col-12 col-lg-4">
-                <TypeDistribution
-                  data={data?.byType ?? []}
-                  totalPublications={data?.total}
-                  loading={loading}
-                  error={Boolean(error)}
-                />
-              </div>
-              <div className="col-12 col-lg-4">
-                <LanguageDistribution
-                  data={data?.byLanguage ?? []}
-                  totalPublications={data?.total}
-                  publicationsWithoutLanguage={
-                    data?.publicationsWithoutLanguage ?? 0
-                  }
-                  loading={loading}
-                  error={Boolean(error)}
-                />
-              </div>
-              <div className="col-12 col-lg-4">
-                <InstitutionDistribution
-                  data={data?.byInstitution ?? []}
-                  totalPublications={data?.total}
-                  publicationsWithoutInstitution={
-                    data?.publicationsWithoutInstitution ?? 0
-                  }
-                  loading={loading}
-                  error={Boolean(error)}
-                />
-              </div>
               <div className="col-12 col-lg-6">
                 <TopJournalsArticlesTable
                   data={data?.topJournalsArticles}
@@ -147,6 +135,70 @@ export default function Publications() {
                   data={data?.authors}
                   loading={loading}
                   error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <TypeDistribution
+                  data={data?.byType ?? []}
+                  totalPublications={data?.total}
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <LanguageDistribution
+                  data={data?.byLanguage ?? []}
+                  totalPublications={data?.total}
+                  publicationsWithoutLanguage={
+                    data?.publicationsWithoutLanguage ?? 0
+                  }
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <InstitutionDistribution
+                  data={data?.byInstitution ?? []}
+                  totalPublications={data?.total}
+                  publicationsWithoutInstitution={
+                    data?.publicationsWithoutInstitution ?? 0
+                  }
+                  loading={loading}
+                  error={Boolean(error)}
+                />
+              </div>
+              {/*
+              <div className="col-12 col-lg-6">
+                <JournalQuantifiersTable
+                  filters={filters}
+                  onLoadingChange={(isLoading) => setPanelLoading("quantifiers", isLoading)}
+                />
+              </div>
+              */}
+              <div className="col-12 col-lg-6">
+                <AuthorshipTeamSize
+                  filters={filters}
+                  onLoadingChange={(isLoading) => setPanelLoading("teamSize", isLoading)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <KnowledgeAreasTreemap
+                  filters={filters}
+                  height={460}
+                  onLoadingChange={(isLoading) => setPanelLoading("knowledgeAreas", isLoading)}
+                />
+              </div>
+              <div className="col-12 col-lg-6">
+                <KeywordsHeatmap
+                  filters={filters}
+                  height={500}
+                  onLoadingChange={(isLoading) => setPanelLoading("keywords", isLoading)}
+                />
+              </div>
+              <div className="col-12">
+                <PublicationsListTable
+                  filters={filters}
+                  onLoadingChange={(isLoading) => setPanelLoading("listing", isLoading)}
                 />
               </div>
             </div>
