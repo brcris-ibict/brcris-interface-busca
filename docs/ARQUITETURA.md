@@ -352,13 +352,13 @@ continuam exigindo apenas os privilégios de leitura correspondentes.
 
 Scripts em `package.json`:
 
-- `yarn dev`: executa `next dev`.
-- `yarn build`: executa `next build`.
-- `yarn postbuild`: executa `next-sitemap`.
-- `yarn start`: executa `next start`.
-- `yarn deploy`: instala dependências, faz build e sobe o processo com PM2.
-- `yarn lint` / `yarn lint:fix`: ESLint com cache.
-- `yarn format` / `yarn format:check`: Prettier.
+- `npm run dev`: executa `next dev`.
+- `npm run build`: executa `next build`.
+- `npm run postbuild`: executa `next-sitemap`.
+- `npm run start`: executa `next start`.
+- `npm run deploy`: instala dependências com `npm ci`, faz build e sobe o processo com PM2.
+- `npm run lint` / `npm run lint:fix`: ESLint com cache.
+- `npm run format` / `npm run format:check`: Prettier.
 
 ## Boas práticas Next.js aplicáveis ao projeto
 
