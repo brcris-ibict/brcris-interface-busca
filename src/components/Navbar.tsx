@@ -2,6 +2,7 @@ import { Laptop, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useRef, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { withBasePath } from "../lib/basePath";
 import dropdownStyle from "../styles/Dropdown.module.css";
@@ -23,6 +24,8 @@ function Navbar() {
 
   const { asPath, pathname } = router;
   const { resolvedTheme, setThemePreference, themePreference } = useTheme();
+  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const themeToggleRef = useRef<HTMLButtonElement>(null);
   const ibictLogoSrc =
     resolvedTheme === "dark"
       ? withBasePath("/logos/logo-ibict-pb.png")
@@ -102,7 +105,7 @@ function Navbar() {
               const isActive = isNavItemActive(href);
 
               return (
-                <li className="nav-item me-2" role="presentation" key={href}>
+                <li className="nav-item me-2" key={href}>
                   <Link
                     href={href}
                     className={getNavLinkClassName(href)}
@@ -113,7 +116,7 @@ function Navbar() {
                 </li>
               );
             })}
-            <li className="nav-item me-2" role="presentation">
+            <li className="nav-item me-2">
               <div className={dropdownStyle.dropdown}>
                 <div className={dropdownStyle.flexCenter}>
                   <a href="#" className="nav-link d-flex align-items-center">
@@ -151,14 +154,27 @@ function Navbar() {
                 </div>
               </div>
             </li>
-            <li className="nav-item me-2" role="presentation">
-              <div className={dropdownStyle.dropdown}>
+            <li className="nav-item me-2">
+              <div
+                className={dropdownStyle.dropdown}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape" && themeMenuOpen) {
+                    event.preventDefault();
+                    setThemeMenuOpen(false);
+                    themeToggleRef.current?.focus();
+                  }
+                }}
+              >
                 <div className={dropdownStyle.flexCenter}>
                   <button
+                    ref={themeToggleRef}
                     type="button"
                     className="nav-link theme-toggle-button"
                     aria-label={t(`${themeLabel}, interface theme`)}
+                    aria-expanded={themeMenuOpen}
+                    aria-controls="theme-preference-menu"
                     title={t("Theme mode")}
+                    onClick={() => setThemeMenuOpen((open) => !open)}
                   >
                     {themeIcon}
                     <span>{t("Theme")}</span>
@@ -178,25 +194,42 @@ function Navbar() {
                     </svg>
                   </button>
                 </div>
-                <div className={dropdownStyle.dropdownContent}>
+                <div
+                  id="theme-preference-menu"
+                  role="group"
+                  aria-label={t("Theme mode")}
+                  className={`${dropdownStyle.dropdownContent} ${themeMenuOpen ? dropdownStyle.dropdownContentOpen : ""}`}
+                >
                   <button
                     type="button"
                     className={`d-flex align-items-center ${dropdownStyle.dropdownAction} ${themePreference === "system" ? dropdownStyle.activeItem : ""}`.trim()}
-                    onClick={() => setThemePreference("system")}
+                    onClick={() => {
+                      setThemePreference("system");
+                      setThemeMenuOpen(false);
+                      themeToggleRef.current?.focus();
+                    }}
                   >
                     <Laptop size={18} /> {t("System")}
                   </button>
                   <button
                     type="button"
                     className={`d-flex align-items-center ${dropdownStyle.dropdownAction} ${themePreference === "light" ? dropdownStyle.activeItem : ""}`.trim()}
-                    onClick={() => setThemePreference("light")}
+                    onClick={() => {
+                      setThemePreference("light");
+                      setThemeMenuOpen(false);
+                      themeToggleRef.current?.focus();
+                    }}
                   >
                     <Sun size={18} /> {t("Light")}
                   </button>
                   <button
                     type="button"
                     className={`d-flex align-items-center ${dropdownStyle.dropdownAction} ${themePreference === "dark" ? dropdownStyle.activeItem : ""}`.trim()}
-                    onClick={() => setThemePreference("dark")}
+                    onClick={() => {
+                      setThemePreference("dark");
+                      setThemeMenuOpen(false);
+                      themeToggleRef.current?.focus();
+                    }}
                   >
                     <Moon size={18} /> {t("Dark")}
                   </button>

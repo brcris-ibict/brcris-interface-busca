@@ -1,7 +1,7 @@
 import { ChevronRight, DatabaseBackup, RefreshCw, X } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "../styles/DataUpdateModal.module.css";
 
@@ -11,12 +11,59 @@ interface UpdateModalProps {
 
 export default function DataUpdateModal({ width }: UpdateModalProps) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const wasOpen = useRef(false);
   const { t } = useTranslation();
   const updateDate = "10/2026";
+
+  useEffect(() => {
+    if (!open) {
+      if (wasOpen.current) {
+        wasOpen.current = false;
+        triggerRef.current?.focus();
+      }
+      return;
+    }
+
+    wasOpen.current = true;
+    closeRef.current?.focus();
+
+    const handleDialogKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), a[href], input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusable?.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleDialogKeyDown);
+    return () => document.removeEventListener("keydown", handleDialogKeyDown);
+  }, [open]);
 
   return (
     <>
       <button
+        ref={triggerRef}
         className={styles.updateTrigger}
         type="button"
         onClick={() => setOpen(true)}
@@ -45,6 +92,10 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
         <div className={styles.modalBackdrop} onClick={() => setOpen(false)}>
           <div
             className={styles.modalContent}
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="data-update-modal-title"
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.modalHeader}>
@@ -54,7 +105,7 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
                 </div>
 
                 <div>
-                  <h2 className={styles.modalTitle}>
+                  <h2 className={styles.modalTitle} id="data-update-modal-title">
                     {t("Data from this page")}
                   </h2>
 
@@ -65,9 +116,11 @@ export default function DataUpdateModal({ width }: UpdateModalProps) {
               </div>
 
               <button
+                ref={closeRef}
                 className={styles.modalClose}
                 type="button"
                 onClick={() => setOpen(false)}
+                aria-label={t("Close")}
               >
                 <X size={16} />
               </button>
