@@ -126,6 +126,47 @@
   margin-top: 20px;
 }
 
+.submitActions {
+  width: 100%;
+  gap: 12px;
+}
+
+.submitButton:not(:disabled) {
+  background-color: #01586b !important;
+  border-color: #01586b !important;
+  color: #ffffff !important;
+}
+
+.submitButton:not(:disabled):hover {
+  background-color: #014a5a !important;
+  border-color: #014a5a !important;
+}
+
+.submitButton:focus-visible {
+  outline: 2px solid #01586b;
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+:global(button[disabled]).submitButton {
+  color: #0f1115 !important;
+}
+
+:global(:root[data-theme="dark"]) .submitButton:not(:disabled) {
+  background-color: #67c5d8 !important;
+  border-color: #67c5d8 !important;
+  color: #0f1115 !important;
+}
+
+:global(:root[data-theme="dark"]) .submitButton:not(:disabled):hover {
+  background-color: #9adceb !important;
+  border-color: #9adceb !important;
+}
+
+:global(:root[data-theme="dark"]) .submitButton:focus-visible {
+  outline-color: #67c5d8;
+}
+
 @media (max-width: 768px) {
   .form {
     padding: 20px;
@@ -144,6 +185,22 @@
 
 /* Mobile improvements: make form and controls fill width and center captcha */
 @media (max-width: 480px) {
+  .submitActions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .submitActions > div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .submitActions .submitButton {
+    width: 100%;
+    max-width: 420px;
+  }
+
   .wrapper {
     padding: 0 12px;
     width: 100%;

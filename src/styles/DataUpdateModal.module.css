@@ -164,6 +164,17 @@
   border-color: var(--border-dark-color);
 }
 
+.modalClose:focus-visible,
+.modalButton:focus-visible {
+  outline: 2px solid #01586b;
+  outline-offset: 3px;
+}
+
+:global(:root[data-theme="dark"]) .modalClose:focus-visible,
+:global(:root[data-theme="dark"]) .modalButton:focus-visible {
+  outline-color: #67c5d8;
+}
+
 /* BODY */
 .modalBody {
   padding: 18px 22px 22px;
