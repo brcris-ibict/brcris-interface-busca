@@ -26,7 +26,7 @@ export default function Contact() {
             <div className="page-title">
               <h1 className="text-center">{t("ContactUs")}</h1>
             </div>
-            <div className="row justify-content-center m-5">
+            <div className="row justify-content-center my-5 mx-0 mx-md-5">
               <div className="col-md-8">
                 <Alert />
                 <ContactForm />

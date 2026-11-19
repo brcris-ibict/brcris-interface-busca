@@ -1,4 +1,5 @@
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { alertService } from "../services/AlertService";
@@ -7,7 +8,7 @@ import style from "../styles/Form.module.css";
 import Loader from "./Loader";
 
 function ContactForm() {
-  /* const router = useRouter() */
+  const { locale } = useRouter();
   const { t } = useTranslation("common");
 
   const options = {
@@ -120,12 +121,13 @@ function ContactForm() {
             />
           </div>
 
-          <div className="submit-btn col-sm-12 mt-2 d-flex justify-content-between align-items-center">
+          <div className={`${style.submitActions} submit-btn col-sm-12 mt-2 d-flex justify-content-between align-items-center`}>
             {/* @ts-ignore */}
             <ReCAPTCHA
               size="normal"
               ref={recaptchaRef}
               sitekey={PUBLIC_RECAPTCHA_SITE_KEY}
+              hl={locale === "pt-BR" ? "pt-BR" : "en"}
               onChange={onReCAPTCHAChange}
             />
             <button
@@ -137,7 +139,7 @@ function ContactForm() {
                   message !== ""
                 )
               }
-              className="btn btn-primary px-4 py-2"
+              className={`${style.submitButton} btn btn-primary px-4 py-2`}
               type="submit"
             >
               {t("Submit")}
