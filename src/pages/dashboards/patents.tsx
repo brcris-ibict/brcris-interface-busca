@@ -5,6 +5,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect } from "react";
 import PageHeader from "../../components/panels/PageHeader";
 import PatentsBigNumbers from "../../components/panels/PatentsBigNumbers";
+import PatentsByYearChart from "../../components/panels/PatentsByYearChart";
+import PatentsKindChart from "../../components/panels/PatentsKindChart";
+import PatentsIpcTable from "../../components/panels/PatentsIpcTable";
+import PatentsListTable from "../../components/panels/PatentsListTable";
 import useRequest from "../../hooks/useRequest";
 import { withBasePath } from "../../lib/basePath";
 import type { PatentsSummaryResponse } from "../../types/PatentsDashboard";
@@ -44,7 +48,26 @@ export default function PatentsDashboard() {
               error={Boolean(error)}
             />
 
-            <div className="row g-3"></div>
+            <div className="row g-3 mb-3">
+              <div className="col-12">
+                <PatentsByYearChart />
+              </div>
+            </div>
+
+            <div className="row g-3">
+              <div className="col-12 col-lg-6">
+                <PatentsKindChart />
+              </div>
+              <div className="col-12 col-lg-6">
+                <PatentsIpcTable />
+              </div>
+            </div>
+
+            <div className="row g-3 mt-3">
+              <div className="col-12">
+                <PatentsListTable />
+              </div>
+            </div>
           </div>
         </div>
       </div>
