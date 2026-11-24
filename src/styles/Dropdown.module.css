@@ -45,8 +45,12 @@
 
 .activeItem {
   background-color: var(--bg-soft) !important;
-  color: var(--primary-color) !important;
+  color: #01586b !important;
   font-weight: 600;
+}
+
+:global(:root[data-theme="dark"]) .activeItem {
+  color: #67c5d8 !important;
 }
 
 .dropdown:hover .dropdownContent {
