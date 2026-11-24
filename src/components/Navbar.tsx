@@ -2,7 +2,7 @@ import { Laptop, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { withBasePath } from "../lib/basePath";
 import dropdownStyle from "../styles/Dropdown.module.css";
@@ -25,7 +25,33 @@ function Navbar() {
   const { asPath, pathname } = router;
   const { resolvedTheme, setThemePreference, themePreference } = useTheme();
   const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const themeToggleRef = useRef<HTMLButtonElement>(null);
+  const languageToggleRef = useRef<HTMLButtonElement>(null);
+  const themeMenuRef = useRef<HTMLDivElement>(null);
+  const languageMenuRef = useRef<HTMLDivElement>(null);
+
+  // Fecha o menu aberto quando o clique ou o foco vai para fora dele.
+  useEffect(() => {
+    if (!themeMenuOpen && !languageMenuOpen) return;
+
+    const closeOnOutside = (event: Event) => {
+      const target = event.target as Node | null;
+      if (themeMenuOpen && !themeMenuRef.current?.contains(target)) {
+        setThemeMenuOpen(false);
+      }
+      if (languageMenuOpen && !languageMenuRef.current?.contains(target)) {
+        setLanguageMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", closeOnOutside);
+    document.addEventListener("focusin", closeOnOutside);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutside);
+      document.removeEventListener("focusin", closeOnOutside);
+    };
+  }, [themeMenuOpen, languageMenuOpen]);
   const ibictLogoSrc =
     resolvedTheme === "dark"
       ? withBasePath("/logos/logo-ibict-pb.png")
@@ -117,9 +143,27 @@ function Navbar() {
               );
             })}
             <li className="nav-item me-2">
-              <div className={dropdownStyle.dropdown}>
+              <div
+                ref={languageMenuRef}
+                className={dropdownStyle.dropdown}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape" && languageMenuOpen) {
+                    event.preventDefault();
+                    setLanguageMenuOpen(false);
+                    languageToggleRef.current?.focus();
+                  }
+                }}
+              >
                 <div className={dropdownStyle.flexCenter}>
-                  <a href="#" className="nav-link d-flex align-items-center">
+                  <button
+                    ref={languageToggleRef}
+                    type="button"
+                    className="nav-link d-flex align-items-center language-toggle-button"
+                    aria-label={`${t(router.locale || "en")}, ${t("interface language")}`}
+                    aria-expanded={languageMenuOpen}
+                    aria-controls="language-menu"
+                    onClick={() => setLanguageMenuOpen((open) => !open)}
+                  >
                     {t(router.locale || "en")}
                     <svg
                       height="20"
@@ -134,9 +178,14 @@ function Navbar() {
                         d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
                       ></path>
                     </svg>
-                  </a>
+                  </button>
                 </div>
-                <div className={dropdownStyle.dropdownContent}>
+                <div
+                  id="language-menu"
+                  role="group"
+                  aria-label={t("Interface language")}
+                  className={`${dropdownStyle.dropdownContent} ${languageMenuOpen ? dropdownStyle.dropdownContentOpen : ""}`}
+                >
                   {LANGUAGES?.map((lang) => (
                     <Link
                       href={asPath}
@@ -147,6 +196,8 @@ function Navbar() {
                           ? `${dropdownStyle.languageLink} ${dropdownStyle.activeItem}`
                           : dropdownStyle.languageLink
                       }
+                      aria-current={router.locale === lang ? "true" : undefined}
+                      onClick={() => setLanguageMenuOpen(false)}
                     >
                       {t(lang)}
                     </Link>
@@ -156,6 +207,7 @@ function Navbar() {
             </li>
             <li className="nav-item me-2">
               <div
+                ref={themeMenuRef}
                 className={dropdownStyle.dropdown}
                 onKeyDown={(event) => {
                   if (event.key === "Escape" && themeMenuOpen) {
