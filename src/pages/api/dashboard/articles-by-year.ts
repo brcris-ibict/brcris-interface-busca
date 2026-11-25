@@ -1,0 +1,81 @@
+import type { NextApiRequest, NextApiResponse } from "next";
+import { createElasticsearchClient } from "../../../services/ElasticsearchClient";
+import logger from "../../../services/Logger";
+import type {
+  ArticlesByYearResponse,
+  ArticleYearPoint,
+  ThesesDashboardErrorResponse,
+} from "../../../types/ThesesDashboard";
+
+const client = createElasticsearchClient();
+
+const MIN_YEAR = 1990;
+const INCOMPLETE_YEAR_RATIO = 0.6;
+
+type YearBucket = { key?: string | number; doc_count?: number };
+type YearAggregations = { by_year?: { buckets?: YearBucket[] } };
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<ArticlesByYearResponse | ThesesDashboardErrorResponse>,
+) {
+  if (req.method !== "GET") {
+    res.setHeader("Allow", "GET");
+    return res.status(405).json({ error: "Metodo nao permitido." });
+  }
+
+  const index = process.env.INDEX_PUBLICATION;
+
+  if (!index) {
+    logger.error("[dashboard/articles-by-year] INDEX_PUBLICATION is not configured");
+    return res.status(500).json({ error: "Servico indisponivel." });
+  }
+
+  const maxYear = new Date().getFullYear();
+
+  try {
+    const response = await client.search({
+      index,
+      size: 0,
+      query: { term: { type: "Artigo" } },
+      aggs: {
+        by_year: {
+          terms: { field: "publicationDate", size: 300, order: { _key: "asc" } },
+        },
+      },
+    });
+
+    const aggregations = response.aggregations as YearAggregations | undefined;
+    const byYear = new Map<number, number>();
+
+    for (const bucket of aggregations?.by_year?.buckets ?? []) {
+      const year = Number(bucket.key);
+      if (!Number.isInteger(year) || year < MIN_YEAR || year > maxYear) continue;
+      byYear.set(year, bucket.doc_count ?? 0);
+    }
+
+    const items: ArticleYearPoint[] = [];
+    if (byYear.size > 0) {
+      const first = Math.min(...byYear.keys());
+      const last = Math.max(...byYear.keys());
+      for (let year = first; year <= last; year += 1) {
+        items.push({ year, articles: byYear.get(year) ?? 0 });
+      }
+    }
+
+    const lastPoint = items[items.length - 1];
+    const previousPoint = items[items.length - 2];
+    const incompleteYear =
+      lastPoint &&
+      previousPoint &&
+      lastPoint.articles < previousPoint.articles * INCOMPLETE_YEAR_RATIO
+        ? lastPoint.year
+        : null;
+
+    return res.status(200).json({ items, incompleteYear });
+  } catch (error: unknown) {
+    logger.error("[dashboard/articles-by-year] falha ao carregar o painel");
+    logger.error(error);
+    return res.status(500).json({ error: "Falha ao carregar o painel." });
+  }
+}
