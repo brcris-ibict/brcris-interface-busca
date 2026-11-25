@@ -438,14 +438,14 @@ export default function FaqPage() {
         </p>
       </div>
 
-      <footer className="border-top py-4">
+      <div className="faq-note border-top py-4">
         <div
           className="container small text-muted"
           dangerouslySetInnerHTML={{
             __html: `© <span id="year">2025</span> BrCris · ${t("Informative content")}. <span class="d-block d-sm-inline"> ${t("Learn more at")} <a href="https://brcris.ibict.br/" target="_blank" rel="noopener noreferrer">brcris.ibict.br</a>.</span>`,
           }}
         />
-      </footer>
+      </div>
     </>
   );
 }

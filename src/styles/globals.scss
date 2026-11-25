@@ -194,7 +194,7 @@ main {
   z-index: 10000;
   padding: 10px 16px;
   border-radius: var(--border-radius);
-  background-color: var(--primary-color);
+  background-color: #01586b;
   color: #ffffff;
   font-weight: 600;
   text-decoration: none;
@@ -3504,7 +3504,7 @@ a.btn-link[href="#top"] {
 }
 
 a.btn-link[href="#top"]:focus-visible,
-footer .container a[href="https://brcris.ibict.br/"]:focus-visible {
+.faq-note .container a[href="https://brcris.ibict.br/"]:focus-visible {
   outline: 2px solid #01586b;
   outline-offset: 2px;
 }
@@ -3519,11 +3519,11 @@ footer .container a[href="https://brcris.ibict.br/"]:focus-visible {
 }
 
 :root[data-theme="dark"] a.btn-link[href="#top"]:focus-visible,
-:root[data-theme="dark"] footer .container a[href="https://brcris.ibict.br/"]:focus-visible {
+:root[data-theme="dark"] .faq-note .container a[href="https://brcris.ibict.br/"]:focus-visible {
   outline-color: #67c5d8;
 }
 
-footer .container a[href="https://brcris.ibict.br/"] {
+.faq-note .container a[href="https://brcris.ibict.br/"] {
   color: #01586b;
   font-weight: 600;
   text-decoration: underline;
@@ -3534,7 +3534,7 @@ footer .container a[href="https://brcris.ibict.br/"] {
   }
 }
 
-:root[data-theme="dark"] footer .container a[href="https://brcris.ibict.br/"] {
+:root[data-theme="dark"] .faq-note .container a[href="https://brcris.ibict.br/"] {
   color: #67c5d8;
 
   &:hover,
