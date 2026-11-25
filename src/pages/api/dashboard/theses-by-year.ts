@@ -11,7 +11,6 @@ const client = createElasticsearchClient();
 
 const THESIS_TYPES = ["Tese", "Dissertação"] as const;
 const MIN_YEAR = 1990;
-const MAX_YEAR = 2100;
 const INCOMPLETE_YEAR_RATIO = 0.6;
 
 type TypeBucket = { key?: string | number; doc_count?: number };
@@ -42,6 +41,8 @@ export default async function handler(
     return res.status(500).json({ error: "Servico indisponivel." });
   }
 
+  const maxYear = new Date().getFullYear();
+
   try {
     const response = await client.search({
       index,
@@ -64,7 +65,7 @@ export default async function handler(
 
     for (const bucket of aggregations?.by_year?.buckets ?? []) {
       const year = Number(bucket.key);
-      if (!Number.isInteger(year) || year < MIN_YEAR || year > MAX_YEAR) continue;
+      if (!Number.isInteger(year) || year < MIN_YEAR || year > maxYear) continue;
       const typeBuckets = bucket.by_type?.buckets;
       byYear.set(year, {
         dissertations: bucketCount(typeBuckets, "Dissertação"),
