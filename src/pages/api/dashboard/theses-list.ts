@@ -136,30 +136,7 @@ export default async function handler(
     });
   }
 
-  const filter: Record<string, unknown>[] = [{ terms: { type: [...THESIS_TYPES] } }];
-
-  const query = search
-    ? {
-        bool: {
-          filter,
-          must: [
-            {
-              simple_query_string: {
-                query: search,
-                fields: [
-                  "title_text^3",
-                  "advisor.name_text",
-                  "course.name",
-                  "sponsorOrgUnit.name",
-                ],
-                default_operator: "and",
-                lenient: true,
-              },
-            },
-          ],
-        },
-      }
-    : { bool: { filter } };
+  const filter = [{ terms: { type: [...THESIS_TYPES] } }];
 
   try {
     const response = await client.search({
@@ -168,10 +145,31 @@ export default async function handler(
       size: pageSize,
       track_total_hits: knownTotal < 1,
       _source: [...SOURCE_FIELDS],
-      query,
+      query: search
+        ? {
+            bool: {
+              filter,
+              must: [
+                {
+                  simple_query_string: {
+                    query: search,
+                    fields: [
+                      "title_text^3",
+                      "advisor.name_text",
+                      "course.name",
+                      "sponsorOrgUnit.name",
+                    ],
+                    default_operator: "and" as const,
+                    lenient: true,
+                  },
+                },
+              ],
+            },
+          }
+        : { bool: { filter } },
       sort: search
-        ? [{ _score: { order: "desc" } }, { degreeDate: { order: "desc", missing: "_last" } }]
-        : [{ degreeDate: { order: "desc", missing: "_last" } }, { _doc: { order: "asc" } }],
+        ? [{ _score: { order: "desc" as const } }, { degreeDate: { order: "desc" as const, missing: "_last" as const } }]
+        : [{ degreeDate: { order: "desc" as const, missing: "_last" as const } }, { _doc: { order: "asc" as const } }],
     });
 
     const rawTotal = response.hits.total;
