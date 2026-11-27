@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createElasticsearchClient } from "../../services/ElasticsearchClient";
 import logger from "../../services/Logger";
+import { GENERIC_ERROR_MESSAGE } from "../../../utils/Utils";
 
 const client = createElasticsearchClient();
 
@@ -28,7 +29,7 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
     res.json(buckets);
   } catch (err) {
     logger.error(err);
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: GENERIC_ERROR_MESSAGE });
   }
 };
 

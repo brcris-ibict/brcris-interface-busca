@@ -11,6 +11,7 @@ import ElasticsearchQueryBuilder from "../../services/ElasticsearchQueryBuilder"
 import { createSearchUiTransporter } from "../../services/ElasticsearchSearchUiTransporter";
 import logger from "../../services/Logger";
 import type { CustomSearchQuery } from "../../types/Entities";
+import { GENERIC_ERROR_MESSAGE } from "../../../utils/Utils";
 
 // https://docs.elastic.co/search-ui/api/connectors/elasticsearch#customise-the-elasticsearch-request-body
 function builConnector(index: string) {
@@ -77,7 +78,6 @@ export default async function handler(
     res.json(response);
   } catch (err) {
     logger.error("ERROR::", err);
-    const message = err instanceof Error ? err.message : "Unknown error";
-    res.status(400).json({ error: message });
+    res.status(400).json({ error: GENERIC_ERROR_MESSAGE });
   }
 }

@@ -374,5 +374,6 @@
   "Update: {{date}}, view data sources and collection dates": "Update: {{date}}, view data sources and collection dates",
   "Learn more about BrCris": "Learn more about BrCris",
   "Visit the Ibict website (opens in a new tab)": "Visit the Ibict website (opens in a new tab)",
-  "Email": "Email"
+  "Email": "Email",
+  "Ocorreu um erro ao realizar a consulta. Tente novamente mais tarde.":"An error occurred while performing the query. Please try again later."
 }

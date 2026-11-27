@@ -457,3 +457,6 @@ export function formatDate(value: string | string[] | undefined) {
     })
     .join(", ");
 }
+
+
+export const GENERIC_ERROR_MESSAGE = 'Ocorreu um erro ao realizar a consulta. Tente novamente mais tarde.'
