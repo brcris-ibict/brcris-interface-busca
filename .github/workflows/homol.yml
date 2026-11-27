@@ -5,6 +5,8 @@ on: workflow_dispatch
 env:
   HOST_ELASTIC: ${{secrets.HOST_ELASTIC}}
   API_KEY: ${{secrets.API_KEY}}
+  ELASTIC_USERNAME: ${{secrets.ELASTIC_USERNAME}}
+  ELASTIC_PASSWORD: ${{secrets.ELASTIC_PASSWORD}}
   MAIL_HOST: ${{secrets.MAIL_HOST}}
   MAIL_SENDER: ${{secrets.MAIL_SENDER}}
   MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}

@@ -327,7 +327,7 @@ Arquivos são gerados em `DOWNLOAD_FOLDER_PATH`, com nome derivado de hash SHA-2
 
 As variáveis estão exemplificadas em `.env.example`. As principais categorias são:
 
-- Elasticsearch: `HOST_ELASTIC`, `API_KEY`, `ELASTICSEARCH_CA_CERT_PATH`.
+- Elasticsearch: `HOST_ELASTIC`, `API_KEY`, `ELASTIC_USERNAME`, `ELASTIC_PASSWORD`, `ELASTICSEARCH_CA_CERT_PATH`.
 - Índices: `INDEX_PUBLICATION`, `INDEX_PERSON`, `INDEX_ORGUNIT`, `INDEX_JOURNAL`, `INDEX_PROGRAM`, `INDEX_PATENT`, `INDEX_GROUP`, `INDEX_SOFTWARE`, `INDEX_COURSE`.
 - E-mail: `MAIL_SENDER`, `MAIL_PASSWORD`, `MAIL_PORT`, `MAIL_HOST`, `MAIL_RECIPIENT`.
 - Captcha: `PUBLIC_RECAPTCHA_SITE_KEY`, `RECAPTCHA_SECRET_KEY`.
@@ -341,6 +341,12 @@ prefixo sem barra final, por exemplo `/brcris`. Nesse caso,
 `BRCRIS_HOST_BASE` deve conter a URL pública completa
 (`https://host.example/brcris`) para que links absolutos gerados pelo servidor
 também incluam o prefixo. Alterar o `basePath` exige um novo build do Next.js.
+
+`HOST_ELASTIC` aceita uma lista de nós separada por vírgulas e deve conter
+todos os nós do cluster (no HML, os quatro nós `wn01` a `wn04-laguna`). O
+cliente em `src/services/ElasticsearchClient.ts` distribui as requisições entre
+os nós e faz failover nativo. A autenticação usa `ELASTIC_USERNAME` e
+`ELASTIC_PASSWORD` quando ambos estão definidos; caso contrário, usa `API_KEY`.
 
 Clusters Elasticsearch que usam uma CA privada devem configurar `HOST_ELASTIC`
 com `https://` e informar em `ELASTICSEARCH_CA_CERT_PATH` o caminho absoluto
