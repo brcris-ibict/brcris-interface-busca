@@ -3,6 +3,9 @@ import "server-only";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 import { Client, type ClientOptions } from "es8";
+import logger from "./Logger";
+
+let nodesLogged = false;
 
 /**
  * HOST_ELASTIC aceita um ou mais nós separados por vírgula, espaço ou quebra
@@ -45,11 +48,21 @@ function getAuthOptions(): ClientOptions["auth"] {
 export function createElasticsearchClient() {
   const nodes = getElasticsearchNodes();
 
-  return new Client({
+  const client = new Client({
     maxRetries: 5,
     requestTimeout: 60000,
     nodes,
     auth: getAuthOptions(),
     tls: getTlsOptions(),
   });
+
+  if (!nodesLogged) {
+    logger.info(
+      { hosts: nodes.map((node) => new URL(node).origin) },
+      "Elasticsearch hosts configured",
+    );
+    nodesLogged = true;
+  }
+
+  return client;
 }
