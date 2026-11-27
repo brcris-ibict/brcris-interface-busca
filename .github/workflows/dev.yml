@@ -3,19 +3,10 @@ name: Deploy Dev
 on: workflow_dispatch
 
 env:
-  HOST_ELASTIC: ${{secrets.HOST_ELASTIC}}
-  API_KEY: ${{secrets.API_KEY}}
-  # Índices do cluster atual de dev/prod. O .env.example usa os nomes do
-  # novo cluster de homologação (brcris-*); remova quando este ambiente migrar.
-  INDEX_PUBLICATION: brc-nov2025-publication-09-2026
-  INDEX_PERSON: brc-nov2025-person-v2
-  INDEX_ORGUNIT: brc-nov2025-orgunit-v2
-  INDEX_JOURNAL: brc-nov2025-journal-v2
-  INDEX_PROGRAM: brc-nov2025-program-v2
-  INDEX_PATENT: brc-nov2025-patent-v2
-  INDEX_GROUP: brc-nov2025-group-v2
-  INDEX_SOFTWARE: brc-nov2025-software-v2
-  INDEX_COURSE: brc-nov2025-course
+  # Cluster Elasticsearch de homologação (4 nós) e sua CA HTTP.
+  HOST_ELASTIC: ${{secrets.HOST_ELASTIC_HML}}
+  API_KEY: ${{secrets.API_KEY_HML}}
+  ELASTICSEARCH_CA_CERT_PATH: certs/elasticsearch-hml-http-ca.crt
   MAIL_HOST: ${{secrets.MAIL_HOST}}
   MAIL_SENDER: ${{secrets.MAIL_SENDER}}
   MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
