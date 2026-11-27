@@ -6,7 +6,7 @@ env:
   # Cluster Elasticsearch de homologação (4 nós) e sua CA HTTP.
   HOST_ELASTIC: ${{secrets.HOST_ELASTIC_HML}}
   API_KEY: ${{secrets.API_KEY_HML}}
-  ELASTICSEARCH_CA_CERT_PATH: certs/elasticsearch-hml-http-ca.crt
+  ELASTICSEARCH_CA_CERT_PATH: ${{vars.ELASTICSEARCH_CA_CERT_PATH}}
   MAIL_HOST: ${{secrets.MAIL_HOST}}
   MAIL_SENDER: ${{secrets.MAIL_SENDER}}
   MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
@@ -14,7 +14,7 @@ env:
   MAIL_RECIPIENT: ${{secrets.MAIL_RECIPIENT}}
   RECAPTCHA_SECRET_KEY: ${{secrets.RECAPTCHA_SECRET_KEY}}
   BRCRIS_HOST_BASE: ${{vars.BRCRIS_HOST_BASE}}
-  NEXT_BASE_PATH: ${{vars.NEXT_BASE_PATH}}
+
 
 
 jobs:

@@ -5,13 +5,13 @@ on: workflow_dispatch
 env:
   HOST_ELASTIC: ${{secrets.HOST_ELASTIC}}
   API_KEY: ${{secrets.API_KEY}}
+  ELASTICSEARCH_CA_CERT_PATH: ${{vars.ELASTICSEARCH_CA_CERT_PATH}}
   MAIL_HOST: ${{secrets.MAIL_HOST}}
   MAIL_SENDER: ${{secrets.MAIL_SENDER}}
   MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
   MAIL_PORT: ${{secrets.MAIL_PORT}}
   MAIL_RECIPIENT: ${{secrets.MAIL_RECIPIENT}}
   RECAPTCHA_SECRET_KEY: ${{secrets.RECAPTCHA_SECRET_KEY}}
-  BRCRIS_HOST_BASE: ${{vars.BRCRIS_HOST_BASE}}
   NEXT_BASE_PATH: ${{vars.NEXT_BASE_PATH}}
 
 jobs:
